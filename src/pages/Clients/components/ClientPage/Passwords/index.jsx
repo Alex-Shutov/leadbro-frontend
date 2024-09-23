@@ -1,68 +1,96 @@
 import React from 'react';
-import {handleError, handleInfo, handleSubmit} from "../../../../../utils/snackbar";
-import Card from "../../../../../shared/Card";
-import styles from "./Passwords.module.sass";
-import Title from "../../../../../shared/Title";
-import MultiInputPasswords from "./Inputs/MultiInput.component";
-import useMappedObj from "../../../../../hooks/useMappedObj";
+import {
+  handleError,
+  handleInfo,
+  handleSubmit,
+} from '../../../../../utils/snackbar';
+import Card from '../../../../../shared/Card';
+import styles from './Passwords.module.sass';
+import Title from '../../../../../shared/Title';
+import MultiInputPasswords from './Inputs/MultiInput.component';
+import useMappedObj from '../../../../../hooks/useMappedObj';
 
-const ClientPasswords = ({passwordsData, onRemove, onChange, onSubmit, onReset, onAdd}) => {
-    const mappedPasswords = useMappedObj(passwordsData)
-    const createNewPass = (prevId) => {
-        return {
-            id:prevId,
-            name:'',
-            values:[]
-        }
-    }
-    const defaultActions = (path, success, info,parentId='',copy = 'Элемент скопирован') => {
-        // console.log(properties,'smile')
-        return {
-            copy: (text) => {
-                navigator.clipboard.writeText(text).then(r => handleInfo(copy))
-            },
-            delete:  ({name}) => {
-                if(parentId){
-                    onRemove(parentId)
-                    return
-                }
-                else
-                    onRemove(name)
-                // setLength((prev) => ({...prev,[middleProp]:prev[middleProp]-1}))
-                handleError('Элемент удален')
-            },
-            edit: ({name, value}) => onChange(name, value),
-            submit: () => {
-                onSubmit()
-                handleSubmit(success)
-            },
-            reset: () => {
-                onReset(path)
-                handleInfo(info)
-            },
-        }
-    }
+const ClientPasswords = ({
+  passwordsData,
+  onRemove,
+  onChange,
+  onSubmit,
+  onReset,
+  onAdd,
+}) => {
+  const mappedPasswords = useMappedObj(passwordsData);
+  const defaultActions = (
+    passId,
+    path,
+    success,
+    info,
+    parentId = '',
+    copy = 'Элемент скопирован',
+  ) => {
+    // console.log(properties,'smile')
+    return {
+      copy: (text) => {
+        navigator.clipboard.writeText(text).then((r) => handleInfo(copy));
+      },
+      delete: ({ name }) => {
+        if (parentId) {
+          onRemove(parentId, passId);
+          return;
+        } else onRemove(name, passId);
+        // setLength((prev) => ({...prev,[middleProp]:prev[middleProp]-1}))
+        handleError('Элемент удален');
+      },
+      edit: ({ name, value }) => onChange(name, value),
+      submit: () => {
+        onSubmit(passId);
+        handleSubmit(success);
+      },
+      reset: () => {
+        onReset(path);
+        handleInfo(info);
+      },
+    };
+  };
 
-
-    return (
-        <Card classTitle={styles.title} className={styles.card}>
-            <Title smallTable={true} actions={{
-                add: {
-                    action: () => onAdd(`passwords.${mappedPasswords.length}`,createNewPass(mappedPasswords.length)),
-                    title: 'Добавить пароль'
-                }
-            }} title={'Пароли клиента'}/>
-            {mappedPasswords?.map(([key,password],index) => {
-                return <MultiInputPasswords index={password.id} param={'values'} onAdd={onAdd} passwordData={password} label={password.name} onActions={(path,parentId)=>defaultActions(path,'Пароль сохранен','Пароль восстановлен',parentId)}  />
-            })}
-            {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Телефон'} param={'tel'} type={'tel'} onActions={(path)=>defaultActions(path,'Телефон сохранен','Телефон восстановлен')}/>*/}
-            {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Адрес'} param={'address'} type={'address'} onActions={(path)=>defaultActions(path,'Адрес сохранен','Адрес восстановлен')}/>*/}
-            {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Почта'} param={'email'} type={'email'} onActions={(path)=>defaultActions(path,'Почта сохранена','Почта восстановлена')}/>*/}
-            {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Адрес сайта'} param={'site'} type={'email'} onActions={(path)=>defaultActions(path,'Сайт сохранен','Сайт восстановлен')}/>*/}
-            {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Юр. реквизиты'} onActions={(path,onSaveText,onCloseText)=>defaultActions(path,onSaveText,onCloseText)}/>*/}
-
-        </Card>
-    );
+  return (
+    <Card classTitle={styles.title} className={styles.card}>
+      <Title
+        smallTable={true}
+        actions={{
+          add: {
+            action: () => onAdd(),
+            title: 'Добавить пароль',
+          },
+        }}
+        title={'Пароли клиента'}
+      />
+      {mappedPasswords?.map(([key, password], index) => {
+        return (
+          <MultiInputPasswords
+            index={password.id}
+            param={'values'}
+            onAdd={onAdd}
+            passwordData={password}
+            label={password.name}
+            onActions={(path, parentId) =>
+              defaultActions(
+                password.id,
+                path,
+                'Пароль сохранен',
+                'Пароль восстановлен',
+                parentId,
+              )
+            }
+          />
+        );
+      })}
+      {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Телефон'} param={'tel'} type={'tel'} onActions={(path)=>defaultActions(path,'Телефон сохранен','Телефон восстановлен')}/>*/}
+      {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Адрес'} param={'address'} type={'address'} onActions={(path)=>defaultActions(path,'Адрес сохранен','Адрес восстановлен')}/>*/}
+      {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Почта'} param={'email'} type={'email'} onActions={(path)=>defaultActions(path,'Почта сохранена','Почта восстановлена')}/>*/}
+      {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Адрес сайта'} param={'site'} type={'email'} onActions={(path)=>defaultActions(path,'Сайт сохранен','Сайт восстановлен')}/>*/}
+      {/*<MultiInputPasswords onAdd={onAdd} contactData={contactData} label={'Юр. реквизиты'} onActions={(path,onSaveText,onCloseText)=>defaultActions(path,onSaveText,onCloseText)}/>*/}
+    </Card>
+  );
 };
 
 export default ClientPasswords;

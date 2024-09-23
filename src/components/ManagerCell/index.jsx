@@ -6,11 +6,11 @@ import { Link } from 'react-router-dom';
 import Tooltip from '../../shared/Tooltip';
 
 const ManagerCell = ({ manager, ...rest }) => {
-  const imageSrc = manager?.image;
+  const imageSrc = manager?.image ?? manager?.avatar;
 
   return (
     <div className={cn(styles.container, rest.className)}>
-      <Avatar imageSrc={imageSrc} />
+      <Avatar size={42} imageSrc={imageSrc} />
       <div className={styles.fioContainer}>
         <div>
           <Link>

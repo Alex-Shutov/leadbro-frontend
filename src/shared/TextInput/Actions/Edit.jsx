@@ -8,8 +8,8 @@ const Index = ({props,actions,label,inputRef,setClose}) => {
         <div onClick={() => {
 
             props?.onEdit()
-            setTimeout(()=>  inputRef.current.focus(),100)
-        }} className={cn(styles.edit, {[styles.edit_active]: props.edited})}>
+            inputRef && setTimeout(()=>  inputRef.current.focus(),100)
+        }} className={cn(styles.edit, {[styles.edit_active]: props?.edited})}>
             <Icon name={'edit'} size="20"/>{" "}
             <p>{label}</p>
         </div>

@@ -1,7 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './Table.module.sass';
 import cn from 'classnames';
-import { useTable, useSortBy, useGroupBy } from 'react-table';
+import { useTable, useSortBy, useGroupBy, usePagination } from 'react-table';
 import { observer } from 'mobx-react';
 import { motion } from 'framer-motion';
 import Card from '../Card';
@@ -9,10 +9,9 @@ import Icon from '../Icon';
 import AdaptiveCards from './AdaptiveCards';
 import Title from '../Title';
 import { clickRecursive } from '../../utils/click';
-import { hoverTable } from '../../utils/motion.variants';
-import TextArea from '../TextArea';
-import TextInput from '../TextInput';
-import Image from '../Image';
+import TableMenu from '../../components/TableMenu';
+import { useLocation, useNavigate } from 'react-router';
+import { NextButton, PreviousButton } from '../PaginationButton';
 
 const Table = observer(
   ({
@@ -22,26 +21,64 @@ const Table = observer(
     headerActions,
     cardComponent,
     editComponent,
+    actions, // Добавлено для передачи действий
+    paging, // Добавлено для пагинации
     ...rest
   }) => {
-    const [editingRowIndex, setEditingRowIndex] = useState(null);
+    const [editingRowIndex, setEditingRowIndex  ] = useState(null);
     const [isSorting, setIsSorting] = useState(false);
+    const [activeMenuRowIndex, setActiveMenuRowIndex] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Получение номера страницы из query параметра
+
     const tableInstance = useTable(
       {
         columns,
         data,
         initialState: {
+          pageIndex: paging?.current ?? undefined,
           columnWidths: columns.map((col) =>
             col.width ? `${col.width}%` : 'auto',
           ),
         },
+        manualPagination: !!paging, // Управляем пагинацией вручную
+        pageCount: paging ? Math.floor(paging.all / paging.offset) : undefined,
       },
       useGroupBy,
       useSortBy,
+      usePagination,
     );
 
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-      tableInstance;
+    const {
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      rows,
+      page,
+      prepareRow,
+      canPreviousPage,
+      canNextPage,
+      pageOptions,
+      gotoPage,
+      nextPage,
+      previousPage,
+      state: { pageIndex },
+    } = tableInstance;
+    const rowsOrPage = paging ? page : rows;
+
+    const allPages = paging
+      ? paging.totalPages ?? Math.ceil(paging.all / paging.offset)
+      : undefined;
+    // useEffect(() => {
+    //   if (paging) {
+    //     navigate({
+    //       pathname: location.pathname,
+    //       search: `?page=${pageIndex}`,
+    //     });
+    //   }
+    // }, [location.pathname, pageIndex, paging]);
 
     const headerSortingRef = useRef(null);
     const titleJsx = (
@@ -57,6 +94,9 @@ const Table = observer(
       />
     );
 
+    const handleMenuClick = (index) => {
+      setActiveMenuRowIndex(activeMenuRowIndex === index ? null : index);
+    };
     const handleEditClick = (index) => {
       if (!isSorting) {
         setEditingRowIndex(editingRowIndex === index ? null : index);
@@ -85,6 +125,23 @@ const Table = observer(
                 {cell.render('Cell')}
               </td>
             ))}
+            {actions && (
+              <td className={styles.menuTd}>
+                <div
+                  className={styles.menuButton}
+                  onClick={(e) => handleMenuClick(index)}
+                >
+                  <Icon fill={'#6F767E'} name={'more-horizontal'} size={28} />
+                </div>
+                {activeMenuRowIndex === index && (
+                  <TableMenu
+                    actions={actions(row.original)}
+                    isVisible={true}
+                    onClose={() => setActiveMenuRowIndex(null)}
+                  />
+                )}
+              </td>
+            )}
             {editComponent &&
               (!editComponentContent ? (
                 <td>
@@ -117,8 +174,6 @@ const Table = observer(
                       setEditingRowIndex((prev) => {
                         return index;
                       });
-                      //Это костыль чтобы модальное окно закрывалось, иначе оно нужно будет кликнуть дважды
-                      //Для оптимизации можно вынести логику в ui store mobx и работать через него
                       setTimeout(() => setEditingRowIndex(index), 100);
                     }}
                   >
@@ -144,6 +199,7 @@ const Table = observer(
           <div
             className={cn(styles.wrapper, {
               [styles.smallTable]: rest.smallTable,
+              [styles.pagingTable]: !!paging,
             })}
           >
             <table {...getTableProps()}>
@@ -154,9 +210,7 @@ const Table = observer(
                       {headerGroup.headers.map((column) => (
                         <motion.th
                           onClick={(e) => {
-                            console.log('sorted');
                             setIsSorting(true);
-                            // debugger
                             if (column.canSort && !column.isSortedDesc)
                               clickRecursive(e.target);
                           }}
@@ -220,7 +274,7 @@ const Table = observer(
                               ) : (
                                 <></>
                               )}
-                              {rows
+                              {rowsOrPage
                                 .filter(
                                   (el) =>
                                     el.id === col.originalId.split('_')[1],
@@ -255,10 +309,46 @@ const Table = observer(
                           );
                         }),
                     )
-                  : rows.map((row, index) => renderRow(row, index))}
+                  : rowsOrPage.map((row, index) => renderRow(row, index))}
               </tbody>
             </table>
           </div>
+        </Card>
+        <Card className={styles.pagingCard}>
+          {paging && (
+            <div className={styles.pagination}>
+              <PreviousButton
+                disabled={paging.current === 1}
+                onClick={() => paging.onPageChange(paging.current - 1)}
+              />
+              <div className={cn(styles.divider_line, styles.left)} />
+              {allPages && (
+                <div className={styles.pagesCount}>
+                  {[...Array(allPages).keys()].map((page, index) => (
+                    <div
+                      key={index}
+                      className={
+                        pageIndex === index + 1
+                          ? cn(styles.page, styles.active)
+                          : styles.page
+                      }
+                      onClick={() => {
+                        paging.onPageChange(index + 1);
+                      }}
+                    >
+                      {index + 1}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className={cn(styles.divider_line, styles.right)} />
+
+              <NextButton
+                disabled={paging.current === allPages}
+                onClick={() => paging.onPageChange(paging.current + 1)}
+              />
+            </div>
+          )}
         </Card>
         {rest?.after}
 

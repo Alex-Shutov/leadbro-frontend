@@ -1,20 +1,43 @@
-import React from 'react';
-import styles from "./ServicesCell.module.sass";
-import {formatDate} from "../../../../../../utils/formate.date";
-import {Link} from "react-router-dom";
+import React, { useState } from 'react';
+import styles from './ServicesCell.module.sass';
+import { Link } from 'react-router-dom';
+import HiddenCount from '../../../../../../components/HiddenCount';
+import NoContentCell from "../../../../../../components/NoContentCell";
 
-const ServicesCell = ({services}) => {
-    return (
-        <div className={styles.servicesCell}>
-            {services.length && services.map((el) => (
-                <div className={styles.services}>
-                    <div className={styles.name}>
-                        <Link>{el?.description}</Link>
-                    </div>
-                </div>
-            ))}
+const ServicesCell = ({ services }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  // Вычисляем количество скрытых услуг
+  const hiddenCount = Number(services?.total) - 1; // Учитываем, что одна услуга всегда видна
+
+  const toggleShowAll = () => {
+    setShowAll((prevShowAll) => !prevShowAll);
+  };
+
+  // Определяем отображаемые сервисы
+  const visibleServices = showAll ? [services?.value] : [services?.value];
+
+  return (
+      <NoContentCell value={services}>
+    <div className={styles.servicesCell}>
+      {/* Отображаем видимые услуги */}
+      {visibleServices.map((service, index) => (
+        <div key={index} className={styles.services}>
+          <div className={styles.name}>
+            <Link className={styles.link} to={`/service/${index + 1}`}>
+              {service?.description}
+            </Link>
+            <HiddenCount
+              hiddenCount={hiddenCount}
+              show={hiddenCount > 0 && !showAll}
+              onClick={toggleShowAll}
+            />
+          </div>
         </div>
-    );
+      ))}
+    </div>
+      </NoContentCell>
+  );
 };
 
 export default ServicesCell;

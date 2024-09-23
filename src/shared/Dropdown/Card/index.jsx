@@ -5,10 +5,14 @@ import cn from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TranslateYTransition } from '../../../utils/motion.variants';
+import Edit from "../../TextInput/Actions/Edit";
+import CardInput from "../../Input/Card";
 
 const CardDropdown = ({
   children,
   text,
+    inputComponent,
+    actions,
   className,
   classNameContainer,
   size = 10,
@@ -22,14 +26,14 @@ const CardDropdown = ({
   return (
     <div className={cn(styles.container, classNameContainer)}>
       <div
-        onClick={() => {
-          setIsOpen(!isOpen);
-          if (rest?.onClick) rest?.onClick();
-        }}
+
         className={cn(styles.header, className)}
       >
-        <div>{text}</div>
-        <div>
+          {inputComponent ?inputComponent() : <div>{text}</div>}
+        <div onClick={() => {
+            setIsOpen(!isOpen);
+            if (rest?.onClick) rest?.onClick();
+        }}>
           <Icon
             viewBox={`0 0 ${size} ${size}`}
             size={size}

@@ -5,8 +5,9 @@ import Icon from "../../../../../shared/Icon";
 import cn from "classnames";
 import TextInput from "../../../../../shared/TextInput";
 import Button from "../../../../../shared/Button";
+import CreateModal from "../../ClientsTable/CreateModal";
 
-const ClientDescription = ({description, onChange,onSubmit,onReset}) => {
+const ClientDescription = ({description, onChange,onSubmit,onReset,clientId}) => {
     const [isEdit, setIsEdit] = useState(false)
     return (
         <Card classTitle={styles.title} classCardHead={'h4'} className={cn(styles.card)}
@@ -19,19 +20,20 @@ const ClientDescription = ({description, onChange,onSubmit,onReset}) => {
                       </div>}
                   </div>
               </div>}>
-            {isEdit ? <TextInput
-                edited={true}
-                makeFocused={true}
-                type={'textarea'}
-                data-name={'Описание'}
-                // label="New password"
-                onChange={(e) => onChange(e.target.name, e.target.value)}
-                value={description}
-                name="description"
-                // type="password"
-                // tooltip="Maximum 100 characters. No HTML or emoji allowed"
-                // required
-            /> : <div>{description}</div>}
+            {/*{isEdit ? <TextInput*/}
+            {/*    edited={true}*/}
+            {/*    makeFocused={true}*/}
+            {/*    type={'textarea'}*/}
+            {/*    data-name={'Описание'}*/}
+            {/*    // label="New password"*/}
+            {/*    onChange={(e) => onChange(e.target.name, e.target.value)}*/}
+            {/*    value={description}*/}
+            {/*    name="description"*/}
+            {/*    // type="password"*/}
+            {/*    // tooltip="Maximum 100 characters. No HTML or emoji allowed"*/}
+            {/*    // required*/}
+            {/*/> : <div>{description}</div>}*/}
+            {isEdit ? <CreateModal onSubmit={onSubmit} clientId={clientId} onClose={() => setIsEdit(false)}/> : <div>{description}</div>}
         </Card>
     );
 };
