@@ -246,4 +246,47 @@
     svg[name='check-circle']
         &:hover
             fill: darken(#FF6A55,10)
+.menuTd
+    position: relative
+    width: 24px
+    >div
+        cursor: pointer
+
+        display: block
+        float: left
+        margin-bottom: 16px
+.pagingTable
+    height: 100%
+.pagingCard
+    .page
+        &.active
+            color: $ph1
+        &:hover
+            cursor: pointer
+            color: $p3
+    .pagesCount
+        display: flex
+        flex-direction: row
+        gap: 30px
+        align-items: center
+    margin-top: 8px
+    color: $n7
+    .pagination
+        display: flex
+        justify-content: center
+.divider_line
+    align-self: center
+    display: block
+    background-color: $n3
+    width: 24px
+    height: 1px
+    transform: rotate(90deg)
+    &.left
+        margin-right: 20px
+    &.right
+        margin-left: 20px
+
+
+
+
 

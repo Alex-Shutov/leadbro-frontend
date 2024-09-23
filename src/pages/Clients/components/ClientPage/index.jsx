@@ -4,7 +4,6 @@ import useStore from '../../../../hooks/useStore';
 import { observer } from 'mobx-react';
 import styles from './Client.module.sass';
 import Title from '../../../../shared/Title';
-import useClients from '../../hooks/useClients';
 import ClientStatus from './Status';
 import cn from 'classnames';
 import ClientService from './Services';
@@ -25,18 +24,17 @@ import {
   TranslateYTransition,
 } from '../../../../utils/motion.variants';
 import { motion } from 'framer-motion';
+import useClients from '../../hooks/useClients';
+import ClientTokens from './Tokens';
+import CreateModal from './Passwords/Modals/CreateModal';
+import CreatePassModal from './Passwords/Modals/CreateModal';
 
 const ClientPage = observer(() => {
   let { id } = useParams();
-  const { data: clients } = useClients();
+  const { data: client, store: clients } = useClients(+id);
   const api = useClientsApi();
-
-  const client = useMemo(
-    () => clients.getById(id),
-    [id, clients.clients, clients.drafts],
-  );
-
   const [dropDownClicked, setDropDownCLicked] = useState(true);
+  const [passModalOpen, setPassModalOpen] = useState(false);
 
   const handleChange = (name, payload, withId = true) => {
     clients.changeById(client?.id ?? +id, name, payload, withId);
@@ -48,9 +46,27 @@ const ClientPage = observer(() => {
   const handleRemove = (path) => {
     clients.removeById(client.id, path);
   };
-  const handleSubmit = () => {
+  const handleRemovePass = (path, passId) => {
+    ;
+    api.deletePassword(client.id, passId);
+
+    handleRemove(path);
+  };
+  const handleSubmit = (submitText) => {
     clients.submitDraft();
-    api.setClients(clients);
+    api.updateCompany(Number(id), {}, submitText);
+    // api.setClients(clients);
+  };
+
+  const handleSubmitPersons = (clientId,submitText) => {
+    api.updateClient(Number(id),clientId)
+    clients.submitDraft()
+
+  }
+
+  const handleSubmitPasswords = (passId) => {
+    clients.submitDraft();
+    api.updatePasswords(Number(id), passId);
   };
 
   return (
@@ -76,7 +92,9 @@ const ClientPage = observer(() => {
           />
           <ClientService
             className={cn(styles.card, styles.card_status)}
-            services={client?.services}
+            services={
+              client?.services?.value ? [client?.services?.value] : null
+            }
           />
           <ClientDeals
             className={cn(styles.card, styles.card_status)}
@@ -97,6 +115,7 @@ const ClientPage = observer(() => {
               })}
             >
               <ClientDescription
+                clientId={client?.id}
                 onChange={handleChange}
                 onReset={handleReset}
                 onSubmit={handleSubmit}
@@ -105,7 +124,7 @@ const ClientPage = observer(() => {
               <ClientPersons
                 onChange={handleChange}
                 onReset={handleReset}
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmitPersons}
                 persons={client?.contactPersons}
               />
               {client?.contactData && (
@@ -118,18 +137,34 @@ const ClientPage = observer(() => {
                   contactData={client?.contactData}
                 />
               )}
-              <ClientPasswords
-                onAdd={(name, payload) => handleChange(name, payload ?? '')}
+              <ClientTokens
                 onRemove={handleRemove}
                 onChange={handleChange}
                 onReset={handleReset}
                 onSubmit={handleSubmit}
+                data={{
+                  ymetricsToken: client?.ymetricsToken,
+                  topvisorToken: client?.topvisorToken,
+                }}
+              />
+              <ClientPasswords
+                onAdd={() => setPassModalOpen(true)}
+                onRemove={handleRemovePass}
+                onChange={handleChange}
+                onReset={handleReset}
+                onSubmit={handleSubmitPasswords}
                 passwordsData={client?.passwords}
               />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+      {passModalOpen && client && (
+        <CreatePassModal
+          onClose={() => setPassModalOpen(false)}
+          companyId={client?.id}
+        />
+      )}
     </motion.div>
   );
 });

@@ -12,22 +12,62 @@ export class ClientsStore {
   clients = [];
   drafts = {};
   currentClient = null;
+  metaInfoTable = {};
+  changedProps = null;
 
   constructor(root) {
     this.root = root;
     makeAutoObservable(this);
+    this.changedProps = new Set();
   }
 
   getClients() {
-    return this.clients.map((client) => {
+    return this?.clients?.map((client) => {
       const draft = this.drafts[client.id];
       return draft ? { ...client, ...draft } : client;
     });
   }
 
+  setMetaInfoTable(info) {
+    this.metaInfoTable = info;
+  }
+
+  getMetaInfoTable() {
+    return this.metaInfoTable;
+  }
+
+  createNewClient() {
+    const newClient = {
+      id: this.clients.length,
+      description: '',
+      title: '',
+      status: 'new', // или другой статус по умолчанию
+      manager: {},
+      services: [],
+      deals: [],
+      activities: [],
+      contactPersons: [],
+      contactData: {
+        address: {},
+        tel: {},
+        email: {},
+        site: {},
+        requisites: {},
+      },
+      passwords: [],
+      ymetricsToken: '',
+      topvisorToken: '',
+    };
+
+    // this.clients.push(newClient);
+    this.drafts[newClient.id] = { ...newClient };
+    this.currentClient = newClient;
+    return newClient.id;
+  }
+
   getById(id, isReset = false) {
     const client =
-      this.clients.find((x) => x.id === Number(id)) || this.currentClient;
+      this.currentClient || this.clients.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? client : draft ? { ...client, ...draft } : client;
   }
@@ -37,6 +77,7 @@ export class ClientsStore {
     let client = this.getById(id, true);
 
     resetDraft(this, id, client, path);
+    this.clearChangesSet();
   }
 
   submitDraft(id) {
@@ -48,6 +89,7 @@ export class ClientsStore {
     const updatedClient = { ...client };
     this.clients = this.clients.map((c) => (c.id === id ? updatedClient : c));
     delete this.drafts[id];
+    this.clearChangesSet();
   }
 
   createDraft(id) {
@@ -61,8 +103,18 @@ export class ClientsStore {
     if (!this.drafts[id]) {
       this.createDraft(id);
     }
+
     let draft = this.drafts[id];
+    this.addChangesProps(path);
     changeDraft(this, id, draft, path, value, withId);
+  }
+
+  addChangesProps(name) {
+    this.changedProps.add(name);
+  }
+
+  clearChangesSet() {
+    this.changedProps = new Set();
   }
 
   removeById(id, path) {

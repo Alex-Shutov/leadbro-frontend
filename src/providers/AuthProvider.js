@@ -2,7 +2,13 @@ import React, { createContext } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useCookies } from '../hooks/useCookies';
 import { API_URL } from '../shared/constants';
-import { adapter, http, mockHttp } from '../shared/http';
+import {
+  adapter,
+  http,
+  mockHttp,
+  resetApiProvider,
+  setMockProvider,
+} from '../shared/http';
 import axios from 'axios'; // Импортируйте хук
 
 export const AuthContext = createContext();
@@ -17,14 +23,15 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      mockHttp.restore();
-      const response = await http.post(
-        `/api/auth`,
+      resetApiProvider();
+      const response = await axios.post(
+        `https://api.lead-bro.ru/api/auth`,
         { email: email, password: password },
         {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
           },
         },
       );

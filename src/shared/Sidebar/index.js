@@ -1,28 +1,28 @@
-import React, { useState } from "react";
-import styles from "./Sidebar.module.sass";
-import { Link, NavLink } from "react-router-dom";
-import cn from "classnames";
-import Icon from "../Icon";
-import Theme from "../Theme";
-import Dropdown from "./Dropdown";
-import Help from "./Help";
-import Image from "../Image";
-import OutsideClickLayout from "../Layouts/outsideClickLayout";
-import {navigation} from "../nav";
+import React, { useState } from 'react';
+import styles from './Sidebar.module.sass';
+import { Link, NavLink } from 'react-router-dom';
+import cn from 'classnames';
+import Icon from '../Icon';
+import Theme from '../Theme';
+import Dropdown from './Dropdown';
+import Help from './Help';
+import Image from '../Image';
+import OutsideClickLayout from '../Layouts/outsideClickLayout';
+import { navigation } from '../nav';
 
-
-const Sidebar = ({ className, onClose, sideVisible,sideSetVisible }) => {
+const Sidebar = ({ className, onClose, sideVisible, sideSetVisible }) => {
   const [visibleHelp, setVisibleHelp] = useState(false);
-  const [visible, setVisible] = [sideVisible,sideSetVisible]
+  const [visible, setVisible] = [sideVisible, sideSetVisible];
 
-  const handleCLose = ()=>{
-    setVisible(false)
-    setVisibleHelp(false)
-    onClose()
-  }
+  const handleCLose = () => {
+    setVisible(false);
+    setVisibleHelp(false);
+    onClose();
+  };
 
   return (
-    <OutsideClickLayout onClick={handleCLose} >
+    <>
+      {/*// <OutsideClickLayout onClick={handleCLose} >*/}
       <div
         className={cn(styles.sidebar, className, { [styles.active]: visible })}
       >
@@ -30,7 +30,6 @@ const Sidebar = ({ className, onClose, sideVisible,sideSetVisible }) => {
           <Icon name="close" size="24" />
         </button>
         <div className={styles.menu}>
-
           {navigation.map((x, index) =>
             x.url ? (
               <NavLink
@@ -53,11 +52,15 @@ const Sidebar = ({ className, onClose, sideVisible,sideSetVisible }) => {
                 item={x}
                 onClose={onClose}
               />
-            )
+            ),
           )}
         </div>
         <button className={styles.toggle}>
-          <Icon onClick={() => setVisible(!visible)} name="arrow-right" size="24" />
+          <Icon
+            onClick={() => setVisible(!visible)}
+            name="arrow-right"
+            size="24"
+          />
           <Icon onClick={handleCLose} name="close" size="24" />
         </button>
         <div className={styles.foot}>
@@ -78,7 +81,8 @@ const Sidebar = ({ className, onClose, sideVisible,sideSetVisible }) => {
       {/*  className={cn(styles.overlay, { [styles.active]: visible })}*/}
       {/*  onClick={() => setVisible(false)}*/}
       {/*></div>*/}
-    </OutsideClickLayout>
+      {/*// </OutsideClickLayout>*/}
+    </>
   );
 };
 
