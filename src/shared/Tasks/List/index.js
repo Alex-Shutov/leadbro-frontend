@@ -36,7 +36,25 @@ const TaskList = ({ data: { data, counts }, onChange }) => {
 const Column = ({ type, typeRu, values, color, onDrop, count }) => {
   const [, drop] = useDrop({
     accept: 'TASK',
-    drop: (item) => onDrop(item.id, type),
+    drop: (item) => {
+      onDrop(item.id, type);
+      return { tb: 123 };
+    },
+
+    item: () => {
+      return {
+        tb: '123',
+      };
+    },
+  });
+
+  const [{ isDragging }, drag, preview] = useDrag({
+    type: 'TASK',
+    item: (item) => {
+      return {
+        tb: '123',
+      };
+    },
   });
 
   return (

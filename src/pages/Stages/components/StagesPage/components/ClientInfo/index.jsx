@@ -30,7 +30,6 @@ const Index = ({
   costsExtra,
 }) => {
   const [dropDownClicked, setDropDownCLicked] = useState(true);
-
   return (
     <>
       <div className={styles.dropdown}>

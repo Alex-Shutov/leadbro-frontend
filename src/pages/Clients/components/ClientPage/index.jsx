@@ -28,6 +28,7 @@ import useClients from '../../hooks/useClients';
 import ClientTokens from './Tokens';
 import CreateModal from './Passwords/Modals/CreateModal';
 import CreatePassModal from './Passwords/Modals/CreateModal';
+import CreateClientsModal from "./Persons/Modals/CreateClientsModal";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -35,7 +36,7 @@ const ClientPage = observer(() => {
   const api = useClientsApi();
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [passModalOpen, setPassModalOpen] = useState(false);
-
+  const [personModalOpen, setPersonModalOpen] = useState(false);
   const handleChange = (name, payload, withId = true) => {
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
@@ -70,103 +71,114 @@ const ClientPage = observer(() => {
   };
 
   return (
-    <motion.div
-      initial={'hidden'}
-      animate={'show'}
-      variants={opacityTransition}
-    >
-      <Title title={client?.title} />
-      <div className={styles.dropdown}>
-        <CardDropdown
-          onClick={() => setDropDownCLicked(!dropDownClicked)}
-          size={16}
-          className={styles.dropdown_inner}
-          text={<b>Информация о клиенте</b>}
-        />
-      </div>
-      <div className={styles.row}>
-        <div className={styles.col}>
-          <ClientStatus
-            className={cn(styles.card, styles.card_status)}
-            client={client}
+      <motion.div
+          initial={'hidden'}
+          animate={'show'}
+          variants={opacityTransition}
+      >
+        <Title title={client?.title} />
+        <div className={styles.dropdown}>
+          <CardDropdown
+              onClick={() => setDropDownCLicked(!dropDownClicked)}
+              size={16}
+              className={styles.dropdown_inner}
+              text={<b>Информация о клиенте</b>}
           />
-          <ClientService
-            className={cn(styles.card, styles.card_status)}
-            services={
-              client?.services?.value ? [client?.services?.value] : null
-            }
-          />
-          <ClientDeals
-            className={cn(styles.card, styles.card_status)}
-            deals={client?.deals}
-          />
-          <ClientActivities activities={client?.activities} />
-          <ClientComments onChange={handleChange} comments={client?.comments} />
         </div>
-        <AnimatePresence>
-          {dropDownClicked && (
-            <motion.div
-              animate={'show'}
-              initial={'hidden'}
-              exit={'hidden'}
-              variants={TranslateYTransition}
-              className={cn(styles.col, {
-                [styles.col_dropdowned]: dropDownClicked,
-              })}
-            >
-              <ClientDescription
-                clientId={client?.id}
-                onChange={handleChange}
-                onReset={handleReset}
-                onSubmit={handleSubmit}
-                description={client?.description}
-              />
-              <ClientPersons
-                onChange={handleChange}
-                onReset={handleReset}
-                onSubmit={handleSubmitPersons}
-                persons={client?.contactPersons}
-              />
-              {client?.contactData && (
-                <ClientsContacts
-                  onAdd={(name, payload) => handleChange(name, payload ?? '')}
-                  onRemove={handleRemove}
-                  onChange={handleChange}
-                  onReset={handleReset}
-                  onSubmit={handleSubmit}
-                  contactData={client?.contactData}
-                />
-              )}
-              <ClientTokens
-                onRemove={handleRemove}
-                onChange={handleChange}
-                onReset={handleReset}
-                onSubmit={handleSubmit}
-                data={{
-                  ymetricsToken: client?.ymetricsToken,
-                  topvisorToken: client?.topvisorToken,
-                }}
-              />
-              <ClientPasswords
-                onAdd={() => setPassModalOpen(true)}
-                onRemove={handleRemovePass}
-                onChange={handleChange}
-                onReset={handleReset}
-                onSubmit={handleSubmitPasswords}
-                passwordsData={client?.passwords}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      {passModalOpen && client && (
-        <CreatePassModal
-          onClose={() => setPassModalOpen(false)}
-          companyId={client?.id}
-        />
-      )}
-    </motion.div>
+        <div className={styles.row}>
+          <div className={styles.col}>
+            <ClientStatus
+                className={cn(styles.card, styles.card_status)}
+                client={client}
+            />
+            <ClientService
+                className={cn(styles.card, styles.card_status)}
+                services={
+                  client?.services?.value ? [client?.services?.value] : null
+                }
+            />
+            <ClientDeals
+                className={cn(styles.card, styles.card_status)}
+                deals={client?.deals}
+            />
+            <ClientActivities activities={client?.activities} />
+            <ClientComments onChange={handleChange} comments={client?.comments} />
+          </div>
+          <AnimatePresence>
+            {dropDownClicked && (
+                <motion.div
+                    animate={'show'}
+                    initial={'hidden'}
+                    exit={'hidden'}
+                    variants={TranslateYTransition}
+                    className={cn(styles.col, {
+                      [styles.col_dropdowned]: dropDownClicked,
+                    })}
+                >
+                  <ClientDescription
+                      clientId={client?.id}
+                      onChange={handleChange}
+                      onReset={handleReset}
+                      onSubmit={handleSubmit}
+                      description={client?.description}
+                  />
+                  <ClientPersons
+                      onAdd={() => setPersonModalOpen(true)}
+                      onChange={handleChange}
+                      onReset={handleReset}
+                      onSubmit={handleSubmitPersons}
+                      persons={client?.contactPersons}
+                  />
+                  {client?.contactData && (
+                      <ClientsContacts
+                          onAdd={(name, payload) => handleChange(name, payload ?? '')}
+                          onRemove={handleRemove}
+                          onChange={handleChange}
+                          onReset={handleReset}
+                          onSubmit={handleSubmit}
+                          contactData={client?.contactData}
+                      />
+                  )}
+                  <ClientTokens
+                      onRemove={handleRemove}
+                      onChange={handleChange}
+                      onReset={handleReset}
+                      onSubmit={handleSubmit}
+                      data={{
+                        ymetricsToken: client?.ymetricsToken,
+                        topvisorToken: client?.topvisorToken,
+                      }}
+                  />
+                  <ClientPasswords
+                      onAdd={() => setPassModalOpen(true)}
+                      onRemove={handleRemovePass}
+                      onChange={handleChange}
+                      onReset={handleReset}
+                      onSubmit={handleSubmitPasswords}
+                      passwordsData={client?.passwords}
+                  />
+                </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        {passModalOpen && client && (
+            <CreatePassModal
+                onClose={() => setPassModalOpen(false)}
+                companyId={client?.id}
+            />
+        )}
+
+        {personModalOpen && client && (
+            <CreateClientsModal
+                onClose={() => setPersonModalOpen(false)}
+                companyId={client?.id}
+            />
+        )}
+      </motion.div>
   );
 });
+
+// console.log('1:'+ setPassModalOpen);
+// console.log('2:'+ setPersonModalOpen);
 
 export default ClientPage;
