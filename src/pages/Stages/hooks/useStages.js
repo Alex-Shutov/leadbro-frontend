@@ -6,7 +6,6 @@ const useStages = (id = null) => {
   const { stagesStore } = useStore();
   const api = useStagesApi();
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
@@ -50,7 +49,7 @@ const useStages = (id = null) => {
     } else {
       return stagesStore;
     }
-  }, [id, stagesStore.currentStage, stagesStore.stages, api]);
+  }, [id, stagesStore.currentStage, stagesStore.stages, api, isLoading]);
 
   return { data: result, isLoading };
 };

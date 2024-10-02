@@ -55,6 +55,7 @@ const useStageApi = () => {
       .then((res) => {
         stagesStore.setCurrentStage(res.body);
       })
+      .then(() => stagesStore.getById(id))
       .catch((e) => {
         handleHttpError(e);
       });

@@ -16,11 +16,9 @@ import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 
 const StagesTable = observer(({ stage }) => {
   // const
-  const api = useStageApi();
   const clientData = React.useMemo(() => stage, [stage]);
   const data = React.useMemo(() => stage?.tasks, [stage?.tasks, stage]);
   const [taskData, setTaskData] = useState(null);
-  const ref = useRef();
   // useOutsideClick(ref, () => setTaskData(null));
   const cols = React.useMemo(() => {
     return [
@@ -101,7 +99,7 @@ const StagesTable = observer(({ stage }) => {
   }, [data, taskData]);
 
   const sumActualTime = useMemo(() => {
-    const totalHours = stage.tasks.reduce(
+    const totalHours = stage?.tasks?.reduce(
       (sum, task) =>
         task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
       0,
@@ -118,7 +116,13 @@ const StagesTable = observer(({ stage }) => {
         cardComponent={(data) => (
           <AdaptiveCard data={data} statusType={StageStatuses.tasks} />
         )}
-        after={<ClientInfo timeActual={sumActualTime} data={clientData} />}
+        after={
+          clientData ? (
+            <ClientInfo timeActual={sumActualTime} data={clientData} />
+          ) : (
+            <></>
+          )
+        }
         headerActions={{
           add: {
             action: () => console.log('1234'),
