@@ -18,8 +18,8 @@ const Act = ({ act }) => {
                                 name={'Акт без печати'}/>
                     </BasisComponent>
                     <BasisComponent  basis={960} className={styles.statusContainer}>
-                        <ServiceBadge statusType={serviceStatuses.act} status={act.scanStatus}/>
-                        <ServiceBadge statusType={serviceStatuses.act} status={act.originalStatus}/>
+                        {/*<ServiceBadge statusType={serviceStatuses.act} status={act.scanStatus}/>*/}
+                        {/*<ServiceBadge statusType={serviceStatuses.act} status={act.originalStatus}/>*/}
                     </BasisComponent>
             </CardField>
         </div>

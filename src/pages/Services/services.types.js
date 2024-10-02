@@ -60,5 +60,17 @@ export const colorStatusBillTypes = {
 }
 
 
+export const  serviceTypeEnum = {
+    seo:'seo',
+    development:'development',
+    advertisement:'advertisement'
+}
+
+export const  serviceTypeEnumRu = {
+    seo:'SEO',
+    development:'Разработка',
+    advertisement:'Реклама'
+}
+
 
 

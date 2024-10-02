@@ -20,6 +20,7 @@ const Dropdown = ({
                       upBody,
                       renderOption,
                       noMinWidth,
+    placeholder,
                       renderValue,
                   }) => {
     const [visible, setVisible] = useState(false);
@@ -61,11 +62,11 @@ const Dropdown = ({
                 )}
             >
                 <div
-                    className={cn(styles.head, classDropdownHead)}
+                    className={cn(styles.head, classDropdownHead,{[styles.head_placeholder]:!value})}
                     onClick={() => setVisible(!visible)}
                 >
-                    <div className={styles.selection}>
-                        {renderValue ? renderValue(value) : value}
+                    <div className={cn(styles.selection,{[styles.selection_placeholder]: !value})}>
+                        {value ? renderValue ? renderValue(value) : value : (placeholder ?? label ?? '')}
                     </div>
                     <Chevron isOpen={visible}/>
                 </div>

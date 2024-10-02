@@ -205,3 +205,48 @@ export const mapFio = (drafts,changedFieldsSet,propId) => {
   })
   return mapped[0]
 }
+
+export const changeCurrentElementById = (storeArray, setFunction,newObject) => {
+  const copy = [...storeArray]; // Создаем копию массива
+  const index = copy.findIndex(item => item.id === newObject.id); // Находим индекс объекта по ID
+
+  if (index !== -1) {
+    copy[index] = { ...copy[index], ...newObject }; // Обновляем объект с этим индексом
+    setFunction(copy); // Применяем сет функцию для обновленного массива
+  } else {
+    console.error(`Object with id ${newObject.id} not found`);
+  }
+};
+
+
+export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
+
+  // Обработка ФИО
+  const castValue = (key, value) => {
+    switch (key) {
+      case 'manager_id':
+        return Number(value.id);
+      default:
+        return value; // По умолчанию оставить как есть
+    }
+  };
+
+  const mapKeyToBackend = (key,draft) => {
+
+    const keyMapping = {
+
+    };
+
+
+
+    return keyMapping[key] || key;
+  };
+
+  return {...mapChangedFieldsForBackend(
+        drafts,
+        changedFieldsSet,
+        mapKeyToBackend,
+        castValue,
+    )};
+};
+

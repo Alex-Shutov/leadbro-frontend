@@ -47,7 +47,6 @@ const ClientPage = observer(() => {
     clients.removeById(client.id, path);
   };
   const handleRemovePass = (path, passId) => {
-    ;
     api.deletePassword(client.id, passId);
 
     handleRemove(path);

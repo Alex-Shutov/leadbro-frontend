@@ -143,7 +143,9 @@ const useClientsApi = () => {
       .post(`/api/companies/${companyId}/clients`, clientData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
-      .catch(handleHttpError);
+        .then(() => handleSubmit('Данные клиента сохранены'))
+
+        .catch(handleHttpError);
   };
   const createPassword = (companyId, clientData) => {
     resetApiProvider();

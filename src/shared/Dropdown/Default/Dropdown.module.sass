@@ -21,6 +21,7 @@
         .head
             box-shadow: inset 0 0 0 2px $shades1
             background: $n
+
             +dark
                 box-shadow: inset 0 0 0 2px $n5
                 background: $n8
@@ -56,6 +57,8 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0)
     user-select: none
     transition: all .2s
+    &_placeholder
+        background-color: $n2
     //&:before
     //    content: ""
     //    position: absolute
@@ -81,6 +84,13 @@
     white-space: nowrap
     +base1-s
     line-height: unset
+    &_placeholder
+        color: #9A9FA5
+        font-size: 15px
+        font-weight: 600
+
+
+
 
 .body
     //max-width: 460px
