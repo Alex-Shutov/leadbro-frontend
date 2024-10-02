@@ -21,16 +21,18 @@ import AdditionalAgreement from './components/AdditionalAgreement';
 import Icon from '../../../../shared/Icon';
 import Button from '../../../../shared/Button';
 import cn from 'classnames';
+import Loader from "../../../../shared/Loader";
 
 const ServicePage = observer(() => {
   let { id } = useParams();
-  const services = useServices();
+  const {data:service,store:services} = useServices(Number(id));
   const api = useServiceApi();
 
-  const service = useMemo(
-    () => services.getById(+id),
-    [id, , services, services.services, services.drafts],
-  );
+  if (!service) return <Loader/>
+  // const service = useMemo(
+  //   () => services.getById(+id),
+  //   [id, , services, services.services, services.drafts],
+  // );
   return (
     <motion.div
       initial={'hidden'}
@@ -51,7 +53,7 @@ const ServicePage = observer(() => {
             }
             title={el.title}
           >
-            <Task stage={el} taskName={service.title} task={el.task} />
+            <Task stage={el} taskName={service.title} task={service.tasks} />
             <Hours time={el.time} />
             <Report />
             <Act act={el.act} />
@@ -79,7 +81,7 @@ const ServicePage = observer(() => {
               />
             </div>
           </Card>
-          <AdaptiveStages data={el} />
+          {/*<AdaptiveStages data={service.tasks} />*/}
         </div>
       ))}
     </motion.div>

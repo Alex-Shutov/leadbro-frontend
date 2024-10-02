@@ -17,6 +17,7 @@ import EditStage from '../EditStage';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 
 const Task = ({ stage, task, taskName }) => {
+  const {last:localTask,total} = task
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef();
   // useOutsideClick(ref, () => setIsOpen(false));
@@ -27,12 +28,12 @@ const Task = ({ stage, task, taskName }) => {
           <Basis className={styles.taskDatesAndStatus}>
             <Icon size={20} name={'calendar'} />
             <span>
-              {formatDateWithOnlyDigits(task.startDate)} -{' '}
-              {formatDateWithOnlyDigits(task.endDate)}
+              {formatDateWithOnlyDigits(localTask.startDate)} -{' '}
+              {formatDateWithOnlyDigits(localTask.endDate)}
             </span>
             <ServiceBadge
               statusType={serviceStatuses.tasks}
-              status={task.status}
+              status={localTask.status}
             />
           </Basis>
           <Button
@@ -49,13 +50,12 @@ const Task = ({ stage, task, taskName }) => {
                 onClick={() => setIsOpen(true)}
                 className={styles.taskName_primary}
               >
-                {taskName}{' '}
+                <span>{`${total} задач`}</span>
               </TextLink>
-              –<span> {stage.title}</span>
             </div>
             <div className={styles.dateDeadline}>
               <Icon size={20} name={'calendar'} />
-              <span>{formatDateWithDateAndYear(task.startDate)}</span>
+              <span>{formatDateWithDateAndYear(localTask.startDate)}</span>
               <span className={styles.taskName_secondary}>Дедлайн</span>
             </div>
           </Basis>

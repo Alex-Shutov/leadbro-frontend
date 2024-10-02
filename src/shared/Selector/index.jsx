@@ -56,7 +56,7 @@ const ValuesSelector = ({
         </div>
       )}
       <Select
-        placeholder={placeholder ?? ''}
+        placeholder={placeholder ? placeholder : typeof label === 'string' ? label : ''}
         onChange={handleChange}
         value={value ?? null}
         isMulti={true}
@@ -88,7 +88,7 @@ const ValuesSelector = ({
             state.isFocused
               ? styles.selector__container__control_focused
               : cn(styles.selector__container__control, {
-                  [styles.hasValue]: value,
+                  [styles.hasValue]: isMulti ? !value?.length : !value,
                 }),
         }}
       />

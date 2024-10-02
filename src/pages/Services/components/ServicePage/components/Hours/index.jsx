@@ -55,7 +55,7 @@ const Hours = ({ time }) => {
         <Basis basis={740} className={styles.costs}>
           <CostView cost={time.extra.cost}></CostView>
           <Button
-            classname={styles.button}
+            classname={styles.add_button}
             type={'secondary'}
             name={'Добавить счет'}
           />

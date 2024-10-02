@@ -6,10 +6,11 @@ import styles from './datepicker.module.sass'
 import Icon from "../Icon";
 import { parse, isValid, format } from 'date-fns';
 import {formatDateWithOnlyDigits} from "../../utils/formate.date";
+import cn from "classnames";
 
 registerLocale('ru', ru)
 
-const Calendar = ({ value, onChange, label }) => {
+const Calendar = ({ value, onChange, label,placeholder=null }) => {
     const datePickerRef = useRef();
 
     const CustomInput = forwardRef(({ onClick }, ref) => {
@@ -44,9 +45,10 @@ const Calendar = ({ value, onChange, label }) => {
 
         return (
             <TextInput
+                placeholder={placeholder ?? label ?? ''}
                 icon={'calendar'}
                 classWrap={styles.datepicker_wrapper}
-                classInput={styles.datepicker_input}
+                classInput={cn(styles.datepicker_input,{[styles.datepicker_input__placeholder]:!inputValue})}
                 classLabel={styles.datepicker_label}
                 value={inputValue}
                 onChange={handleInputChange}

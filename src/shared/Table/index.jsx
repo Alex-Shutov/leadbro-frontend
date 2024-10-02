@@ -319,7 +319,7 @@ const Table = observer(
             <div className={styles.pagination}>
               <PreviousButton
                 disabled={paging.current === 1}
-                onClick={() => paging.onPageChange(paging.current - 1)}
+                onClick={() => paging.onPageChange(Number(paging.current) - 1)}
               />
               <div className={cn(styles.divider_line, styles.left)} />
               {allPages && (
@@ -333,7 +333,7 @@ const Table = observer(
                           : styles.page
                       }
                       onClick={() => {
-                        paging.onPageChange(index + 1);
+                        paging.onPageChange(Number(index) + 1);
                       }}
                     >
                       {index + 1}
@@ -345,7 +345,7 @@ const Table = observer(
 
               <NextButton
                 disabled={paging.current === allPages}
-                onClick={() => paging.onPageChange(paging.current + 1)}
+                onClick={() => paging.onPageChange(Number(paging.current) + 1)}
               />
             </div>
           )}

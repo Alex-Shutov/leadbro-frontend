@@ -1,154 +1,151 @@
-import React from 'react';
-import {observer} from "mobx-react";
-import useServices from "../../hooks/useServices";
-import TableLink from "../../../../shared/Table/Row/Link";
-import Badge, {statusTypes} from "../../../../shared/Badge";
-import styles from "../../../Clients/components/ClientsTable/Table.module.sass";
-import ManagerCell from "../../../../components/ManagerCell";
-import ServicesCell from "../../../Clients/components/ClientsTable/Cells/ServicesCell";
-import ActivitiesCell from "../../../Clients/components/ClientsTable/Cells/ActivitiesCell";
-import Table from "../../../../shared/Table";
-import Tooltip from "../../../../shared/Tooltip";
-import StagesCell from "./components/StagesCell";
-import {getCorrectWordForm} from "../../../../utils/format.string";
-import FormFilter from "./components/FormFilter";
-import useTableFilters from "../../../../hooks/useTableFilters";
-import useServiceApi from "../../services.api";
-import EditModal from "./components/EditModal";
-import AdaptiveCard from "./components/AdaptiveCard";
+import React, { useState, useCallback } from 'react';
+import { observer } from 'mobx-react';
+import Table from '../../../../shared/Table';
+import Badge, { statusTypes } from '../../../../shared/Badge';
+import ManagerCell from '../../../../components/ManagerCell';
+import StagesCell from './components/StagesCell';
+import { getCorrectWordForm } from '../../../../utils/format.string';
+import usePagingData from '../../../../hooks/usePagingData';
+import useServiceApi from '../../services.api';
+import useServices from '../../hooks/useServices';
+import TableLink from '../../../../shared/Table/Row/Link';
+import Tooltip from '../../../../shared/Tooltip';
+import EditModal from './components/EditModal';
+import AdaptiveCard from './components/AdaptiveCard';
+import styles from './Table.module.sass';
+import useStore from "../../../../hooks/useStore";
 
 const ServicesTable = observer(() => {
-    const servicesStore = useServices()
+    const {servicesStore} = useStore();
+    const api = useServiceApi();
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [currentService, setCurrentService] = useState(null);
 
-    const data = React.useMemo(() => servicesStore?.services, [servicesStore?.services, servicesStore?.drafts])
-    console.log(data,'123data')
-    const {filteredData, setFilterValue,filters} = useTableFilters(data, {
-        manager: {id: 'all', name: 'Все',filterKey:'id'},
-        title: 'Все'
-    })
-    const api = useServiceApi()
+    const fetchServices = useCallback((page) => {
+        api.getServices(page);
+    }, []);
 
-    const handleChange = (id,name,payload) => {
-        servicesStore.changeById(id,name,payload,true)
-    }
-    const handleReset = (path) =>{
-        // servicesStore.resetDraft(client.id,path)
-    }
+    const {
+        currentPage,
+        totalPages,
+        totalItems,
+        paginatedData,
+        itemsPerPage,
+        handlePageChange,
+    } = usePagingData(servicesStore, fetchServices, () => servicesStore?.getServices());
 
-    const handleSubmit = () => {
-        servicesStore.submitDraft()
-        api.setClients(servicesStore)
-    }
+    const handleEdit = (service) => {
+        setCurrentService(service);
+        setEditModalOpen(true);
+    };
+
+    const handleDelete = (id) => {
+        // Реализуйте логику удаления
+        console.log(`Удалить услугу с ID: ${id}`);
+    };
+
+    const getActions = (data) => [
+        { label: 'Скачать', onClick: () => console.log('Скачать') },
+        { label: 'Редактировать', onClick: () => handleEdit(data) },
+        {
+            label: 'Удалить',
+            onClick: () => handleDelete(data.id),
+            disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
+        },
+    ];
 
     const cols = React.useMemo(() => [
         {
             Header: 'ID',
             id: 'id',
             accessor: 'id',
-            width: 10,
-            Cell: ({row}) => {
-
-                const data = row?.original
-                return <span>{data.id}</span>
-            }
+            width:'0',
+            Cell: ({ row }) => <span>{row.original.id}</span>,
         },
         {
             Header: 'Услуга',
             id: 'title',
-            // editing: true,
             accessor: 'title',
-            // onChange:(id,name,value)=>{
-            //     if(id === null)
-            //         throw new Error()
-            //     return handleChange(id,name,value)
-            // },
-            width: 450,
-            Cell: ({row}) => {
-                const data = row?.original
-                return <TableLink to={`/services/${data.id}`} name={data.title}/>
-            },
-
+            width: '20%',
+            Cell: ({ row }) => (
+                <TableLink to={`/services/${row.original.id}`} name={row.original.title} />
+            ),
         },
         {
-            Header: <span style={{textWrap:'nowrap'}}>№ договора</span>,
+            Header: '№ договора',
             id: 'contractNumber',
+            width: '12%',
             accessor: 'contractNumber',
-            // editing: true,
-            width: 200,
-            Cell: ({row}) => {
-                const data = row?.original
-                return <p>{data.contractNumber}</p>
-            },
-
+            Cell: ({ row }) => <p>{row.original.contractNumber}</p>,
         },
         {
             Header: 'Создатель',
             id: 'manager',
-            sortType: 'basic',
+            width: '15%',
             accessor: 'manager.name',
-            width: 300,
-            Cell: ({row}) => {
-                const data = row?.original
-                return <ManagerCell manager={data.manager}/>
-            },
-
+            Cell: ({ row }) => <ManagerCell manager={row.original.manager} />,
         },
         {
             Header: 'Команда',
             id: 'command',
-
-            // accessor: 'conmmand',
-            width: 200,
-            Cell: ({row}) => {
-                const data = row?.original
-                const fiosInTeam = data.command.map(el => <p>{el.name} {el.surname}</p>)
-                return <Tooltip title={fiosInTeam}>
-                    <div><TableLink name={getCorrectWordForm(data.command.length, 'участник')}/></div>
-                </Tooltip>
+            width: '10%',
+            Cell: ({ row }) => {
+                const data = row.original;
+                const teamMembers = data.command.map(member => <p key={member.id}>{member.name} {member.surname}</p>);
+                return (
+                    <Tooltip title={teamMembers}>
+                        <div><TableLink name={getCorrectWordForm(data.command.length, 'участник')} /></div>
+                    </Tooltip>
+                );
             },
-
         },
         {
             Header: 'Статус',
             id: 'status',
-            Cell: ({row}) => {
-                const data = row?.original
-                return <Badge classname={styles.badge} status={data.status} statusType={statusTypes.services}/>
-            },
-
+            Cell: ({ row }) => (
+                <Badge classname={styles.badge} status={row.original.status} statusType={statusTypes.services} />
+            ),
         },
         {
             Header: 'Этапы',
             id: 'stages',
-            editing:false,
-
-            width: 800,
-            Cell: ({row}) => {
-                const data = row?.original
+            width: '20%',
+            Cell: ({ row }) => {
                 const maxCellLength = Math.floor(800 / 18);
-                return <StagesCell stages={data.stages} maxCellLength={maxCellLength}/>
+                return <StagesCell stages={row.original.stages} maxCellLength={maxCellLength} />;
             },
-
         },
-    ], [data])
+    ], []);
+
     return (
-        <div className={styles.table}>
-            <Table editComponent={(data,onClose)=><EditModal data={data}/>} cardComponent={(data) => (<AdaptiveCard data={data} statusType={statusTypes.services}/>)}
-                   headerActions={{
-                       filter: {
-                           title: 'Фильтр',
-                           children: (<FormFilter selectedService={filters?.title}
-                                                  selectedManager={filters?.manager}
-                                                  onServiceChange={(service) => setFilterValue('title', service)}
-                                                  onManagerChange={(manager) => setFilterValue('manager', {...manager,filterKey:'id'})}
-                                                  data={servicesStore.services}/>)
-                       },
-                       add: {
-                           action: () => console.log('1234'),
-                           title: 'Добавить услугу'
-                       }
-                   }} title={'Услуги'} data={filteredData} columns={cols}/>
-        </div>
+        <>
+            <div className={styles.table}>
+                <Table
+                    cardComponent={(data) => (
+                        <AdaptiveCard data={data} statusType={statusTypes.services} />
+                    )}
+                    headerActions={{
+                        sorting: true,
+                        settings: true,
+                        add: {
+                            action: () =>  setEditModalOpen(true),
+                            title: 'Добавить услугу',
+                        },
+                    }}
+                    title="Услуги"
+                    data={paginatedData}
+                    columns={cols}
+                    actions={getActions}
+                    paging={{
+                        current: currentPage,
+                        all: totalItems,
+                        offset: itemsPerPage,
+                        onPageChange: handlePageChange,
+                    }}
+                />
+            </div>
+            {editModalOpen && <EditModal serviceId={currentService?.id ??null}  onClose={() => setEditModalOpen(false)} />}
+        </>
     );
 });
 

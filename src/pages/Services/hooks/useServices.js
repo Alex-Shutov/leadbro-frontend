@@ -1,19 +1,55 @@
-import React, { useEffect } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import useStore from '../../../hooks/useStore';
-import useClientsApi from '../../Clients/clients.api';
 import useServiceApi from '../services.api';
+import { useLocation } from 'react-router-dom';
 
-const UseServices = () => {
+const useServices = (id = null) => {
   const { servicesStore } = useStore();
   const api = useServiceApi();
-  useEffect(() => {
-    async function getServices() {
-      if (!servicesStore.services.length) return api.getServices();
-    }
-    getServices().catch(console.error);
-  }, [servicesStore.services, servicesStore.drafts, api]);
+  const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const currentPage = parseInt(query.get('page')) || 1; // Если нет параметра, то первая страница
 
-  return servicesStore;
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      if (id !== null) {
+        // Логика для загрузки конкретной услуги по ID
+        await api.getServiceById(id);
+      } else if (!servicesStore.services.length) {
+        // Логика для загрузки всех услуг при пустом сторе
+        await api.getServices(currentPage);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, servicesStore, api, currentPage]);
+
+  // Используем useMemo для вызова fetchData
+  useMemo(() => {
+    fetchData();
+  }, [id, servicesStore]);
+
+  // Возвращаем данные в зависимости от наличия ID
+  const result = useMemo(() => {
+    if(id && !servicesStore.currentService) return null
+    if (id !== null) {
+      fetchData()
+      return servicesStore.getById(id);
+    } else {
+      return servicesStore;
+    }
+  }, [
+    // id,
+    servicesStore.currentService,
+    servicesStore.drafts,
+    servicesStore.services
+  ]);
+
+  return { data: result, isLoading, store: servicesStore, fetchData };
 };
 
-export default UseServices;
+export default useServices;

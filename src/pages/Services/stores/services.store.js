@@ -12,6 +12,10 @@ export class ServicesStore {
     services = [];
     serviceTypes = [];
     drafts = {};
+    metaInfoTable = {};
+    currentService=null
+    changedProps = new Set();
+
 
     constructor(root) {
         this.root = root;
@@ -25,10 +29,11 @@ export class ServicesStore {
         });
     }
 
-    getById(id,isReset=false) {
-        const service = this.services.find(x => x.id === Number(id));
+    getById(id, isReset = false) {
+        const service =
+            this.currentService || this.services.find((x) => x.id === Number(id));
         const draft = this.drafts[id];
-        return isReset ? service :  draft ? { ...service, ...draft } : service;
+        return isReset ? service : draft ? { ...service, ...draft } : service;
     }
 
     resetDraft(id, path) {
@@ -48,6 +53,7 @@ export class ServicesStore {
         const updatedClient = { ...service };
         this.services = this.services.map(c => (c.id === id ? updatedClient : c));
         delete this.drafts[id];
+        this.clearChangesSet();
     }
 
     createDraft(id) {
@@ -62,7 +68,9 @@ export class ServicesStore {
             this.createDraft(id);
         }
         let draft = this.drafts[id];
+        this.addChangesProps(path);
         changeDraft(this,id,draft,path,value,withId)
+
     }
 
     removeById(id, path) {
@@ -76,6 +84,15 @@ export class ServicesStore {
     setServices(result) {
         this.services = result;
     }
+    setMetaInfoTable(info) {
+        this.metaInfoTable = info;
+    }
+
+    getMetaInfoTable() {
+        return this.metaInfoTable;
+    }
+
+
     
     setServiceTypes(result){
         this.serviceTypes = result
@@ -86,5 +103,17 @@ export class ServicesStore {
             const draft = this.drafts[serviceType.id];
             return draft ? { ...serviceType, ...draft } : serviceType;
         });
+    }
+
+    setCurrentService(service) {
+        this.currentService = service;
+    }
+
+    addChangesProps(name) {
+        this.changedProps.add(name);
+    }
+
+    clearChangesSet() {
+        this.changedProps = new Set();
     }
 }
