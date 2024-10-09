@@ -14,6 +14,7 @@ export class StagesStore {
   drafts = {};
   currentStage = null;
   templateTypes = [];
+  metaInfoTable= {}
 
   constructor(root) {
     this.root = root;
@@ -21,14 +22,15 @@ export class StagesStore {
   }
 
   getStages() {
-    return this.stages.map((stage) => {
+    const stagesArray = this.stages.length === 0 ? [this.currentStage] : this.stages
+    return stagesArray.map((stage) => {
       const draft = this.drafts[stage.id];
       return draft ? { ...stage, ...draft } : stage;
     });
   }
 
   getById(id, isReset = false) {
-    const stage = this.stages.find((x) => x.id === Number(id));
+    const stage = this.currentStage || this.stages.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? stage : draft ? { ...stage, ...draft } : stage;
   }
@@ -103,6 +105,15 @@ export class StagesStore {
   setCurrentStage(stage) {
     this.currentStage = stage;
   }
+
+  setMetaInfoTable(info) {
+    this.metaInfoTable = info;
+  }
+
+  getMetaInfoTable() {
+    return this.metaInfoTable;
+  }
+
 
   clearCurrentStage() {
     this.currentStage = null;

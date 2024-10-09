@@ -7,7 +7,6 @@ import Tooltip from '../../shared/Tooltip';
 
 const ManagerCell = ({ manager, ...rest }) => {
   const imageSrc = manager?.image ?? manager?.avatar;
-
   return (
     <div className={cn(styles.container, rest.className)}>
       <Avatar size={42} imageSrc={imageSrc} />

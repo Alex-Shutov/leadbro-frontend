@@ -48,7 +48,7 @@ const mapParticipants = (participants) => {
         surname: participant.last_name,
         middleName: participant.middle_name,
         avatar: participant.avatar ? createBlob(participant.avatar) : null,
-        position: participant.position?.name,
+        role: participant.position?.name,
         email: participant.email,
         phone: participant.phone || null,
     }));

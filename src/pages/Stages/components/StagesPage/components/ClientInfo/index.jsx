@@ -103,10 +103,10 @@ const Index = ({
                     />
                   }
                 />
-                <LabeledParagraph
-                  label={'Стоимость доп. задач'}
-                  text={<CostView cost={extraCosts} />}
-                />
+                {/*<LabeledParagraph*/}
+                {/*  label={'Стоимость доп. задач'}*/}
+                {/*  text={<CostView cost={extraCosts} />}*/}
+                {/*/>*/}
                 {/*<LabeledParagraph text={'123'} />*/}
                 {/*<LabeledParagraph text={'123'} />*/}
               </Card>

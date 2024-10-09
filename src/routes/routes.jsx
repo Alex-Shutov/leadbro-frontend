@@ -5,12 +5,12 @@ import ClientPage from '../pages/Clients/components/ClientPage';
 import Page from '../shared/Page';
 import Services from '../pages/Services';
 import ServicePage from '../pages/Services/components/ServicePage';
-import StagesPage from '../pages/Stages/components/StagesPage';
 import Tasks from '../pages/Tasks';
 import NotFound from '../pages/NotFound';
 import { AuthContext } from '../providers/AuthProvider';
 import LoginPage from '../pages/Login';
 import { useLocation } from 'react-router';
+import StagesPage from "../pages/Stages/components/StagesPage";
 
 export const paths = {
   MAIN: '/',

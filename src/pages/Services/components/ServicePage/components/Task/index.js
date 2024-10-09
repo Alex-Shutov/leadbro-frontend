@@ -13,16 +13,15 @@ import Image from '../../../../../../shared/Image';
 import Icon from '../../../../../../shared/Icon';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Basis from '../../../../../../shared/Basis';
-import EditStage from '../EditStage';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 
-const Task = ({ stage, task, taskName }) => {
+const Task = ({ stage, task, taskName,...rest }) => {
   const {last:localTask,total} = task
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef();
   // useOutsideClick(ref, () => setIsOpen(false));
   return (
-    <div className={styles.task_container}>
+    <div key={rest?.key} className={styles.task_container}>
       <div>
         <CardField label={'ТЗ и сроки'}>
           <Basis className={styles.taskDatesAndStatus}>
@@ -53,18 +52,16 @@ const Task = ({ stage, task, taskName }) => {
                 <span>{`${total} задач`}</span>
               </TextLink>
             </div>
-            <div className={styles.dateDeadline}>
-              <Icon size={20} name={'calendar'} />
-              <span>{formatDateWithDateAndYear(localTask.startDate)}</span>
-              <span className={styles.taskName_secondary}>Дедлайн</span>
-            </div>
+            {/*<div className={styles.dateDeadline}>*/}
+            {/*  <Icon size={20} name={'calendar'} />*/}
+            {/*  <span>{formatDateWithDateAndYear(localTask.startDate)}</span>*/}
+            {/*  <span className={styles.taskName_secondary}>Дедлайн</span>*/}
+            {/*</div>*/}
           </Basis>
         </CardField>
       </div>
       <div>
-        {isOpen && (
-          <EditStage stageId={stage.id} idStage={stage.id} handleClose={() => setIsOpen(false)} />
-        )}
+
       </div>
     </div>
   );

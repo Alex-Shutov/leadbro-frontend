@@ -17,7 +17,7 @@ import CommentsList from '../../../../../../../../components/CommentsList';
 import taskStyles from './components/TaskDescriptionPart/Description.module.sass';
 
 const EditModal = observer(({ stageId, data, handleClose }) => {
-  const { data: stagesStore } = useStages();
+  const { store: stagesStore } = useStages(stageId);
   const stageTask = useMemo(
     () => stagesStore.getById(stageId)?.tasks.find((el) => el.id === data.id),
     [

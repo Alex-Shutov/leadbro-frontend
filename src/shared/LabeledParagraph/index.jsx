@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './Paragraph.module.sass';
 import TextLink from '../Table/TextLink';
-const Index = ({ label, text, to }) => {
+import cn from "classnames";
+const Index = ({ label, text, to,...rest }) => {
   return (
     <div className={styles.container}>
       {label && <div className={styles.label}>{label}</div>}
@@ -10,7 +11,7 @@ const Index = ({ label, text, to }) => {
           {text}
         </TextLink>
       ) : (
-        <div className={styles.text}>{text}</div>
+        <div className={cn(styles.text,rest.textClass)}>{text}</div>
       )}
     </div>
   );

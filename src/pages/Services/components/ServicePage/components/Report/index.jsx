@@ -10,12 +10,12 @@ import Basis from "../../../../../../shared/Basis";
 const Report = () => {
     return (
         <div>
-            <CardField label={'Отчет'}>
-                <Basis className={styles.report_container}>
-                </Basis>
-                <Button isSmallButton={true} adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'}  name={'add'}/>} classname={styles.button} name={'Создать отчет'}/>
+            {/*<CardField label={'Отчет'}>*/}
+            {/*    <Basis className={styles.report_container}>*/}
+            {/*    </Basis>*/}
+            {/*    <Button isSmallButton={true} adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'}  name={'add'}/>} classname={styles.button} name={'Создать отчет'}/>*/}
 
-            </CardField>
+            {/*</CardField>*/}
         </div>
     );
 };

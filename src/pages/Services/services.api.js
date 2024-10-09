@@ -39,7 +39,7 @@ const useServiceApi = () => {
 
   const setServices = (body) => {
     return http
-      .post('/services', body)
+      .post('/api/services', body)
       .then(handleHttpResponse)
       .then((res) => servicesStore.setServices(res.body))
       .catch(handleHttpError);
@@ -47,7 +47,7 @@ const useServiceApi = () => {
 
   const getServiceTypes = () => {
     return http
-      .get('/services/types')
+      .get('/api/services/types')
       .then(handleHttpResponse)
       .then((res) => servicesStore.setServiceTypes(res.body))
       .then(() => servicesStore.getServiceTypes())
@@ -62,7 +62,7 @@ const useServiceApi = () => {
     const pageFromUrl = getQueryParam('page',1)
     resetApiProvider()
     return http
-        .post('/services', body)
+        .post('/api/services', body)
         .then(handleHttpResponse)
         .then((res) => getServices(pageFromUrl))
         .catch(handleHttpError);
@@ -94,7 +94,7 @@ const useServiceApi = () => {
                 const mappedService = mapServiceFromApi(serviceData, stagesData);
 
 
-                changeCurrentElementById(servicesStore.services, setServices, mappedService);
+                // changeCurrentElementById(servicesStore.services, setServices, mappedService);
                 servicesStore.setCurrentService(mappedService);
 
                 return mappedService;

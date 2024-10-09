@@ -31,13 +31,12 @@ const useServices = (id = null) => {
   // Используем useMemo для вызова fetchData
   useMemo(() => {
     fetchData();
-  }, [id, servicesStore]);
+  }, [id,servicesStore]);
 
   // Возвращаем данные в зависимости от наличия ID
   const result = useMemo(() => {
     if(id && !servicesStore.currentService) return null
     if (id !== null) {
-      fetchData()
       return servicesStore.getById(id);
     } else {
       return servicesStore;

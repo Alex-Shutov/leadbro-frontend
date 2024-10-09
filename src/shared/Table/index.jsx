@@ -187,9 +187,10 @@ const Table = observer(
       );
     };
 
-    return (
+    return (<>
       <div className={rest.classContainer}>
         {!rest.headerInCard && titleJsx}
+          <div className={'gridContainer'}>
         <Card
           className={cn(styles.card, {
             [styles.card_smallTable]: rest.smallTable,
@@ -350,7 +351,9 @@ const Table = observer(
             </div>
           )}
         </Card>
-        {rest?.after}
+              {rest?.after}
+
+          </div>
 
         {cardComponent && (
           <AdaptiveCards
@@ -360,6 +363,7 @@ const Table = observer(
           />
         )}
       </div>
+        </>
     );
   },
 );

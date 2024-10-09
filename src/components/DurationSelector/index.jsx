@@ -5,7 +5,7 @@ import styles from '../../pages/Services/components/ServicesTable/components/Edi
 import cn from 'classnames';
 
 const Index = ({ onChange, label, stageId, ...rest }) => {
-  const { data: stagesStore } = useStages();
+  const { store: stagesStore } = useStages(stageId);
   const stage = useMemo(
     () => stagesStore.getById(+stageId),
     [stageId, stagesStore, stagesStore.stages, stagesStore.drafts],

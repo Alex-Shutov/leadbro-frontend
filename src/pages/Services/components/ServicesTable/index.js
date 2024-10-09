@@ -33,7 +33,6 @@ const ServicesTable = observer(() => {
         itemsPerPage,
         handlePageChange,
     } = usePagingData(servicesStore, fetchServices, () => servicesStore?.getServices());
-
     const handleEdit = (service) => {
         setCurrentService(service);
         setEditModalOpen(true);
