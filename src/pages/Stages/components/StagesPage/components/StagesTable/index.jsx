@@ -14,14 +14,17 @@ import { convertToHours } from '../../../../../../utils/format.time';
 import AdaptiveCard from './components/AdaptiveCard';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
-import useStore from "../../../../../../hooks/useStore";
-import usePagingData from "../../../../../../hooks/usePagingData";
+import useStore from '../../../../../../hooks/useStore';
+import usePagingData from '../../../../../../hooks/usePagingData';
+import EditStage from '../../../../../../components/EditStage';
+import { useParams } from 'react-router';
 
 const StagesTable = observer(({ stage }) => {
   const { stagesStore } = useStore();
+  const { stageId } = useParams();
   const api = useStageApi();
   const [taskData, setTaskData] = useState(null);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editStageModalOpen, setEditStageModalOpen] = useState(false);
   const ref = useRef();
 
   const fetchStages = useCallback((stageId) => {
@@ -38,7 +41,7 @@ const StagesTable = observer(({ stage }) => {
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
   const handleEdit = (data) => {
     setTaskData(data);
-    setEditModalOpen(true);
+    // setEditModalOpen(true);
   };
 
   const handleDelete = (id) => {
@@ -51,7 +54,7 @@ const StagesTable = observer(({ stage }) => {
     {
       label: 'Удалить',
       onClick: () => handleDelete(data.id),
-      disabled: data.id === 0
+      disabled: data.id === 0,
     },
   ];
 
@@ -143,29 +146,33 @@ const StagesTable = observer(({ stage }) => {
   return (
     <div className={styles.table}>
       <Table
-          paging={{
-            current: currentPage,
-            all: totalItems,
-            offset: itemsPerPage,
-            onPageChange: handlePageChange,
-          }}
-
-        editComponent={(data) => <EditModal stageId={stage.id} data={data} />}
+        paging={{
+          current: currentPage,
+          all: totalItems,
+          offset: itemsPerPage,
+          onPageChange: handlePageChange,
+        }}
+        // editComponent={(data) => <EditModal stageId={stage.id} data={data} />}
         classContainer={styles.tableContainer}
         // editComponent={(data, onClose) => <EditModal data={data} />}
         // cardComponent={(data) => (
         //   <AdaptiveCard data={data} statusType={StageStatuses.tasks} />
         // )}
-          actions={getActions}
-        after={<ClientInfo timeActual={sumActualTime} data={paginatedData[0]} />}
+        actions={getActions}
+        after={
+          <ClientInfo timeActual={sumActualTime} data={paginatedData[0]} />
+        }
         headerActions={{
           add: {
             action: () => console.log('1234'),
-            title: 'Добавить услугу',
+            title: 'Создать задачу',
+          },
+          edit: {
+            action: () => setEditStageModalOpen(true),
           },
         }}
-        data={paginatedData.map(el=>el.tasks)}
-        title={`Этап №${stage.id+1}`}
+        data={paginatedData.map((el) => el.tasks)}
+        title={`${stage.title}`}
         columns={cols}
       />
       {/*{stage && <ClientInfo client={stage.client} />}*/}
@@ -175,6 +182,12 @@ const StagesTable = observer(({ stage }) => {
           stageId={stage.id}
           data={taskData}
           handleClose={() => setTaskData(null)}
+        />
+      )}
+      {editStageModalOpen && (
+        <EditStage
+          stageId={Number(stageId)}
+          handleClose={() => setEditStageModalOpen(false)}
         />
       )}
     </div>

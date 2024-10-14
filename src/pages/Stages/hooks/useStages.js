@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import useStore from '../../../hooks/useStore';
 import useStagesApi from '../stages.api';
-import {useLocation} from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 
 const useStages = (id) => {
   const { stagesStore } = useStore();
@@ -15,11 +15,12 @@ const useStages = (id) => {
     setIsLoading(true);
     try {
       if (id !== null) {
+        debugger;
         // Логика для загрузки конкретной услуги по ID
         await api.getStageById(Number(id));
       } else if (!stagesStore.stages.length) {
         // Логика для загрузки всех услуг при пустом сторе
-        await api.getTaskStages(id,currentPage);
+        await api.getTaskStages(id, currentPage);
       }
     } catch (error) {
       console.error(error);
@@ -41,12 +42,7 @@ const useStages = (id) => {
     } else {
       return stagesStore;
     }
-  }, [
-    id,
-    stagesStore.currentStage,
-    stagesStore.drafts,
-    stagesStore.stages
-  ]);
+  }, [id, stagesStore.currentStage, stagesStore.drafts, stagesStore.stages]);
 
   return { data: result, isLoading, store: stagesStore, fetchData };
 };

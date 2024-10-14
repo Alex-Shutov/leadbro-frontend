@@ -69,12 +69,16 @@ const Index = ({
                   to={`/clients/${client.id}`}
                   text={client.title}
                 />
-                <LabeledParagraph label={'Услуга'} text={service.title} />
-                <LabeledParagraph label={'Этап'} text={title} />
                 <LabeledParagraph
-                  label={'Контактное лицо'}
-                  text={contactPerson}
+                  label={'Услуга'}
+                  to={`/services/${service.id}`}
+                  text={service.title}
                 />
+                {/*<LabeledParagraph label={'Этап'} text={title} />*/}
+                {/*<LabeledParagraph*/}
+                {/*  label={'Контактное лицо'}*/}
+                {/*  text={contactPerson}*/}
+                {/*/>*/}
                 <LabeledParagraph
                   label={'Дедлайн'}
                   text={formatDateWithDateAndYear(deadline)}

@@ -14,7 +14,8 @@ export class StagesStore {
   drafts = {};
   currentStage = null;
   templateTypes = [];
-  metaInfoTable= {}
+  metaInfoTable = {};
+  changedProps = new Set();
 
   constructor(root) {
     this.root = root;
@@ -22,7 +23,8 @@ export class StagesStore {
   }
 
   getStages() {
-    const stagesArray = this.stages.length === 0 ? [this.currentStage] : this.stages
+    const stagesArray =
+      this.stages.length === 0 ? [this.currentStage] : this.stages;
     return stagesArray.map((stage) => {
       const draft = this.drafts[stage.id];
       return draft ? { ...stage, ...draft } : stage;
@@ -30,7 +32,8 @@ export class StagesStore {
   }
 
   getById(id, isReset = false) {
-    const stage = this.currentStage || this.stages.find((x) => x.id === Number(id));
+    const stage =
+      this.currentStage || this.stages.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? stage : draft ? { ...stage, ...draft } : stage;
   }
@@ -51,6 +54,7 @@ export class StagesStore {
     const updatedStage = { ...stage };
     this.stages = this.stages.map((c) => (c.id === id ? updatedStage : c));
     delete this.drafts[id];
+    this.clearChangesSet();
   }
 
   createDraft(id) {
@@ -65,6 +69,7 @@ export class StagesStore {
       this.createDraft(id);
     }
     let draft = this.drafts[id];
+    this.addChangesProps(path);
     changeDraft(this, id, draft, path, value, withId);
   }
 
@@ -114,8 +119,15 @@ export class StagesStore {
     return this.metaInfoTable;
   }
 
-
   clearCurrentStage() {
     this.currentStage = null;
+  }
+
+  addChangesProps(name) {
+    this.changedProps.add(name);
+  }
+
+  clearChangesSet() {
+    this.changedProps = new Set();
   }
 }

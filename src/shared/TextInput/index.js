@@ -17,7 +17,7 @@ import See from './Actions/See';
 import { createReactEditorJS } from 'react-editor-js';
 import MarkdownIt from 'markdown-it';
 import ActionList from './Actions/ActionList';
-import Editor from "../Editor";
+import Editor from '../Editor';
 
 // onMouseLeave={() => {
 //     if (!props?.edited && props?.onHover)
@@ -44,15 +44,15 @@ const TextInput = ({
   place,
   actions,
   noMinWidth,
-    onChange,
-    value,
+  onChange,
+  value,
   ...props
 }) => {
   const inputRef = useRef(null);
   const wrapRef = useRef(null);
 
   const formatValue = (inputValue) => {
-    if(!inputValue) return inputValue
+    if (!inputValue) return inputValue;
     // Удаляем все, кроме чисел и точки
     let formattedValue = inputValue.replace(/[^0-9.]/g, '');
 
@@ -74,14 +74,10 @@ const TextInput = ({
     return formattedValue;
   };
 
-
-
-
   const handleInputChange = (e) => {
     const currentCursorPosition = e.target.selectionStart;
     const rawValue = e.target.value;
-    debugger
-    if(rawValue===''){
+    if (rawValue === '') {
       onChange({
         target: {
           ...e.target,
@@ -94,8 +90,13 @@ const TextInput = ({
 
     // debugger
     const [integer, decimal] = rawValue.split('.');
-    const formattedValue = integer ?  formatValue(rawValue) :'';
-    if(!rawValue.includes('.') && rawValue!=='' && e.target.defaultValue!=="") return
+    const formattedValue = integer ? formatValue(String(rawValue)) : '';
+    if (
+      !rawValue.includes('.') &&
+      rawValue !== '' &&
+      e.target.defaultValue !== ''
+    )
+      return;
 
     onChange({
       target: {
@@ -103,10 +104,7 @@ const TextInput = ({
         value: formattedValue,
       },
     });
-
-
-
-  }
+  };
 
   return (
     <div
@@ -146,25 +144,26 @@ const TextInput = ({
             className={cn(classInput, styles.input, styles.textarea)}
             {...props}
           />
-        ) : props.type==='editor' ?
-            <Editor initialHTML={value} onChange={onChange}/>
-            :
-            (
-            <input
-                ref={inputRef}
-                className={cn(classInput, styles.input)}
-                value={props.type === 'money' ? formatValue(value || '') : value}
-                onChange={props.type ==='money' ? handleInputChange:onChange}
-                {...props}
-            />
+        ) : props.type === 'editor' ? (
+          <Editor initialHTML={value} onChange={onChange} />
+        ) : (
+          <input
+            ref={inputRef}
+            className={cn(classInput, styles.input)}
+            value={
+              props.type === 'money' ? formatValue(String(value) || '') : value
+            }
+            onChange={props.type === 'money' ? handleInputChange : onChange}
+            {...props}
+          />
         )}
         {icon && (
-            <div className={styles.icon}>
-              <Icon name={icon} size="24"/>{' '}
-            </div>
+          <div className={styles.icon}>
+            <Icon name={icon} size="24" />{' '}
+          </div>
         )}
         {copy && (
-            <button className={styles.copy}>
+          <button className={styles.copy}>
             <Icon name="copy" size="24" />{' '}
           </button>
         )}

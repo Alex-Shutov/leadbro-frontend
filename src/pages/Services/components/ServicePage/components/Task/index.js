@@ -15,8 +15,9 @@ import TextLink from '../../../../../../shared/Table/TextLink';
 import Basis from '../../../../../../shared/Basis';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 
-const Task = ({ stage, task, taskName,...rest }) => {
-  const {last:localTask,total} = task
+const Task = ({ stage, task, taskName, ...rest }) => {
+  debugger;
+  const { last: localTask, total } = task;
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef();
   // useOutsideClick(ref, () => setIsOpen(false));
@@ -60,9 +61,7 @@ const Task = ({ stage, task, taskName,...rest }) => {
           </Basis>
         </CardField>
       </div>
-      <div>
-
-      </div>
+      <div></div>
     </div>
   );
 };
