@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import useClients from '../../../Clients/hooks/useClients';
 import ClientInfo from './components/ClientInfo';
 import useParamSearch from '../../../../hooks/useParamSearch';

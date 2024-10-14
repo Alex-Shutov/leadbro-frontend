@@ -19,7 +19,7 @@ const Index = ({
 
   const managerOptions = useMemo(() => {
     const managers = [{ id: 'all', name: 'Все' }];
-    data.forEach((item) => {
+    data?.forEach((item) => {
       managers.push({
         id: item.manager.id,
         name: `${item.manager.name} ${item.manager.surname}`,

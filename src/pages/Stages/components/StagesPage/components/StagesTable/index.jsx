@@ -136,7 +136,7 @@ const StagesTable = observer(({ stage }) => {
   }, []);
 
   const sumActualTime = useMemo(() => {
-    const totalHours = stage.tasks.reduce(
+    const totalHours = stage?.tasks?.reduce(
       (sum, task) =>
         task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
       0,

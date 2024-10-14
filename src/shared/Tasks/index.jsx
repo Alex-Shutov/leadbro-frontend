@@ -4,6 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import TaskList from './List';
 import { useDndScrolling } from 'react-dnd-scrolling';
+import DragPreview from './Preview';
 const isMobile =
   /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent,
@@ -20,8 +21,8 @@ const TasksManager = ({ data, handleChange, counts }) => {
           : undefined
       }
     >
-      <div>{isMobile ? 'mobile' : 'not mobile'}</div>
       <TaskList data={{ data, counts }} onChange={handleChange} />
+      {<DragPreview values={data} />}
     </DndProvider>
   );
 };
