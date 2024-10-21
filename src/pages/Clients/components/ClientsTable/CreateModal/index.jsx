@@ -10,6 +10,8 @@ import ValuesSelector from '../../../../../shared/Selector';
 import useMembers from '../../../../Members/hooks/useMembers';
 import cn from 'classnames';
 import useClientsApi from '../../../clients.api';
+import { colorStatusTypes } from '../../../clients.types';
+import StatusDropdown from '../../../../../components/StatusDropdown';
 
 const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { clientsStore } = useStore(); // Подключение к MobX Store
@@ -29,6 +31,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     description: '',
     manager: null,
   });
+
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
 
   const client = useMemo(() => {
@@ -49,6 +52,12 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
       setIsEditMode(false); // Режим создания
     }
   }, [clientId]);
+
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
+  useEffect(() => {
+    setSelectedStatus(colorStatusTypes[client?.status]);
+  }, [client]);
 
   // Обработчик изменений полей
   const handleChange = (name, value, withId = true) => {
@@ -112,6 +121,11 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
       <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}>
         <div className={modlaStyles.header}>
           <p>{isEditMode ? 'Редактирование клиента' : 'Создание клиента'}</p>
+          <StatusDropdown
+            statuses={colorStatusTypes}
+            value={selectedStatus}
+            onChange={(option) => handleChange('status', option.key)}
+          />
         </div>
         <TextInput
           onChange={({ target }) => handleChange('title', target.value)}

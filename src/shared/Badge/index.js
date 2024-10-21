@@ -4,11 +4,13 @@ import cn from "classnames";
 import {colorStatusTypes as clientStatuses} from "../../pages/Clients/clients.types";
 import {colorStatusTypes as servicesStatuses } from "../../pages/Services/services.types";
 import {colorTasksTypes as tasksStatuses} from "../../pages/Tasks/tasks.types";
+import {colorEmployersTypeEnum as employersStatuses} from "../../pages/Settings/settings.types";
 
 export const statusTypes = {
     clients: clientStatuses,
     services: servicesStatuses,
-    tasks: tasksStatuses
+    tasks: tasksStatuses,
+    employes:employersStatuses
 
 }
 

@@ -11,7 +11,7 @@ const ScrollingComponent = withScrolling('div', {
   horizontalStrength, // Применяем новую зону чувствительности
 });
 
-const TaskList = ({ data: { data, counts }, onChange }) => {
+const TaskList = ({ data: { data, counts }, onChange,onClick }) => {
   const handleDrop = (taskId, newStatus) => {
     onChange(taskId, newStatus);
   };
@@ -20,6 +20,7 @@ const TaskList = ({ data: { data, counts }, onChange }) => {
     <ScrollingComponent className={styles.taskList}>
       {data.map((column) => (
         <Column
+            onClick={onClick}
           typeRu={column.typeRu}
           key={column.type}
           type={column.type}
@@ -33,7 +34,7 @@ const TaskList = ({ data: { data, counts }, onChange }) => {
   );
 };
 
-const Column = ({ type, typeRu, values, color, onDrop, count }) => {
+const Column = ({ type, typeRu, values, color, onDrop, count, onClick }) => {
   const [, drop] = useDrop({
     accept: 'TASK',
     drop: (item) => {
@@ -65,7 +66,9 @@ const Column = ({ type, typeRu, values, color, onDrop, count }) => {
       <div className={cn(color, styles.divider)}></div>
       <div className={styles.scroll}>
         {values.map((task) => (
-          <Task key={task.id} task={task} />
+            <div style={{display:'contents'}} onClick={()=>onClick(task)}>
+              <Task key={task.id}  task={task} />
+            </div>
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, {useMemo, useState} from 'react';
 import { opacityTransition } from '../../../../utils/motion.variants';
 import { motion } from 'framer-motion';
 import Title from '../../../../shared/Title';
@@ -22,69 +22,79 @@ import Icon from '../../../../shared/Icon';
 import Button from '../../../../shared/Button';
 import cn from 'classnames';
 import Loader from "../../../../shared/Loader";
+import EditModal from "../ServicesTable/components/EditModal";
+import DocumentsCard from "./components/DocumentsCard";
+import ServiceInfoCard from "./components/ServiceInfoCard";
+import EditStage from "../../../../components/EditStage";
+
+const withDocuments = false
+
 
 const ServicePage = observer(() => {
   let { id } = useParams();
   const {data:service,store:services} = useServices(Number(id));
   const api = useServiceApi();
-
+  const [editModalOpen,setEditModalOpen] = useState(false)
+  const [createEtapModal,setCreateEtapModal] = useState(false)
   if (!service) return <Loader/>
   // const service = useMemo(
   //   () => services.getById(+id),
   //   [id, , services, services.services, services.drafts],
   // );
   return (
-    <motion.div
-      initial={'hidden'}
-      animate={'show'}
-      variants={`opacityTransition`}
-    >
-      {service?.stages.map((el) => (
-        <div className={styles.cards}>
-          <Card
-            classCardHead={styles.card_title}
-            className={styles.card}
-            classCardHead={styles.head}
-            classTitle={styles.card_title}
-            head={
-              <TextLink to={`stages/${el.id}`} className={styles.etap}>
-                Этап №{el.number}
-              </TextLink>
-            }
-            title={el.title}
+      <>
+          <motion.div
+              initial={'hidden'}
+              animate={'show'}
+              variants={`opacityTransition`}
           >
-            <Task stage={el} taskName={service.title} task={service.tasks} />
-            <Hours time={el.time} />
-            <Report />
-            <Act act={el.act} />
-            {/*<Agreement/>*/}
-            {/*<AdditionalAgreement/>*/}
-            <Bills bills={el.bills} />
-          </Card>
-          <Card
-            classCardHead={styles.card_title}
-            className={cn(styles.card, styles.secondCard)}
-            title={'Документы'}
-          >
-            <div className={styles.buttons}>
-              <Button
-                type={'secondary'}
-                after={<Icon size={24} name={'download'} />}
-                classname={styles.button}
-                name={'Договор'}
-              />
-              <Button
-                type={'secondary'}
-                after={<Icon size={24} name={'download'} />}
-                classname={styles.button}
-                name={'Доп.соглашение'}
-              />
-            </div>
-          </Card>
-          {/*<AdaptiveStages data={service.tasks} />*/}
-        </div>
-      ))}
-    </motion.div>
+              <div className={styles.header}>
+                  <div>
+                      {service.title}
+                      <Icon className={styles.edit} onClick={() => setEditModalOpen(true)} size={24} name={'edit'}/>
+                  </div>
+                  <Button onClick={()=>setCreateEtapModal(true)} type={'primary'} name={'Создать Этап'}/>
+              </div>
+              <div className={!withDocuments ? styles.gridContainer : ''}>
+                  <div>
+                  {service?.stages.map((el) => (
+                      <div className={styles.cards} key={el.id}>
+                          <Card
+
+                              classCardHead={styles.card_title}
+                              className={styles.card}
+                              classCardHead={styles.head}
+                              classTitle={styles.card_title}
+                              head={
+                                  <TextLink to={`stages/${el.id}`} className={styles.etap}>
+                                      Этап №{el.id + 1}
+                                  </TextLink>
+                              }
+                              title={el.title}
+                          >
+                              <Task key={el.id} stage={el} taskName={service.title} task={service.tasks}/>
+                              <Hours actSum={el.cost} time={el.time} el={el}/>
+                              <Report/>
+                              <Act act={el.act}/>
+                              {/*<Agreement/>*/}
+                              {/*<AdditionalAgreement/>*/}
+                              <Bills bills={el.bills}/>
+                          </Card>
+                          {withDocuments && <DocumentsCard service={service}/>}
+                          {/*<AdaptiveStages data={service.tasks} />*/}
+
+                      </div>
+                      ))}
+                  </div>
+                  {!withDocuments && <ServiceInfoCard service={service}/>}
+              </div>
+
+          </motion.div>
+          {editModalOpen && <EditModal serviceId={service.id} onClose={()=>setEditModalOpen(false)}/>}
+          {createEtapModal && (
+              <EditStage  handleClose={() => setCreateEtapModal(false)} />
+          )}
+      </>
   );
 });
 

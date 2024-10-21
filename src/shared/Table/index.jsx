@@ -12,6 +12,7 @@ import { clickRecursive } from '../../utils/click';
 import TableMenu from '../../components/TableMenu';
 import { useLocation, useNavigate } from 'react-router';
 import { NextButton, PreviousButton } from '../PaginationButton';
+import TableSwithcer from "../../pages/Settings/components/TableSwithcer";
 
 const Table = observer(
   ({
@@ -187,9 +188,11 @@ const Table = observer(
       );
     };
 
-    return (
+    return (<>
       <div className={rest.classContainer}>
         {!rest.headerInCard && titleJsx}
+          {rest?.settingsSwithcerValue && <TableSwithcer value={rest.settingsSwithcerValue}/>}
+          <div className={'gridContainer'}>
         <Card
           className={cn(styles.card, {
             [styles.card_smallTable]: rest.smallTable,
@@ -350,7 +353,9 @@ const Table = observer(
             </div>
           )}
         </Card>
-        {rest?.after}
+              {rest?.after}
+
+          </div>
 
         {cardComponent && (
           <AdaptiveCards
@@ -360,6 +365,7 @@ const Table = observer(
           />
         )}
       </div>
+        </>
     );
   },
 );

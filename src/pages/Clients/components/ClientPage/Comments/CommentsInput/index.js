@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import FileUpload from "../../../../../../shared/File/Input";
-import {createBlob} from "../../../../clients.mocks";
+import {loadAvatar} from "../../../../clients.mocks";
 import styles from './CommentsInput.module.sass'
 import FileElement from "../../../../../../shared/File/Element";
 import TextInput from "../../../../../../shared/TextInput";

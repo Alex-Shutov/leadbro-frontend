@@ -1,12 +1,25 @@
 import {
   handleHttpError,
   handleHttpResponse,
+  handleShowError,
   http,
   mockHttp,
+  resetApiProvider,
 } from '../../shared/http';
 import mocks from './stages.mocks';
 import useStore from '../../hooks/useStore';
 import { useEffect, useRef } from 'react';
+import { getQueryParam } from '../../utils/window.utils';
+import {
+  mapServiceDataToBackend,
+  mapServiceFromApi,
+} from '../Services/services.mapper';
+import { mapStageDataToBackend, mapStageFromApi } from './stages.mapper';
+import useServiceApi from '../Services/services.api';
+import servicesApi from '../Services/services.api';
+import { stageStatusTypes } from './stages.types';
+import { format } from 'date-fns';
+import {useParams} from "react-router";
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -39,29 +52,54 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 
 const useStageApi = () => {
   const { stagesStore } = useStore();
-  const getStages = () => {
-    return http
-      .get('/stages')
-      .then(handleHttpResponse)
-      .then((res) => stagesStore.setStages(res.body))
-      .then(() => stagesStore.getStages())
+  const serviceApi = useServiceApi();
+  const {id:serviceId} = useParams()
+
+  const getTaskStages = (stageId, page = null) => {
+    const pageFromUrl = page ?? getQueryParam('page', 1);
+    resetApiProvider();
+    return Promise.all([
+      http.get(`/api/stages/${stageId}`, { params: { page: pageFromUrl } }),
+      http.get(`/api/stages/${stageId}/tasks`, {
+        params: { page: pageFromUrl },
+      }),
+    ])
+      .then(([stageResponse, tasksResponse]) => {
+        const stageData = stageResponse.body.data;
+        const tasksData = tasksResponse.body.data;
+
+        const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
+        stagesStore.setStages([mappedStage]); // Сохраняем в store
+        stagesStore.setMetaInfoTable(tasksResponse.body.meta); // Метаданные задач
+
+        return mappedStage;
+      })
       .catch(handleHttpError);
   };
 
-  const getStageById = (id) => {
-    return http
-      .get(`/stages/${id}`)
-      .then((e) => handleHttpResponse(e))
-      .then((res) => {
-        stagesStore.setCurrentStage(res.body);
+  const getStageById = (id, page) => {
+    const pageFromUrl = page ?? getQueryParam('page', 1);
+    resetApiProvider();
+    return Promise.all([
+      http.get(`/api/stages/${id}`, { params: { page: pageFromUrl } }),
+      http.get(`/api/stages/${id}/tasks`, { params: { page: pageFromUrl } }),
+    ])
+      .then(([stageResponse, tasksResponse]) => {
+        const stageData = stageResponse.data.data;
+        const tasksData = tasksResponse.data.data;
+
+        const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
+        stagesStore.setCurrentStage(mappedStage);
+        // stagesStore.setStages(mappedStage); // Сохраняем в store
+        stagesStore.setMetaInfoTable(tasksResponse.body.meta); // Метаданные задач
+
+        return mappedStage;
       })
-      .then(() => stagesStore.getById(id))
-      .catch((e) => {
-        handleHttpError(e);
-      });
+      .catch(handleHttpError);
   };
 
   const setStages = (body) => {
+    resetApiProvider();
     return http
       .post('/stages', body)
       .then(handleHttpResponse)
@@ -86,13 +124,53 @@ const useStageApi = () => {
       .catch(handleHttpError);
   };
 
+  const updateStage = (stageId,taskId, updateData) => {
+    resetApiProvider();
+    debugger;
+    updateData = mapStageDataToBackend(
+      stagesStore.drafts[stageId],
+      stagesStore.changedProps,
+        taskId,
+    );
+    return http
+      .patch(`/api/stages/${stageId}`, updateData)
+      .then(handleHttpResponse)
+      .then(() =>
+        Promise.all([
+          getStageById(stageId),
+          serviceApi.getServiceById(serviceId),
+        ]),
+      )
+      .catch(handleShowError);
+  };
+
+  const createStage = (serviceId, data) => {
+    data = {
+      ...data,
+      name: data.title,
+      active: data.status === stageStatusTypes.inProgress,
+      start: format(data.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+      deadline: format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss"),
+      act_sum: data.actSum,
+      technical_specification: data.taskDescription,
+    };
+    resetApiProvider();
+    return http
+      .post(`api/services/${serviceId}/stages`, data)
+      .then(handleHttpResponse)
+      .then(() => serviceApi.getServiceById(serviceId))
+      .catch(handleShowError);
+  };
+
   const postFile = (blobFile, fileName) => {
     const form = new FormData();
   };
 
   return {
+    createStage,
+    updateStage,
     setStages,
-    getStages,
+    getTaskStages,
     getStageTypes,
     getStageById,
     getTemplateTypes,

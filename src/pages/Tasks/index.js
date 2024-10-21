@@ -7,36 +7,47 @@ import useTasksByStatus from './hooks/useTasksByStatus';
 import { observer } from 'mobx-react';
 import { taskStatusTypes } from '../Stages/stages.types';
 import styles from './tasks.module.sass';
+import { LoadingProvider } from "../../providers/LoadingProvider";
+import useTasksApi from "./tasks.api";
+import EditModal from "../Stages/components/StagesPage/components/StagesTable/components/EditModal";
+import EditTaskModal from "./components/TaskEditModal";
+
+const filters = [
+    { label: 'Все', value: 'all' },
+    { label: 'Я - Создатель', value: 'creator' },
+    { label: 'Я - Исполнитель', value: 'performer' },
+    { label: 'Я - Ответственный', value: 'responsible' },
+    { label: 'Я - Аудитор', value: 'auditor' },
+];
 
 const Index = observer(() => {
-  const data = useTasksByStatus();
-  const { tasksStore } = useStore();
-
+  const { data, isLoading, store: tasksStore } = useTasksByStatus();
+  const api = useTasksApi()
+    const [taskData,setTaskData] = useState(null)
   const getCountStatusTask = (type) => {
     const tasks = data.filter((task) => task.type === type)[0];
     return tasks.values.length;
   };
 
-  const [statusFilters, setStatusFilters] = useState({
-    inProgress: true,
-    finished: true,
-    created: true,
-    onReview: true,
-    onHold: true,
-  });
 
-  const handleCheckboxChange = (status, isChecked) => {
-    setStatusFilters((prevFilters) => ({
-      ...prevFilters,
-      [status]: isChecked,
-    }));
-  };
+
+
+    const [statusFilter, setStatusFilter] = useState(filters[0].value);
+
+    const handleRadioChange = async (filterValue) => {
+        setStatusFilter(filterValue);
+        if (filterValue === 'all') {
+            await api.getTasks();
+        } else {
+            await api.getTasksByRole(filterValue);
+        }
+    };
 
   const handleChange = (taskId, newStatus) => {
     tasksStore.changeById(taskId, `status`, newStatus, true);
   };
 
-  const filteredTasks = data.filter((task) => statusFilters[task.type]);
+  const filteredTasks = data;
 
   const taskCounts = useMemo(() => {
     return Object.keys(taskStatusTypes).reduce((acc, status) => {
@@ -46,30 +57,36 @@ const Index = observer(() => {
   }, [data]);
 
   return (
-    <>
-      <Title
-        title={'Мои задачи'}
-        actions={{
-          filter: {
-            classNameBody: styles.filter_container,
-            title: 'Фильтр',
-            children: (
-              <TaskFilter
-                filters={statusFilters}
-                onChange={handleCheckboxChange}
-                taskCounts={taskCounts}
-              />
-            ),
-          },
-        }}
-      />
-
-      <TasksTable
-        counts={taskCounts}
-        data={filteredTasks}
-        handleChange={handleChange}
-      />
-    </>
+      <LoadingProvider isLoading={api.isLoading}>
+        <Title
+            title={'Мои задачи'}
+            actions={{
+              filter: {
+                classNameBody: styles.filter_container,
+                title: 'Фильтр',
+                children: (
+                    <TaskFilter
+                        filters={filters}
+                        selectedFilter={statusFilter}
+                        onChange={handleRadioChange}
+                        taskCounts={taskCounts}
+                    />
+                ),
+              },
+            }}
+        />
+        <TasksTable
+            onClick={(data)=>setTaskData(data)}
+            counts={taskCounts}
+            data={filteredTasks}
+            handleChange={handleChange}
+        />
+          {taskData && (
+              <EditTaskModal
+                  data={taskData}
+                  handleClose={() => setTaskData(null)}
+              />)}
+      </LoadingProvider>
   );
 });
 

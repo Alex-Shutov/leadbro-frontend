@@ -1,57 +1,50 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import useStore from '../../../hooks/useStore';
 import useStagesApi from '../stages.api';
+import { useLocation } from 'react-router-dom';
 
-const useStages = (id = null) => {
+const useStages = (id) => {
   const { stagesStore } = useStore();
   const api = useStagesApi();
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    async function fetchData() {
-      setIsLoading(true);
-      try {
-        if (id !== null) {
-          if (!stagesStore.stages.length) {
-            await api.getStageById(id);
-          } else {
-            const stageFromStore = stagesStore.getById(id);
-            if (stageFromStore) {
-              stagesStore.setCurrentStage(stageFromStore);
-            } else {
-              await api.getStageById(id);
-            }
-          }
-        } else if (!stagesStore.stages.length) {
-          await api.getStages();
-        }
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const currentPage = parseInt(query.get('page')) || 1; // Если нет параметра, то первая страница
 
-    fetchData();
-
-    return () => {
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+    try {
       if (id !== null) {
-        stagesStore.clearCurrentStage();
+        debugger;
+        // Логика для загрузки конкретной услуги по ID
+        await api.getStageById(Number(id));
+      } else if (!stagesStore.stages.length) {
+        // Логика для загрузки всех услуг при пустом сторе
+        await api.getTaskStages(id, currentPage);
       }
-    };
-  }, [stagesStore, id, api]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [id, stagesStore, api, currentPage]);
 
+  // Используем useMemo для вызова fetchData
+  useMemo(() => {
+    fetchData();
+  }, [id, stagesStore]);
+
+  // Возвращаем данные в зависимости от наличия ID
   const result = useMemo(() => {
+    // if(id && !stagesStore.currentStage) return null
     if (id !== null) {
-      return (
-        stagesStore.currentStage ||
-        stagesStore.getById(id) ||
-        api.getStageById(id)
-      );
+      return stagesStore.getById(Number(id));
     } else {
       return stagesStore;
     }
-  }, [id, stagesStore.currentStage, stagesStore.stages, api, isLoading]);
+  }, [id, stagesStore.currentStage, stagesStore.drafts, stagesStore.stages]);
 
-  return { data: result, isLoading };
+  return { data: result, isLoading, store: stagesStore, fetchData };
 };
 
 export default useStages;

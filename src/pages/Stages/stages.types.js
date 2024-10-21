@@ -1,5 +1,4 @@
 export const taskStatusTypes = {
-
   created: 'created',
   inProgress: 'inProgress',
   onReview: 'onReview',
@@ -18,12 +17,10 @@ export const taskStatusTypesRu = {
 export const stageStatusTypes = {
   inProgress: 'inProgress',
   finished: 'finished',
-  created: 'created',
 };
 export const stageStatusTypesRu = {
   inProgress: 'В работе',
   finished: 'Завершен',
-  created: 'Создан',
 };
 
 export const colorStatusTaskTypes = {

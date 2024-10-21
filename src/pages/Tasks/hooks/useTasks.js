@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from 'react';
 import useStore from '../../../hooks/useStore';
 import useTasksApi from '../tasks.api';
 
@@ -7,9 +7,11 @@ const useTasks = (id = null) => {
     const api = useTasksApi();
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchData() {
-            setIsLoading(true);
+
+    const fetchData = useCallback(async () => {
+        console.log(isLoading,'data')
+        setIsLoading(true)
+
             try {
                 if (id !== null) {
                     if (!tasksStore.tasks.length) {
@@ -18,15 +20,21 @@ const useTasks = (id = null) => {
                 } else if (!tasksStore.tasks.length) {
                     await api.getTasks();
                 }
+
             } catch (error) {
                 console.error(error);
-            } finally {
-                setIsLoading(false);
             }
-        }
+            finally {
+                setIsLoading(false)
+                console.log(isLoading,'data')
 
-        fetchData();
+            }
+
+
     }, [tasksStore, id, api]);
+    useMemo(()=>{
+        fetchData()
+    },[id,tasksStore])
 
     const result = useMemo(() => {
         if (id !== null) {
@@ -35,8 +43,10 @@ const useTasks = (id = null) => {
             return tasksStore.getTasks();
         }
     }, [id, tasksStore.tasks, api]);
+    console.log(isLoading,'data','final')
 
-    return { data: result, isLoading };
+
+    return { data: result, isLoading,store:tasksStore };
 };
 
 export default useTasks;

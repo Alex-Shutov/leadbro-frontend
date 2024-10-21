@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './Status.module.sass';
 import ManagerCell from '../../../../../components/ManagerCell';
 import Badge, { statusTypes } from '../../../../../shared/Badge';
 import Card from '../../../../../shared/Card';
 import cn from 'classnames';
+import StatusDropdown from '../../../../../components/StatusDropdown';
+import { colorStatusTypes } from '../../../clients.types';
 
 const ClientStatus = ({ client, className }) => {
   return (
@@ -22,6 +24,11 @@ const ClientStatus = ({ client, className }) => {
       </div>
       <div className={styles.container}>
         <ManagerCell manager={client?.manager} />
+        {/*<StatusDropdown*/}
+        {/*  statuses={colorStatusTypes}*/}
+        {/*  value={selectedStatus}*/}
+        {/*  onChange={handleChangeSelectedStatus}*/}
+        {/*/>*/}
         <Badge status={client?.status} statusType={statusTypes?.clients} />
       </div>
       <div className={styles.clientId}>

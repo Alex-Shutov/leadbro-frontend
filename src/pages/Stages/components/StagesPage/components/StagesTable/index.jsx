@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import useStageApi from '../../../../stages.api';
 import ManagerCell from '../../../../../../components/ManagerCell';
-import styles from '../../../../../Clients/components/ClientsTable/Table.module.sass';
+import styles1 from '../../../../../Clients/components/ClientsTable/Table.module.sass';
+import styles from './Stages.module.sass';
 import Table from '../../../../../../shared/Table';
 import { formatDateWithDateAndYear } from '../../../../../../utils/formate.date';
 import StageBadge, { StageStatuses } from './components/StagesBadge';
@@ -13,13 +14,59 @@ import { convertToHours } from '../../../../../../utils/format.time';
 import AdaptiveCard from './components/AdaptiveCard';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
+import useStore from '../../../../../../hooks/useStore';
+import usePagingData from '../../../../../../hooks/usePagingData';
+import EditStage from '../../../../../../components/EditStage';
+import { useParams } from 'react-router';
 
 const StagesTable = observer(({ stage }) => {
-  // const
-  const clientData = React.useMemo(() => stage, [stage]);
-  const data = React.useMemo(() => stage?.tasks, [stage?.tasks, stage]);
+  const { stagesStore } = useStore();
+  const { stageId } = useParams();
+  const api = useStageApi();
   const [taskData, setTaskData] = useState(null);
-  // useOutsideClick(ref, () => setTaskData(null));
+  const [editStageModalOpen, setEditStageModalOpen] = useState(false);
+  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  const ref = useRef();
+
+  const fetchStages = useCallback((stageId) => {
+    api.getTaskStages(stageId);
+  }, []);
+
+  const {
+    currentPage,
+    totalPages,
+    totalItems,
+    paginatedData,
+    itemsPerPage,
+    handlePageChange,
+  } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
+  const handleEditTask = (data) => {
+    setTaskData(data);
+    setEditTaskModalOpen(true);
+  };
+  const handleCreateTask = () => {
+    setTaskData(null)
+    setEditTaskModalOpen(true)
+  }
+
+  const handleCloseTaskModal = () => {
+    setTaskData(null)
+    setEditTaskModalOpen(false)
+  }
+  const handleDelete = (id) => {
+    // Реализуйте логику удаления
+    console.log(`Удалить услугу с ID: ${id}`);
+  };
+
+  const getActions = (data) => [
+    { label: 'Редактировать', onClick: () => handleEditTask(data) },
+    {
+      label: 'Удалить',
+      onClick: () => handleDelete(data.id),
+      disabled: data.id === 0,
+    },
+  ];
+
   const cols = React.useMemo(() => {
     return [
       {
@@ -33,7 +80,7 @@ const StagesTable = observer(({ stage }) => {
           return (
             <TextLink
               onClick={() => {
-                setTaskData(data);
+               handleEditTask(data)
               }}
             >
               {data.title}
@@ -62,18 +109,17 @@ const StagesTable = observer(({ stage }) => {
         // editing: true,
         Cell: ({ row }) => {
           const data = row?.original;
-
           return Array.isArray(data.responsibles) ? (
             data.responsibles.map((el) => <ManagerCell manager={el} />)
           ) : (
-            <ManagerCell manager={data.responsible} />
+            <ManagerCell manager={data.responsibles} />
           );
         },
       },
       {
         Header: 'Дедлайн',
         id: 'deadline',
-        width: '15%',
+        width: '25%',
 
         Cell: ({ row }) => {
           const data = row?.original;
@@ -87,6 +133,7 @@ const StagesTable = observer(({ stage }) => {
 
         Cell: ({ row }) => {
           const data = row?.original;
+          debugger
           return (
             <DeadLineTimeCell
               deadLine={data.deadlineTime}
@@ -96,50 +143,61 @@ const StagesTable = observer(({ stage }) => {
         },
       },
     ];
-  }, [data, taskData]);
+  }, [paginatedData]);
 
   const sumActualTime = useMemo(() => {
-    const totalHours = stage?.tasks?.reduce(
+    const totalHours = Object.values(stage?.tasks)?.reduce(
       (sum, task) =>
         task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
       0,
     );
     return totalHours + ' ч';
-  }, [data]);
-
+  }, [paginatedData[0]]);
   return (
     <div className={styles.table}>
       <Table
-        editComponent={(data) => <EditModal stageId={stage.id} data={data} />}
+        paging={{
+          current: currentPage,
+          all: totalItems,
+          offset: itemsPerPage,
+          onPageChange: handlePageChange,
+        }}
+        // editComponent={(data) => <EditModal stageId={stage.id} data={data} />}
         classContainer={styles.tableContainer}
         // editComponent={(data, onClose) => <EditModal data={data} />}
-        cardComponent={(data) => (
-          <AdaptiveCard data={data} statusType={StageStatuses.tasks} />
-        )}
+        // cardComponent={(data) => (
+        //   <AdaptiveCard data={data} statusType={StageStatuses.tasks} />
+        // )}
+        actions={getActions}
         after={
-          clientData ? (
-            <ClientInfo timeActual={sumActualTime} data={clientData} />
-          ) : (
-            <></>
-          )
+          <ClientInfo timeActual={sumActualTime} data={paginatedData[0]} />
         }
         headerActions={{
           add: {
-            action: () => console.log('1234'),
-            title: 'Добавить услугу',
+            action: () => handleCreateTask(),
+            title: 'Создать задачу',
+          },
+          edit: {
+            action: () => setEditStageModalOpen(true),
           },
         }}
-        data={data}
-        title={`Этап №${stage.number}`}
+        data={Object.values(paginatedData[0]?.tasks)}
+        title={`${stage.title}`}
         columns={cols}
       />
       {/*{stage && <ClientInfo client={stage.client} />}*/}
-      {taskData && (
+      {editTaskModalOpen && (
         <EditModal
           idStage={stage.id}
           stageId={stage.id}
           data={taskData}
-          handleClose={() => setTaskData(null)}
+          handleClose={handleCloseTaskModal}
+        />
+      )}
+      {editStageModalOpen && (
+        <EditStage
+          stageId={Number(stageId)}
+          handleClose={() => setEditStageModalOpen(false)}
         />
       )}
     </div>

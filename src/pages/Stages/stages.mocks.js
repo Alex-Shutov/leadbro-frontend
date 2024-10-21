@@ -1,4 +1,4 @@
-import { createBlob } from '../../utils/create.utils';
+import { loadAvatar } from '../../utils/create.utils';
 import { taskStatusTypes, taskStatusTypesRu, stageStatusTypes, stageStatusTypesRu } from './stages.types';
 
 const createStages = () => {
@@ -59,7 +59,7 @@ const createStages = () => {
               date: new Date(2011, 11, 10),
               sender: {
                 id: 0,
-                image: createBlob(),
+                image: loadAvatar(),
                 name: 'Александр Шилов',
               },
               value: {
@@ -78,7 +78,7 @@ const createStages = () => {
           auditors: [
             {
               id: 0,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Александр Шилов',
               role: 'Директор',
             },
@@ -86,7 +86,7 @@ const createStages = () => {
           executors: [
             {
               id: 0,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Александр Шилов',
               role: 'Директор',
             },
@@ -94,7 +94,7 @@ const createStages = () => {
           responsibles: [
             {
               id: 0,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Александр Шилов',
               role: 'Директор',
             },
@@ -136,7 +136,7 @@ const createStages = () => {
               date: new Date(2022, 6, 15),
               sender: {
                 id: 1,
-                image: createBlob(),
+                image: loadAvatar(),
                 name: 'Мария Иванова',
               },
               value: {
@@ -155,7 +155,7 @@ const createStages = () => {
           auditors: [
             {
               id: 1,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Мария Иванова',
               role: 'Менеджер проекта',
             },
@@ -163,7 +163,7 @@ const createStages = () => {
           executors: [
             {
               id: 2,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Иван Петров',
               role: 'Дизайнер',
             },
@@ -171,7 +171,7 @@ const createStages = () => {
           responsibles: [
             {
               id: 3,
-              image: createBlob(),
+              image: loadAvatar(),
               fio: 'Алексей Сидоров',
               role: 'Разработчик',
             },

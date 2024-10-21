@@ -60,27 +60,27 @@ export const handleHttpResponse = (response) => {
 
 export const handleHttpError = (error) => {
   const code = error?.code;
-
+  console.warn({ status: 'error', message: error?.message, code });
   return { status: 'error', message: error?.message, code };
 };
 
 export const handleShowError = (errors, delay = 100) => {
-
-    const errorsResp = errors.response?.data?.errors
-  const errorsResponse = errorsResp ? errorsResp : errors.response?.data?.message ;
+  const errorsResp = errors.response?.data?.errors;
+  const errorsResponse = errorsResp
+    ? errorsResp
+    : errors.response?.data?.message;
   let delayTime = 0;
 
   // Преобразуем объект ошибок в массив сообщений
-  const getErrorMessages = () =>Object.entries(errorsResponse).flatMap(
-    ([field, messages]) => {
+  const getErrorMessages = () =>
+    Object.entries(errorsResponse).flatMap(([field, messages]) => {
       return messages?.map((message) => `${field}: ${message}`);
-    },
-  );
+    });
 
   // Показываем каждую ошибку с задержкой
-    (errorsResp ? getErrorMessages() : [errorsResponse]).forEach((message) => {
+  (errorsResp ? getErrorMessages() : [errorsResponse]).forEach((message) => {
     setTimeout(() => {
-      handleError(message); // Показ ошибки через notistack
+      handleError(message ?? 'Произошла ошибка'); // Показ ошибки через notistack
     }, delayTime);
 
     delayTime += delay; // Увеличиваем задержку

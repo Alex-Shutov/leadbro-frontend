@@ -7,7 +7,8 @@ import cn from 'classnames';
 import { getFormattedTimeType } from '../../../../../../utils/format.time';
 import HoursComponent from '../../../../../../components/HoursComponent';
 import CostView from '../../../../../../components/CostView';
-const Hours = ({ time }) => {
+const Hours = ({ time,actSum,el }) => {
+  console.log(time,actSum,el,'sum')
   return (
     <div className="hours">
       {/*<div>*/}
@@ -23,44 +24,47 @@ const Hours = ({ time }) => {
       {/*</div>*/}
       <CardField labelCls={styles.labelPlanned} label={'Время по ТЗ'}>
         <HoursView
-          basis={282}
+          basis={292}
           type={getFormattedTimeType(time.planned.type)}
           time={time.planned.planned}
           label={'плановое время'}
         ></HoursView>
         <HoursView
-          basis={1230}
+          basis={292}
           type={getFormattedTimeType(time.planned.type)}
           time={time.planned.actual}
           label={'фактическое время'}
         ></HoursView>
+          <Basis basis={900} className={styles.costs}>
+          <CostView cost={actSum}></CostView>
+          </Basis>
       </CardField>
-      <CardField
-        labelCls={styles.labelExtra}
-        cls={cn(styles.hoursView_container)}
-        label={'Время сверх ТЗ'}
-      >
-        <HoursView
-          basis={282}
-          type={getFormattedTimeType(time.extra.type)}
-          time={time.extra.planned}
-          label={'плановое время'}
-        ></HoursView>
-        <HoursView
-          basis={400}
-          type={getFormattedTimeType(time.extra.type)}
-          time={time.extra.actual}
-          label={'фактическое время'}
-        ></HoursView>
-        <Basis basis={740} className={styles.costs}>
-          <CostView cost={time.extra.cost}></CostView>
-          <Button
-            classname={styles.add_button}
-            type={'secondary'}
-            name={'Добавить счет'}
-          />
-        </Basis>
-      </CardField>
+      {/*<CardField*/}
+      {/*  labelCls={styles.labelExtra}*/}
+      {/*  cls={cn(styles.hoursView_container)}*/}
+      {/*  label={'Время сверх ТЗ'}*/}
+      {/*>*/}
+      {/*  <HoursView*/}
+      {/*    basis={282}*/}
+      {/*    type={getFormattedTimeType(time.extra.type)}*/}
+      {/*    time={time.extra.planned}*/}
+      {/*    label={'плановое время'}*/}
+      {/*  ></HoursView>*/}
+      {/*  <HoursView*/}
+      {/*    basis={400}*/}
+      {/*    type={getFormattedTimeType(time.extra.type)}*/}
+      {/*    time={time.extra.actual}*/}
+      {/*    label={'фактическое время'}*/}
+      {/*  ></HoursView>*/}
+      {/*  <Basis basis={740} className={styles.costs}>*/}
+      {/*    <CostView cost={time.extra.cost}></CostView>*/}
+      {/*    <Button*/}
+      {/*      classname={styles.add_button}*/}
+      {/*      type={'secondary'}*/}
+      {/*      name={'Добавить счет'}*/}
+      {/*    />*/}
+      {/*  </Basis>*/}
+      {/*</CardField>*/}
     </div>
   );
 };

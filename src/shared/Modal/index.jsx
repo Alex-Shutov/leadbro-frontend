@@ -102,6 +102,7 @@ const Modal = ({
           { [styles.appModal__inner__md]: size === 'md' },
           { [styles.appModal__inner__lg]: size === 'lg' },
           { [styles.appModal__inner__xl]: size === 'xl' },
+          { [styles.appModal__inner__md_up]: size === 'md_up' },
           cls,
         )}
       >
@@ -124,7 +125,7 @@ const Modal = ({
               isSmall={false}
               onClick={() => handleCloseModal()}
               classname={styles.button}
-              name={'Удалить'}
+              name={closeButton??'Удалить'}
               type={'secondary'}
             />
           )}

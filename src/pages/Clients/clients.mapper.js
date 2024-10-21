@@ -1,5 +1,5 @@
 import { statusTypes } from './clients.types'; // Предположим, что у вас есть statusTypes
-import { createBlob } from '../../utils/create.utils';
+import { loadAvatar } from '../../utils/create.utils';
 import {
   getValueByPath,
   mapChangedFieldsForBackend, mapFio, MapFio,
@@ -22,7 +22,7 @@ export const mapClientFromApi = (
       surname: apiClient.manager.last_name,
       middleName: apiClient.manager.middle_name,
       avatar: apiClient.manager.avatar
-        ? createBlob(apiClient.manager.avatar)
+        ? loadAvatar(apiClient.manager.avatar)
         : null,
       position: apiClient.manager.position.name,
       email: apiClient.manager.email,
@@ -36,7 +36,7 @@ export const mapClientFromApi = (
         description: 'Связаться с клиентом',
         deadline: new Date(),
         responsible: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -52,7 +52,7 @@ export const mapClientFromApi = (
         type: 'call',
         members: 2,
         assignee: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -65,7 +65,7 @@ export const mapClientFromApi = (
         type: 'call',
         members: 2,
         assignee: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',

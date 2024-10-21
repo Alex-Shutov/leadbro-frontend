@@ -62,3 +62,26 @@
   gap: 8px
   >*
     max-width: fit-content
+
+.header
+  >div
+    .edit
+      margin-left: 16px
+      cursor: pointer
+    +title1-s
+    font-size: 24px
+  margin-bottom: 16px
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+
+.gridContainer
+  display: grid
+  grid-template-columns: 5fr 2fr
+  gap: 16px
+  .infoCard
+    max-height: fit-content
+  .inProgress
+    color: $p2
+  .closed
+    color: $p3

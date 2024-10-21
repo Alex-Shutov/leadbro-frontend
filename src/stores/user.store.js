@@ -1,10 +1,10 @@
 import {makeAutoObservable} from "mobx";
-import {createBlob} from "../utils/create.utils";
+import {loadAvatar} from "../utils/create.utils";
 
 export class UserStore {
     user= {
         id: 0,
-        image: createBlob(),
+        image: loadAvatar(),
         firstName:'Александр',
         lastName:'Шилов',
         middleName:'Александрович',

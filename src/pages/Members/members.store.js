@@ -1,4 +1,4 @@
-import {createBlob} from "../../utils/create.utils";
+import {loadAvatar} from "../../utils/create.utils";
 import {makeAutoObservable} from "mobx";
 import {changeDraft, removeDraft,resetDraft} from "../../utils/store.utils";
 

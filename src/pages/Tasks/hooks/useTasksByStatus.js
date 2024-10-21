@@ -9,7 +9,9 @@ import {
 } from "../../Stages/stages.types";
 
 const useTasksByStatus = () => {
-    const {data: data} = useTasks();
+    const {data: data,isLoading} = useTasks();
+    const { tasksStore } = useStore();
+
 
     const statusedTasks = useMemo(() => {
         const filteredData = Object.values(taskStatusTypes).map((status) => ({
@@ -22,7 +24,7 @@ const useTasksByStatus = () => {
         return filteredData
     }, [data]);
 
-    return statusedTasks;
+    return {data:statusedTasks,isLoading,store:tasksStore};
 };
 
 export default useTasksByStatus;

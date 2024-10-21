@@ -4,6 +4,7 @@ import {changeDraft, removeDraft} from "../../../utils/store.utils";
 export class TasksStore {
     tasks = [];
     drafts = {};
+    taskStatuses=null
 
     constructor(root) {
         this.root = root;
@@ -68,4 +69,11 @@ export class TasksStore {
     setTasks(result) {
         this.tasks = result;
     }
+    setStatuses(result){
+        this.taskStatuses=result
+    }
+    getStatuses(){
+        return this.taskStatuses
+    }
+
 }

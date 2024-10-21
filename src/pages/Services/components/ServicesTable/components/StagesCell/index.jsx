@@ -6,7 +6,6 @@ import { truncateString } from '../../../../../../utils/format.string';
 
 const StagesCell = ({ stages, maxCellLength = -1 }) => {
     const [showAll, setShowAll] = useState(false);
-
     const stageList = Array.isArray(stages) ? stages : [stages?.last];
     const totalStages = Array.isArray(stages) ? stages.length : stages?.total || 0;
     const hiddenCount = totalStages - 1;

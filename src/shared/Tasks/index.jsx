@@ -11,7 +11,7 @@ const isMobile =
   );
 const Backend = isMobile ? TouchBackend : HTML5Backend;
 
-const TasksManager = ({ data, handleChange, counts }) => {
+const TasksManager = ({ data, handleChange, counts,onClick }) => {
   return (
     <DndProvider
       backend={Backend}
@@ -21,7 +21,7 @@ const TasksManager = ({ data, handleChange, counts }) => {
           : undefined
       }
     >
-      <TaskList data={{ data, counts }} onChange={handleChange} />
+      <TaskList data={{ data, counts }} onClick={onClick} onChange={handleChange} />
       {<DragPreview values={data} />}
     </DndProvider>
   );

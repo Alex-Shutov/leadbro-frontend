@@ -6,7 +6,7 @@ import DurationSelector from '../DurationSelector';
 import useStages from '../../pages/Stages/hooks/useStages';
 
 const Index = ({ onChange, stageId }) => {
-  const { data: stagesStore } = useStages();
+  const { store: stagesStore } = useStages(stageId);
   const stage = useMemo(
     () => stagesStore.getById(+stageId),
     [stageId, stagesStore, stagesStore.stages, stagesStore.drafts],

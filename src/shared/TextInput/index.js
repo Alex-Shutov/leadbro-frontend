@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import cn from 'classnames';
 import styles from './TextInput.module.sass';
 import Icon from '../Icon';
@@ -14,7 +14,10 @@ import Close from './Actions/Close';
 import Submit from './Actions/Submit';
 import Edit from './Actions/Edit';
 import See from './Actions/See';
+import { createReactEditorJS } from 'react-editor-js';
+import MarkdownIt from 'markdown-it';
 import ActionList from './Actions/ActionList';
+import Editor from '../Editor';
 
 // onMouseLeave={() => {
 //     if (!props?.edited && props?.onHover)
@@ -26,6 +29,7 @@ import ActionList from './Actions/ActionList';
 //     props?.onHover()
 // }
 // }
+
 const TextInput = ({
   className,
   classLabel,
@@ -40,10 +44,80 @@ const TextInput = ({
   place,
   actions,
   noMinWidth,
+  onChange,
+  value,
+                     validate,
   ...props
 }) => {
   const inputRef = useRef(null);
   const wrapRef = useRef(null);
+  const [hasError, setHasError] = useState(false);
+  const formatValue = (inputValue) => {
+    if (!inputValue) return inputValue;
+    // Удаляем все, кроме чисел и точки
+    let formattedValue = inputValue.replace(/[^0-9.]/g, '');
+
+    // Разделяем значение на целую и дробную части
+    const [integer, decimal] = formattedValue.split('.');
+    if (decimal) {
+      // Ограничиваем дробную часть двумя знаками
+      formattedValue = `${integer}.${decimal.slice(0, 2)}`;
+    }
+
+    // Добавляем .00 только если значение не пустое и нет дробной части
+    if (!decimal) {
+      formattedValue += formattedValue.includes('.') ? '00' : '.00';
+    }
+    // } else if (formattedValue.split('.')[1]?.length === 1) {
+    //   formattedValue += '0';
+    // }
+
+    return formattedValue;
+  };
+
+  const handleBlur = () => {
+    if (validate) {
+      const isValid = validate(value);
+      if (!isValid) {
+        inputRef.current.classList.add(styles.errorInput);  // Добавляем класс ошибки
+      } else {
+        inputRef.current.classList.remove(styles.errorInput);  // Убираем класс ошибки
+      }
+    }
+  };
+
+
+  const handleInputChange = (e) => {
+    const currentCursorPosition = e.target.selectionStart;
+    const rawValue = e.target.value;
+    if (rawValue === '') {
+      onChange({
+        target: {
+          ...e.target,
+          value: '',
+        },
+      });
+    }
+
+    // if(!rawValue.includes('.') && rawValue!=='') return
+
+    // debugger
+    const [integer, decimal] = rawValue.split('.');
+    const formattedValue = integer ? formatValue(String(rawValue)) : '';
+    if (
+      !rawValue.includes('.') &&
+      rawValue !== '' &&
+      e.target.defaultValue !== ''
+    )
+      return;
+
+    onChange({
+      target: {
+        ...e.target,
+        value: formattedValue,
+      },
+    });
+  };
 
   return (
     <div
@@ -83,11 +157,17 @@ const TextInput = ({
             className={cn(classInput, styles.input, styles.textarea)}
             {...props}
           />
+        ) : props.type === 'editor' ? (
+            value && <Editor name={props.name ?? ''} initialHTML={value} onChange={onChange} />
         ) : (
           <input
+              onBlur={handleBlur}
             ref={inputRef}
-            disabled={!props?.edited ?? false}
             className={cn(classInput, styles.input)}
+            value={
+              props.type === 'money' ? formatValue(String(value) || '') : value
+            }
+            onChange={props.type === 'money' ? handleInputChange : onChange}
             {...props}
           />
         )}

@@ -42,3 +42,8 @@ export const formatDateWithOnlyDigits = (date) => {
 export const formatHours = (date) => {
   return format(date, 'HH:mm');
 };
+
+
+export const formatDateToBackend = (value) =>{
+  return format(value, "yyyy-MM-dd'T'HH:mm:ss");
+}

@@ -1,19 +1,18 @@
 import React from 'react';
-import Checkbox from "../../../../shared/Checkbox";
-import {taskStatusTypes, taskStatusTypesRu} from "../../../Stages/stages.types";
-import styles from './Filter.module.sass'
-const TaskFilter = ({ filters, onChange, taskCounts }) => {
+import styles from './Filter.module.sass';
+import Radio from "../../../../shared/Radio";
 
+const TaskFilter = ({ filters, selectedFilter, onChange, taskCounts }) => {
     return (
         <div>
-            {Object.keys(taskStatusTypes).map(status => (
-                <Checkbox
+            {filters.map(({ label, value }) => (
+                <Radio
                     className={styles.container}
-                    key={status}
-                    status={status}
-                    content={<div className={styles.label}>{taskStatusTypesRu[status]} <span className={styles.count}>{taskCounts[status] || 0}</span></div>}
-                    value={filters[status]}
-                    onChange={onChange}
+                    key={value}
+                    name="taskFilter"
+                    content={`${label} <span class="${styles.count}">${taskCounts[label] || 0}</span>`}
+                    value={selectedFilter === value}
+                    onChange={() => onChange(value)}
                 />
             ))}
         </div>
