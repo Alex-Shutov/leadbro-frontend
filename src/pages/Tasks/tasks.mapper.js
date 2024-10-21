@@ -31,11 +31,11 @@ const mapTaskStatus = (status) => {
     case 'created':
       return taskStatusTypes.created;
     case 'in_progress':
-      return taskStatusTypes.inProgress;
+      return taskStatusTypes.in_work;
     case 'finished':
       return taskStatusTypes.finished;
     default:
-      return taskStatusTypes.unknown;
+      return taskStatusTypes[status];
   }
 };
 

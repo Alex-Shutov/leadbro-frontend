@@ -11,6 +11,11 @@ import useServices from '../../../../../../../../../Services/hooks/useServices';
 import styles from './Description.module.sass';
 import cn from 'classnames';
 import { observer } from 'mobx-react';
+import ValuesSelector from "../../../../../../../../../../shared/Selector";
+import {colorStatusTypes} from "../../../../../../../../../Clients/clients.types";
+import StatusDropdown from "../../../../../../../../../../components/StatusDropdown";
+import {colorTasksTypes} from "../../../../../../../../../Tasks/tasks.types";
+import {colorStatusTaskTypes, colorStatusTaskTypesForTaskList} from "../../../../../../../../stages.types";
 const Index = observer(
   ({
     data: {
@@ -23,12 +28,14 @@ const Index = observer(
       title,
       status,
     },
+      selectedStatus,
       prefix,
     handleChange,
     handleSave,
     handleDecline,
     className,
   }) => {
+      // const stageOptions = useS
     return (
       <div className={cn(styles.border_container, className)}>
         <div className={styles.buttons}>
@@ -40,12 +47,28 @@ const Index = observer(
             {/*  name={'Отклонить'}*/}
             {/*  onClick={handleDecline}*/}
             {/*/>*/}
-              <StageBadge status={status} statusType={StageStatuses.tasks} />
+              <StatusDropdown
+                  statuses={colorStatusTaskTypes}
+                  value={selectedStatus}
+                  onChange={(option) => handleChange(`${prefix}taskStatus`, option.key)}
+              />
 
           </div>
           <div>
           </div>
         </div>
+          {/*<ValuesSelector*/}
+          {/*    // classLabel={styles.input_label}*/}
+          {/*    // onChange={({ target }) => handleChange(target.name, target.value)}*/}
+          {/*    // name={`${prefix}stage`}*/}
+          {/*    // value={title}*/}
+          {/*    // edited={false}*/}
+          {/*    // disable={true}*/}
+          {/*    // className={styles.input}*/}
+          {/*    options={}*/}
+          {/*    isMulti={false}*/}
+          {/*    label={'Этап'}*/}
+          {/*/>*/}
         <TextInput
           classLabel={styles.input_label}
           onChange={({ target }) => handleChange(target.name, target.value)}

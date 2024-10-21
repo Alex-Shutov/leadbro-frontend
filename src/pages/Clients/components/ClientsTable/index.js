@@ -33,7 +33,6 @@ const ClientsTable = observer(() => {
   } = usePagingData(clientsStore, fetchClients, () =>
     clientsStore?.getClients(),
   );
-  debugger;
   const cols = React.useMemo(
     () => [
       {

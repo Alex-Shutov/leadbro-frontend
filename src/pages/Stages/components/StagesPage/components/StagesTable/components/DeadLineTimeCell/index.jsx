@@ -5,8 +5,11 @@ import { compareTime } from '../../../../../../../../utils/compare';
 
 const DeadLineTimeCell = ({ actualTime, deadLine }) => {
   const formatTime = (time) => {
-    return parseFloat(time.toString().replace(',', '.')) + ' ' + time.toString().split(' ')[1];
+    const currTimeEl = time.toString().split(' ')[1] ?? 'ч'
+    return parseFloat(time.toString().replace(',', '.')) + ' ' + currTimeEl;
   };
+
+  debugger
 
   const formattedActualTime = formatTime(actualTime);
   const formattedDeadLine = formatTime(deadLine);

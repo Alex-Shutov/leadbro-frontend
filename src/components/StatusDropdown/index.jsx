@@ -15,7 +15,7 @@ const StatusDropdown = ({ statuses, value, onChange }) => {
     );
   }, [statuses]);
 
-  const dropdownOptions = options.map((opt) => `${opt.label}_${opt.key}`);
+  const dropdownOptions = options.map((opt) => `${opt.label}#${opt.key}`);
 
   return (
     <Dropdown
@@ -23,9 +23,10 @@ const StatusDropdown = ({ statuses, value, onChange }) => {
       classDropdownHead={value?.class}
       options={dropdownOptions}
       value={value?.status}
-      renderOption={(opt) => opt.split('_')[0]} // Отображаем только название статуса
+      renderOption={(opt) => opt.split('#')[0]} // Отображаем только название статуса
       setValue={(e) => {
-        const selectedKey = e.split('_')[1];
+          debugger
+        const selectedKey = e.split('#')[1];
         const selectedOption = options.find((opt) => opt.key === selectedKey);
         onChange(selectedOption);
       }}

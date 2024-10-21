@@ -2,14 +2,13 @@ import React, {useCallback, useEffect, useLayoutEffect, useMemo, useState} from 
 import useStore from '../../../hooks/useStore';
 import useTasksApi from '../tasks.api';
 
-const useTasks = (id = null) => {
+const useTasks = (id = null,status=null) => {
     const { tasksStore } = useStore();
     const api = useTasksApi();
     const [isLoading, setIsLoading] = useState(true);
 
 
     const fetchData = useCallback(async () => {
-        console.log(isLoading,'data')
         setIsLoading(true)
 
             try {
@@ -17,8 +16,10 @@ const useTasks = (id = null) => {
                     if (!tasksStore.tasks.length) {
                         await api.getTaskById(id);
                     }
-                } else if (!tasksStore.tasks.length) {
-                    await api.getTasks();
+                } else if (status) {
+                    await api.getTasksByRole(status);
+                } else {
+                    await api.getTasks()
                 }
 
             } catch (error) {

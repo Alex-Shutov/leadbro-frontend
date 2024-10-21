@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Paperclip, Download } from 'lucide-react';
 import styles from './Upload.module.sass';
 import cn from "classnames";
+import {Link} from "react-router-dom";
 const FileUpload = ({
                         label,
                         value,
@@ -85,7 +86,12 @@ const FileUpload = ({
             URL.revokeObjectURL(link.href);
         } else if (typeof value === 'string') {
             // Если это строка (URL), открываем в новом окне
-            window.open(value, '_blank');
+            const link = document.createElement('a');
+            link.href = 'https://pdfobject.com/pdf/sample.pdf';
+            link.download = 'https://pdfobject.com/pdf/sample.pdf'.split('/').pop(); // Извлекаем имя файла из URL
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     };
 
@@ -95,7 +101,11 @@ const FileUpload = ({
                 <label className={styles.label}>
                     {label}
                     {props.required && <span className={styles.required}>*</span>}
+                    <Link target={'_blank'} download to={value}>123</Link>
+
                 </label>
+
+
             )}
             <div className={styles.wrap}>
                 <input
