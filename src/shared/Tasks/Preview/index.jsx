@@ -1,7 +1,7 @@
 import { useDragLayer } from 'react-dnd';
 import Task from '../Task';
 import { useDropTarget } from 'react-dnd/lib/hooks/useDrop/useDropTarget';
-
+import styles from './Preview.module.sass'
 const DragPreview = ({ values }) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
@@ -26,7 +26,7 @@ const DragPreview = ({ values }) => {
   return isDragging
     ? item && (
         <div
-          className="preview"
+          className={styles.preview}
           style={{
             position: 'fixed',
             pointerEvents: 'none',

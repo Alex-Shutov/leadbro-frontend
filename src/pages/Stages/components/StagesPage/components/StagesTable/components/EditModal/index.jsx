@@ -19,7 +19,7 @@ import {tasksTypes} from "../../../../../../../Tasks/tasks.types";
 import {useParams} from "react-router";
 import useTasksApi from "../../../../../../../Tasks/tasks.api";
 import {mapStageDataToBackend} from "../../../../../../stages.mapper";
-import {taskStatusTypes} from "../../../../../../stages.types";
+import {colorStatusTaskTypes, taskStatusTypes} from "../../../../../../stages.types";
 const draftSet = new Set()
 const EditModal = observer(({ stageId, data, handleClose }) => {
   debugger
@@ -31,7 +31,7 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
     description: ' ',
     linked_task: '',
     type: '',
-    status: taskStatusTypes.onHold,
+    taskStatus: taskStatusTypes.created,
     deadline: '',
     responsibles: [],
     planned_time: '',
@@ -70,7 +70,6 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
     if(name.includes('responsibles')){
       value = value[0]
     }
-    debugger
     if (isEditMode) {
       stagesStore.changeById(stageId, name, value, withId);
     } else {
@@ -103,7 +102,7 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
   const handleSubmit = async () => {
     try {
       if (isEditMode) {
-        await taskApi.updateTask(stageTask.id, stageTask); // Обновляем услугу
+        await taskApi.updateTask(stageTask.id, null); // Обновляем услугу
       } else {
         await taskApi.createTask(mapStageDataToBackend({...stageTask,stage_id:localTask.stage_id},draftSet)); // Создаем новую услугу
         draftSet.clear()
@@ -129,6 +128,7 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
             </div>
             <div className={styles.gridContainer}>
               <TaskDescriptionPart
+                  selectedStatus={colorStatusTaskTypes[stageTask.taskStatus]}
                   prefix={isEditMode ? `tasks.${stageTask.id}.` :''}
                   handleSave={() => handleSubmit('Задача принята')}
                   handleDecline={() => handleDecline()}

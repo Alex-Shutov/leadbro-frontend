@@ -1,12 +1,11 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './config';
-import './editor.scss';
+import './editor.sass';
 
 const Editor = createReactEditorJS();
 
 const Index = ({ onChange, initialHTML, name }) => {
-  debugger
   const editorCore = useRef(null);
   initialHTML =   /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML) ? initialHTML : `<p>${initialHTML}</p>`
 

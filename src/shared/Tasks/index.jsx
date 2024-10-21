@@ -22,7 +22,7 @@ const TasksManager = ({ data, handleChange, counts,onClick }) => {
       }
     >
       <TaskList data={{ data, counts }} onClick={onClick} onChange={handleChange} />
-      {<DragPreview values={data} />}
+      {isMobile && <DragPreview values={data} />}
     </DndProvider>
   );
 };

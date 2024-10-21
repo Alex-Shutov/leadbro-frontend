@@ -1,0 +1,30 @@
+@import "src/styles/helpers"
+.codex-editor__redactor
+
+
+
+  word-break: break-word
+  padding-top: 12px
+  padding-bottom: 180px !important
+  border: 2px #EFEFEF solid
+  border-radius: 12px
+  margin-bottom: 16px
+  font-weight: 500
+
+.codex-editor
+  z-index: 0
+  display: flow
+.ce-block__content
+    max-width: calc(70%)
+    @media only screen and (max-width: "1600px")
+      max-width: calc(75%)
+    @media only screen and (max-width: "1104px")
+      max-width: calc(65%)
+.ce-toolbar__content
+  @media only screen and (max-width: "1700px")
+    max-width: calc(75%)
+  @media only screen and (max-width: "1104px")
+    max-width: calc(65%)
+  //@media only screen and (max-width: "1600px")
+  //  max-width: calc(80%)
+

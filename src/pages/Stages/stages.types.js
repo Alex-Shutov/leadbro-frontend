@@ -1,17 +1,16 @@
 export const taskStatusTypes = {
   created: 'created',
-  inProgress: 'inProgress',
-  onReview: 'onReview',
+  in_work: 'in_work',
+  waiting_for_approval: 'waiting_for_approval',
   finished: 'finished',
-
-  onHold: 'onHold',
+  paused: 'paused',
 };
 export const taskStatusTypesRu = {
-  inProgress: 'В работе',
+  in_work: 'В работе',
   finished: 'Завершено',
   created: 'Создана',
-  onReview: 'Ожидают проверку',
-  onHold: 'Отложено',
+  waiting_for_approval: 'Ожидает проверку',
+  paused: 'Отложено',
 };
 
 export const stageStatusTypes = {
@@ -24,20 +23,20 @@ export const stageStatusTypesRu = {
 };
 
 export const colorStatusTaskTypes = {
-  inProgress: { status: taskStatusTypesRu.inProgress, class: 'status-green' },
+  in_work: { status: taskStatusTypesRu.in_work, class: 'status-green' },
   finished: { status: taskStatusTypesRu.finished, class: 'status-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-blue' },
-  onReview: { status: taskStatusTypesRu.onReview, class: 'status-yellow' },
-  onHold: { status: taskStatusTypesRu.onHold, class: 'status-disabled' },
+  waiting_for_approval: { status: taskStatusTypesRu.waiting_for_approval, class: 'status-yellow' },
+  paused: { status: taskStatusTypesRu.paused, class: 'status-disabled' },
 };
 
 export const colorStatusTaskTypesForTaskList = {
-  inProgress: {
-    status: taskStatusTypesRu.inProgress,
+  in_work: {
+    status: taskStatusTypesRu.in_work,
     class: 'status-task-green',
   },
   finished: { status: taskStatusTypesRu.finished, class: 'status-task-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-task-blue' },
-  onReview: { status: taskStatusTypesRu.onReview, class: 'status-task-yellow' },
-  onHold: { status: taskStatusTypesRu.onHold, class: 'status-task-disabled' },
+  waiting_for_approval: { status: taskStatusTypesRu.waiting_for_approval, class: 'status-task-yellow' },
+  paused: { status: taskStatusTypesRu.paused, class: 'status-task-disabled' },
 };

@@ -97,7 +97,7 @@ const StagesTable = observer(({ stage }) => {
         Cell: ({ row }) => {
           const data = row?.original;
           return (
-            <StageBadge statusType={StageStatuses.tasks} status={data.status} />
+            <StageBadge statusType={StageStatuses.tasks} status={data.taskStatus} />
           );
         },
       },
@@ -129,7 +129,7 @@ const StagesTable = observer(({ stage }) => {
       {
         Header: () => null,
         id: 'deadline_time',
-        width: '25%',
+        width: '30%',
 
         Cell: ({ row }) => {
           const data = row?.original;

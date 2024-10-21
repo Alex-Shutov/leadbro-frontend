@@ -1,6 +1,6 @@
 import {
   handleHttpError,
-  handleHttpResponse,
+  handleHttpResponse, handleShowError,
   http,
   mockHttp,
   resetApiProvider,
@@ -39,6 +39,7 @@ const useTasksApi = () => {
   debugger
   const getTasks = useCallback(() => {
     resetApiProvider();
+    setIsLoading(true)
     return http
       .get('api/tasks/mine')
       .then(handleHttpResponse)
@@ -47,7 +48,8 @@ const useTasksApi = () => {
         tasksStore.setTasks(mappedTasks);
         return mappedTasks;
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+        .finally(()=>setIsLoading(false));
   },[]);
 
   const getTaskById = useCallback((id) => {
@@ -81,8 +83,10 @@ const useTasksApi = () => {
   },[]);
 
   const createTask = useCallback((updateData) => {
+    resetApiProvider()
+
     return http
-        .post('/api/tasks', {...updateData,status:taskStatusTypes.created, stage_id:stageId}, )
+        .post('/api/tasks', {...updateData, stage_id:stageId}, )
         .then(handleHttpResponse)
         .then(()=>stageId !== undefined && stagesApi.getStageById(stageId) )
         .catch(handleHttpError);
@@ -91,17 +95,17 @@ const useTasksApi = () => {
   // PUT/PATCH - Обновление задачи
   const updateTask = useCallback((id, updateData) => {
     debugger
-    updateData = mapStageDataToBackend(
+    updateData = updateData ?? mapStageDataToBackend(
         stagesStore.drafts[stageId],
         stagesStore.changedProps,
         id,
     );
-
+    resetApiProvider()
     return http
         .put(`/api/tasks/${id}`, updateData)
         .then(handleHttpResponse)
         .then(()=>stageId !== undefined && stagesApi.getStageById(stageId) )
-        .catch(handleHttpError);
+        .catch(handleShowError);
   }, []);
 
   // DELETE - Удаление задачи

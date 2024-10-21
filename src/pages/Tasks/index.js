@@ -11,6 +11,8 @@ import { LoadingProvider } from "../../providers/LoadingProvider";
 import useTasksApi from "./tasks.api";
 import EditModal from "../Stages/components/StagesPage/components/StagesTable/components/EditModal";
 import EditTaskModal from "./components/TaskEditModal";
+import {useNavigate} from "react-router";
+import {useSearchParams} from "react-router-dom";
 
 const filters = [
     { label: 'Все', value: 'all' },
@@ -21,20 +23,23 @@ const filters = [
 ];
 
 const Index = observer(() => {
-  const { data, isLoading, store: tasksStore } = useTasksByStatus();
   const api = useTasksApi()
     const [taskData,setTaskData] = useState(null)
-  const getCountStatusTask = (type) => {
-    const tasks = data.filter((task) => task.type === type)[0];
-    return tasks.values.length;
-  };
 
 
 
 
-    const [statusFilter, setStatusFilter] = useState(filters[0].value);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Получаем значение фильтра из URL или используем значение по умолчанию
+    const initialFilter = searchParams.get('filter') || 'all';
+    const [statusFilter, setStatusFilter] = useState(initialFilter);
+    const { data, isLoading, store: tasksStore } = useTasksByStatus(statusFilter);
 
     const handleRadioChange = async (filterValue) => {
+        setStatusFilter(filterValue);
+
+        setSearchParams({ filter: filterValue });
         setStatusFilter(filterValue);
         if (filterValue === 'all') {
             await api.getTasks();
@@ -42,9 +47,14 @@ const Index = observer(() => {
             await api.getTasksByRole(filterValue);
         }
     };
-
+    const getCountStatusTask = (type) => {
+        const tasks = data.filter((task) => task.type === type)[0];
+        return tasks.values.length;
+    };
   const handleChange = (taskId, newStatus) => {
+      debugger
     tasksStore.changeById(taskId, `status`, newStatus, true);
+      api.updateTask(taskId,{status:newStatus})
   };
 
   const filteredTasks = data;

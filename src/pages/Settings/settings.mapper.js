@@ -61,7 +61,7 @@ export const mapLegalEntitiesFromApi = (legalEntity) => {
 
 // Пример функции createBlob для обработки изображений
 const createBlob = (fileUrl) => {
-    return `https://yourserver.com${fileUrl}`; // Пример того, как может быть обработан путь к файлу
+    return `${process.env.REACT_APP_API_URL}${fileUrl}`; // Пример того, как может быть обработан путь к файлу
 };
 
 

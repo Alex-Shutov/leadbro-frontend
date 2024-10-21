@@ -47,11 +47,10 @@ const mapTasksFromApi = (tasksData) => {
 };
 
 const mapTaskFromApi = (task) => {
-  debugger;
   return {
     id: task.id,
     title: task.name,
-    status: mapTaskStatus(task.status),
+    taskStatus: mapTaskStatus(task.status),
     service: {
       id: task.service?.id || 0,
       title: task.service?.title || 'Название услуги 1',
@@ -69,7 +68,7 @@ const mapTaskFromApi = (task) => {
     executors: task.performer ? [task.performer].map(mapManager) : [],
     responsibles: task.responsible ? mapManager(task.responsible) : [],
     deadline: task.deadline ? new Date(task.deadline) : new Date(),
-    deadlineTime: task.deadlineTime || '5 ч',
+    deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не задано',
     actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не задано',
     isNewForUser: task.isNewForUser || false,
   };
@@ -118,7 +117,7 @@ const mapTaskStatus = (status) => {
     case 'finished':
       return taskStatusTypes.finished;
     default:
-      return taskStatusTypes.inProgress;
+      return taskStatusTypes[status];
   }
 };
 
@@ -163,22 +162,24 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       deadline:'deadline',
       responsibles:'responsible_id',
       auditors:'auditors',
-      deadlineTime:'deadlineTime',
+      deadlineTime:'planned_time',
       executors:'performer_id',
       taskLinked:'linked_task',
       showInLK:'show_at_client_cabinet',
       description:'description',
+      taskStatus:'status',
       [`tasks.${propId}.actualTime`]: 'actual_time',
       [`tasks.${propId}.title`]: 'name',
       [`tasks.${propId}.type`]: 'type',
       [`tasks.${propId}.deadline`]: 'deadline',
       [`tasks.${propId}.responsibles`]: 'responsible_id',
       [`tasks.${propId}.auditors`]: 'auditors_ids',
-      [`tasks.${propId}.deadlineTime`]: 'deadline', // Привязка времени к 'deadline'
+      [`tasks.${propId}.deadlineTime`]: 'planned_time', // Привязка времени к 'deadline'
       [`tasks.${propId}.executors`]: 'performer_id',
       [`tasks.${propId}.showInLK`]: 'show_at_client_cabinet',
       [`tasks.${propId}.description`]: 'description',
       [`tasks.${propId}.taskLinked`]: 'linked_task',
+      [`tasks.${propId}.taskStatus`]: 'status',
       // Добавляем дополнительные ключи по мере необходимости
     };
 
