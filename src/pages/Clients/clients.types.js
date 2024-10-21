@@ -21,5 +21,5 @@ export const colorStatusTypes = {
   },
   partner: { status: statusTypesRu.partner, class: 'status-purple' },
   competitor: { status: statusTypesRu.competitor, class: 'status-yellow' },
-  unknown: { status: statusTypesRu.unknown, class: 'status-grey' },
+  // unknown: { status: statusTypesRu.unknown, class: 'status-grey' },
 };

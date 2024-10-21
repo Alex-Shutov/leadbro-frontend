@@ -1,27 +1,36 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import cn from "classnames";
+import cn from 'classnames';
 import styles from '../../shared/Dropdown/Default/Dropdown.module.sass';
-import Dropdown from "../../shared/Dropdown/Default";
-import useUnits from "../../hooks/useUnits";
-import {formatDuration, formatUnts} from "../../utils/format.string";
+import Dropdown from '../../shared/Dropdown/Default';
 
-const StatusDropdown =(
-    {
-       options,
-       value, onChange
-    }
-) => {
-    const statuses = options.map((el, idx) => el.label+'_'+idx);
-
-    return (
-        <Dropdown
-            classNameContainer={cn(styles.statusDropdown, styles[value.className])}
-            options={statuses}
-            value={value.label}
-            renderOption={(opt) => opt.split('_')[0]}
-            setValue={(e) => onChange(e.split('_')[1])}
-        />
+const StatusDropdown = ({ statuses, value, onChange }) => {
+  debugger;
+  const options = useMemo(() => {
+    return Object.entries(statuses).map(
+      ([key, { status, class: className }]) => ({
+        key,
+        label: status,
+        className,
+      }),
     );
+  }, [statuses]);
+
+  const dropdownOptions = options.map((opt) => `${opt.label}_${opt.key}`);
+
+  return (
+    <Dropdown
+      classNameContainer={cn(styles.statusDropdown, styles[value?.class])}
+      classDropdownHead={value?.class}
+      options={dropdownOptions}
+      value={value?.status}
+      renderOption={(opt) => opt.split('_')[0]} // Отображаем только название статуса
+      setValue={(e) => {
+        const selectedKey = e.split('_')[1];
+        const selectedOption = options.find((opt) => opt.key === selectedKey);
+        onChange(selectedOption);
+      }}
+    />
+  );
 };
 
 export default StatusDropdown;

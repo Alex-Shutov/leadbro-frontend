@@ -1,4 +1,4 @@
-import { createBlob } from '../../utils/create.utils';
+import { loadAvatar } from '../../utils/create.utils';
 import {
   statusActTypes,
   statusBillTypes,
@@ -23,7 +23,7 @@ const createServices = () => {
       },
       manager: {
         id: 0,
-        image: createBlob(),
+        image: loadAvatar(),
         name: 'Александр',
         surname: 'Александр1',
         role: 'Директор',
@@ -31,14 +31,14 @@ const createServices = () => {
       command: [
         {
           id: 0,
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Александр1',
           role: 'Директор',
         },
         {
           id: 1,
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Александр2',
           role: 'Директор',
@@ -122,7 +122,7 @@ const createServices = () => {
       },
       manager: {
         id: 1,
-        image: createBlob(),
+        image: loadAvatar(),
         name: 'Александр',
         surname: 'Александр2',
         role: 'Директор',
@@ -130,7 +130,7 @@ const createServices = () => {
       command: [
         {
           id: 0,
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Александр1',
           role: 'Директор',

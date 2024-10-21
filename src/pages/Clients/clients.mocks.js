@@ -1,6 +1,6 @@
 import { mockHttp, resetApiProvider } from '../../shared/http';
 import { statusTypes } from './clients.types';
-import { createBlob } from '../../utils/create.utils';
+import { loadAvatar } from '../../utils/create.utils';
 
 export const createRequisites = ({
   INN = '',
@@ -28,7 +28,7 @@ const createClients = () => {
     title: 'ООО ПКФ «Катав-Ивановский лакокрасочный завод»',
     status: statusTypes.inProgress,
     manager: {
-      image: createBlob(),
+      image: loadAvatar(),
       name: 'Александр',
       surname: 'Шилов',
       role: 'Директор',
@@ -90,7 +90,7 @@ const createClients = () => {
         date: new Date(2011, 11, 10),
         sender: {
           id: 0,
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр Шилов',
         },
         value: {
@@ -110,7 +110,7 @@ const createClients = () => {
         type: 'call',
         members: 2,
         assignee: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -124,7 +124,7 @@ const createClients = () => {
         type: 'call',
         members: 2,
         assignee: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -135,13 +135,13 @@ const createClients = () => {
       {
         description: 'SEONeo',
         creator: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
         },
         responsible: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -151,13 +151,13 @@ const createClients = () => {
       {
         description: 'SEONeo',
         creator: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
         },
         responsible: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',
@@ -173,7 +173,7 @@ const createClients = () => {
         description: 'Связаться с клиентом',
         deadline: new Date(),
         responsible: {
-          image: createBlob(),
+          image: loadAvatar(),
           name: 'Александр',
           surname: 'Шилов',
           role: 'Директор',

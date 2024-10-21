@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import cn from 'classnames';
 import styles from './TextInput.module.sass';
 import Icon from '../Icon';
@@ -46,11 +46,12 @@ const TextInput = ({
   noMinWidth,
   onChange,
   value,
+                     validate,
   ...props
 }) => {
   const inputRef = useRef(null);
   const wrapRef = useRef(null);
-
+  const [hasError, setHasError] = useState(false);
   const formatValue = (inputValue) => {
     if (!inputValue) return inputValue;
     // Удаляем все, кроме чисел и точки
@@ -73,6 +74,18 @@ const TextInput = ({
 
     return formattedValue;
   };
+
+  const handleBlur = () => {
+    if (validate) {
+      const isValid = validate(value);
+      if (!isValid) {
+        inputRef.current.classList.add(styles.errorInput);  // Добавляем класс ошибки
+      } else {
+        inputRef.current.classList.remove(styles.errorInput);  // Убираем класс ошибки
+      }
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const currentCursorPosition = e.target.selectionStart;
@@ -145,9 +158,10 @@ const TextInput = ({
             {...props}
           />
         ) : props.type === 'editor' ? (
-          <Editor initialHTML={value} onChange={onChange} />
+            value && <Editor name={props.name ?? ''} initialHTML={value} onChange={onChange} />
         ) : (
           <input
+              onBlur={handleBlur}
             ref={inputRef}
             className={cn(classInput, styles.input)}
             value={

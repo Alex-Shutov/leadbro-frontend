@@ -7,7 +7,8 @@ import cn from 'classnames';
 import { getFormattedTimeType } from '../../../../../../utils/format.time';
 import HoursComponent from '../../../../../../components/HoursComponent';
 import CostView from '../../../../../../components/CostView';
-const Hours = ({ time,actSum }) => {
+const Hours = ({ time,actSum,el }) => {
+  console.log(time,actSum,el,'sum')
   return (
     <div className="hours">
       {/*<div>*/}

@@ -8,6 +8,11 @@ import {
 } from '../../../../../../../../../../utils/formate.date';
 import { convertToHours } from '../../../../../../../../../../utils/format.time';
 import Switch from '../../../../../../../../../../shared/Switch';
+import Dropdown from "../../../../../../../../../../shared/Dropdown/Default";
+import Calendar from "../../../../../../../../../../shared/Datepicker";
+import ValuesSelector from "../../../../../../../../../../shared/Selector";
+import useMembers from "../../../../../../../../../Members/hooks/useMembers";
+import {tasksTypesRu} from "../../../../../../../../../Tasks/tasks.types";
 
 const Index = ({
   data: {
@@ -21,6 +26,7 @@ const Index = ({
     deadlineTime,
     actualTime,
   },
+    types,
   handleChange,
   handleAdd,
   className,
@@ -28,12 +34,12 @@ const Index = ({
   const [mappedAuditors, setMappedAuditors] = useState([]);
   const [mappedExecutors, setMappedExecutors] = useState([]);
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
-
+    const { members } = useMembers();
   const mapValuesForInput = (values) => {
     if (Array.isArray(values)) {
       return values.map((el, index) => ({
         value: el.id !== null ? el.id : index,
-        label: el.id !== null ? `${el.fio}` : el.fio,
+        label: el.id !== null ? `${el.surname} ${el.name}` : el.fio,
       }));
     }
     return [];
@@ -46,66 +52,147 @@ const Index = ({
   }, [initialAuditors, initialExecutors, initialResponsibles]);
   return (
     <div className={className}>
-      <TextInput
+        <TextInput
+            label={'Связанная задача'}
+            name={'taskLinked'}
+
+            value={taskLinked}
+            readonly={true}
+            onChange={({target})=>handleChange(target.name,target.value)}
+            className={styles.input}
+        />
+      <Dropdown
+          // value={selectedService}
+          // setValue={handleServiceChange}
+          // options={serviceOptions}
+          // label="Услуга"
+          renderOption={(opt)=>tasksTypesRu[opt]}
         label={'Тип задачи'}
-        name={'deadline'}
-        value={type.title}
-        readonly={true}
-        className={styles.input}
+        options={types}
+        setValue={(e)=>handleChange('type',e)}
+        value={type}
+        renderValue={(value)=>tasksTypesRu[value]}
+        className={styles.dropdown}
       />
-      <TextInput
+      <Calendar
+          onChange={(data)=> handleChange('deadline',data)}
         label={'Дедлайн'}
         name={'deadline'}
-        value={formatDateWithOnlyDigits(deadline)}
+          value={deadline}
+        // value={formatDateWithOnlyDigits(deadline)}
         readonly={true}
         className={styles.input}
       />
-      <ResponsibleInput
-        canAdd={false}
-        max={1}
-        onAdd={(name) =>
-          handleAdd(name, { fio: '', id: initialResponsibles.length })
-        }
-        onChange={(name, value) => handleChange(`${name}.fio`, value)}
-        name={'responsibles'}
-        label={'Ответственный'}
-        values={mappedResponsibles}
-      />
-      <ResponsibleInput
-        max={3}
-        onAdd={(name) =>
-          handleAdd(name, { fio: '', id: initialAuditors.length })
-        }
-        onChange={(name, value) => handleChange(`${name}.fio`, value)}
-        name={'auditors'}
-        label={'Аудиторы'}
-        values={mappedAuditors}
-      />
+        <ValuesSelector
+            onChange={(e) =>{
+                debugger
+                handleChange(
+                    'responsibles',
+                    e.length
+                        ? members.filter((member) =>
+                            e.some((option) => option.value === member.id),
+                        )
+                        : []
+                )
+            }}
+            isMulti={false}
+            label="Ответственный"
+            options={members.map((el) => ({
+                value: el.id,
+                label: `${el.surname} ${el.name} ${el.middleName}`,
+            }))}
+            value={
+                initialResponsibles
+                    ? initialResponsibles.map((el) => ({
+                        value: el.id,
+                        label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                    }))
+                    : []
+            }
+        />
+      {/*<ResponsibleInput*/}
+      {/*  canAdd={false}*/}
+      {/*  max={1}*/}
+      {/*  onAdd={(name) =>*/}
+      {/*    handleAdd(name, { fio: '', id: initialResponsibles.length })*/}
+      {/*  }*/}
+      {/*  onChange={(name, value) => handleChange(`${name}.fio`, value)}*/}
+      {/*  name={'responsibles'}*/}
+      {/*  label={'Ответственный'}*/}
+      {/*  values={mappedResponsibles}*/}
+      {/*/>*/}
+        <ValuesSelector
+            onChange={(e) =>
+                handleChange(
+                    'auditors',
+                    e.length
+                        ? members.filter((member) =>
+                            e.some((option) => option.value === member.id),
+                        )
+                        : []
+                )
+            }
+            isMulti={true}
+            label="Аудиторы"
+            options={members.map((el) => ({
+                value: el.id,
+                label: `${el.surname} ${el.name} ${el.middleName}`,
+            }))}
+            value={
+                initialAuditors
+                    ? initialAuditors.map((el) => ({
+                        value: el.id,
+                        label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                    }))
+                    : []
+            }
+        />
       <TextInput
         label={'Плановое время, ч'}
         name={'deadlineTime'}
+        type={'number'}
+
         value={convertToHours(deadlineTime)}
         readonly={true}
+        onChange={({target})=>handleChange(target.name,target.value)}
         className={styles.input}
       />
       <TextInput
+          type={'number'}
         label={'Фактическое время, ч'}
         name={'actualTime'}
+        onChange={({target})=>handleChange(target.name,target.value)}
         value={convertToHours(actualTime)}
         readonly={true}
         className={styles.input}
       />
 
-      <ResponsibleInput
-        max={3}
-        onAdd={(name) =>
-          handleAdd(name, { fio: '', id: initialExecutors.length })
-        }
-        onChange={(name, value) => handleChange(`${name}.fio`, value)}
-        name={'executors'}
-        label={'Аудиторы'}
-        values={mappedExecutors}
-      />
+        <ValuesSelector
+            onChange={(e) =>
+                handleChange(
+                    'executors',
+                    e.length
+                        ? members.filter((member) =>
+                            e.some((option) => option.value === member.id),
+                        )
+                        : []
+                )
+            }
+            isMulti={false}
+            label="Исполнитель"
+            options={members.map((el) => ({
+                value: el.id,
+                label: `${el.surname} ${el.name} ${el.middleName}`,
+            }))}
+            value={
+                initialExecutors
+                    ? initialExecutors.map((el) => ({
+                        value: el.id,
+                        label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                    }))
+                    : []
+            }
+        />
       <Switch
         className={styles.switch}
         name={'showInLK'}

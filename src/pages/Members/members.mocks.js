@@ -1,9 +1,9 @@
-import {createBlob} from "../../utils/create.utils";
+import {loadAvatar} from "../../utils/create.utils";
 
 const createMembers = () => [
     {
         id: 0,
-        image: createBlob(),
+        image: loadAvatar(),
         name:
             'Александр',
         surname:
@@ -14,7 +14,7 @@ const createMembers = () => [
     },
     {
         id: 1,
-        image: createBlob(),
+        image: loadAvatar(),
         name:
             'Александр',
         surname:
@@ -24,7 +24,7 @@ const createMembers = () => [
     },
     {
         id: 2,
-        image: createBlob(),
+        image: loadAvatar(),
         name:
             'Александр',
         surname:

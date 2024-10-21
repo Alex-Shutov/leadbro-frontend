@@ -60,7 +60,7 @@ export const handleHttpResponse = (response) => {
 
 export const handleHttpError = (error) => {
   const code = error?.code;
-
+  console.warn({ status: 'error', message: error?.message, code });
   return { status: 'error', message: error?.message, code };
 };
 

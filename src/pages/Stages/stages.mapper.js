@@ -1,4 +1,4 @@
-import { createBlob } from '../../utils/create.utils';
+import { loadAvatar } from '../../utils/create.utils';
 import { stageStatusTypes, taskStatusTypes } from './stages.types';
 import { statusTypes } from '../Services/services.types';
 import { mapChangedFieldsForBackend } from '../../utils/store.utils';
@@ -32,11 +32,22 @@ export const mapStageFromApi = (stageData, tasksData) => {
       id: stageData.company?.id,
       title: stageData.company?.name,
     },
-    tasks: tasksData.map(mapTaskFromApi),
+    tasks: mapTasksFromApi(tasksData),
   };
 };
 
+const mapTasksFromApi = (tasksData) => {
+  debugger
+  return tasksData.reduce((acc, task) => {
+      const mappedTask = mapTaskFromApi(task);
+      acc[mappedTask.id] = mappedTask;
+      return acc;
+    }, {})
+
+};
+
 const mapTaskFromApi = (task) => {
+  debugger;
   return {
     id: task.id,
     title: task.name,
@@ -52,17 +63,11 @@ const mapTaskFromApi = (task) => {
     description: task.description || 'Описание отсутствует',
     showInLK: task.show_at_client_cabinet === 1,
     comments: task.comments ? mapComments(task.comments) : {},
-    taskLinked: {
-      id: task.taskLinked?.id || 0,
-      title: task.taskLinked?.title || 'Задача № 3 - разработать сайт',
-    },
-    type: {
-      id: task.type?.id || 0,
-      title: task.type?.title || 'Тип задачи 1',
-    },
-    auditors: task.auditors ? task.auditors.map(mapParticipant) : [],
-    executors: task.executors ? task.executors.map(mapParticipant) : [],
-    responsibles: task.responsible ? task.responsible : [],
+    taskLinked: task?.linked_task,
+    type: task?.type,
+    auditors: task.auditors ? task.auditors.map(mapManager) : [],
+    executors: task.performer ? [task.performer].map(mapManager) : [],
+    responsibles: task.responsible ? mapManager(task.responsible) : [],
     deadline: task.deadline ? new Date(task.deadline) : new Date(),
     deadlineTime: task.deadlineTime || '5 ч',
     actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не задано',
@@ -75,7 +80,7 @@ const mapParticipant = (participant) => {
     id: participant.id,
     fio: participant.fio || 'Неизвестный',
     role: participant.role || 'Неизвестная роль',
-    image: participant.avatar ? createBlob(participant.avatar) : null,
+    image: participant.avatar ? loadAvatar(participant.avatar) : null,
   };
 };
 
@@ -92,6 +97,20 @@ const mapComments = (comments) => {
   }, {});
 };
 
+const mapManager = (manager) => {
+  if (!manager) return null;
+  return {
+    id: manager.id,
+    name: manager.name,
+    surname: manager.last_name,
+    middleName: manager.middle_name,
+    avatar: manager.avatar ? loadAvatar(manager.avatar) : null,
+    role: manager.position?.name,
+    email: manager.email,
+    phone: manager.phone || null,
+  };
+};
+
 const mapTaskStatus = (status) => {
   switch (status) {
     case 'created':
@@ -104,7 +123,9 @@ const mapTaskStatus = (status) => {
 };
 
 export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
+  debugger
   const castValue = (key, value) => {
+    debugger
     switch (key) {
       case 'active':
         return stageStatusTypes.inProgress === value;
@@ -112,6 +133,19 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
         return format(value, "yyyy-MM-dd'T'HH:mm:ss");
       case 'deadline':
         return format(value, "yyyy-MM-dd'T'HH:mm:ss");
+      case 'actual_time':
+      case 'planned_time':
+        return parseFloat(value); // Если нужны бинарные числа, преобразуем в float
+      case 'show_at_client_cabinet':
+        debugger
+        return Boolean(value); // Преобразуем в булевое значение
+      case 'responsible_id':
+        return value.id
+      case 'performer_id':
+        debugger
+        return value.map(el=>el.id)[0]
+      case 'auditors_ids':
+        return value.map(el=>el.id); // Преобразуем идентификаторы в строки
       default:
         return value; // По умолчанию оставить как есть
     }
@@ -124,6 +158,27 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       startTime: 'start',
       actSum: 'act_sum',
       taskDescription: 'technical_specification',
+      actualTime:'actual_time',
+      type:'type',
+      deadline:'deadline',
+      responsibles:'responsible_id',
+      auditors:'auditors',
+      deadlineTime:'deadlineTime',
+      executors:'performer_id',
+      taskLinked:'linked_task',
+      showInLK:'show_at_client_cabinet',
+      description:'description',
+      [`tasks.${propId}.actualTime`]: 'actual_time',
+      [`tasks.${propId}.title`]: 'name',
+      [`tasks.${propId}.type`]: 'type',
+      [`tasks.${propId}.deadline`]: 'deadline',
+      [`tasks.${propId}.responsibles`]: 'responsible_id',
+      [`tasks.${propId}.auditors`]: 'auditors_ids',
+      [`tasks.${propId}.deadlineTime`]: 'deadline', // Привязка времени к 'deadline'
+      [`tasks.${propId}.executors`]: 'performer_id',
+      [`tasks.${propId}.showInLK`]: 'show_at_client_cabinet',
+      [`tasks.${propId}.description`]: 'description',
+      [`tasks.${propId}.taskLinked`]: 'linked_task',
       // Добавляем дополнительные ключи по мере необходимости
     };
 

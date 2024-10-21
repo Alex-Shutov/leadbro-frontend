@@ -11,6 +11,7 @@ import { AuthContext } from '../providers/AuthProvider';
 import LoginPage from '../pages/Login';
 import { useLocation } from 'react-router';
 import StagesPage from "../pages/Stages/components/StagesPage";
+import Settings from "../pages/Settings";
 
 export const paths = {
   MAIN: '/',
@@ -20,6 +21,7 @@ export const paths = {
   SERVICES_ID: '/services/:id',
   SERVICES_ID_STAGES: '/services/:id/stages/:stageId',
   TASKS: '/tasks',
+  SETTINGS:"/settings",
   LOGIN: '/login',
   NOTFOUND: '*',
 };
@@ -63,6 +65,10 @@ const protectedRoutes = [
   {
     path: paths.TASKS,
     element: <Tasks />,
+  },
+  {
+    path: paths.SETTINGS,
+    element: <Settings />,
   },
 ];
 

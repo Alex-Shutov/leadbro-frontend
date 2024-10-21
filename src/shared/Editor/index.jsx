@@ -5,8 +5,10 @@ import './editor.scss';
 
 const Editor = createReactEditorJS();
 
-const Index = ({ onChange, initialHTML }) => {
+const Index = ({ onChange, initialHTML, name }) => {
+  debugger
   const editorCore = useRef(null);
+  initialHTML =   /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML) ? initialHTML : `<p>${initialHTML}</p>`
 
   const handleInitialize = useCallback((instance) => {
     editorCore.current = instance;
@@ -44,6 +46,7 @@ const Index = ({ onChange, initialHTML }) => {
   };
 
   const handleSpanFormatting = (node) => {
+
     // const htmlContent = node.innerHTML || node.textContent;
     //
     // // Обработка <span>: удаляем <span> и применяем без bold
@@ -73,7 +76,7 @@ const Index = ({ onChange, initialHTML }) => {
 
       onChange({
         target: {
-          name: '',
+          name: name,
           value: html,
         },
       });

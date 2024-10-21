@@ -3,6 +3,7 @@ import Icon from '../../shared/Icon';
 // import * from '/images/content/notes.svg';
 
 const CostView = ({ cost }) => {
+    console.log('cost',cost)
   return (
     <div className={styles.hoursView}>
       {/*<svg width={16} height={16} viewBox={'0 0 16 16'}>*/}

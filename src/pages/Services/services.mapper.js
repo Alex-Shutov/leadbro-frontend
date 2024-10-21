@@ -1,7 +1,8 @@
-import { createBlob } from '../../utils/create.utils';
 import { mapChangedFieldsForBackend } from '../../utils/store.utils';
-import { serviceTypeEnum, statusActTypes, statusTypes } from './services.types';
 import { serviceStatuses } from './components/ServicePage/components/Statuses';
+import { loadAvatar } from '../../utils/create.utils';
+import { statusActTypes, statusTypes } from './services.types';
+import {formatDateToBackend} from "../../utils/formate.date";
 
 // Маппинг данных сервиса с бэкенда
 export const mapServiceFromApi = (apiService, stagesData) => {
@@ -21,7 +22,7 @@ export const mapServiceFromApi = (apiService, stagesData) => {
     command: mapParticipants(apiService.participants),
     status: mapServiceStatus(apiService.active), // Статус (активна ли услуга)
     stages: mapStages(stagesData || apiService.stages), // Этапы
-    tasks: mapTasks(stagesData.tasks), // Задачи
+    tasks: mapTasks(stagesData?.tasks || apiService.tasks), // Задачи
   };
 };
 
@@ -33,7 +34,7 @@ const mapManager = (manager) => {
     name: manager.name,
     surname: manager.last_name,
     middleName: manager.middle_name,
-    avatar: manager.avatar ? createBlob(manager.avatar) : null,
+    avatar: manager.avatar ? loadAvatar(manager.avatar) : null,
     role: manager.position?.name,
     email: manager.email,
     phone: manager.phone || null,
@@ -47,7 +48,7 @@ const mapParticipants = (participants) => {
     name: participant.name,
     surname: participant.last_name,
     middleName: participant.middle_name,
-    avatar: participant.avatar ? createBlob(participant.avatar) : null,
+    avatar: participant.avatar ? loadAvatar(participant.avatar) : null,
     role: participant.position?.name,
     email: participant.email,
     phone: participant.phone || null,
@@ -94,7 +95,7 @@ const mapStages = (stages) => {
       startDate: new Date(stage.start),
       endDate: stage.deadline ? new Date(stage.deadline) : null,
       description: stage.technical_specification,
-      cost: stage.actSum, // Стоимость этапа
+      cost: stage.act_sum, // Стоимость этапа
       active: stage.active === 1 ? serviceStatuses.tasks.inProgress : '',
     }));
   }
@@ -167,7 +168,7 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
       case 'active':
         return statusTypes.inProgress === value;
       case 'deadline':
-        return value.toISOString().slice(0, -5);
+        return formatDateToBackend(value)
       case 'client':
         return value.id;
       default:

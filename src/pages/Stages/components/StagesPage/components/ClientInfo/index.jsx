@@ -29,6 +29,7 @@ const Index = ({
   timeActual,
   costsExtra,
 }) => {
+  debugger
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   return (
     <>

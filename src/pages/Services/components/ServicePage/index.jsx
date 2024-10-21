@@ -73,7 +73,7 @@ const ServicePage = observer(() => {
                               title={el.title}
                           >
                               <Task key={el.id} stage={el} taskName={service.title} task={service.tasks}/>
-                              <Hours actSum={el.cost} time={el.time}/>
+                              <Hours actSum={el.cost} time={el.time} el={el}/>
                               <Report/>
                               <Act act={el.act}/>
                               {/*<Agreement/>*/}

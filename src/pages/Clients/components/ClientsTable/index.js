@@ -33,6 +33,7 @@ const ClientsTable = observer(() => {
   } = usePagingData(clientsStore, fetchClients, () =>
     clientsStore?.getClients(),
   );
+  debugger;
   const cols = React.useMemo(
     () => [
       {
@@ -42,6 +43,7 @@ const ClientsTable = observer(() => {
         accessor: 'name',
         width: '25%',
         Cell: ({ row }) => {
+          debugger;
           const data = row?.original;
           return <TableLink to={`${data.id}`} name={data.title} />;
         },

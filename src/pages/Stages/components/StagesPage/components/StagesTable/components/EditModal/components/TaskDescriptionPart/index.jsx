@@ -23,67 +23,65 @@ const Index = observer(
       title,
       status,
     },
+      prefix,
     handleChange,
     handleSave,
     handleDecline,
     className,
   }) => {
-    const templateTypes = useTemplatesTypes();
-    const { services } = useServices();
     return (
       <div className={cn(styles.border_container, className)}>
         <div className={styles.buttons}>
           <div className={styles.buttons_actions}>
-            <Button isSmall={false} name={'Принять'} onClick={handleSave} />
-            <Button
-              isSmall={false}
-              type={'secondary_outline'}
-              name={'Отклонить'}
-              onClick={handleDecline}
-            />
+            {/*<Button isSmall={false} name={'Принять'} onClick={handleSave} />*/}
+            {/*<Button*/}
+            {/*  isSmall={false}*/}
+            {/*  type={'secondary_outline'}*/}
+            {/*  name={'Отклонить'}*/}
+            {/*  onClick={handleDecline}*/}
+            {/*/>*/}
+              <StageBadge status={status} statusType={StageStatuses.tasks} />
+
           </div>
           <div>
-            <StageBadge status={status} statusType={StageStatuses.tasks} />
           </div>
         </div>
         <TextInput
           classLabel={styles.input_label}
           onChange={({ target }) => handleChange(target.name, target.value)}
-          name={`tasks.${id}.title`}
+          name={`${prefix}title`}
           value={title}
           edited={true}
           className={styles.input}
           label={'Задача'}
         />
-        <Dropdown
-          setValue={(e) => handleChange(`tasks.${id}.service`, e)}
-          classNameContainer={styles.input}
-          label={'Услуга'}
-          value={services?.find((el) => el.id === service?.id)?.title}
-          renderOption={(opt) => opt.title}
-          options={services}
-        />
-        <Dropdown
-          setValue={(e) => handleChange(`tasks.${id}.template`, e)}
-          classNameContainer={styles.input}
-          label={
-            <div className={styles.template_label}>
-              <span>Шаблон задачи</span>
-              <TextLink>Страница задачи</TextLink>
-            </div>
-          }
-          value={templateTypes?.find((el) => el.id === template?.id)?.title}
-          renderOption={(opt) => opt.title}
-          options={templateTypes}
-        />
+        {/*<Dropdown*/}
+        {/*  setValue={(e) => handleChange(`tasks.${id}.service`, e)}*/}
+        {/*  classNameContainer={styles.input}*/}
+        {/*  label={'Услуга'}*/}
+        {/*  value={services?.find((el) => el.id === service?.id)?.title}*/}
+        {/*  renderOption={(opt) => opt.title}*/}
+        {/*  options={services}*/}
+        {/*/>*/}
+        {/*<Dropdown*/}
+        {/*  setValue={(e) => handleChange(`tasks.${id}.template`, e)}*/}
+        {/*  classNameContainer={styles.input}*/}
+        {/*  label={*/}
+        {/*    <div className={styles.template_label}>*/}
+        {/*      <span>Шаблон задачи</span>*/}
+        {/*      <TextLink>Страница задачи</TextLink>*/}
+        {/*    </div>*/}
+        {/*  }*/}
+        {/*  value={templateTypes?.find((el) => el.id === template?.id)?.title}*/}
+        {/*  renderOption={(opt) => opt.title}*/}
+        {/*  options={templateTypes}*/}
+        {/*/>*/}
         <TextInput
           onChange={({ target }) => handleChange(target.name, target.value)}
-          name={`tasks.${id}.description`}
+          name={`${prefix}description`}
           value={description}
           edited={true}
-          type={'textarea'}
-          rows={6}
-          makeFocused={true}
+          type={'editor'}
           className={cn(styles.input, styles.textarea)}
           label={'Описание'}
         />

@@ -19,6 +19,7 @@ import useServiceApi from '../Services/services.api';
 import servicesApi from '../Services/services.api';
 import { stageStatusTypes } from './stages.types';
 import { format } from 'date-fns';
+import {useParams} from "react-router";
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -52,6 +53,8 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useStageApi = () => {
   const { stagesStore } = useStore();
   const serviceApi = useServiceApi();
+  const {id:serviceId} = useParams()
+
   const getTaskStages = (stageId, page = null) => {
     const pageFromUrl = page ?? getQueryParam('page', 1);
     resetApiProvider();
@@ -121,13 +124,13 @@ const useStageApi = () => {
       .catch(handleHttpError);
   };
 
-  const updateStage = (stageId, updateData) => {
+  const updateStage = (stageId,taskId, updateData) => {
     resetApiProvider();
     debugger;
-    const serviceId = updateData.service.id;
     updateData = mapStageDataToBackend(
       stagesStore.drafts[stageId],
       stagesStore.changedProps,
+        taskId,
     );
     return http
       .patch(`/api/stages/${stageId}`, updateData)

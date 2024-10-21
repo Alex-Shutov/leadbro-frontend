@@ -25,6 +25,7 @@ const StagesTable = observer(({ stage }) => {
   const api = useStageApi();
   const [taskData, setTaskData] = useState(null);
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
+  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   const ref = useRef();
 
   const fetchStages = useCallback((stageId) => {
@@ -39,18 +40,26 @@ const StagesTable = observer(({ stage }) => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
-  const handleEdit = (data) => {
+  const handleEditTask = (data) => {
     setTaskData(data);
-    // setEditModalOpen(true);
+    setEditTaskModalOpen(true);
   };
+  const handleCreateTask = () => {
+    setTaskData(null)
+    setEditTaskModalOpen(true)
+  }
 
+  const handleCloseTaskModal = () => {
+    setTaskData(null)
+    setEditTaskModalOpen(false)
+  }
   const handleDelete = (id) => {
     // Реализуйте логику удаления
     console.log(`Удалить услугу с ID: ${id}`);
   };
 
   const getActions = (data) => [
-    { label: 'Редактировать', onClick: () => handleEdit(data) },
+    { label: 'Редактировать', onClick: () => handleEditTask(data) },
     {
       label: 'Удалить',
       onClick: () => handleDelete(data.id),
@@ -67,11 +76,11 @@ const StagesTable = observer(({ stage }) => {
         width: '25%',
 
         Cell: ({ row }) => {
-          const data = row?.original[row.index];
+          const data = row?.original;
           return (
             <TextLink
               onClick={() => {
-                setTaskData(data);
+               handleEditTask(data)
               }}
             >
               {data.title}
@@ -86,7 +95,7 @@ const StagesTable = observer(({ stage }) => {
         // editing: true,
         accessor: 'status',
         Cell: ({ row }) => {
-          const data = row?.original[row.index];
+          const data = row?.original;
           return (
             <StageBadge statusType={StageStatuses.tasks} status={data.status} />
           );
@@ -99,7 +108,7 @@ const StagesTable = observer(({ stage }) => {
         accessor: 'responsible',
         // editing: true,
         Cell: ({ row }) => {
-          const data = row?.original[row.index];
+          const data = row?.original;
           return Array.isArray(data.responsibles) ? (
             data.responsibles.map((el) => <ManagerCell manager={el} />)
           ) : (
@@ -113,7 +122,7 @@ const StagesTable = observer(({ stage }) => {
         width: '25%',
 
         Cell: ({ row }) => {
-          const data = row?.original[row.index];
+          const data = row?.original;
           return <span>{formatDateWithDateAndYear(data.deadline)}</span>;
         },
       },
@@ -123,7 +132,8 @@ const StagesTable = observer(({ stage }) => {
         width: '25%',
 
         Cell: ({ row }) => {
-          const data = row?.original[row.index];
+          const data = row?.original;
+          debugger
           return (
             <DeadLineTimeCell
               deadLine={data.deadlineTime}
@@ -133,16 +143,16 @@ const StagesTable = observer(({ stage }) => {
         },
       },
     ];
-  }, []);
+  }, [paginatedData]);
 
   const sumActualTime = useMemo(() => {
-    const totalHours = stage?.tasks?.reduce(
+    const totalHours = Object.values(stage?.tasks)?.reduce(
       (sum, task) =>
         task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
       0,
     );
     return totalHours + ' ч';
-  }, [paginatedData]);
+  }, [paginatedData[0]]);
   return (
     <div className={styles.table}>
       <Table
@@ -164,24 +174,24 @@ const StagesTable = observer(({ stage }) => {
         }
         headerActions={{
           add: {
-            action: () => console.log('1234'),
+            action: () => handleCreateTask(),
             title: 'Создать задачу',
           },
           edit: {
             action: () => setEditStageModalOpen(true),
           },
         }}
-        data={paginatedData.map((el) => el.tasks)}
+        data={Object.values(paginatedData[0]?.tasks)}
         title={`${stage.title}`}
         columns={cols}
       />
       {/*{stage && <ClientInfo client={stage.client} />}*/}
-      {taskData && (
+      {editTaskModalOpen && (
         <EditModal
           idStage={stage.id}
           stageId={stage.id}
           data={taskData}
-          handleClose={() => setTaskData(null)}
+          handleClose={handleCloseTaskModal}
         />
       )}
       {editStageModalOpen && (

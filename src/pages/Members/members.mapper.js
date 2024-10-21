@@ -1,10 +1,10 @@
 // Функция маппинга данных
-import {createBlob} from "../../utils/create.utils";
+import {loadAvatar} from "../../utils/create.utils";
 
 const mapBackendToMock = (backendData: any[]) => {
     return backendData.map((item) => ({
         id: item.id,
-        image: item.avatar ? `https://api.lead-bro.ru${item.avatar}` : createBlob(), // Если есть аватар, используем его, иначе создаем blob
+        image: item.avatar ? `https://api.lead-bro.ru${item.avatar}` : loadAvatar(), // Если есть аватар, используем его, иначе создаем blob
         name: item.name,
         surname: item.last_name,
         middleName:item.middle_name ?? '',

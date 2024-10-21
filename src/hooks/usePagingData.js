@@ -21,14 +21,20 @@ const usePagingData = (store, fetchData, getDataFromStore) => {
 
   const handlePageChange = useCallback(
     (page) => {
-      if (page !== currentPage) {
-        navigate({
-          pathname: location.pathname,
-          search: `?page=${page}`,
-        });
-      }
+      const searchParams = new URLSearchParams(location.search);
+
+      // Устанавливаем новый параметр page
+      searchParams.set('page', page);
+
+      // Формируем новую строку запроса
+      const newSearch = searchParams.toString();
+
+      navigate({
+        pathname: location.pathname,
+        search: newSearch ? `?${newSearch}` : `?page=${page}`,
+      });
     },
-    [navigate, location.pathname, currentPage],
+    [navigate, location.pathname, currentPage, location.search],
   );
 
   return {
