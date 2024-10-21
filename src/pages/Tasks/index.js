@@ -53,7 +53,7 @@ const Index = observer(() => {
     };
   const handleChange = (taskId, newStatus) => {
       debugger
-    tasksStore.changeById(taskId, `status`, newStatus, true);
+    tasksStore.changeById(taskId, `taskStatus`, newStatus, true);
       api.updateTask(taskId,{status:newStatus})
   };
 

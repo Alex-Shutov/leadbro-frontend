@@ -19,7 +19,7 @@ const useTasksByStatus = (statusFilter) => {
                 type: status,
                 typeRu: taskStatusTypesRu[status],
 
-                values: data.filter((task) => task.status === status),
+                values: data.filter((task) => task.taskStatus === status),
                 color: { color: colorStatusTaskTypesForTaskList[status].class },
             }
         });
