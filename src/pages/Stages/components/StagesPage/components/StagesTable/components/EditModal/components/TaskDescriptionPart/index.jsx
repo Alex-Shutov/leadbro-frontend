@@ -36,6 +36,7 @@ const Index = observer(
     className,
   }) => {
       // const stageOptions = useS
+      debugger
     return (
       <div className={cn(styles.border_container, className)}>
         <div className={styles.buttons}>
@@ -49,7 +50,7 @@ const Index = observer(
             {/*/>*/}
               <StatusDropdown
                   statuses={colorStatusTaskTypes}
-                  value={selectedStatus}
+                  value={colorStatusTaskTypes[selectedStatus]}
                   onChange={(option) => handleChange(`${prefix}taskStatus`, option.key)}
               />
 
@@ -99,7 +100,7 @@ const Index = observer(
         {/*  renderOption={(opt) => opt.title}*/}
         {/*  options={templateTypes}*/}
         {/*/>*/}
-        <TextInput
+          {description &&   <TextInput
           onChange={({ target }) => handleChange(target.name, target.value)}
           name={`${prefix}description`}
           value={description}
@@ -107,7 +108,7 @@ const Index = observer(
           type={'editor'}
           className={cn(styles.input, styles.textarea)}
           label={'Описание'}
-        />
+        />}
       </div>
     );
   },

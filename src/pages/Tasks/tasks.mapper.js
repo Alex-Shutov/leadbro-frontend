@@ -5,7 +5,7 @@ export const mapTaskFromApi = (task) => {
   return {
     id: task.id,
     title: task.name,
-    status: mapTaskStatus(task.status),
+    taskStatus: mapTaskStatus(task.status),
     stage: {
       id: task.stage?.id || null,
       title: task.stage?.name || 'Этап не задан',

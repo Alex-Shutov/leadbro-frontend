@@ -27,12 +27,10 @@ const EditTaskModal = observer(({ data, handleClose }) => {
             taskStore.drafts,
         ],
     );
-    debugger
 
     const [isOpened, setOpened] = useState(true);
     const api = useTasksApi();
     const handleChange = (name, payload, withId = true) => {
-        debugger
         taskStore.changeById(data.id, name, payload, withId);
     };
     const handleReset = useCallback((path = '') => {
@@ -63,6 +61,7 @@ const EditTaskModal = observer(({ data, handleClose }) => {
                 <div className={styles.gridContainer}>
                     <TaskDescriptionPart
                         prefix={''}
+                        selectedStatus={task.taskStatus}
                         handleSave={() => handleSubmit('Задача принята')}
                         handleDecline={() => handleDecline()}
                         className={styles.taskDescription}
