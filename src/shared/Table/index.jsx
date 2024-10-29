@@ -12,13 +12,14 @@ import { clickRecursive } from '../../utils/click';
 import TableMenu from '../../components/TableMenu';
 import { useLocation, useNavigate } from 'react-router';
 import { NextButton, PreviousButton } from '../PaginationButton';
-import TableSwithcer from "../../pages/Settings/components/TableSwithcer";
+import TableSwithcer from '../../pages/Settings/components/TableSwithcer';
 
 const Table = observer(
   ({
     columns,
     data,
     title,
+    beforeTable,
     headerActions,
     cardComponent,
     editComponent,
@@ -26,7 +27,7 @@ const Table = observer(
     paging, // Добавлено для пагинации
     ...rest
   }) => {
-    const [editingRowIndex, setEditingRowIndex  ] = useState(null);
+    const [editingRowIndex, setEditingRowIndex] = useState(null);
     const [isSorting, setIsSorting] = useState(false);
     const [activeMenuRowIndex, setActiveMenuRowIndex] = useState(null);
     const navigate = useNavigate();
@@ -188,184 +189,195 @@ const Table = observer(
       );
     };
 
-    return (<>
-      <div className={rest.classContainer}>
-        {!rest.headerInCard && titleJsx}
-          {rest?.settingsSwithcerValue && <TableSwithcer value={rest.settingsSwithcerValue}/>}
+    return (
+      <>
+        <div className={rest.classContainer}>
+          {!rest.headerInCard && titleJsx}
+          {rest?.settingsSwithcerValue && (
+            <TableSwithcer value={rest.settingsSwithcerValue} />
+          )}
           <div className={'gridContainer'}>
-        <Card
-          className={cn(styles.card, {
-            [styles.card_smallTable]: rest.smallTable,
-          })}
-        >
-          {rest.headerInCard && titleJsx}
-          <div
-            className={cn(styles.wrapper, {
-              [styles.smallTable]: rest.smallTable,
-              [styles.pagingTable]: !!paging,
-            })}
-          >
-            <table {...getTableProps()}>
-              <thead>
-                {!rest.disableHeader &&
-                  headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <motion.th
-                          onClick={(e) => {
-                            setIsSorting(true);
-                            if (column.canSort && !column.isSortedDesc)
-                              clickRecursive(e.target);
-                          }}
-                          {...column.getHeaderProps(
-                            column.getSortByToggleProps(),
-                          )}
-                          style={{ width: column.width }}
-                        >
-                          <div
-                            onClick={() => {
-                              setIsSorting(true);
-                            }}
-                            className={cn(styles.headerCol_wrapper)}
-                          >
-                            <div
-                              className={cn(styles.headerCol)}
-                              ref={headerSortingRef}
+            {beforeTable && beforeTable()}
+            <Card
+              className={cn(styles.card, {
+                [styles.card_smallTable]: rest.smallTable,
+              })}
+            >
+              {rest.headerInCard && titleJsx}
+              <div
+                className={cn(styles.wrapper, {
+                  [styles.smallTable]: rest.smallTable,
+                  [styles.pagingTable]: !!paging,
+                })}
+              >
+                <table {...getTableProps()}>
+                  <thead>
+                    {!rest.disableHeader &&
+                      headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                          {headerGroup.headers.map((column) => (
+                            <motion.th
+                              onClick={(e) => {
+                                setIsSorting(true);
+                                if (column.canSort && !column.isSortedDesc)
+                                  clickRecursive(e.target);
+                              }}
+                              {...column.getHeaderProps(
+                                column.getSortByToggleProps(),
+                              )}
+                              style={{ width: column.width }}
                             >
-                              <span>{column.render('Header')}</span>
-                              {column.canSort && (
-                                <span className={styles.margin}>
-                                  <div className={styles.flex}>
-                                    <Icon
-                                      fill={'#6F767E'}
-                                      name={'sort-arrow'}
-                                      viewBox={'0 0 8 17'}
-                                      size={16}
-                                    />
-                                    <div
-                                      className={cn(styles.component, {
-                                        [styles.active]: column.isSortedDesc,
-                                      })}
-                                    >
-                                      <span />
-                                      <span />
-                                      <span />
-                                    </div>
-                                  </div>
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </motion.th>
+                              <div
+                                onClick={() => {
+                                  setIsSorting(true);
+                                }}
+                                className={cn(styles.headerCol_wrapper)}
+                              >
+                                <div
+                                  className={cn(styles.headerCol)}
+                                  ref={headerSortingRef}
+                                >
+                                  <span>{column.render('Header')}</span>
+                                  {column.canSort && (
+                                    <span className={styles.margin}>
+                                      <div className={styles.flex}>
+                                        <Icon
+                                          fill={'#6F767E'}
+                                          name={'sort-arrow'}
+                                          viewBox={'0 0 8 17'}
+                                          size={16}
+                                        />
+                                        <div
+                                          className={cn(styles.component, {
+                                            [styles.active]:
+                                              column.isSortedDesc,
+                                          })}
+                                        >
+                                          <span />
+                                          <span />
+                                          <span />
+                                        </div>
+                                      </div>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </motion.th>
+                          ))}
+                        </tr>
                       ))}
-                    </tr>
-                  ))}
-              </thead>
-              <tbody {...getTableBodyProps()}>
-                {rest.disableHeader
-                  ? headerGroups.map((group) =>
-                      group.headers
-                        .filter((col) => col.columns && !col.parent)
-                        .map((col) => {
-                          const colJsx = col.render('Header');
-                          return (
-                            <div className={styles.disable_header} key={col.id}>
-                              {Object.keys(colJsx.props).length ? (
-                                <tr>
-                                  <td>{colJsx}</td>
-                                </tr>
-                              ) : (
-                                <></>
-                              )}
-                              {rowsOrPage
-                                .filter(
-                                  (el) =>
-                                    el.id === col.originalId.split('_')[1],
-                                )
-                                .map((row) => {
-                                  prepareRow(row);
-                                  return (
-                                    <React.Fragment
-                                      key={row.id}
-                                      {...row.getRowProps()}
-                                    >
-                                      <tr>
-                                        {row.cells
-                                          .filter(
-                                            (cell) =>
-                                              cell.column.parent.id ===
-                                              col.originalId,
-                                          )
-                                          .map((cell) => (
-                                            <td
-                                              key={cell.column.id}
-                                              {...cell.getCellProps()}
-                                            >
-                                              {cell.render('Cell')}
-                                            </td>
-                                          ))}
-                                      </tr>
-                                    </React.Fragment>
-                                  );
-                                })}
-                            </div>
-                          );
-                        }),
-                    )
-                  : rowsOrPage.map((row, index) => renderRow(row, index))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-        <Card className={styles.pagingCard}>
-          {paging && (
-            <div className={styles.pagination}>
-              <PreviousButton
-                disabled={paging.current === 1}
-                onClick={() => paging.onPageChange(Number(paging.current) - 1)}
-              />
-              <div className={cn(styles.divider_line, styles.left)} />
-              {allPages && (
-                <div className={styles.pagesCount}>
-                  {[...Array(allPages).keys()].map((page, index) => (
-                    <div
-                      key={index}
-                      className={
-                        pageIndex === index + 1
-                          ? cn(styles.page, styles.active)
-                          : styles.page
-                      }
-                      onClick={() => {
-                        paging.onPageChange(Number(index) + 1);
-                      }}
-                    >
-                      {index + 1}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                    {rest.disableHeader
+                      ? headerGroups.map((group) =>
+                          group.headers
+                            .filter((col) => col.columns && !col.parent)
+                            .map((col) => {
+                              const colJsx = col.render('Header');
+                              return (
+                                <div
+                                  className={styles.disable_header}
+                                  key={col.id}
+                                >
+                                  {Object.keys(colJsx.props).length ? (
+                                    <tr>
+                                      <td>{colJsx}</td>
+                                    </tr>
+                                  ) : (
+                                    <></>
+                                  )}
+                                  {rowsOrPage
+                                    .filter(
+                                      (el) =>
+                                        el.id === col.originalId.split('_')[1],
+                                    )
+                                    .map((row) => {
+                                      prepareRow(row);
+                                      return (
+                                        <React.Fragment
+                                          key={row.id}
+                                          {...row.getRowProps()}
+                                        >
+                                          <tr>
+                                            {row.cells
+                                              .filter(
+                                                (cell) =>
+                                                  cell.column.parent.id ===
+                                                  col.originalId,
+                                              )
+                                              .map((cell) => (
+                                                <td
+                                                  key={cell.column.id}
+                                                  {...cell.getCellProps()}
+                                                >
+                                                  {cell.render('Cell')}
+                                                </td>
+                                              ))}
+                                          </tr>
+                                        </React.Fragment>
+                                      );
+                                    })}
+                                </div>
+                              );
+                            }),
+                        )
+                      : rowsOrPage.map((row, index) => renderRow(row, index))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+            <Card className={styles.pagingCard}>
+              {paging && (
+                <div className={styles.pagination}>
+                  <PreviousButton
+                    disabled={paging.current === 1}
+                    onClick={() =>
+                      paging.onPageChange(Number(paging.current) - 1)
+                    }
+                  />
+                  <div className={cn(styles.divider_line, styles.left)} />
+                  {allPages && (
+                    <div className={styles.pagesCount}>
+                      {[...Array(allPages).keys()].map((page, index) => (
+                        <div
+                          key={index}
+                          className={
+                            pageIndex === index + 1
+                              ? cn(styles.page, styles.active)
+                              : styles.page
+                          }
+                          onClick={() => {
+                            paging.onPageChange(Number(index) + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
+                  <div className={cn(styles.divider_line, styles.right)} />
+
+                  <NextButton
+                    disabled={paging.current === allPages}
+                    onClick={() =>
+                      paging.onPageChange(Number(paging.current) + 1)
+                    }
+                  />
                 </div>
               )}
-              <div className={cn(styles.divider_line, styles.right)} />
-
-              <NextButton
-                disabled={paging.current === allPages}
-                onClick={() => paging.onPageChange(Number(paging.current) + 1)}
-              />
-            </div>
-          )}
-        </Card>
-              {rest?.after}
-
+            </Card>
+            {rest?.after}
           </div>
 
-        {cardComponent && (
-          <AdaptiveCards
-            onPagination={rest?.onPagination ?? null}
-            cardComponent={cardComponent}
-            rows={rows}
-          />
-        )}
-      </div>
-        </>
+          {cardComponent && (
+            <AdaptiveCards
+              onPagination={rest?.onPagination ?? null}
+              cardComponent={cardComponent}
+              rows={rows}
+            />
+          )}
+        </div>
+      </>
     );
   },
 );

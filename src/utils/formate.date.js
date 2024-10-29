@@ -43,7 +43,10 @@ export const formatHours = (date) => {
   return format(date, 'HH:mm');
 };
 
-
-export const formatDateToBackend = (value) =>{
+export const formatDateToBackend = (value) => {
   return format(value, "yyyy-MM-dd'T'HH:mm:ss");
-}
+};
+
+export const formatDateToQuery = (value) => {
+  return format(value, 'yyyy-MM-dd');
+};
