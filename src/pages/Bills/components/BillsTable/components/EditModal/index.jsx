@@ -23,8 +23,9 @@ import ServiceItems from "./components/ServiceItems";
 import useClientsApi from "../../../../../Clients/clients.api";
 import Icon from "../../../../../../shared/Icon";
 import ConfirmationModal from "../../../../../../components/ConfirmationModal";
+import useServiceApi from "../../../../../Services/services.api";
 
-const EditModal = observer(({ billId, onClose }) => {
+const EditModal = observer(({ billId, onClose,company,service,stage }) => {
   const { store: billsStore } = useBills();
   const appApi = useAppApi();
   const { appStore } = useStore();
@@ -36,6 +37,7 @@ const EditModal = observer(({ billId, onClose }) => {
   //   data: { legalEntities },
   // } = useLegals();
   const api = useBillsApi();
+  const serviceApi = useServiceApi()
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [companySearchTerm, setCompanySearchTerm] = useState('');
@@ -48,11 +50,11 @@ const EditModal = observer(({ billId, onClose }) => {
     creationDate: new Date(),
     paymentDate: new Date(),
     legalEntity: null,
-    company: null,
+    company: company ?? null,
     status: 'created',
     paymentReason:'',
-    service:null,
-    stage:null,
+    service: service ?? null,
+    stage: stage ?? null,
     stampedBill:null,
     items: [],
   });
@@ -134,7 +136,7 @@ const EditModal = observer(({ billId, onClose }) => {
           ...localBill,
           legalEntityId: bill?.legalEntity?.id ?? 0,
           companyId: bill?.company?.id ?? 0,
-        });
+        }).then(()=>service && stage && serviceApi.getServiceById(service.id));
       }
       handleSubmitSnackbar(
         isEditMode ? 'Счет успешно отредактирован' : 'Счет успешно создан',
@@ -142,7 +144,7 @@ const EditModal = observer(({ billId, onClose }) => {
       onClose();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
-      handleError('Ошибка при сохранении:', error.toString())
+      handleError('Ошибка при сохранении:', error)
     }
   };
 
@@ -205,7 +207,7 @@ const EditModal = observer(({ billId, onClose }) => {
           return response;
         }}
         setValue={(e) => {
-          handleChange('company', e)
+          handleChange('legalEntity', e)
         }
       }
         classNameContainer={styles.input}
@@ -259,7 +261,7 @@ const EditModal = observer(({ billId, onClose }) => {
 
       <ValuesSelector
           minInputLength={4}
-
+        readonly={company ?? false}
         placeholder={'Клиент'}
         onChange={(e) =>{
           handleChange(
@@ -293,6 +295,7 @@ const EditModal = observer(({ billId, onClose }) => {
 
         {bill?.company?.id && <ValuesSelector
           minInputLength={4}
+          readonly={service ?? false}
 
           placeholder={'Услуга'}
           onChange={(e) =>{
@@ -329,6 +332,7 @@ const EditModal = observer(({ billId, onClose }) => {
 
       {bill?.service?.id && <ValuesSelector
           minInputLength={4}
+          readonly={stage ?? false}
 
           placeholder={'Этап'}
           onChange={(e) =>
