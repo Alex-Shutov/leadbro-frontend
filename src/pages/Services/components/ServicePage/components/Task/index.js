@@ -14,6 +14,7 @@ import Icon from '../../../../../../shared/Icon';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Basis from '../../../../../../shared/Basis';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
+import {declineWord} from "../../../../../../utils/format.string";
 
 const Task = ({ stage, task, taskName, ...rest }) => {
   debugger;
@@ -43,14 +44,14 @@ const Task = ({ stage, task, taskName, ...rest }) => {
             adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'} name={'add'} />}
           />
         </CardField>
-        <CardField label={'Задача'}>
+        <CardField label={'Задачи'}>
           <Basis className={styles.taskName}>
             <div>
               <TextLink
                 onClick={() => setIsOpen(true)}
                 className={styles.taskName_primary}
               >
-                <span>{`${total} задач`}</span>
+                <span>{stage.taskCount} {`${declineWord('задача',stage.taskCount)}`}</span>
               </TextLink>
             </div>
             {/*<div className={styles.dateDeadline}>*/}

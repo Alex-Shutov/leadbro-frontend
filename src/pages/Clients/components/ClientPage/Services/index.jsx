@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, {useMemo, useState} from 'react';
 import TableLink from '../../../../../shared/Table/Row/Link';
 import Badge, { statusTypes } from '../../../../../shared/Badge';
 import ManagerCell from '../../../../../components/ManagerCell';
@@ -11,8 +11,12 @@ import { formatDate } from '../../../../../utils/formate.date';
 import styles from './Services.module.sass';
 import { Link } from 'react-router-dom';
 import TextLink from '../../../../../shared/Table/TextLink';
+import EditModal from "../../../../Services/components/ServicesTable/components/EditModal";
 
-const ClientService = ({ services }) => {
+const ClientService = ({ services,currentClient }) => {
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [currentService, setCurrentService] = useState(null);
+
   const cols = React.useMemo(
     () => [
       {
@@ -20,8 +24,9 @@ const ClientService = ({ services }) => {
         id: 'service',
         Cell: ({ row }) => {
           const data = row?.original;
+            console.log(data,'data')
           return (
-            <TextLink className={styles.link}>{data?.description}</TextLink>
+            <TextLink to={`/services/${data.id}`} className={styles.link}>{data?.description}</TextLink>
           );
         },
       },
@@ -76,7 +81,7 @@ const ClientService = ({ services }) => {
         headerActions={{
           sorting: true,
           add: {
-            action: () => console.log('1234'),
+              action: () => setEditModalOpen(true),
             title: '',
           },
         }}
@@ -84,6 +89,13 @@ const ClientService = ({ services }) => {
         data={data}
         columns={cols}
       />
+        {editModalOpen && (
+            <EditModal
+                client={currentClient}
+                serviceId={currentService?.id ?? null}
+                onClose={() => setEditModalOpen(false)}
+            />
+        )}
     </div>
   );
 };

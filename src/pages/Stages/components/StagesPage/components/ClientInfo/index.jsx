@@ -15,6 +15,7 @@ import cn from 'classnames';
 import CardDropdown from '../../../../../../shared/Dropdown/Card';
 import { TranslateYTransition } from '../../../../../../utils/motion.variants';
 import { AnimatePresence, motion } from 'framer-motion';
+import {compareTime} from "../../../../../../utils/compare";
 const Index = ({
   data: {
     client,
@@ -29,7 +30,7 @@ const Index = ({
   timeActual,
   costsExtra,
 }) => {
-  debugger
+  console.log(actualTime,deadlineTime,'12233333')
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   return (
     <>
@@ -97,7 +98,7 @@ const Index = ({
                   label={'Фактическое время'}
                   text={
                     <HoursComponent
-                      cls={cn(styles.hours, styles.hours_actual)}
+                      cls={cn(styles.hours, styles.hours_actual,{[styles.hours_actual_true]:!compareTime(actualTime??timeActual,deadlineTime)} )}
                       time={
                         actualTime
                           ? convertToHours(actualTime)

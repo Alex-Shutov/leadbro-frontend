@@ -9,13 +9,12 @@ export const mapBillFromApi = (apiBill) => {
     number: apiBill.number,
     creationDate: new Date(apiBill.creation_date),
     paymentDate: new Date(apiBill.payment_date),
-    paymentReason:'',
-    company: apiBill.company
-      ? {
-          id: apiBill.company.id,
-          name: apiBill.company.name,
-        }
-      : null,
+    paymentReason:apiBill.payment_reason,
+    stage:apiBill.stage,
+    company: apiBill.stage.company ?? null,
+
+    service: apiBill.stage.service ?? null,
+
     legalEntity: apiBill.legal_entity
       ? {
           id: apiBill.legal_entity.id,
@@ -45,9 +44,13 @@ export const mapBillDataToBackend = (drafts, changedFieldsSet) => {
         return Number(value.id);
       case 'companyId':
         return Number(value.id);
+      case 'stage_id':
+        return Number(value.id)
       case 'creationDate':
       case 'paymentDate':
         return formatDateToBackend(value);
+      case 'bill_items':
+        return value.map(el=>({...el,'measurement_unit':el.measurementUnit}))
       default:
         return value;
     }
@@ -59,6 +62,9 @@ export const mapBillDataToBackend = (drafts, changedFieldsSet) => {
       company: 'company_id',
       creationDate: 'creation_date',
       paymentDate: 'payment_date',
+      stage:'stage_id',
+      paymentReason:'payment_reason',
+      items:'bill_items'
       // Добавьте дополнительные ключи по мере необходимости
     };
 

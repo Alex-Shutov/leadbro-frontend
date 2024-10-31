@@ -98,6 +98,49 @@ const useAppApi = () => {
       .catch(handleHttpError);
   };
 
+  const getServicesByCompany = (companyId) => {
+    resetApiProvider();
+    return http
+        .get(`/api/companies/${companyId}/services`, {
+        })
+        .then(handleHttpResponse)
+        .then((res) => {
+          debugger
+          appStore.setServicesByCompany(res.body.data.map(el=>({id:el.id,name:el.name}))); // Сохраняем услуги в стор
+          return res.body.data// Сохраняем услуги в стор
+
+        })
+        .catch(handleHttpError);
+  };
+
+  const getStagesByService = (serviceId) => {
+    resetApiProvider();
+    return http
+        .get(`/api/services/${serviceId}/stages`, {
+        })
+        .then(handleHttpResponse)
+        .then((res) => {
+          appStore.setStagesByService(res.body.data.map(el=>({id:el.id,name:el.name})));
+          return res.body.data// Сохраняем услуги в стор
+
+        })
+        .catch(handleHttpError);
+  };
+
+  const getLegalEntities = (serviceId) => {
+    resetApiProvider();
+    return http
+        .get(`/api/selector/legal_entities`, {
+        })
+        .then(handleHttpResponse)
+        .then((res) => {
+          appStore.setLegalEntities(res.body.data.map(el=>({id:el.id,name:el.name})));
+          return res.body.data// Сохраняем услуги в стор
+
+        })
+        .catch(handleHttpError);
+  };
+
   return {
     getEmployees,
     getCompanies,
@@ -105,6 +148,9 @@ const useAppApi = () => {
     getEmployeePositions,
     getTasks,
     getServices,
+    getServicesByCompany,
+    getStagesByService,
+    getLegalEntities
   };
 };
 

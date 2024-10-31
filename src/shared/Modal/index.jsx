@@ -20,21 +20,23 @@ const Modal = ({
   handleSubmit,
   children,
   cls,
+    modalRef,
   closeButton,
+    customButtons
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const ref = useRef(null);
-  const innerRef = useRef(null);
+  const ref = useRef( null);
+  const innerRef = useRef(modalRef ?? null);
   const isFirstRender = useRef(true);
 
   const handleCloseModal = useCallback(() => {
-    setIsVisible(false);
+    // setIsVisible(false);
     handleClose && handleClose();
     document.body.style.overflow = 'auto';
   }, [handleClose]);
 
   const handleSubmitModal = useCallback(() => {
-    setIsVisible(false);
+    // setIsVisible(false);
     handleSubmit && handleSubmit();
     document.body.style.overflow = 'auto';
   }, [handleSubmit]);
@@ -111,6 +113,7 @@ const Modal = ({
         </div>
         {children}
         <div className={styles.buttons}>
+          <div className={styles.left}>
           {handleSubmit && (
             <Button
               isSmall={false}
@@ -129,6 +132,8 @@ const Modal = ({
               type={'secondary'}
             />
           )}
+          </div>
+          {customButtons && customButtons}
         </div>
       </div>
     </motion.div>,

@@ -25,7 +25,6 @@ const StatusDropdown = ({ statuses, value, onChange }) => {
       value={value?.status}
       renderOption={(opt) => opt.split('#')[0]} // Отображаем только название статуса
       setValue={(e) => {
-          debugger
         const selectedKey = e.split('#')[1];
         const selectedOption = options.find((opt) => opt.key === selectedKey);
         onChange(selectedOption);

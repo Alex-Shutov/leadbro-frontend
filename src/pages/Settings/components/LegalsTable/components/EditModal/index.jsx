@@ -11,6 +11,7 @@ import useLegalsApi from '../../../../api/legals.api';
 import {mapChangedFieldsForBackend} from "../../../../../../utils/store.utils";
 import {mapSettingsDataToBackend} from "../../../../settings.mapper";
 import FileUpload from "../../../../../../shared/FileUpload";
+import Checkbox from "../../../../../../shared/Checkbox";
 
 const EditModal = observer(({ legalId, onClose }) => {
     const { store: legalsStore } = useLegals();
@@ -219,6 +220,7 @@ const EditModal = observer(({ legalId, onClose }) => {
             </div>
             <div className={styles.flex}>
                 <FileUpload
+                    required
                     label="Скан подписи"
                     name="signScan"
                     value={legal.signScan}
@@ -226,6 +228,8 @@ const EditModal = observer(({ legalId, onClose }) => {
                     acceptTypes=".pdf,.png,.jpg"
                 />
                 <FileUpload
+                    required
+
                     label="Скан подписи"
                     name="stampScan"
                     value={legal.stampScan}
@@ -233,8 +237,13 @@ const EditModal = observer(({ legalId, onClose }) => {
                     acceptTypes=".pdf,.png,.jpg"
                 />
             </div>
-
-            {/* TODO: Add file upload components for signScan and stampScan */}
+            <Checkbox
+                name={'isMainLegalEntity'}
+                content={<span className={styles.checkbox_mainLegal}>Основное юр. лицо</span>}
+                className={styles.checkbox}
+                value={legal?.isMainLegalEntity ?? false}
+                onChange={(name,value)=>handleChange(name,value)}
+            />
         </Modal>
     );
 });

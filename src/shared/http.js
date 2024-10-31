@@ -86,6 +86,7 @@ export const handleShowError = (errors, delay = 100) => {
 
     delayTime += delay; // Увеличиваем задержку
   });
+  throw errorsResp
 };
 
 export const resetApiProvider = () => {

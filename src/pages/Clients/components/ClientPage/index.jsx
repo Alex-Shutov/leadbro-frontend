@@ -28,6 +28,7 @@ import useClients from '../../hooks/useClients';
 import ClientTokens from './Tokens';
 import CreateModal from './Passwords/Modals/CreateModal';
 import CreatePassModal from './Passwords/Modals/CreateModal';
+import {LoadingProvider} from "../../../../providers/LoadingProvider";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -74,6 +75,7 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
+      <LoadingProvider isLoading={api.isLoading}>
       <Title title={client?.title} />
       <div className={styles.dropdown}>
         <CardDropdown
@@ -90,6 +92,7 @@ const ClientPage = observer(() => {
             client={client}
           />
           <ClientService
+              currentClient={client}
             className={cn(styles.card, styles.card_status)}
             services={
               client?.services?.value ? [client?.services?.value] : null
@@ -164,6 +167,7 @@ const ClientPage = observer(() => {
           companyId={client?.id}
         />
       )}
+      </LoadingProvider>
     </motion.div>
   );
 });

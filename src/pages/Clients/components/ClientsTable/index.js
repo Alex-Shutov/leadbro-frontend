@@ -89,7 +89,7 @@ const ClientsTable = observer(() => {
 
         Cell: ({ row }) => {
           const data = row?.original;
-          return <ActivitiesCell activities={data.activities} />;
+          // return <ActivitiesCell activities={data.activities} />;
         },
       },
     ],

@@ -14,21 +14,36 @@ import TextLink from '../../../../shared/Table/TextLink';
 import BillsStats from './components/BillsStats';
 import useQueryParam from '../../../../hooks/useQueryParam';
 import { formatDateToQuery } from '../../../../utils/formate.date';
+import {format, startOfDay, sub} from "date-fns";
+
+export const formatDateForUrl = (date) => {
+  return format(date, 'yyyy-MM-dd');
+};
 
 const BillsTable = observer(() => {
   const { billsStore } = useStore();
   const api = useBillsApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
-  const from = useQueryParam('from', null);
-  const to = useQueryParam('to', null);
+
+  const today = startOfDay(new Date());
+  const monthAgo = sub(today, { months: 1 });
+  const todayFormatted = formatDateForUrl(today);
+
+  const monthAgoFormatted = formatDateForUrl(monthAgo);
+  debugger
+
+  const from = useQueryParam('from', monthAgoFormatted);
+  const to = useQueryParam('to', todayFormatted);
 
   const fetchBills = useCallback(
     (page) => {
-      api.getBills(page,from,to);
+      api.getBills(page, from, to);
     },
     [from, to],
   );
+  // Поправить редактирвоание счета
+  // Активные дела заголовок оставить,а значения пустые
 
   const {
     currentPage,
@@ -60,8 +75,14 @@ const BillsTable = observer(() => {
   ];
 
   useEffect(() => {
-    api.getBills(currentPage, from ?? formatDateToQuery(new Date()), to ?? formatDateToQuery(new Date()));
+    api.getBills(
+      currentPage,
+      from ?? formatDateToQuery(new Date()),
+      to ?? formatDateToQuery(new Date()),
+    );
   }, [from, to]);
+
+
 
   // const handleFilter = (period) => {
   //   debugger;
@@ -176,7 +197,10 @@ const BillsTable = observer(() => {
       {editModalOpen && (
         <EditModal
           billId={currentBill?.id ?? null}
-          onClose={() => setEditModalOpen(false)}
+          onClose={() => {
+            setEditModalOpen(false)
+            setCurrentBill(null)
+          }}
         />
       )}
     </>

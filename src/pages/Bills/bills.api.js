@@ -9,12 +9,14 @@ import {
   http,
   resetApiProvider,
 } from '../../shared/http';
+import {useState} from "react";
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
-
+  const [isLoading,setIsLoading] = useState(false)
   const getBills = (page = 1, from, to) => {
     resetApiProvider();
+    setIsLoading(true)
     return http
       .get('/api/bills', { params: { page, from, to } })
       .then(handleHttpResponse)
@@ -24,21 +26,28 @@ const useBillsApi = () => {
         billsStore.setMetaInfoTable(res.body.meta);
         billsStore.setStats(res.body.stats);
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+        .finally(()=>setIsLoading(false));
   };
 
   const createBill = (body) => {
     const pageFromUrl = getQueryParam('page', 1);
     resetApiProvider();
+    setIsLoading(true)
+
     return http
       .post('/api/bills', body)
       .then(handleHttpResponse)
       .then(() => getBills(pageFromUrl))
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+  .finally(()=>setIsLoading(false));
+
   };
 
   const updateBill = (billId, updateData) => {
     resetApiProvider();
+    setIsLoading(true)
+    debugger
     updateData = mapBillDataToBackend(
       billsStore.drafts[billId],
       billsStore.changedProps,
@@ -47,11 +56,15 @@ const useBillsApi = () => {
       .patch(`/api/bills/${billId}`, updateData)
       .then(handleHttpResponse)
       .then(() => getBillById(billId))
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+        .finally(()=>setIsLoading(false));
+
   };
 
   const getBillById = (billId) => {
     resetApiProvider();
+    setIsLoading(true)
+
     return http
       .get(`/api/bills/${billId}`)
       .then(handleHttpResponse)
@@ -59,7 +72,31 @@ const useBillsApi = () => {
         const mappedBill = mapBillFromApi(res.body.data);
         billsStore.setCurrentBill(mappedBill);
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+        .finally(()=>setIsLoading(false));
+
+  };
+
+  const deleteBill = async (billId) => {
+    resetApiProvider();
+    setIsLoading(true);
+  debugger
+    try {
+      await http.delete(`/api/bills/${billId}`);
+      const pageFromUrl = getQueryParam('page', 1);
+      await getBills(pageFromUrl);
+      return true;
+    } catch (error) {
+      handleHttpError(error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadBill = (billId) => {
+    const url = `https://api.lead-bro.ru/bills/${billId}/print_stamped/`;
+    window.open(url, '_blank');
   };
 
   return {
@@ -67,6 +104,9 @@ const useBillsApi = () => {
     createBill,
     updateBill,
     getBillById,
+    deleteBill,
+    downloadBill,
+    isLoading
   };
 };
 

@@ -25,6 +25,7 @@ const ValuesSelector = ({
                             label,
                             tooltip,
                             placeholder,
+                            readonly,
                             small,
                             upBody,
                             renderOption,
@@ -37,7 +38,7 @@ const ValuesSelector = ({
                             noOptionsMessage = 'Нет результатов',
                         }) => {
     const ref = useRef(false);
-
+    console.log(options,1233333)
     const handleChange = (selectedOptions) => {
         if (!isMulti && selectedOptions.length > 1) {
             onChange([selectedOptions[selectedOptions.length - 1]]);
@@ -67,6 +68,7 @@ const ValuesSelector = ({
         onChange: handleChange,
         value: value ?? null,
         isMulti: true,
+        isDisabled:readonly??false,
         name: name,
         components: {
             MenuList: MenuList,
