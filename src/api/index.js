@@ -127,10 +127,11 @@ const useAppApi = () => {
         .catch(handleHttpError);
   };
 
-  const getLegalEntities = (serviceId) => {
+  const getLegalEntities = (query) => {
     resetApiProvider();
     return http
         .get(`/api/selector/legal_entities`, {
+          params:{query}
         })
         .then(handleHttpResponse)
         .then((res) => {
