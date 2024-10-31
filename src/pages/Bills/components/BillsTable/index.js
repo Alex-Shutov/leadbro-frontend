@@ -138,11 +138,12 @@ const BillsTable = observer(() => {
         id: 'company',
         width: '20%',
         accessor: 'company.name',
-        Cell: ({ row }) => (
+        Cell: ({ row }) => {
+          return row.original.company ?  (
           <TextLink to={`/clients/${row.original.company.id}`}>
             {row.original.company.name}
           </TextLink>
-        ),
+        ) : <></>},
       },
 
       {

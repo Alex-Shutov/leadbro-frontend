@@ -11,9 +11,9 @@ export const mapBillFromApi = (apiBill) => {
     paymentDate: new Date(apiBill.payment_date),
     paymentReason:apiBill.payment_reason,
     stage:apiBill.stage,
-    company: apiBill.stage.company ?? null,
+    company: apiBill.company ?? null,
 
-    service: apiBill.stage.service ?? null,
+    service: apiBill.service ?? null,
 
     legalEntity: apiBill.legal_entity
       ? {

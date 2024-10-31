@@ -166,7 +166,7 @@ const Dropdown = ({
               <div className={styles.loader_container}>
                 <Loader />
               </div>
-            ) : (
+            ) : options.length ?  (
               options.map((option, index) => (
                 <div
                   className={cn(styles.option, {
@@ -178,7 +178,7 @@ const Dropdown = ({
                   {renderOption ? renderOption(option) : option}
                 </div>
               ))
-            )}
+            ) : <p className={styles.noOptions}>Нет опций для выбора</p>}
           </div>
         )}
       </div>

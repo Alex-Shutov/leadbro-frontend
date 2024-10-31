@@ -8,7 +8,7 @@ import useClients from '../../../../../Clients/hooks/useClients';
 import useLegals from '../../../../../Settings/hooks/useLegals';
 import useBillsApi from '../../../../bills.api';
 import React, { useEffect, useMemo, useState } from 'react';
-import { handleSubmit as handleSubmitSnackbar } from '../../../../../../utils/snackbar';
+import {handleError, handleSubmit as handleSubmitSnackbar} from '../../../../../../utils/snackbar';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Calendar from '../../../../../../shared/Datepicker';
 import { billStatusTypesRu } from '../../../../bills.types';
@@ -142,6 +142,7 @@ const EditModal = observer(({ billId, onClose }) => {
       onClose();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      handleError('Ошибка при сохранении:', error.toString())
     }
   };
 
@@ -209,10 +210,10 @@ const EditModal = observer(({ billId, onClose }) => {
       }
         classNameContainer={styles.input}
         label={'Получатель платежа'}
-        value={bill?.company}
+        value={bill?.legalEntity}
         renderValue={(val) => val.name}
         renderOption={(opt) => opt.name}
-        options={appStore?.companies ?? []}
+        options={appStore?.legalEntities ?? []}
       />
       <div className={cn(styles.flex, styles.addZIndex)}>
         <Calendar
@@ -263,7 +264,7 @@ const EditModal = observer(({ billId, onClose }) => {
         onChange={(e) =>{
           handleChange(
             'company',
-            e.length ? appStore?.companies.find((el) => el.id === e[0]?.value) : null,
+            e.length ? appStore?.companies.find((el) => el?.id === e[0]?.value) : null,
           )
           handleClearInfoAfterCompany()
         }
@@ -274,19 +275,18 @@ const EditModal = observer(({ billId, onClose }) => {
             Клиент
           </div>
         }
-          p
           isAsync
           asyncSearch={async (query) => {
             const response = await appApi.getCompanies(query);
             const data = response
             return data.map(item => ({
-              value: item.id,
-              label: item.name
+              value: item?.id,
+              label: item?.name
             }));
           }}
         value={
           bill?.company
-            ? { value: bill?.company.id, label: bill?.company.name }
+            ? { value: bill?.company?.id, label: bill?.company?.name }
             : null
         }
       />

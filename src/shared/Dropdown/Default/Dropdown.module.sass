@@ -29,11 +29,16 @@
             &:before
                 transform: rotate(180deg)
         .body
+            max-width: 380px
             overflow-y: auto
             max-height: 280px
             visibility: visible
             opacity: 1
             transform: translateY(0)
+            .noOptions
+                +body1-s
+                text-align: center
+                padding: 8px 0px
     &.small
         .head
             height: 40px
