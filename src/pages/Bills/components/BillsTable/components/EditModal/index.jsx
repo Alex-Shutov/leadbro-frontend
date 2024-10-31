@@ -188,7 +188,7 @@ const EditModal = observer(({ billId, onClose }) => {
             onConfirm={handleDeleteBill}
         />
     <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}
-           customButtons={<div className={styles.addButtons}>
+           customButtons={isEditMode && <div className={styles.addButtons}>
              <DownloadButton handleDownload={handleDownloadBill} />
              <DeleteButton handleDelete={()=>setIsDeleteModalOpen(true)} />
            </div>}
