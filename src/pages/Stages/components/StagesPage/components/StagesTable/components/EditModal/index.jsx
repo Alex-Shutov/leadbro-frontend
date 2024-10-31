@@ -128,7 +128,7 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
             </div>
             <div className={styles.gridContainer}>
               <TaskDescriptionPart
-                  selectedStatus={colorStatusTaskTypes[stageTask.taskStatus]}
+                  selectedStatus={stageTask.taskStatus}
                   prefix={isEditMode ? `tasks.${stageTask.id}.` :''}
                   handleSave={() => handleSubmit('Задача принята')}
                   handleDecline={() => handleDecline()}

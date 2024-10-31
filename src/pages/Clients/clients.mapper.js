@@ -151,18 +151,19 @@ const mapServices = (backendServices) => {
   return {
     total: backendServices.services.total,
     value: {
+      id:last.id,
       description: last.name, // Используем поле name для description
       creator: {
         name: last.responsible.name, // Отсутствует creator в API, поэтому используем responsible
         surname: last.responsible.last_name,
         role: last.responsible.position.name,
-        image: null, // API не возвращает image
+        image:loadAvatar(last.responsible.avatar)
       },
       responsible: {
         name: last.responsible.name,
         surname: last.responsible.last_name,
         role: last.responsible.position.name,
-        image: null, // API не возвращает image
+        image: loadAvatar(last.responsible.avatar)
       },
       deadline: new Date(last.deadline), // Преобразуем строку в дату
     },

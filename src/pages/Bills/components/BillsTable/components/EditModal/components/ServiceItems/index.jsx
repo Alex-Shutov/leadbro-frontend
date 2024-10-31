@@ -28,7 +28,7 @@ const ServiceItems = ({ items = [], onChange }) => {
             name: '',
             price: '',
             quantity: '',
-            measurement_unit: 'pcs'
+            measurementUnit: 'pcs'
         }];
         onChange(newItems);
     };
@@ -92,7 +92,7 @@ const ServiceItems = ({ items = [], onChange }) => {
                                 value={measurementUnitTypesRu[item.measurementUnit]}
                                 setValue={(value) => handleItemChange(
                                     index,
-                                    'measurement_unit',
+                                    'measurementUnit',
                                     Object.keys(measurementUnitTypesRu).find(
                                         key => measurementUnitTypesRu[key] === value
                                     )

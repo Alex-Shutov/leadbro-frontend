@@ -2,16 +2,22 @@
 
 .taskList
   //overflow-y: auto
-  height: calc( 100vh - 96px - 40px - 100px)
+  padding-bottom: 24px
+  height: calc( 100vh - 96px - 40px - 105px)
   overflow-x: auto
+  overflow-y: hidden
   display: flex
   white-space: nowrap
   //scroll-behavior: smooth
   //justify-content: space-around
   //justify-content:
   gap: 24px
+  scrollbar-width: none
+  &::-webkit-scrollbar
+    width: 0
 .column 
   max-width: 320px
+
 
 .task 
   padding: 10px
@@ -29,6 +35,7 @@
   &_description
     +body1-s
     text-wrap: pretty
+    white-space: break-spaces
     margin-top: 5px
     margin-bottom: 12px
 
@@ -55,3 +62,6 @@
 .scroll
   overflow-y: auto
   max-height: 100%
+  scrollbar-width: none
+  &::-webkit-scrollbar
+    width: 0

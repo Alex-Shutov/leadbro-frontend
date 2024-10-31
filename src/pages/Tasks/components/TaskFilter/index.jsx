@@ -10,7 +10,7 @@ const TaskFilter = ({ filters, selectedFilter, onChange, taskCounts }) => {
                     className={styles.container}
                     key={value}
                     name="taskFilter"
-                    content={`${label} <span class="${styles.count}">${taskCounts[label] || 0}</span>`}
+                    content={`${label}</span>`}
                     value={selectedFilter === value}
                     onChange={() => onChange(value)}
                 />

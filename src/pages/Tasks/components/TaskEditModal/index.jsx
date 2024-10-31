@@ -1,6 +1,6 @@
 import {observer} from "mobx-react";
 import useStages from "../../../Stages/hooks/useStages";
-import {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import useStageApi from "../../../Stages/stages.api";
 import {handleError,handleSubmit as handleSubmitSnackbar,} from "../../../../utils/snackbar";
 import Modal from "../../../../shared/Modal";
@@ -58,6 +58,9 @@ const EditTaskModal = observer(({ data, handleClose }) => {
                 size={'md_up'}
                 // stageId={stageId}
             >
+                <div className={styles.name}>
+                    {'Редактирование задачи'}
+                </div>
                 <div className={styles.gridContainer}>
                     <TaskDescriptionPart
                         prefix={''}

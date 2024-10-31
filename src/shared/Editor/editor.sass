@@ -14,13 +14,21 @@
 .codex-editor
   z-index: 0
   display: flow
+.codex-editor--narrow
+  .codex-editor__redactor
+    margin-right: unset
+  .ce-toolbar__actions
+    right: unset
+    margin-left: -48px
+
 .ce-block__content
-    max-width: calc(70%)
+    max-width: calc(100%)
+    padding-left: 84px
+    padding-right: 24px
     @media only screen and (max-width: "1600px")
-      max-width: calc(75%)
     @media only screen and (max-width: "1104px")
-      max-width: calc(65%)
 .ce-toolbar__content
+  margin-left: 74px
   @media only screen and (max-width: "1700px")
     max-width: calc(75%)
   @media only screen and (max-width: "1104px")

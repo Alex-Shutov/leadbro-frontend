@@ -113,9 +113,6 @@ const FileUpload = ({
         <label className={styles.label}>
           {label}
           {props.required && <span className={styles.required}>*</span>}
-          <Link target={'_blank'} download to={value}>
-            123
-          </Link>
         </label>
       )}
       <div className={styles.wrap}>

@@ -91,6 +91,7 @@ const mapStages = (stages) => {
           extension: '.pdf',
         },
       },
+      taskCount: stage?.task_count,
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),
       endDate: stage.deadline ? new Date(stage.deadline) : null,

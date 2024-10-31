@@ -84,23 +84,23 @@ const useLegalsApi = () => {
         );
 
         // Если есть файлы, используем FormData
-        const formData = new FormData();
-        if (updateData.signScan instanceof File) {
-            formData.append('sign_scan', updateData.signScan);
-        }
-        if (updateData.stampScan instanceof File) {
-            formData.append('stamp_scan', updateData.stampScan);
-        }
-
-        // Добавляем остальные измененные поля
-        Object.keys(backendData).forEach(key => {
-            if (key !== 'sign_scan' && key !== 'stamp_scan') {
-                formData.append(key, backendData[key]);
-            }
-        });
+        // const formData = new FormData();
+        // if (updateData.signScan instanceof File) {
+        //     formData.append('sign_scan', updateData.signScan);
+        // }
+        // if (updateData.stampScan instanceof File) {
+        //     formData.append('stamp_scan', updateData.stampScan);
+        // }
+        //
+        // // Добавляем остальные измененные поля
+        // Object.keys(backendData).forEach(key => {
+        //     if (key !== 'sign_scan' && key !== 'stamp_scan') {
+        //         formData.append(key, backendData[key]);
+        //     }
+        // });
 
         return http
-            .patch(`/api/legal_entities/${legalId}`, formData, {
+            .patch(`/api/legal_entities/${legalId}`, backendData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

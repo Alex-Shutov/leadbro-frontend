@@ -81,3 +81,58 @@ export function formatDuration(value, type) {
       return pluralize(value, 'день', 'дня', 'дней');
   }
 }
+
+
+export function declineWord(word, count) {
+
+  function getWordForms(word) {
+    const rules = {
+      'задача': { one: 'задача', few: 'задачи', many: 'задач' },
+      'файл': { one: 'файл', few: 'файла', many: 'файлов' },
+      'комментарий': { one: 'комментарий', few: 'комментария', many: 'комментариев' },
+    };
+
+    return rules[word] || generateForms(word);
+  }
+
+// Fallback function for words not in the rules
+  function generateForms(word) {
+    // Basic rules for common endings
+    if (word.endsWith('а')) {
+      return {
+        one: word,
+        few: word.slice(0, -1) + 'и',
+        many: word.slice(0, -1)
+      };
+    }
+    // Add more ending rules as needed
+
+    // Default case
+    return {
+      one: word,
+      few: word + 'а',
+      many: word + 'ов'
+    };
+  }
+  // Remove trailing spaces
+  count = Math.abs(count);
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+
+  // Get word forms
+  const forms = getWordForms(word);
+
+  // Handle special cases for numbers ending in 11-14
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+    return forms.many;
+  }
+
+  // Handle other cases based on last digit
+  if (lastDigit === 1) {
+    return forms.one;
+  }
+  if (lastDigit >= 2 && lastDigit <= 4) {
+    return forms.few;
+  }
+  return forms.many;
+}

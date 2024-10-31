@@ -9,10 +9,10 @@ const Checkbox = ({
                       value,
                       onChange,
                       reverse,
-                      status
+                      name
                   }) => {
     const handleChange = (e) => {
-        onChange(status, e.target.checked);
+        onChange(name, e.target.checked);
     };
 
     return (

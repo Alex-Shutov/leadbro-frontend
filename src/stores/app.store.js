@@ -7,6 +7,9 @@ export class AppStore{
     employeePositions = [];
     tasks = [];
     services = [];
+    servicesByCompany=[]
+    stagesByService = []
+    legalEntities=[]
 
     constructor(root) {
         this.root = root;
@@ -16,6 +19,10 @@ export class AppStore{
     // Устанавливаем сотрудников
     setEmployees(employees) {
         this.employees = employees;
+    }
+
+    setLegalEntities(legals){
+        this.legalEntities = legals
     }
 
     // Устанавливаем компании
@@ -41,5 +48,20 @@ export class AppStore{
     // Устанавливаем услуги
     setServices(services) {
         this.services = services;
+    }
+    setServicesByCompany(services) {
+        this.servicesByCompany = services;
+    }
+    setStagesByService(stages){
+        this.stagesByService = stages
+    }
+
+    clearProp(props) {
+        props.forEach(propName=> {
+            if (propName in this) {
+                const propType = Array.isArray(this[propName]) ? [] : null;
+                this[propName] = propType;
+            }
+        })
     }
 }

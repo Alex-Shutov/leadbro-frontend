@@ -9,7 +9,7 @@ import {
 import { statusTypes } from './clients.types';
 import mocks from './clients.mocks';
 import useStore from '../../hooks/useStore';
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { mapClientDataToBackend, mapClientFromApi } from './clients.mapper';
 import useQueryParam from '../../hooks/useQueryParam';
 import { getQueryParam } from '../../utils/window.utils';
@@ -41,9 +41,11 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 });
 const useClientsApi = () => {
   const { clientsStore } = useStore();
+  const [isLoading,setIsLoading] = useState(false)
 
   const getClients = (page = 1) => {
     resetApiProvider();
+    setIsLoading(true);
     return http
       .get('/api/companies', { params: { page: page } })
       .then(handleHttpResponse)
@@ -52,11 +54,14 @@ const useClientsApi = () => {
         clientsStore.setClients(mappedClients); // Устанавливаем клиентов в store
         clientsStore.setMetaInfoTable(res.body.meta);
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+        .finally(()=>setIsLoading(false));
+
   };
 
   const createCompany = (body) => {
     resetApiProvider();
+    setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
 
     console.log(http.defaults, 'adapter');
@@ -65,11 +70,11 @@ const useClientsApi = () => {
       .post('/api/companies', body)
       .then(handleHttpResponse)
       .then(() => getClients(pageFromUrl))
-      .catch(handleShowError);
+      .catch(handleShowError).finally(()=>setIsLoading(false));
   };
 
   const getClientById = (id) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     return (
       Promise.all([
         http.get(`/api/companies/${id}`), // Запрос для получения данных клиента
@@ -92,13 +97,13 @@ const useClientsApi = () => {
 
           return mappedClient; // Возвращаем смапленного клиента
         })
-        .catch(handleHttpError)
+        .catch(handleHttpError).finally(()=>setIsLoading(false))
     );
   };
 
   // Обновление данных компании
   const updateCompany = (id, updateData, submitText) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     updateData = mapClientDataToBackend(
       clientsStore.drafts[id],
       clientsStore.changedProps,
@@ -108,11 +113,11 @@ const useClientsApi = () => {
       .then(handleHttpResponse)
       .then(() => getClientById(id))
       .then(() => handleSubmit(submitText ?? 'Сохранение успешно'))
-      .catch(handleShowError);
+      .catch(handleShowError).finally(()=>setIsLoading(false));
   };
 
   const updatePasswords = (id, passId, updateData, submitText) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     updateData = mapClientDataToBackend(
       clientsStore.drafts[id],
       clientsStore.changedProps,
@@ -123,54 +128,54 @@ const useClientsApi = () => {
       .then(handleHttpResponse)
       .then(() => getClientById(id))
       .then(() => handleSubmit(submitText ?? 'Сохранение успешно'))
-      .catch(handleShowError);
+      .catch(handleShowError).finally(()=>setIsLoading(false));
   };
 
   // Удаление компании
   const deleteCompany = (id) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     return http
       .delete(`/api/companies/${id}`)
       .then(handleHttpResponse)
       .then(() => getClientById(id))
-      .catch(handleHttpError);
+      .catch(handleHttpError).finally(()=>setIsLoading(false));
   };
 
   // Создание клиента в компании
   const createClient = (companyId, clientData) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     return http
       .post(`/api/companies/${companyId}/clients`, clientData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
         .then(() => handleSubmit('Данные клиента сохранены'))
 
-        .catch(handleHttpError);
+        .catch(handleHttpError).finally(()=>setIsLoading(false));
   };
   const createPassword = (companyId, clientData) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
 
     return http
       .post(`/api/companies/${companyId}/passwords`, clientData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
       .then(() => handleSubmit('Пароль сохранен'))
-      .catch(handleHttpError);
+      .catch(handleHttpError).finally(()=>setIsLoading(false));
   };
   const deletePassword = (clientId, passId) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     return http
       .delete(`/api/passwords/${passId}`)
       .then(handleHttpResponse)
       .then(() => handleSubmit('Пароль удален'))
 
       .then(() => getClientById(clientId))
-      .catch(handleHttpError);
+      .catch(handleHttpError).finally(()=>setIsLoading(false));
   };
 
   // Обновление клиента компании
   const updateClient = (companyId,clientId) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     const updateData = mapClientDataToBackend(
         clientsStore.drafts[companyId],
         clientsStore.changedProps,
@@ -180,17 +185,17 @@ const useClientsApi = () => {
       .patch(`/api/clients/${clientId}`, updateData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
-      .catch(handleShowError);
+      .catch(handleShowError).finally(()=>setIsLoading(false));
   };
 
   // Удаление клиента
   const deleteClient = (id) => {
-    resetApiProvider();
+    resetApiProvider();setIsLoading(true);
     return http
       .delete(`/api/clients/${id}`)
       .then(handleHttpResponse)
       .then(() => getClientById(id))
-      .catch(handleHttpError);
+      .catch(handleHttpError).finally(()=>setIsLoading(false));
   };
 
   return {
@@ -205,6 +210,8 @@ const useClientsApi = () => {
     updatePasswords,
     deleteClient,
     deletePassword,
+    isLoading
+
   };
 };
 

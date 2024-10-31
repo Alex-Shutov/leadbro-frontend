@@ -19,7 +19,7 @@ import {
 import TextLink from '../../../../../../shared/Table/TextLink';
 import cn from 'classnames';
 
-const EditModal = observer(({ serviceId, onClose }) => {
+const EditModal = observer(({ serviceId, onClose,...props }) => {
   const serviceTypes = useServiceTypes();
   const {store:serviceStore} = useServices();
   const { members } = useMembers();
@@ -80,6 +80,8 @@ const EditModal = observer(({ serviceId, onClose }) => {
     }
   };
     console.log(serviceTypes,'serviceTypes')
+
+    const serviceClient = service?.client ?? props?.client ?? null
 
   const handleReset = () => {
     if (isEditMode) {
@@ -181,6 +183,7 @@ const EditModal = observer(({ serviceId, onClose }) => {
           />
         </div>
         <ValuesSelector
+            readonly={props?.client}
             placeholder={'Клиент'}
             onChange={(e) =>
                 handleChange(
@@ -190,14 +193,15 @@ const EditModal = observer(({ serviceId, onClose }) => {
             }
             isMulti={false}
             label={
-              <div className={styles.client_label}>
-                Клиент<TextLink>Создать клиента</TextLink>
-              </div>
+                (<div className={styles.client_label}>
+                    <span>Клиент</span>
+                    {!props.client &&<TextLink>Создать клиента</TextLink>}
+              </div>)
             }
             options={clients.map((el) => ({ value: el.id, label: el.title }))}
             value={
-              service.client
-                  ? { value: service.client.id, label: service.client.title }
+                serviceClient
+                  ? { value: serviceClient.id, label: serviceClient.title }
                   : null
             }
         />

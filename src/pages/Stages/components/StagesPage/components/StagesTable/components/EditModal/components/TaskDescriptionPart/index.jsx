@@ -36,7 +36,6 @@ const Index = observer(
     className,
   }) => {
       // const stageOptions = useS
-      debugger
     return (
       <div className={cn(styles.border_container, className)}>
         <div className={styles.buttons}>

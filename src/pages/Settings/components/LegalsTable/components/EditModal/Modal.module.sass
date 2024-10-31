@@ -145,3 +145,15 @@
 .errorInput
   input
     border-color: #ff5454 !important // Красная рамка при ошибке
+
+.checkbox
+  margin-bottom: 32px
+  &_mainLegal
+    +body1-m
+  *[class*=_inner]
+    display: flex
+    flex-direction: column-reverse
+    span[class*=text]
+      padding-left: 0
+      padding-bottom: 4px
+

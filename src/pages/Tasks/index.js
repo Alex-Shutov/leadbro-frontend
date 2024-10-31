@@ -13,6 +13,7 @@ import EditModal from "../Stages/components/StagesPage/components/StagesTable/co
 import EditTaskModal from "./components/TaskEditModal";
 import {useNavigate} from "react-router";
 import {useSearchParams} from "react-router-dom";
+import {startOfDay, sub} from "date-fns";
 
 const filters = [
     { label: 'Все', value: 'all' },
@@ -25,7 +26,6 @@ const filters = [
 const Index = observer(() => {
   const api = useTasksApi()
     const [taskData,setTaskData] = useState(null)
-
 
 
 
