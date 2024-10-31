@@ -40,14 +40,14 @@ export const mapBillFromApi = (apiBill) => {
 export const mapBillDataToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value) => {
     switch (key) {
-      case 'legalEntityId':
+      case 'legal_entity_id':
         return Number(value.id);
-      case 'companyId':
+      case 'company_id':
         return Number(value.id);
       case 'stage_id':
         return Number(value.id)
-      case 'creationDate':
-      case 'paymentDate':
+      case 'creation_date':
+      case 'payment_date':
         return formatDateToBackend(value);
       case 'bill_items':
         return value.map(el=>({...el,'measurement_unit':el.measurementUnit}))

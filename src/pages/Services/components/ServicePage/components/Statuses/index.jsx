@@ -2,9 +2,10 @@ import React from 'react';
 import cn from "classnames";
 import {colorStatusTaskTypes as taskTypes} from "../../../../services.types";
 import {colorStatusActTypes as statusActTypes} from "../../../../services.types";
-import {colorStatusBillTypes as billTypes} from "../../../../services.types";
+
 import Badge from "../../../../../../shared/Badge";
 import styles from './Statuses.module.sass'
+import {colorBillStatusTypes as billTypes} from "../../../../../Bills/bills.types";
 
 export const serviceStatuses = {
     tasks: taskTypes,

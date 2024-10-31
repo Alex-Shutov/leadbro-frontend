@@ -78,7 +78,7 @@ const ServicePage = observer(() => {
                               <Act act={el.act}/>
                               {/*<Agreement/>*/}
                               {/*<AdditionalAgreement/>*/}
-                              <Bills bills={el.bills}/>
+                              <Bills company={{...service.client,name:service.client.title}} service={{id:service?.id,name:service?.title}} stage={{id:el.id,name:el.title}} bills={el.bills}/>
                           </Card>
                           {withDocuments && <DocumentsCard service={service}/>}
                           {/*<AdaptiveStages data={service.tasks} />*/}

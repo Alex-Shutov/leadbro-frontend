@@ -55,9 +55,7 @@ export const statusBillTypesRu = {
 }
 
 
-export const colorStatusBillTypes = {
-    payed:{status:statusBillTypesRu.payed,class:'status-disabled'},
-}
+
 
 
 export const  serviceTypeEnum = {

@@ -9,6 +9,7 @@ export const mapStageFromApi = (stageData, tasksData) => {
     id: stageData.id,
     number: stageData.number || '1234', // Номер этапа
     title: stageData.name,
+    bills:stageData?.bills ?? [],
     startTime: stageData.start ? new Date(stageData.start) : new Date(),
     deadline: stageData.deadline ? new Date(stageData.deadline) : new Date(),
     deadlineTime: `${parseFloat(stageData.planned_time.toFixed(1))} ч`, // Время дедлайна по умолчанию

@@ -1,6 +1,6 @@
 import styles from './Bills.module.sass'
 import {formatDateWithoutHours} from "../../../../../../utils/formate.date";
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import TextLink from "../../../../../../shared/Table/TextLink";
 import ManagerCell from "../../../../../../components/ManagerCell";
 import {formatSum} from "../../../../../../utils/format.number";
@@ -9,7 +9,13 @@ import Table from "../../../../../../shared/Table";
 import AdaptiveCard from "../../../../../Clients/components/ClientPage/Deals/AdaptiveCard";
 import Button from "../../../../../../shared/Button";
 import Icon from "../../../../../../shared/Icon";
-const Bills = ({ bills }) => {
+import cn from "classnames";
+import EditModal from "../../../../../Bills/components/BillsTable/components/EditModal";
+const Bills = ({ bills,service,company,stage }) => {
+    const downloadBill = (url) => {
+        window.open(url, '_blank');
+    }
+    const [createBill,setCreateBill] = useState()
     const cols =  React.useMemo(() => [
         {
             Header: '№ счета',
@@ -17,26 +23,26 @@ const Bills = ({ bills }) => {
             width:'17%',
             Cell: ({row}) => {
                 const data = row?.original
-                return <TextLink>{data.title}</TextLink>
+                return <TextLink>Счет №{data.number}</TextLink>
             },
 
         },
         {
             Header: '',
-            width:'21%',
+            width:'30%',
             id: 'billWithSign',
             Cell: ({row}) => {
-                return <Button  type={'secondary'} after={<Icon size={24} name={'download'}/>} classname={styles.button} name={'Счет с печатью'}/>
+                return <Button onClick={()=>downloadBill(row?.original.stampedBill)} type={'secondary'} after={<Icon size={24} name={'download'}/>} classname={cn(styles.button,styles.button_bills)} name={'Счет с печатью'}/>
             },
 
         },
         {
             Header: '',
-            width:'21%',
+            width:'30%',
 
             id: 'billWithoutSign',
             Cell: ({row}) => {
-                return <Button  type={'secondary'} after={<Icon size={24} name={'download'}/>} classname={styles.button} name={'Счет без печати'}/>
+                return <Button onClick={()=>downloadBill(row?.original.unstampedBill)}  type={'secondary'} after={<Icon size={24} name={'download'}/>} classname={cn(styles.button,styles.button_bills)} name={'Счет без печати'}/>
             },
 
         },
@@ -44,7 +50,7 @@ const Bills = ({ bills }) => {
 
         {
             Header: 'Сумма',
-            width:'20%',
+            width:'15%',
 
             id: 'sum',
             Cell: ({row}) => {
@@ -72,7 +78,7 @@ const Bills = ({ bills }) => {
 
             Cell: ({row}) => {
                 const data = row?.original
-                return <p>{formatDateWithoutHours(data.payedDate)}</p>
+                return <p>{formatDateWithoutHours(data.paymentDate)}</p>
             },
 
         },
@@ -83,12 +89,23 @@ const Bills = ({ bills }) => {
         <div className={styles.table_container}>
             <Table smallTable={true}  cardComponent={(data,onPagination)=><AdaptiveCard data={data} onPagination={onPagination} />} headerActions={{
                 add: {
+                    action:()=>setCreateBill(true),
                     isSmall:true,
                     cls:`${styles.button} ${styles.button_title}`,
                     type:'primary',
                     title:'Добавить счет'
                 }
             }}  title={'Счета'} data={data} columns={cols}/>
+            {createBill && (
+                <EditModal
+                    service={service}
+                    company={company}
+                    stage={stage}
+                    onClose={() => {
+                        setCreateBill(false)
+                    }}
+                />
+            )}
         </div>
     );
     // return (

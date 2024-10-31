@@ -92,6 +92,8 @@ const mapStages = (stages) => {
         },
       },
       taskCount: stage?.task_count,
+      bills:mapBill(stage?.bills ?? []),
+
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),
       endDate: stage.deadline ? new Date(stage.deadline) : null,
@@ -117,6 +119,40 @@ const mapStages = (stages) => {
     },
   };
 };
+
+const mapBill = (bills) => {
+  return bills.map(bill => ({
+    id: bill?.id,
+    number: bill?.number,
+    creationDate: new Date(bill?.creation_date),
+    paymentDate: new Date(bill?.payment_date),
+    paymentReason:bill?.payment_reason,
+    stage:bill?.stage,
+    company: bill?.company ?? null,
+
+    service: bill?.service ?? null,
+
+    legalEntity: bill?.legal_entity
+        ? {
+          id: bill?.legal_entity.id,
+          name: bill?.legal_entity.name,
+        }
+        : null,
+    items: bill?.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      measurementUnit: item.measurement_unit,
+    })),
+    sum: bill?.sum,
+    status: bill?.status,
+    stampedBill: bill?.stamped_bill,
+    unstampedBill: bill?.unstamped_bill,
+    stampedAct: bill?.stamped_act,
+    unstampedAct: bill?.unstamped_act,
+  }))
+}
 
 // Маппинг задач
 const mapTasks = (tasks) => {

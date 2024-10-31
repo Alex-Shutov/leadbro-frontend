@@ -5,7 +5,7 @@ import { getQueryParam } from '../../utils/window.utils';
 import { mapBillDataToBackend, mapBillFromApi } from './bills.mapper';
 import {
   handleHttpError,
-  handleHttpResponse,
+  handleHttpResponse, handleShowError,
   http,
   resetApiProvider,
 } from '../../shared/http';
@@ -34,12 +34,15 @@ const useBillsApi = () => {
     const pageFromUrl = getQueryParam('page', 1);
     resetApiProvider();
     setIsLoading(true)
-
+    const createData = mapBillDataToBackend(
+        body,
+        Object.keys(body),
+    );
     return http
-      .post('/api/bills', body)
+      .post('/api/bills', createData)
       .then(handleHttpResponse)
       .then(() => getBills(pageFromUrl))
-      .catch(handleHttpError)
+      .catch(handleShowError)
   .finally(()=>setIsLoading(false));
 
   };
