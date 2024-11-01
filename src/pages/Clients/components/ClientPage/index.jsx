@@ -29,6 +29,7 @@ import ClientTokens from './Tokens';
 import CreateModal from './Passwords/Modals/CreateModal';
 import CreatePassModal from './Passwords/Modals/CreateModal';
 import {LoadingProvider} from "../../../../providers/LoadingProvider";
+import {handleSubmit as handleSubmitSnackbar} from "../../../../utils/snackbar";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -38,6 +39,7 @@ const ClientPage = observer(() => {
   const [passModalOpen, setPassModalOpen] = useState(false);
 
   const handleChange = (name, payload, withId = true) => {
+    debugger
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {
@@ -52,21 +54,44 @@ const ClientPage = observer(() => {
 
     handleRemove(path);
   };
-  const handleSubmit = (submitText) => {
-    clients.submitDraft();
-    api.updateCompany(Number(id), {}, submitText);
-    // api.setClients(clients);
+  const handleSubmit = async(path,submitText) => {
+    try {
+      await api.updateCompany(Number(id), {}, submitText);
+      clients.submitDraft();
+      // api.setClients(clients);
+    }
+    catch (error) {
+      console.error('Ошибка при сохранении:', error);
+      clients.resetDraft(Number(id),path)
+
+    }
   };
 
-  const handleSubmitPersons = (clientId,submitText) => {
-    api.updateClient(Number(id),clientId)
-    clients.submitDraft()
+  const handleSubmitPersons = async (clientId,submitText,path) => {
+    try {
+      await api.updateClient(Number(id),clientId,submitText)
+      clients.submitDraft()
+
+    }
+    catch (error) {
+      console.error('Ошибка при сохранении:', error);
+      clients.resetDraft(Number(id),path)
+    }
 
   }
 
-  const handleSubmitPasswords = (passId) => {
-    clients.submitDraft();
-    api.updatePasswords(Number(id), passId);
+  const handleSubmitPasswords = async (path,passId,submitText) => {
+    try {
+      await api.updatePasswords(Number(id), passId).then(()=>handleSubmitSnackbar(submitText));
+      clients.submitDraft();
+
+
+    }
+    catch (error) {
+      console.error('Ошибка при сохранении:', error);
+      clients.resetDraft(Number(id),path)
+
+    }
   };
 
   return (

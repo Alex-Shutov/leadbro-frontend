@@ -115,7 +115,7 @@ const EditStage = ({ handleClose, stageId }) => {
             <TextInput
               onChange={({ target }) => handleChange('actSum', target.value)}
               name="actSum"
-              type={'money'}
+              type={'number'}
               value={stage.actSum}
               edited={true}
               className={styles.input}

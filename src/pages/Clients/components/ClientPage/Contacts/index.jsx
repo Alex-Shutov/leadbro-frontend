@@ -38,7 +38,7 @@ const ClientsContacts = ({
       // },
       edit: ({ name, value }) => onChange(name, value),
       submit: () => {
-        onSubmit(success);
+        onSubmit(path,success);
       },
       reset: () => {
         onReset(path);

@@ -42,8 +42,7 @@ const ClientPasswords = ({
       },
       edit: ({ name, value }) => onChange(name, value),
       submit: () => {
-        onSubmit(passId);
-        handleSubmit(success);
+        onSubmit(path,passId,success);
       },
       reset: () => {
         onReset(path);

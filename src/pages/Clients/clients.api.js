@@ -174,17 +174,20 @@ const useClientsApi = () => {
   };
 
   // Обновление клиента компании
-  const updateClient = (companyId,clientId) => {
-    resetApiProvider();setIsLoading(true);
+  const updateClient = (companyId,clientId,submitText) => {
+    resetApiProvider();
     const updateData = mapClientDataToBackend(
         clientsStore.drafts[companyId],
         clientsStore.changedProps,
         clientId,
     );
+    setIsLoading(true);
     return http
       .patch(`/api/clients/${clientId}`, updateData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
+        .then(() => handleSubmit(submitText ?? 'Данные клиента сохранены'))
+
       .catch(handleShowError).finally(()=>setIsLoading(false));
   };
 

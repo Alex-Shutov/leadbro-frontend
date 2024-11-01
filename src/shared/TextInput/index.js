@@ -151,6 +151,9 @@ const TextInput = ({
       >
         {props.type === 'textarea' ? (
           <TextArea
+              onBlur={handleBlur}
+              onChange={onChange}
+              value={value}
             disabled={!props?.edited ?? false}
             autoFocus={props?.makeFocused}
             ref={inputRef}
@@ -161,6 +164,7 @@ const TextInput = ({
             value && <Editor name={props.name ?? ''} initialHTML={value} onChange={onChange} />
         ) : (
           <input
+              disabled={!props?.edited ?? false}
               onBlur={handleBlur}
             ref={inputRef}
             className={cn(classInput, styles.input)}
