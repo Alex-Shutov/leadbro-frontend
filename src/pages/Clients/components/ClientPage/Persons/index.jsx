@@ -21,7 +21,6 @@ import useMappedObj from "../../../../../hooks/useMappedObj";
 
 const ClientPersons = ({ persons, onChange, onSubmit, onReset }) => {
   const mappedPersons = useMappedObj(persons);
-  console.log(mappedPersons,'mapped')
 
   const defaultActions = (
     path,
@@ -36,12 +35,12 @@ const ClientPersons = ({ persons, onChange, onSubmit, onReset }) => {
     // delete: ({ name, value }) => onChange(name, ''),
     edit: ({ name, value }) => onChange(name, value),
     submit: () => {
-      onSubmit(clientId);
-      handleSubmit(success);
+      onSubmit(clientId,success,path);
+      // handleSubmit(success);
     },
     reset: () => {
-      onReset(path);
-      handleInfo(info);
+      onReset(path,info);
+
     },
   });
 

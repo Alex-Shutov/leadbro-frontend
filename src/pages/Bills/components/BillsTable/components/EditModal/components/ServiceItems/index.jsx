@@ -70,7 +70,7 @@ const ServiceItems = ({ items = [], onChange }) => {
                                 placeholder="Цена услуги"
                                 name={'price'}
                                 value={item.price}
-                                type="money"
+                                type="number"
                                 onChange={(e) => handleItemChange(index, 'price', parseFloat(e.target.value))}
                                 edited={true}
                             />

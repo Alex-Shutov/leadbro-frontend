@@ -188,9 +188,12 @@ export const mapFio = (drafts,changedFieldsSet,propId) => {
 
       if (parts.length === 1) {
         handleError('Некорректное ФИО: должно содержать хотя бы имя и фамилию');
+        throw 'Некорректное ФИО: должно содержать хотя бы имя и фамилию'
         return;
       } else if (parts.length > 3) {
         handleError('Некорректное ФИО: слишком много частей');
+        throw 'Некорректное ФИО: слишком много частей'
+
         return;
       }
 
