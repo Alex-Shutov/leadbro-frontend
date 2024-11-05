@@ -27,7 +27,7 @@ const EditStage = ({ handleClose, stageId }) => {
     deadline: null,
     actSum: 0,
     sumByHand: false,
-    taskDescription: '',
+    taskDescription: ' ',
   });
 
   const stage = useMemo(() => {

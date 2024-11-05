@@ -16,6 +16,7 @@ import {
 import { mapServiceDataToBackend, mapServiceFromApi } from './services.mapper';
 import { getQueryParam } from '../../utils/window.utils';
 import { changeCurrentElementById } from '../../utils/store.utils';
+import useClientsApi from '../Clients/clients.api';
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -29,6 +30,7 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 
 const useServiceApi = () => {
   const { servicesStore } = useStore();
+  const { getClientById } = useClientsApi();
   const getServices = (page = 1) => {
     resetApiProvider();
     return http
@@ -64,14 +66,36 @@ const useServiceApi = () => {
     const form = new FormData();
   };
 
+  const getCurrentPage = () => {
+    const path = window.location.pathname;
+    if (path.includes('/clients/')) {
+      return 'client';
+    } else if (path.includes('/services')) {
+      return 'services';
+    }
+    return null;
+  };
+
   const createService = (body) => {
     const pageFromUrl = getQueryParam('page', 1);
+    const currentPage = getCurrentPage();
+    const clientId = body?.client?.id;
+    const updateData = mapServiceDataToBackend(body, Object.keys(body));
     resetApiProvider();
+    debugger;
     return http
-      .post('/api/services', body)
+      .post(`/api/companies/${clientId}/services`, updateData)
       .then(handleHttpResponse)
-      .then((res) => getServices(pageFromUrl))
-      .catch(handleHttpError);
+      .then((res) => {
+        // В зависимости от страницы вызываем разные методы обновления данных
+        if (currentPage === 'client') {
+          return getClientById(clientId);
+        } else if (currentPage === 'services') {
+          return getServices(pageFromUrl);
+        }
+        return res;
+      })
+      .catch(handleShowError);
   };
 
   const updateService = (serviceId, updateData) => {
@@ -80,6 +104,7 @@ const useServiceApi = () => {
       servicesStore.drafts[serviceId],
       servicesStore.changedProps,
     );
+    debugger;
     return http
       .patch(`/api/services/${serviceId}`, updateData)
       .then(handleHttpResponse)

@@ -10,6 +10,7 @@ const ClientComments = ({ comments, onChange }) => {
     () => Object.keys(comments ?? {}).length,
     [comments],
   );
+  debugger;
   const user = useUser();
   const [isFilterFiles, setFilterFiles] = useState(false);
   const [isFilterComments, setCommentFiles] = useState(false);

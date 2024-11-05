@@ -326,46 +326,48 @@ const Table = observer(
                 </table>
               </div>
             </Card>
-            <Card className={styles.pagingCard}>
-              {paging && (
-                <div className={styles.pagination}>
-                  <PreviousButton
-                    disabled={paging.current === 1}
-                    onClick={() =>
-                      paging.onPageChange(Number(paging.current) - 1)
-                    }
-                  />
-                  <div className={cn(styles.divider_line, styles.left)} />
-                  {allPages && (
-                    <div className={styles.pagesCount}>
-                      {[...Array(allPages).keys()].map((page, index) => (
-                        <div
-                          key={index}
-                          className={
-                            pageIndex === index + 1
-                              ? cn(styles.page, styles.active)
-                              : styles.page
-                          }
-                          onClick={() => {
-                            paging.onPageChange(Number(index) + 1);
-                          }}
-                        >
-                          {index + 1}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className={cn(styles.divider_line, styles.right)} />
+            {paging && (
+              <Card className={styles.pagingCard}>
+                {paging && (
+                  <div className={styles.pagination}>
+                    <PreviousButton
+                      disabled={paging.current === 1}
+                      onClick={() =>
+                        paging.onPageChange(Number(paging.current) - 1)
+                      }
+                    />
+                    <div className={cn(styles.divider_line, styles.left)} />
+                    {allPages && (
+                      <div className={styles.pagesCount}>
+                        {[...Array(allPages).keys()].map((page, index) => (
+                          <div
+                            key={index}
+                            className={
+                              pageIndex === index + 1
+                                ? cn(styles.page, styles.active)
+                                : styles.page
+                            }
+                            onClick={() => {
+                              paging.onPageChange(Number(index) + 1);
+                            }}
+                          >
+                            {index + 1}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className={cn(styles.divider_line, styles.right)} />
 
-                  <NextButton
-                    disabled={paging.current === allPages}
-                    onClick={() =>
-                      paging.onPageChange(Number(paging.current) + 1)
-                    }
-                  />
-                </div>
-              )}
-            </Card>
+                    <NextButton
+                      disabled={paging.current === allPages}
+                      onClick={() =>
+                        paging.onPageChange(Number(paging.current) + 1)
+                      }
+                    />
+                  </div>
+                )}
+              </Card>
+            )}
             {rest?.after}
           </div>
 

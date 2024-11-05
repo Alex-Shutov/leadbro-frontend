@@ -42,7 +42,6 @@ const ClientsTable = observer(() => {
         accessor: 'name',
         width: '25%',
         Cell: ({ row }) => {
-          debugger;
           const data = row?.original;
           return <TableLink to={`${data.id}`} name={data.title} />;
         },
@@ -66,6 +65,8 @@ const ClientsTable = observer(() => {
         id: 'manager',
         sortType: 'basic',
         accessor: 'manager.name',
+        // width: '25%',
+
         Cell: ({ row }) => {
           const data = row?.original;
           return <ManagerCell manager={data.manager} />;
