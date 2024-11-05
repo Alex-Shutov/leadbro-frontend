@@ -13,7 +13,6 @@ export const mockHttp = new MockAdapter(http);
 
 http.interceptors.request.use(
   async (request) => {
-    debugger;
     if (request.url.toLowerCase().includes('/auth')) {
       return request;
     }
@@ -86,7 +85,7 @@ export const handleShowError = (errors, delay = 100) => {
 
     delayTime += delay; // Увеличиваем задержку
   });
-  throw errorsResponse
+  throw errorsResponse;
 };
 
 export const resetApiProvider = () => {

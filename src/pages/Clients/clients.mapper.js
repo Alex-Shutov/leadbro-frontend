@@ -2,14 +2,18 @@ import { statusTypes } from './clients.types'; // Предположим, что
 import { loadAvatar } from '../../utils/create.utils';
 import {
   getValueByPath,
-  mapChangedFieldsForBackend, mapFio, MapFio,
+  mapChangedFieldsForBackend,
+  mapFio,
+  MapFio,
 } from '../../utils/store.utils';
-import {handleError} from "../../utils/snackbar"; // Если требуется для аватара
+import { handleError } from '../../utils/snackbar'; // Если требуется для аватара
 
 export const mapClientFromApi = (
   apiClient,
   apiPasswords = [],
   apiContactPersons = [],
+  apiComments = [],
+  apiServices = null,
 ) => {
   return {
     id: apiClient.id,
@@ -28,7 +32,7 @@ export const mapClientFromApi = (
       email: apiClient.manager.email,
       phone: apiClient.manager.phone,
     },
-    services: mapServices(apiClient),
+    services: mapServices(apiClient.services, apiServices),
     deals: [
       {
         status: 'Догоовр подписан',
@@ -44,6 +48,7 @@ export const mapClientFromApi = (
         },
       },
     ],
+    comments: mapCommentsFromApi(apiComments),
     activities: [
       {
         date: new Date(2024, 1, 11),
@@ -109,11 +114,11 @@ const mapPasswords = (apiPasswords) => {
 };
 
 const mapContactPersons = (apiContactPersons) => {
-  return apiContactPersons.reduce((acc,client) => {
-    acc[client.id] ={
+  return apiContactPersons.reduce((acc, client) => {
+    acc[client.id] = {
       id: client.id,
       role: client.role, // или другой подходящий роль, если есть
-      fio: `${client.last_name} ${client.name} ${client.middle_name ? client.middle_name  : ''}`,
+      fio: `${client.last_name} ${client.name} ${client.middle_name ? client.middle_name : ''}`,
       tel: client.phone ? client.phone : null,
       email: client.email ? client.email : null,
       messengers: [
@@ -127,7 +132,7 @@ const mapContactPersons = (apiContactPersons) => {
     };
 
     return acc;
-  },{});
+  }, {});
 };
 
 const mapLegals = (legals) => {
@@ -143,31 +148,51 @@ const mapLegals = (legals) => {
   };
 };
 
-const mapServices = (backendServices) => {
-  const { last } = backendServices.services;
-  if (!last) {
+const mapServices = (backendServices, apiServices) => {
+  debugger;
+  if (apiServices == undefined) {
+    const { last } = backendServices;
+    return {
+      total: backendServices.total,
+      value: {
+        id: last.id,
+        description: last.name, // Используем поле name для description
+        creator: {
+          name: last.responsible.name, // Отсутствует creator в API, поэтому используем responsible
+          surname: last.responsible.last_name,
+          role: last.responsible.position.name,
+          image: loadAvatar(last.responsible.avatar),
+        },
+        responsible: {
+          name: last.responsible.name,
+          surname: last.responsible.last_name,
+          role: last.responsible.position.name,
+          image: loadAvatar(last.responsible.avatar),
+        },
+        deadline: new Date(last.deadline), // Преобразуем строку в дату
+      },
+    };
+  }
+  if (!apiServices?.length) {
     return null;
   }
-  return {
-    total: backendServices.services.total,
-    value: {
-      id:last.id,
-      description: last.name, // Используем поле name для description
-      creator: {
-        name: last.responsible.name, // Отсутствует creator в API, поэтому используем responsible
-        surname: last.responsible.last_name,
-        role: last.responsible.position.name,
-        image:loadAvatar(last.responsible.avatar)
-      },
-      responsible: {
-        name: last.responsible.name,
-        surname: last.responsible.last_name,
-        role: last.responsible.position.name,
-        image: loadAvatar(last.responsible.avatar)
-      },
-      deadline: new Date(last.deadline), // Преобразуем строку в дату
+  return apiServices.map((service) => ({
+    id: service.id,
+    description: service.name, // Используем поле name для description
+    creator: {
+      name: service.responsible.name, // Отсутствует creator в API, поэтому используем responsible
+      surname: service.responsible.last_name,
+      role: service.responsible.position.name,
+      image: loadAvatar(service.responsible.avatar),
     },
-  };
+    responsible: {
+      name: service.responsible.name,
+      surname: service.responsible.last_name,
+      role: service.responsible.position.name,
+      image: loadAvatar(service.responsible.avatar),
+    },
+    deadline: new Date(service.deadline), // Преобразуем строку в дату
+  }));
 };
 
 // Маппинг статуса компании из API
@@ -185,11 +210,71 @@ const mapStatus = (status) => {
       return statusTypes.unknown;
   }
 };
+const mapCommentsFromApi = (apiComments) => {
+  return apiComments?.reduce((acc, comment) => {
+    debugger;
+    acc[comment.id] = {
+      id: comment.id,
+      date: new Date(comment.created_at),
+      sender: {
+        id: comment.commentator.id,
+        image: comment.commentator.avatar
+          ? loadAvatar(comment.commentator.avatar)
+          : loadAvatar(),
+        name: `${comment.commentator.name} ${comment.commentator.last_name}`,
+      },
+      value: {
+        text: comment.text,
+        files: comment.files.map((file) => ({
+          id: file.id,
+          name: file.original_name,
+          extension: `.${file.original_name.split('.').pop()}`,
+          url: file.url,
+        })),
+      },
+    };
+    return acc;
+  }, {});
+};
+
+export const mapCommentDataToBackend = (drafts, changedFieldsSet) => {
+  const formData = new FormData();
+
+  const mapCommentKeyToBackend = (key) => {
+    const commentKeyMapping = {
+      text: 'text',
+      files: 'files',
+    };
+
+    return commentKeyMapping[key] || key;
+  };
+
+  // Map changed fields for text
+  const changedData = mapChangedFieldsForBackend(
+    drafts,
+    changedFieldsSet,
+    mapCommentKeyToBackend,
+    (key, value) => value, // No special casting needed for comments
+  );
+
+  // Add text to FormData
+  if (changedData.text) {
+    formData.append('text', changedData.text);
+  }
+
+  // Add files to FormData if present
+  if (changedData.files) {
+    changedData.files.forEach((file, index) => {
+      formData.append(`files[${index}]`, file);
+    });
+  }
+
+  return formData;
+};
 
 export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
-
   // Обработка ФИО
-  const fioParams = mapFio(drafts,changedFieldsSet,propId)
+  const fioParams = mapFio(drafts, changedFieldsSet, propId);
   const castValue = (key, value) => {
     switch (key) {
       case 'manager_id':
@@ -199,8 +284,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
     }
   };
 
-  const mapKeyToBackend = (key,draft) => {
-
+  const mapKeyToBackend = (key, draft) => {
     const keyMapping = {
       [`passwords.${propId}.name`]: 'service_name',
       [`passwords.${propId}.values.login`]: 'login',
@@ -228,15 +312,16 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       // Добавляем другие ключи по мере необходимости
     };
 
-
-
     return keyMapping[key] || key;
   };
 
-  return {...mapChangedFieldsForBackend(
-    drafts,
-    changedFieldsSet,
-    mapKeyToBackend,
-    castValue,
-  ),...fioParams};
+  return {
+    ...mapChangedFieldsForBackend(
+      drafts,
+      changedFieldsSet,
+      mapKeyToBackend,
+      castValue,
+    ),
+    ...fioParams,
+  };
 };
