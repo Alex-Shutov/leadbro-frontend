@@ -4,6 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    container_name: leadbro_frontend
+    container_name: ${COMPOSE_PREFIX}_frontend
     ports:
       - '${EXTERNAL_PORT}:80'
