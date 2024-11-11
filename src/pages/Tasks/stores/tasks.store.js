@@ -1,79 +1,104 @@
 import { makeAutoObservable, action, observable } from 'mobx';
-import {changeDraft, removeDraft} from "../../../utils/store.utils";
+import {
+  changeDraft,
+  removeDraft,
+  resetDraft,
+  updateDraftObject,
+  updateObjectRecursively,
+} from '../../../utils/store.utils';
 
 export class TasksStore {
-    tasks = [];
-    drafts = {};
-    taskStatuses=null
+  tasks = [];
+  drafts = {};
+  taskStatuses = null;
+  metaInfoTable = {};
+  changedProps = new Set();
 
-    constructor(root) {
-        this.root = root;
-        makeAutoObservable(this);
+  constructor(root) {
+    this.root = root;
+    makeAutoObservable(this);
+  }
+
+  getTasks() {
+    return this.tasks.map((task) => {
+      const draft = this.drafts[task.id];
+      return draft ? { ...task, ...draft } : task;
+    });
+  }
+
+  getById(id, isReset = false) {
+    const task = this.tasks.find((x) => x.id === Number(id));
+    const draft = this.drafts[id];
+    return isReset ? task : draft ? { ...task, ...draft } : task;
+  }
+
+  resetDraft(id, path) {
+    if (!this.drafts[id]) return;
+    let task = this.getById(id, true);
+
+    resetDraft(this, id, task, path);
+  }
+
+  submitDraft(id) {
+    if (!this.drafts[id]) return;
+
+    const task = this.getById(id);
+    if (!task) return;
+
+    const updatedTask = { ...task };
+    this.tasks = this.tasks.map((c) => (c.id === id ? updatedTask : c));
+    delete this.drafts[id];
+    this.clearChangesSet();
+  }
+
+  createDraft(id) {
+    const task = this.getById(id);
+    if (!task) return;
+
+    this.drafts[id] = { ...task };
+  }
+
+  changeById(id, path, value, withId) {
+    if (!this.drafts[id]) {
+      this.createDraft(id);
     }
 
-    getTasks() {
-        return this.tasks.map((task) => {
-            const draft = this.drafts[task.id];
-            return draft ? { ...task, ...draft } : task;
-        });
+    let draft = this.drafts[id];
+    this.addChangesProps(path);
+    changeDraft(this, id, draft, path, value, withId);
+  }
+
+  removeById(id, path) {
+    if (!this.drafts[id]) {
+      this.createDraft(id);
     }
 
-    getById(id, isReset = false) {
-        const task = this.tasks.find((x) => x.id === Number(id));
-        const draft = this.drafts[id];
-        return isReset ? task : draft ? { ...task, ...draft } : task;
-    }
+    removeDraft(this, id, path);
+  }
 
-    resetDraft(id, path) {
-        if (!this.drafts[id]) return;
-        let task = this.getById(id, true);
+  setTasks(result) {
+    this.tasks = result;
+  }
+  setStatuses(result) {
+    this.taskStatuses = result;
+  }
 
-        this.resetDraft(this, id, task, path);
-    }
+  setMetaInfoTable(info) {
+    this.metaInfoTable = info;
+  }
 
-    submitDraft(id) {
-        if (!this.drafts[id]) return;
+  getMetaInfoTable() {
+    return this.metaInfoTable;
+  }
+  getStatuses() {
+    return this.taskStatuses;
+  }
 
-        const task = this.getById(id);
-        if (!task) return;
+  addChangesProps(name) {
+    this.changedProps.add(name);
+  }
 
-        const updatedTask = { ...task };
-        this.tasks = this.tasks.map((c) => (c.id === id ? updatedTask : c));
-        delete this.drafts[id];
-    }
-
-    createDraft(id) {
-        const task = this.getById(id);
-        if (!task) return;
-
-        this.drafts[id] = { ...task };
-    }
-
-    changeById(id, path, value, withId) {
-        if (!this.drafts[id]) {
-            this.createDraft(id);
-        }
-        let draft = this.drafts[id];
-
-        changeDraft(this, id, draft, path, value, withId);
-    }
-
-    removeById(id, path) {
-        if (!this.drafts[id]) {
-            this.createDraft(id);
-        }
-
-        removeDraft(this, id, path);
-    }
-
-    setTasks(result) {
-        this.tasks = result;
-    }
-    setStatuses(result){
-        this.taskStatuses=result
-    }
-    getStatuses(){
-        return this.taskStatuses
-    }
-
+  clearChangesSet() {
+    this.changedProps = new Set();
+  }
 }

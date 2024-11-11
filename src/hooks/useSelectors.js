@@ -42,7 +42,6 @@ export const useSelectorClients = (query = '') => {
 };
 
 export const useSelectorEmployeePositions = () => {
-  debugger;
   const { getEmployeePositions } = useAppApi();
   const { appStore } = useStore();
   useEffect(() => {

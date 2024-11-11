@@ -14,7 +14,7 @@ import TextLink from '../../../../shared/Table/TextLink';
 import BillsStats from './components/BillsStats';
 import useQueryParam from '../../../../hooks/useQueryParam';
 import { formatDateToQuery } from '../../../../utils/formate.date';
-import {format, startOfDay, sub} from "date-fns";
+import { format, startOfDay, sub } from 'date-fns';
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -31,7 +31,6 @@ const BillsTable = observer(() => {
   const todayFormatted = formatDateForUrl(today);
 
   const monthAgoFormatted = formatDateForUrl(monthAgo);
-  debugger
 
   const from = useQueryParam('from', monthAgoFormatted);
   const to = useQueryParam('to', todayFormatted);
@@ -64,8 +63,12 @@ const BillsTable = observer(() => {
     console.log(`Удалить счет с ID: ${id}`);
   };
 
+  const handleDownload = (urlToBill) => {
+    window.open(urlToBill, '_blank');
+  };
+
   const getActions = (data) => [
-    { label: 'Скачать', onClick: () => console.log('Скачать') },
+    { label: 'Скачать', onClick: () => handleDownload(data.stampedBill) },
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
       label: 'Удалить',
@@ -82,10 +85,8 @@ const BillsTable = observer(() => {
     );
   }, [from, to]);
 
-
-
   // const handleFilter = (period) => {
-  //   debugger;
+  //
   //   // Вызываем API для фильтрации счетов по выбранному периоду
   //   api.getBills(currentPage, from, to);
   // };
@@ -99,7 +100,7 @@ const BillsTable = observer(() => {
         width: '15%',
         Cell: ({ row }) => (
           <TableLink
-            to={`/bills/${row.original.id}`}
+            onClick={() => handleEdit(row.original)}
             name={row.original.number}
           />
         ),
@@ -139,11 +140,14 @@ const BillsTable = observer(() => {
         width: '20%',
         accessor: 'company.name',
         Cell: ({ row }) => {
-          return row.original.company ?  (
-          <TextLink to={`/clients/${row.original.company.id}`}>
-            {row.original.company.name}
-          </TextLink>
-        ) : <></>},
+          return row.original.company ? (
+            <TextLink to={`/clients/${row.original.company.id}`}>
+              {row.original.company.name}
+            </TextLink>
+          ) : (
+            <></>
+          );
+        },
       },
 
       {
@@ -199,8 +203,8 @@ const BillsTable = observer(() => {
         <EditModal
           billId={currentBill?.id ?? null}
           onClose={() => {
-            setEditModalOpen(false)
-            setCurrentBill(null)
+            setEditModalOpen(false);
+            setCurrentBill(null);
           }}
         />
       )}

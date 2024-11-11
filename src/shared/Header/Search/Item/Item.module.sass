@@ -12,7 +12,12 @@
     flex-grow: 1
     &:hover
         .title
+
             color: $p1
+.details
+    flex-grow: 1
+    overflow: hidden
+    min-width: 0 // Важно для работы text-overflow
 
 .preview
     flex-shrink: 0
@@ -34,6 +39,9 @@
 .title
     color: $n7
     transition: color .2s
+    overflow: hidden
+    text-overflow: ellipsis
+
     +dark
         color: $n1
 

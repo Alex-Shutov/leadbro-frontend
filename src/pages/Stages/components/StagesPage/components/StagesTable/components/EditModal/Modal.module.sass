@@ -1,9 +1,19 @@
 @import ../../../../../../../../styles/helpers
 
 .name
+  display: flex
+  flex-direction: row
   +title1-s
   color: $n7
   margin-bottom: 24px
+  gap: 8px
+  justify-content: space-evenly
+  span
+    +body1-s
+    color: $n4
+    display: inline-block
+    margin: auto
+
 
 .container
   display: flex

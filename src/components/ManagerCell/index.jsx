@@ -13,7 +13,7 @@ const ManagerCell = ({ manager, ...rest }) => {
       <div className={styles.fioContainer}>
         <div>
           <Link>
-            {manager?.name} {manager?.surname} {manager?.fio}
+            {manager?.name} {manager?.surname ?? manager?.lastName} {manager?.fio}
           </Link>
         </div>
         <div>{manager?.role}</div>

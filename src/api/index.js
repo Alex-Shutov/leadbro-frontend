@@ -6,9 +6,40 @@ import {
   resetApiProvider,
 } from '../shared/http';
 import { mapEmployeesFromApi } from '../pages/Settings/settings.mapper';
+import {useEffect, useState} from 'react';
 
 const useAppApi = () => {
   const { appStore } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [entityForLoad,setEntityForLoad] = useState(null)
+
+    useEffect(() => {
+        if(!isLoading) setEntityForLoad(null)
+    }, [isLoading]);
+
+   const sendComment = (entityType, entityId, { text, files }) => {
+       resetApiProvider()
+    const formData = new FormData();
+    formData.append('text', text);
+
+    // Добавляем файлы в FormData
+    files.forEach((file) => {
+      formData.append('files', file.blob); // Добавляем сам файл
+    });
+     setIsLoading(true)
+       setEntityForLoad('comment')
+    return http
+        .post(`/api/${entityType}/${entityId}/comment`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(handleHttpResponse)
+        .catch(handleHttpError)
+        .finally(()=>setIsLoading(false))
+        ;
+  };
+
   const getEmployees = (query) => {
     resetApiProvider();
 
@@ -20,7 +51,8 @@ const useAppApi = () => {
       .then((res) => {
         appStore.setEmployees(res.data); // Сохраняем сотрудников в стор
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   // Функция для получения компаний
@@ -33,11 +65,11 @@ const useAppApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
         appStore.setCompanies(res.body.data); // Сохраняем компании в стор
         return res.body.data;
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   // Функция для получения клиентов
@@ -53,12 +85,12 @@ const useAppApi = () => {
         appStore.setClients(res.data); // Сохраняем клиентов в стор
         return res.data;
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   // Функция для получения должностей сотрудников
   const getEmployeePositions = () => {
-    debugger;
     resetApiProvider();
     return http
       .get(`/api/selector/employee_position`)
@@ -66,7 +98,8 @@ const useAppApi = () => {
       .then((res) => {
         appStore.setEmployeePositions(res.body.data); // Сохраняем должности сотрудников в стор
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   // Функция для получения задач
@@ -81,7 +114,8 @@ const useAppApi = () => {
       .then((res) => {
         appStore.setTasks(res.data); // Сохраняем задачи в стор
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   // Функция для получения услуг
@@ -95,63 +129,97 @@ const useAppApi = () => {
       .then((res) => {
         appStore.setServices(res.data); // Сохраняем услуги в стор
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getServicesByCompany = (companyId) => {
     resetApiProvider();
     return http
-        .get(`/api/companies/${companyId}/services`, {
-        })
-        .then(handleHttpResponse)
-        .then((res) => {
-          debugger
-          appStore.setServicesByCompany(res.body.data.map(el=>({id:el.id,name:el.name}))); // Сохраняем услуги в стор
-          return res.body.data// Сохраняем услуги в стор
-
-        })
-        .catch(handleHttpError);
+      .get(`/api/companies/${companyId}/services`, {})
+      .then(handleHttpResponse)
+      .then((res) => {
+        appStore.setServicesByCompany(
+          res.body.data.map((el) => ({ id: el.id, name: el.name })),
+        ); // Сохраняем услуги в стор
+        return res.body.data; // Сохраняем услуги в стор
+      })
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getStagesByService = (serviceId) => {
     resetApiProvider();
     return http
-        .get(`/api/services/${serviceId}/stages`, {
-        })
-        .then(handleHttpResponse)
-        .then((res) => {
-          appStore.setStagesByService(res.body.data.map(el=>({id:el.id,name:el.name})));
-          return res.body.data// Сохраняем услуги в стор
-
-        })
-        .catch(handleHttpError);
+      .get(`/api/services/${serviceId}/stages`, {})
+      .then(handleHttpResponse)
+      .then((res) => {
+        appStore.setStagesByService(
+          res.body.data.map((el) => ({ id: el.id, name: el.name })),
+        );
+        return res.body.data; // Сохраняем услуги в стор
+      })
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getLegalEntities = (query) => {
     resetApiProvider();
     return http
-        .get(`/api/selector/legal_entities`, {
-          params:{query}
-        })
-        .then(handleHttpResponse)
-        .then((res) => {
-          appStore.setLegalEntities(res.body.data.map(el=>({id:el.id,name:el.name})));
-          return res.body.data// Сохраняем услуги в стор
-
-        })
-        .catch(handleHttpError);
+      .get(`/api/selector/legal_entities`, {
+        params: { query },
+      })
+      .then(handleHttpResponse)
+      .then((res) => {
+        appStore.setLegalEntities(
+          res.body.data.map((el) => ({ id: el.id, name: el.name })),
+        );
+        return res.body.data; // Сохраняем услуги в стор
+      })
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
+  const search = (query) => {
+    resetApiProvider();
+    setIsLoading(true);
+    return http
+      .get(`/api/search`, {
+        params: { query },
+      })
+      .then(handleHttpResponse)
+      .then((res) => {
+        appStore.setSearchResults(res.body); // Сохраняем результаты поиска в стор
+        return res.body.data;
+      })
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
+    const getUserProfile = () => {
+        setIsLoading(true)
+        setEntityForLoad('user')
+        return http
+            .get('/api/me')
+            .then(handleHttpResponse)
+            .catch(handleHttpError)
+            .finally(()=>setIsLoading(false))
+    };
 
   return {
     getEmployees,
     getCompanies,
     getClients,
+      getUserProfile,
     getEmployeePositions,
     getTasks,
     getServices,
     getServicesByCompany,
     getStagesByService,
-    getLegalEntities
+    getLegalEntities,
+    search,
+      sendComment,
+    isLoading,
+      entityForLoad
   };
 };
 

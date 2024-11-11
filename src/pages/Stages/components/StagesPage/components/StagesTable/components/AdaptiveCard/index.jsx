@@ -54,7 +54,7 @@ const Index = ({ data, statusType }) => {
                 ))}
               </div>
             </Card>
-            {opened && <EditModal data={original} />}
+            {/*{opened && <EditModal data={original} />}*/}
           </>
         );
       })}

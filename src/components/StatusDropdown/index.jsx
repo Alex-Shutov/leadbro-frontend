@@ -4,7 +4,6 @@ import styles from '../../shared/Dropdown/Default/Dropdown.module.sass';
 import Dropdown from '../../shared/Dropdown/Default';
 
 const StatusDropdown = ({ statuses, value, onChange }) => {
-  debugger;
   const options = useMemo(() => {
     return Object.entries(statuses).map(
       ([key, { status, class: className }]) => ({

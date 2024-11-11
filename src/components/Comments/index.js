@@ -1,22 +1,39 @@
 import React, { useMemo, useState } from 'react';
-import Card from '../../../../../shared/Card';
-import CommentsList from '../../../../../components/CommentsList';
+import Card from '../../shared/Card';
+import CommentsList from '../CommentsList';
 import CommentsInput from './CommentsInput';
-import useUser from '../../../../../hooks/useUser';
+import useUser from '../../hooks/useUser';
 import CommentsFilters from './CommentsFilters';
+import useAppApi from "../../api";
+import {useLocation} from "react-router-dom";
+import {useParams} from "react-router";
 
-const ClientComments = ({ comments, onChange }) => {
+const Comments = ({ comments, onChange,prefix='',entityId,belongsTo=null }) => {
   const commentsLength = useMemo(
     () => Object.keys(comments ?? {}).length,
     [comments],
   );
-  debugger;
-  const user = useUser();
+  const {id} = useParams()
+
+  const {user} = useUser();
   const [isFilterFiles, setFilterFiles] = useState(false);
   const [isFilterComments, setCommentFiles] = useState(false);
+  const url = useLocation()
+  const appApi = useAppApi()
 
   function countComments() {
     return Object.keys(comments ?? {}).length;
+  }
+
+  function getCurrentEntityType(){
+    const path = url.pathname
+    if (path.includes('clients')) {
+      return 'companies'
+    } else if (path.includes('deals')) {
+      return 'deals'
+    } else if (path.includes('tasks') || path.includes('stages')) {
+      return 'tasks'
+    }
   }
 
   function countFiles() {
@@ -39,12 +56,18 @@ const ClientComments = ({ comments, onChange }) => {
     setFilterFiles(true);
     setCommentFiles(false);
   }
-
+  debugger
   return (
     <Card>
       <CommentsInput
         commentsLength={commentsLength}
-        onSendMessage={(val) => onChange(`comments.${commentsLength}`, val)}
+        onSendMessage={(val) => {
+          onChange(`${prefix}comments.${commentsLength}`, val)
+          debugger
+          appApi.sendComment(belongsTo ?? getCurrentEntityType(),entityId ?? id,{text:val.value.text,files:val.value.files})
+        }
+
+      }
         currentUser={user}
       />
       <CommentsFilters
@@ -58,9 +81,10 @@ const ClientComments = ({ comments, onChange }) => {
         filterFiles={isFilterFiles}
         filterComments={isFilterComments}
         comments={comments}
+
       />
     </Card>
   );
 };
 
-export default ClientComments;
+export default Comments;

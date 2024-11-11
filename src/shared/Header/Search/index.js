@@ -1,118 +1,163 @@
-import React, {useRef, useState} from "react";
-import cn from "classnames";
-import styles from "./Search.module.sass";
-import Icon from "../../Icon";
-import Item from "./Item";
-import Suggestion from "./Suggestion";
-import OutsideClickLayout from "../../Layouts/outsideClickLayout";
-import useOutsideClick from "../../../hooks/useOutsideClick";
+import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { observer } from 'mobx-react';
+import cn from 'classnames';
+import styles from './Search.module.sass';
+import Icon from '../../Icon';
+import { debounce } from 'lodash';
+import Item from './Item';
+import Suggestion from './Suggestion';
+import { useNavigate } from 'react-router';
+import useStore from '../../../hooks/useStore';
+import useAppApi from '../../../api';
+import TaskEditModal from '../../../components/TaskModal';
+import useTasks from '../../../pages/Tasks/hooks/useTasks';
+import useTasksApi from '../../../pages/Tasks/tasks.api';
 
-const result = [
-  {
-    title: "Put your title here",
-    content: "Small caption",
-    image: "/images/content/product-pic-3.jpg",
-    image2x: "/images/content/product-pic-3@2x.jpg",
-  },
-  {
-    title: "Put your title here",
-    content: "Small caption",
-    image: "/images/content/product-pic-4.jpg",
-    image2x: "/images/content/product-pic-4@2x.jpg",
-  },
-];
+const Search = observer(({ className }) => {
+  const navigate = useNavigate();
+  const { appStore } = useStore();
+  const { searchResults } = appStore;
+  const appApi = useAppApi();
+  const { data, isLoading, store: taskStore } = useTasks();
+  const taskApi = useTasksApi();
 
-const suggestions = [
-  {
-    title: "Put your title here",
-    content: "Small caption",
-    icon: "photos",
-  },
-  {
-    title: "Put your title here",
-    content: "Small caption",
-    icon: "photos",
-  },
-];
-
-const Search = ({ className }) => {
   const [visible, setVisible] = useState(false);
-  const [visibleModalProduct, setVisibleModalProduct] = useState(false);
-  const ref=useRef(null)
-  const [text,setText] = useState('')
-  useOutsideClick(ref,()=>setVisible(false))
-  const inputRef = useRef(null)
+  const [text, setText] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
+  const ref = useRef(null);
+  const inputRef = useRef(null);
+
+  // Debounced search function
+  const searchFunction = async (query) => {
+    if (query.length >= 3) {
+      try {
+        await appApi.search(query);
+      } catch (error) {
+        console.error('Search error:', error);
+        appStore.clearSearchResults();
+      }
+    } else {
+      appStore.clearSearchResults();
+    }
+  };
+
+  // Создаем мемоизированную debounced версию функции поиска
+  const debouncedSearch = useCallback(debounce(searchFunction, 100), [appApi]);
+
+  useEffect(() => {
+    debouncedSearch(text);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [text]);
+
+  const handleResultClick = (item, type) => {
+    switch (type) {
+      case 'tasks':
+        setSelectedTask(item);
+        break;
+      case 'deals':
+        navigate(`/deals/${item.id}`);
+        break;
+      case 'companies':
+        navigate(`/clients/${item.id}`);
+        break;
+      case 'services':
+        navigate(`/services/${item.id}`);
+        break;
+    }
+    setVisible(false);
+  };
+
+  const formatResults = () => {
+    const results = [];
+
+    // Заголовки для групп результатов
+    const TYPE_GROUPS = {
+      companies: 'Компании',
+      deals: 'Сделки',
+      tasks: 'Задачи',
+      services: 'Услуги',
+    };
+
+    Object.entries(searchResults).forEach(([type, items]) => {
+      if (items.length > 0) {
+        results.push({
+          title: TYPE_GROUPS[type],
+          items: items.map((item) => ({
+            title: item.name,
+            content: TYPE_GROUPS[type], // Используем перевод для единственного числа
+            id: item.id,
+            type,
+          })),
+        });
+      }
+    });
+
+    return results;
+  };
+
+  const handleClose = () => {
+    setText('');
+    inputRef.current.blur();
+    setVisible(false);
+    appStore.clearSearchResults();
+  };
+
   return (
     <>
       <div
-          ref={ref}
+        ref={ref}
         className={cn(styles.search, className, { [styles.active]: visible })}
       >
         <div className={styles.head}>
           <button className={styles.start}>
             <Icon className={styles.searchIcon} name="search" size="24" />
           </button>
-          {/*<button className={styles.direction}>*/}
-          {/*  <Icon name="arrow-left" size="24" />*/}
-          {/*</button>*/}
           <input
-              ref={inputRef}
-              value={text}
+            ref={inputRef}
+            value={text}
             className={styles.input}
             type="text"
             placeholder="Поиск"
-            onChange={({target}) => {
-              setText(target.value)
-              setVisible(true)
-
-            }
-            }
+            onChange={({ target }) => {
+              setText(target.value);
+              setVisible(true);
+            }}
           />
-          {/*<button className={styles.result}>⌘ F</button>*/}
-          <button className={styles.close} onClick={() => {
-            setText('')
-            inputRef.current.blur()
-            setVisible(false)
-
-          }}>
+          <button className={styles.close} onClick={handleClose}>
             <Icon name="close-circle" size="24" />
           </button>
         </div>
         <div className={styles.body}>
-          <div className={styles.box}>
-            <div className={styles.category}>Recent search</div>
-            <div className={styles.list}>
-              {result.map((x, index) => (
-                <Item
-                  className={styles.item}
-                  item={x}
-                  key={index}
-                  onClick={() => setVisibleModalProduct(true)}
-                />
-              ))}
+          {formatResults().map((section, sectionIndex) => (
+            <div className={styles.box} key={sectionIndex}>
+              <div className={styles.category}>{section.title}</div>
+              <div className={styles.list}>
+                {section.items.map((item, itemIndex) => (
+                  <Item
+                    className={styles.item}
+                    item={item}
+                    key={itemIndex}
+                    onClick={() => handleResultClick(item, item.type)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-          <div className={styles.box}>
-            <div className={styles.category}>Suggestions</div>
-            <div className={styles.list}>
-              {suggestions.map((x, index) => (
-                <Suggestion
-                  className={styles.item}
-                  item={x}
-                  key={index}
-                  onClick={() => setVisibleModalProduct(true)}
-                />
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
-      {/*<ModalProduct*/}
-      {/*  visible={visibleModalProduct}*/}
-      {/*  onClose={() => setVisibleModalProduct(false)}*/}
-      {/*/>*/}
+
+      {selectedTask && (
+        <TaskEditModal
+          data={selectedTask}
+          handleClose={() => setSelectedTask(null)}
+          taskStore={taskStore}
+          taskApi={taskApi}
+        />
+      )}
     </>
   );
-};
+});
 
 export default Search;

@@ -37,7 +37,6 @@ const useServiceApi = () => {
       .get('/api/services', { params: { page } })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
         const mappedServices = res.body.data.map((e) => mapServiceFromApi(e));
         servicesStore.setServices(mappedServices); // Устанавливаем клиентов в store
         servicesStore.setMetaInfoTable(res.body.meta);
@@ -82,7 +81,7 @@ const useServiceApi = () => {
     const clientId = body?.client?.id;
     const updateData = mapServiceDataToBackend(body, Object.keys(body));
     resetApiProvider();
-    debugger;
+
     return http
       .post(`/api/companies/${clientId}/services`, updateData)
       .then(handleHttpResponse)
@@ -104,7 +103,7 @@ const useServiceApi = () => {
       servicesStore.drafts[serviceId],
       servicesStore.changedProps,
     );
-    debugger;
+
     return http
       .patch(`/api/services/${serviceId}`, updateData)
       .then(handleHttpResponse)

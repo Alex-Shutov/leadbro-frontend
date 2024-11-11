@@ -14,10 +14,9 @@ import Icon from '../../../../../../shared/Icon';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Basis from '../../../../../../shared/Basis';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
-import {declineWord} from "../../../../../../utils/format.string";
+import { declineWord } from '../../../../../../utils/format.string';
 
 const Task = ({ stage, task, taskName, ...rest }) => {
-  debugger;
   const { last: localTask, total } = task;
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef();
@@ -51,7 +50,10 @@ const Task = ({ stage, task, taskName, ...rest }) => {
                 onClick={() => setIsOpen(true)}
                 className={styles.taskName_primary}
               >
-                <span>{stage.taskCount} {`${declineWord('задача',stage.taskCount)}`}</span>
+                <span>
+                  {stage.taskCount}{' '}
+                  {`${declineWord('задача', stage.taskCount)}`}
+                </span>
               </TextLink>
             </div>
             {/*<div className={styles.dateDeadline}>*/}

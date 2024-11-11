@@ -13,6 +13,8 @@ import { useLocation } from 'react-router';
 import StagesPage from '../pages/Stages/components/StagesPage';
 import Settings from '../pages/Settings';
 import Bills from '../pages/Bills';
+import Deals from "../pages/Deals";
+import DealPage from "../pages/Deals/components/DealPage";
 
 export const paths = {
   MAIN: '/',
@@ -26,6 +28,8 @@ export const paths = {
   BILLS: '/bills',
   LOGIN: '/login',
   NOTFOUND: '*',
+  DEALS:'/deals',
+  DEALS_ID:'/deals/:id'
 };
 
 const PrivateRoute = ({ element }) => {
@@ -45,9 +49,18 @@ const protectedRoutes = [
     element: <></>,
   },
   {
+    path: paths.DEALS,
+    element: <Deals />,
+  },
+  {
+    path: paths.DEALS_ID,
+    element: <DealPage />,
+  },
+  {
     path: paths.CLIENTS,
     element: <Clients />,
   },
+
   {
     path: paths.CLIENTS_ID,
     element: <ClientPage />,

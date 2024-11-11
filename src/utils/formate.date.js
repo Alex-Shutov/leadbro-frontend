@@ -34,19 +34,27 @@ export const formatDateOnlyHours = (date) => {
 };
 
 export const formatDateWithOnlyDigits = (date) => {
+  if (!date) return;
+
   let formatDate = format(date, 'dd.MM.yyyy', { locale: ru });
   formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
   return formatDate;
 };
 
 export const formatHours = (date) => {
+  if (!date) return;
+
   return format(date, 'HH:mm');
 };
 
 export const formatDateToBackend = (value) => {
+  if (!value) return;
+
   return format(value, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
 export const formatDateToQuery = (value) => {
+  if (!value) return;
+
   return format(value, 'yyyy-MM-dd');
 };

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styles from './Filters.module.sass'
-import Icon from "../../../../../../shared/Icon";
+import Icon from "../../../shared/Icon";
 import cn from "classnames";
 
 const Index = ({commentsLength,filesLength,filterFiles,filterComments,filterAll}) => {

@@ -6,6 +6,7 @@ import { colorStatusTypes as servicesStatuses } from '../../pages/Services/servi
 import { colorTasksTypes as tasksStatuses } from '../../pages/Tasks/tasks.types';
 import { colorEmployersTypeEnum as employersStatuses } from '../../pages/Settings/settings.types';
 import { colorBillStatusTypes as billsStatuses } from '../../pages/Bills/bills.types';
+import { colorStatusDealTypes as dealsStatuses } from '../../pages/Deals/deals.types';
 
 export const statusTypes = {
   clients: clientStatuses,
@@ -13,6 +14,7 @@ export const statusTypes = {
   tasks: tasksStatuses,
   employes: employersStatuses,
   bills: billsStatuses,
+    deals: dealsStatuses,
 };
 
 const Badge = ({ statusType, status, classname }) => {

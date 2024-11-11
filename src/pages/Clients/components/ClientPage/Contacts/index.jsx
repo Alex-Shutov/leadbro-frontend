@@ -38,7 +38,7 @@ const ClientsContacts = ({
       // },
       edit: ({ name, value }) => onChange(name, value),
       submit: () => {
-        onSubmit(path,success);
+        onSubmit(path, success);
       },
       reset: () => {
         onReset(path);
@@ -51,12 +51,14 @@ const ClientsContacts = ({
     <Card classTitle={styles.title} className={styles.card}>
       <Title
         smallTable={true}
-        actions={{
-          add: {
-            action: () => null,
-            title: 'Добавить клиента',
-          },
-        }}
+        actions={
+          {
+            // add: {
+            //   action: () => null,
+            //   title: 'Добавить клиента',
+            // },
+          }
+        }
         title={'Контактные данные'}
       />
       <MultiInputContacts

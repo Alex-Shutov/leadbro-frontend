@@ -1,67 +1,91 @@
-import {makeAutoObservable} from "mobx";
+import { makeAutoObservable } from 'mobx';
 
-export class AppStore{
-    employees = [];
-    companies = [];
-    clients = [];
-    employeePositions = [];
-    tasks = [];
-    services = [];
-    servicesByCompany=[]
-    stagesByService = []
-    legalEntities=[]
+export class AppStore {
+  employees = [];
+  companies = [];
+  clients = [];
+  employeePositions = [];
+  tasks = [];
+  services = [];
+  servicesByCompany = [];
+  stagesByService = [];
+  legalEntities = [];
+  searchResults = {
+    companies: [],
+    deals: [],
+    tasks: [],
+    services: [],
+  };
 
-    constructor(root) {
-        this.root = root;
-        makeAutoObservable(this);
-    }
+  constructor(root) {
+    this.root = root;
+    makeAutoObservable(this);
+  }
 
-    // Устанавливаем сотрудников
-    setEmployees(employees) {
-        this.employees = employees;
-    }
+  setSearchResults(results) {
+    this.searchResults = {
+      companies: results.companies || [],
+      deals: results.deals || [],
+      tasks: results.tasks || [],
+      services: results.services || [],
+    };
+  }
 
-    setLegalEntities(legals){
-        this.legalEntities = legals
-    }
+  clearSearchResults() {
+    this.searchResults = {
+      companies: [],
+      deals: [],
+      tasks: [],
+      services: [],
+    };
+  }
 
-    // Устанавливаем компании
-    setCompanies(companies) {
-        this.companies = companies;
-    }
+  // Устанавливаем сотрудников
+  setEmployees(employees) {
+    this.employees = employees;
+  }
 
-    // Устанавливаем клиентов
-    setClients(clients) {
-        this.clients = clients;
-    }
+  setLegalEntities(legals) {
+    this.legalEntities = legals;
+  }
 
-    // Устанавливаем должности сотрудников
-    setEmployeePositions(positions) {
-        this.employeePositions = positions;
-    }
+  // Устанавливаем компании
+  setCompanies(companies) {
+    this.companies = companies;
+  }
 
-    // Устанавливаем задачи
-    setTasks(tasks) {
-        this.tasks = tasks;
-    }
+  // Устанавливаем клиентов
+  setClients(clients) {
+    this.clients = clients;
+  }
 
-    // Устанавливаем услуги
-    setServices(services) {
-        this.services = services;
-    }
-    setServicesByCompany(services) {
-        this.servicesByCompany = services;
-    }
-    setStagesByService(stages){
-        this.stagesByService = stages
-    }
+  // Устанавливаем должности сотрудников
+  setEmployeePositions(positions) {
+    this.employeePositions = positions;
+  }
 
-    clearProp(props) {
-        props.forEach(propName=> {
-            if (propName in this) {
-                const propType = Array.isArray(this[propName]) ? [] : null;
-                this[propName] = propType;
-            }
-        })
-    }
+  // Устанавливаем задачи
+  setTasks(tasks) {
+    this.tasks = tasks;
+  }
+
+  // Устанавливаем услуги
+  setServices(services) {
+    this.services = services;
+  }
+  setServicesByCompany(services) {
+    this.servicesByCompany = services;
+  }
+  setStagesByService(stages) {
+    this.stagesByService = stages;
+  }
+
+  clearProp(props) {
+    props.forEach((propName) => {
+      if (propName in this) {
+        const propType = Array.isArray(this[propName]) ? [] : null;
+        this[propName] = propType;
+      }
+    });
+  }
 }

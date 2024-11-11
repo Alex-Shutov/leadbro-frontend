@@ -2,7 +2,7 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { serviceStatuses } from './components/ServicePage/components/Statuses';
 import { loadAvatar } from '../../utils/create.utils';
 import { statusActTypes, statusTypes } from './services.types';
-import {formatDateToBackend} from "../../utils/formate.date";
+import { formatDateToBackend } from '../../utils/formate.date';
 
 // Маппинг данных сервиса с бэкенда
 export const mapServiceFromApi = (apiService, stagesData) => {
@@ -92,7 +92,7 @@ const mapStages = (stages) => {
         },
       },
       taskCount: stage?.task_count,
-      bills:mapBill(stage?.bills ?? []),
+      bills: mapBill(stage?.bills ?? []),
 
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),
@@ -121,23 +121,23 @@ const mapStages = (stages) => {
 };
 
 const mapBill = (bills) => {
-  return bills.map(bill => ({
+  return bills.map((bill) => ({
     id: bill?.id,
     number: bill?.number,
     creationDate: new Date(bill?.creation_date),
     paymentDate: new Date(bill?.payment_date),
-    paymentReason:bill?.payment_reason,
-    stage:bill?.stage,
+    paymentReason: bill?.payment_reason,
+    stage: bill?.stage,
     company: bill?.company ?? null,
 
     service: bill?.service ?? null,
 
     legalEntity: bill?.legal_entity
-        ? {
+      ? {
           id: bill?.legal_entity.id,
           name: bill?.legal_entity.name,
         }
-        : null,
+      : null,
     items: bill?.items.map((item) => ({
       id: item.id,
       name: item.name,
@@ -151,12 +151,11 @@ const mapBill = (bills) => {
     unstampedBill: bill?.unstamped_bill,
     stampedAct: bill?.stamped_act,
     unstampedAct: bill?.unstamped_act,
-  }))
-}
+  }));
+};
 
 // Маппинг задач
 const mapTasks = (tasks) => {
-  debugger;
   if (!tasks || !tasks.last) return null;
 
   return {
@@ -205,7 +204,7 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
       case 'active':
         return statusTypes.inProgress === value;
       case 'deadline':
-        return formatDateToBackend(value)
+        return formatDateToBackend(value);
       case 'client':
         return value.id;
       default:

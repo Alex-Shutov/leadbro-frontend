@@ -92,7 +92,7 @@ const useClientsApi = () => {
         .then(
           ([clientRes, passwordsRes, contactRes, commentsRes, servicesRes]) => {
             // Деструктурируем результаты обоих запросов
-            debugger;
+
             const clientData = clientRes.data.data;
             const passwordsData = passwordsRes.data.data;
             const contactPersonsData = contactRes.data.data;
@@ -118,6 +118,7 @@ const useClientsApi = () => {
 
   // Обновление данных компании
   const updateCompany = (id, updateData, submitText) => {
+    debugger
     resetApiProvider();
     setIsLoading(true);
     updateData = mapClientDataToBackend(
@@ -190,13 +191,17 @@ const useClientsApi = () => {
   const createClient = (companyId, clientData) => {
     resetApiProvider();
     setIsLoading(true);
+    const updateData = mapClientDataToBackend(
+      clientData,
+      Object.keys(clientData),
+    );
     return http
-      .post(`/api/companies/${companyId}/clients`, clientData)
+      .post(`/api/companies/${companyId}/clients`, updateData)
       .then(handleHttpResponse)
       .then(() => getClientById(companyId))
       .then(() => handleSubmit('Данные клиента сохранены'))
 
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
   const createPassword = (companyId, clientData) => {

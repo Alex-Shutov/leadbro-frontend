@@ -15,16 +15,20 @@ import TextInput from '../../../../../../../../shared/TextInput';
 import cn from 'classnames';
 import CommentsList from '../../../../../../../../components/CommentsList';
 import taskStyles from './components/TaskDescriptionPart/Description.module.sass';
-import {tasksTypes} from "../../../../../../../Tasks/tasks.types";
-import {useParams} from "react-router";
-import useTasksApi from "../../../../../../../Tasks/tasks.api";
-import {mapStageDataToBackend} from "../../../../../../stages.mapper";
-import {colorStatusTaskTypes, taskStatusTypes} from "../../../../../../stages.types";
-const draftSet = new Set()
-const EditModal = observer(({ stageId, data, handleClose }) => {
-  debugger
+import { tasksTypes } from '../../../../../../../Tasks/tasks.types';
+import { useParams } from 'react-router';
+import useTasksApi from '../../../../../../../Tasks/tasks.api';
+import { mapStageDataToBackend } from '../../../../../../stages.mapper';
+import {
+  colorStatusTaskTypes,
+  taskStatusTypes,
+} from '../../../../../../stages.types';
+const draftSet = new Set();
+
+const EditModal = observer(({ stage, data, handleClose }) => {
+  const { id: stageId, title: stageName } = stage;
   const { store: stagesStore } = useStages(stageId);
-  const {id:serviceId} = useParams()
+  const { id: serviceId } = useParams();
   const [isEditMode, setIsEditMode] = useState(false);
   const [localTask, setLocalTask] = useState({
     name: '',
@@ -39,10 +43,18 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
     performer: [],
     show_at_client_cabinet: false,
     auditors: [],
-    stage_id: stageId
+    stage: {
+      title: stageName,
+      id: stageId,
+    },
   });
   const stageTask = useMemo(
-    () => isEditMode ?  Object.values(stagesStore.getById(stageId)?.tasks).find((el) => el.id === data?.id) : localTask,
+    () =>
+      isEditMode
+        ? Object.values(stagesStore.getById(stageId)?.tasks).find(
+            (el) => el.id === data?.id,
+          )
+        : localTask,
     [
       isEditMode,
       localTask,
@@ -51,7 +63,7 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
       stagesStore.currentStage,
       stagesStore.drafts,
     ],
-      );
+  );
 
   useEffect(() => {
     if (data) {
@@ -67,8 +79,8 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
   //   stagesStore.changeById(stageId, name, payload, withId);
   // };
   const handleChange = (name, value, withId = true) => {
-    if(name.includes('responsibles')){
-      value = value[0]
+    if (name.includes('responsibles')) {
+      value = value[0];
     }
     if (isEditMode) {
       stagesStore.changeById(stageId, name, value, withId);
@@ -77,19 +89,18 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
         ...prev,
         [name]: value,
       }));
-      draftSet.add(name)
+      draftSet.add(name);
     }
   };
   const handleReset = (path = '') => {
     stagesStore.resetDraft(stageId, path);
-    handleClose()
-  }
+    handleClose();
+  };
 
   const handleDecline = () => {
     handleError('Задача отклонена');
     handleClose && handleClose(null);
-    draftSet.clear()
-
+    draftSet.clear();
   };
 
   // const handleSubmit = useCallback((text) => {
@@ -104,10 +115,19 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
       if (isEditMode) {
         await taskApi.updateTask(stageTask.id, null); // Обновляем услугу
       } else {
-        await taskApi.createTask(mapStageDataToBackend({...stageTask,stage_id:localTask.stage_id},draftSet)); // Создаем новую услугу
-        draftSet.clear()
+        await taskApi.createTask(
+          mapStageDataToBackend(
+            { ...stageTask, stage_id: localTask.stage_id },
+            draftSet,
+          ),
+        ); // Создаем новую услугу
+        draftSet.clear();
       }
-      handleSubmitSnackbar(isEditMode ? 'Услуга успешно отредактирована' : 'Услуга успешно создана');
+      handleSubmitSnackbar(
+        isEditMode
+          ? 'Услуга успешно отредактирована'
+          : 'Услуга успешно создана',
+      );
       handleClose(null); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
@@ -115,58 +135,69 @@ const EditModal = observer(({ stageId, data, handleClose }) => {
   };
 
   return (
-    stageTask &&
-      (
-          <Modal
-              handleClose={handleReset}
-              handleSubmit={() => handleSubmit()}
-              size={'lg'}
-              stageId={stageId}
-          >
-            <div className={styles.name}>
-              {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
-            </div>
-            <div className={styles.gridContainer}>
-              <TaskDescriptionPart
-                  selectedStatus={stageTask.taskStatus}
-                  prefix={isEditMode ? `tasks.${stageTask.id}.` :''}
-                  handleSave={() => handleSubmit('Задача принята')}
-                  handleDecline={() => handleDecline()}
-                  className={styles.taskDescription}
-                  data={stageTask}
-                  handleChange={(name, value, withId) =>
-                      handleChange(name, value, withId)
-                  }
-              />
-              <TaskTypePart
-                  types={Object.keys(tasksTypes)}
-
-                  className={styles.taskType}
-                  data={Array.isArray(stageTask.responsibles) ? stageTask : {...stageTask, responsibles: [stageTask.responsibles]}}
-                  handleAdd={(name, payload) => {
-                    handleChange(isEditMode ? `tasks.${data.id}.${name}`  : name, payload, false);
-                  }}
-                  handleChange={(name, value, withId) =>
-                      handleChange(isEditMode ? `tasks.${data.id}.${name}` : name, value, true)
-                  }
-              />
-              {/*<CommentComponent*/}
-              {/*  className={styles.comment}*/}
-              {/*  data={stageTask}*/}
-              {/*  handleChange={(name, value, withId) =>*/}
-              {/*    handleChange(name, value, withId)*/}
-              {/*  }*/}
-              {/*/>*/}
-            </div>
-          </Modal>
-      )
+    stageTask && (
+      <Modal
+        handleClose={handleReset}
+        handleSubmit={() => handleSubmit()}
+        size={'lg'}
+        stageId={stageId}
+      >
+        <div className={styles.name}>
+          <div>{isEditMode ? 'Редактирование задачи' : 'Создание задачи'}</div>
+          <span>Принадлежит к {stageTask?.stage?.title}</span>
+        </div>
+        <div className={styles.gridContainer}>
+          <TaskDescriptionPart
+            selectedStatus={stageTask.taskStatus}
+            prefix={isEditMode ? `tasks.${stageTask.id}.` : ''}
+            handleSave={() => handleSubmit('Задача принята')}
+            handleDecline={() => handleDecline()}
+            className={styles.taskDescription}
+            data={stageTask}
+            handleChange={(name, value, withId) =>
+              handleChange(name, value, withId)
+            }
+          />
+          <TaskTypePart
+            types={Object.keys(tasksTypes)}
+            className={styles.taskType}
+            data={
+              Array.isArray(stageTask.responsibles)
+                ? stageTask
+                : { ...stageTask, responsibles: [stageTask.responsibles] }
+            }
+            handleAdd={(name, payload) => {
+              handleChange(
+                isEditMode ? `tasks.${data.id}.${name}` : name,
+                payload,
+                false,
+              );
+            }}
+            handleChange={(name, value, withId) =>
+              handleChange(
+                isEditMode ? `tasks.${data.id}.${name}` : name,
+                value,
+                true,
+              )
+            }
+          />
+          {/*<CommentComponent*/}
+          {/*  className={styles.comment}*/}
+          {/*  data={stageTask}*/}
+          {/*  handleChange={(name, value, withId) =>*/}
+          {/*    handleChange(name, value, withId)*/}
+          {/*  }*/}
+          {/*/>*/}
+        </div>
+      </Modal>
+    )
   );
 });
 
 const CommentComponent = ({
-                            handleChange,
-                            data: {comment, comments, id},
-                          }) => {
+  handleChange,
+  data: { comment, comments, id },
+}) => {
   return (
     <div>
       <div className={taskStyles.border_container_comment}>

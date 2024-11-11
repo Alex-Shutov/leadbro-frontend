@@ -66,7 +66,7 @@
     .body
         box-shadow: 0px 40px 64px -12px rgba(0, 0, 0, 0.08), 0px 0px 14px -4px rgba(0, 0, 0, 0.05), 0px 32px 48px -8px rgba(0, 0, 0, 0.1)
 
-    &.blue
+    &.blue,&.status-task-aqua
         .head
             background: #e3f7ff
             &:hover
@@ -77,7 +77,7 @@
 
             .selection
                 color: #29B6F3
-    &.status-yellow
+    &.status-yellow, &.status-task-yellow
         .head
             background: #fff3dc
             &:hover
@@ -89,7 +89,7 @@
             .selection
                 color: #E4A52B
 
-        &.status-grey
+        &.status-grey, &.status-task-disabled
             .head
                 background: $n3
                 &:hover
@@ -101,7 +101,7 @@
                 .selection
                     color: #272B30
 
-    &.status-green
+    &.status-green,&.status-task-green
         .head
             background: #eafae4
             &:hover
@@ -112,6 +112,28 @@
 
             .selection
                 color: #83BF6E
+    &.status-green-dark,&.status-task-dark-green
+        .head
+            background: #26842A
+            &:hover
+                box-shadow: inset 0 0 0 2px #26842A
+
+            .chevron
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12.707 15.707l-.094.083a1 1 0 0 1-1.32-.083h0l-6-6-.083-.094a1 1 0 0 1 1.497-1.32h0L12 13.585l5.293-5.292.094-.083a1 1 0 0 1 1.32 1.497h0l-6 6z' fill='%2383BF6E'/%3E%3C/svg%3E") no-repeat 50% 50% / 18px auto
+
+            .selection
+                color: lighten(#26842A,60)
+    &.status-light-green,&.status-task-light-green
+        .head
+            background: #B5E4CA
+            &:hover
+                box-shadow: inset 0 0 0 2px #B5E4CA
+
+            .chevron
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12.707 15.707l-.094.083a1 1 0 0 1-1.32-.083h0l-6-6-.083-.094a1 1 0 0 1 1.497-1.32h0L12 13.585l5.293-5.292.094-.083a1 1 0 0 1 1.32 1.497h0l-6 6z' fill='%2383BF6E'/%3E%3C/svg%3E") no-repeat 50% 50% / 18px auto
+
+            .selection
+                color: darken(#B5E4CA,40)
 
     &.status-purple
         .head
@@ -125,17 +147,40 @@
             .selection
                 color: #2A85FF
 
-    &.status-red-dark
+    &.status-red-dark, &.status-task-red-dark
         .head
-            background: #fff1ee
+            background: darken(#fff1ee,10)
             &:hover
-                box-shadow: inset 0 0 0 2px #FF6A55
+                box-shadow: inset 0 0 0 2px $s6
 
             .chevron
                 background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12.707 15.707l-.094.083a1 1 0 0 1-1.32-.083h0l-6-6-.083-.094a1 1 0 0 1 1.497-1.32h0L12 13.585l5.293-5.292.094-.083a1 1 0 0 1 1.32 1.497h0l-6 6z' fill='%23FF6A55'/%3E%3C/svg%3E") no-repeat 50% 50% / 18px auto
 
             .selection
-                color: #FF6A55
+                color: $s6
+    &.status-task-blue
+        .head
+            background: #eaf3ff
+            &:hover
+                box-shadow: inset 0 0 0 2px $p1
+
+            .chevron
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12.707 15.707l-.094.083a1 1 0 0 1-1.32-.083h0l-6-6-.083-.094a1 1 0 0 1 1.497-1.32h0L12 13.585l5.293-5.292.094-.083a1 1 0 0 1 1.32 1.497h0l-6 6z' fill='%23FF6A55'/%3E%3C/svg%3E") no-repeat 50% 50% / 18px auto
+
+            .selection
+                color: $p1
+    &.status-task-red, &.status-red
+        .head
+            background: #fff1ee
+            &:hover
+                box-shadow: inset 0 0 0 2px $p3
+
+            .chevron
+                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12.707 15.707l-.094.083a1 1 0 0 1-1.32-.083h0l-6-6-.083-.094a1 1 0 0 1 1.497-1.32h0L12 13.585l5.293-5.292.094-.083a1 1 0 0 1 1.32 1.497h0l-6 6z' fill='%23FF6A55'/%3E%3C/svg%3E") no-repeat 50% 50% / 18px auto
+
+            .selection
+                color: $p3
+
 
 .head
     position: relative

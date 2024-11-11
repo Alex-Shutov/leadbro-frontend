@@ -1,27 +1,41 @@
 import { taskStatusTypes } from '../Stages/stages.types';
 import { loadAvatar } from '../../utils/create.utils';
+import { taskableTypes } from './tasks.types';
 
 export const mapTaskFromApi = (task) => {
+  const taskableType = task.related_entity?.type;
+  const taskableId = task.related_entity?.id;
+
   return {
     id: task.id,
     title: task.name,
     taskStatus: mapTaskStatus(task.status),
-    stage: {
-      id: task.stage?.id || null,
-      title: task.stage?.name || 'Этап не задан',
-    },
+    stage:
+      taskableType === taskableTypes.stage
+        ? {
+            id: taskableId,
+            title: task.related_entity?.name || 'Этап не задан',
+          }
+        : null,
+    deal:
+      taskableType === taskableTypes.deal
+        ? {
+            id: taskableId,
+            title: task.related_entity?.name || 'Сделка не задана',
+          }
+        : null,
     type: task.type,
-    taskLinked:task?.linked_task,
+    taskLinked: task?.linked_task,
     description: task.description,
     deadline: new Date(task.deadline),
     deadlineTime: formatDuration(task.planned_time), // Например, '5 ч'
     actualTime: formatDuration(task.actual_time), // Например, '2 дн'
     isNewForUser: task.show_at_client_cabinet === 1,
-    responsibles:mapAssigned([task.responsible]),
-    executors:mapAssigned([task.performer]),
-    auditors:mapAssigned(task.auditors),
+    responsibles: mapAssigned([task.responsible]),
+    executors: mapAssigned([task.performer]),
+    auditors: mapAssigned(task.auditors),
     assigned: mapAssigned([task.responsible, task.performer]), // Ответственные и исполнители
-    comments: mapComments(task.comments || []), // Комментарии к задаче
+    comments: mapComments(task.comments || []) ?? [], // Комментарии к задаче
   };
 };
 
@@ -66,6 +80,14 @@ const mapComments = (comments) => {
       text: comment.text || 'Комментарий отсутствует',
     },
   }));
+};
+
+export const getTaskableTypeFromUrl = () => {
+  const path = window.location.pathname;
+  if (path.includes('/deals')) {
+    return taskableTypes.deal;
+  }
+  return taskableTypes.stage; // По умолчанию используем Stage
 };
 
 // Функция для форматирования времени
