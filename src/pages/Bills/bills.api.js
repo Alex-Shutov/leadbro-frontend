@@ -10,6 +10,7 @@ import {
   resetApiProvider,
 } from '../../shared/http';
 import {useState} from "react";
+import {API_URL} from "../../shared/constants";
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
@@ -97,8 +98,7 @@ const useBillsApi = () => {
     }
   };
 
-  const downloadBill = (billId) => {
-    const url = `https://api.lead-bro.ru/bills/${billId}/print_stamped/`;
+  const downloadBill = (url) => {
     window.open(url, '_blank');
   };
 

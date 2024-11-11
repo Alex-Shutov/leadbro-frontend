@@ -169,7 +169,7 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
   };
 
   const handleDownloadBill = async () => {
-    api.downloadBill(billId);
+    api.downloadBill(bill?.stampedBill);
   };
 
 

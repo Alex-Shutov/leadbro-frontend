@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     try {
       resetApiProvider();
       const response = await axios.post(
-        `https://api.lead-bro.ru/api/auth`,
+        `${API_URL}/api/auth`,
         { email: email, password: password },
         {
           headers: {

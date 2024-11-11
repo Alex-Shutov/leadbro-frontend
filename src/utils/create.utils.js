@@ -1,3 +1,5 @@
+import {API_URL} from "../shared/constants";
+
 export const createBaseMessengerLinksByName = (name) => {
   switch (name) {
     case 'whatsapp':
@@ -16,7 +18,7 @@ export const loadAvatar = (blob) => {
     blob ?? defaultBlobImage
   return !blob
     ? `data:image/png;base64,${blobResult}`
-    : `${process.env.REACT_APP_API_URL}${blob}`;
+    : `${API_URL}${blob}`;
 };
 
 
