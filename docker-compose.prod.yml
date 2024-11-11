@@ -6,4 +6,4 @@ services:
       dockerfile: Dockerfile.prod
     container_name: leadbro_frontend
     ports:
-      - '8080:80'
+      - '${EXTERNAL_PORT}:80'
