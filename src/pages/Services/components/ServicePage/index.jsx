@@ -65,12 +65,12 @@ const ServicePage = observer(() => {
                               className={styles.card}
                               classCardHead={styles.head}
                               classTitle={styles.card_title}
-                              head={
-                                  <TextLink to={`stages/${el.id}`} className={styles.etap}>
-                                      Этап №{el.id + 1}
-                                  </TextLink>
-                              }
-                              title={el.title}
+                              // head={
+                              //     <TextLink to={`stages/${el.id}`} className={styles.etap}>
+                              //         Этап №{el.id + 1}
+                              //     </TextLink>
+                              // }
+                              title={<TextLink to={`stages/${el.id}`}>{el.title}</TextLink>}
                           >
                               <Task key={el.id} stage={el} taskName={service.title} task={service.tasks}/>
                               <Hours actSum={el.cost} time={el.time} el={el}/>

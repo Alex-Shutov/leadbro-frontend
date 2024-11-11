@@ -17,6 +17,7 @@ import DealStatus from "./components/DealStatus";
 import DealInfo from "./components/DealInfo";
 import {serviceTypeEnumRu} from "../../../Services/services.types";
 import DealMembers from "./components/DealMembers";
+import {handleSubmit as handleSubmitSnackbar} from "../../../../utils/snackbar";
 
 const DealPage = observer(() => {
     const { id } = useParams();
@@ -34,13 +35,20 @@ const DealPage = observer(() => {
 
     const handleSubmit = async (path, submitText) => {
         try {
-            await api.updateDeal(Number(id), {}, submitText);
+            await api.updateDeal(Number(id), {});
+            handleSubmitSnackbar(submitText)
             deals.submitDraft();
         } catch (error) {
             console.error('Ошибка при сохранении:', error);
             deals.resetDraft(Number(id), path);
         }
     };
+
+    const handleChangeStatus =  (name,value) =>{
+            handleChange(name,value)
+            handleSubmit(name,'Статус успешно изменен!')
+
+    }
 
     return (
         <motion.div
@@ -61,6 +69,7 @@ const DealPage = observer(() => {
                 <div className={styles.row}>
                     <div className={styles.col}>
                         <DealStatus
+                            handleChange={handleChangeStatus}
                             className={cn(styles.card, styles.card_status)}
                             deal={deal}
                         />

@@ -7,7 +7,7 @@ import cn from 'classnames';
 import StatusDropdown from '../../../../../components/StatusDropdown';
 import { colorStatusTypes } from '../../../clients.types';
 
-const ClientStatus = ({ client, className }) => {
+const ClientStatus = ({ client, className,handleChange }) => {
   return (
     <Card className={cn(styles.card, className)}>
       <div className={styles.adaptive}>
@@ -29,7 +29,12 @@ const ClientStatus = ({ client, className }) => {
         {/*  value={selectedStatus}*/}
         {/*  onChange={handleChangeSelectedStatus}*/}
         {/*/>*/}
-        <Badge status={client?.status} statusType={statusTypes?.clients} />
+          <StatusDropdown
+              statuses={colorStatusTypes}
+              value={colorStatusTypes[client?.status]}
+              onChange={(option) => handleChange('status', option.key)}
+          />
+        {/*<Badge status={client?.status} statusType={statusTypes?.clients} />*/}
       </div>
       <div className={styles.clientId}>
         <span>{client?.id}</span>

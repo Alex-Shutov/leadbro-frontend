@@ -142,7 +142,7 @@ const ValuesSelector = ({
 const Indicator = ({ children, ...props }) => {
   return (
     <components.DropdownIndicator {...props}>
-      <Chevron isOpen={props.selectProps.menuIsOpen}></Chevron>
+      <Chevron direction={''} isOpen={props.selectProps.menuIsOpen}></Chevron>
     </components.DropdownIndicator>
   );
 };

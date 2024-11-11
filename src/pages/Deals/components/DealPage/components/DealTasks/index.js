@@ -30,7 +30,7 @@ const DealTasks = ({ deal }) => {
         {
             Header: 'Задача',
             id: 'task',
-            width: '20%',
+            width: '25%',
 
             Cell: ({ row }) => {
                 const data = row?.original;
@@ -46,7 +46,7 @@ const DealTasks = ({ deal }) => {
         {
             Header: 'Статус задачи',
             id: 'status',
-            width: '20%',
+            width: '15%',
             // editing: true,
             accessor: 'status',
             Cell: ({ row }) => {

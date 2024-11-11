@@ -106,6 +106,7 @@ const ServicesTable = observer(() => {
             <Tooltip title={teamMembers}>
               <div>
                 <TableLink
+                    cls={styles.teamLink}
                   name={getCorrectWordForm(data.command.length, 'участник')}
                 />
               </div>

@@ -14,10 +14,10 @@ export const dealStatusTypesRu = {
     new_lead: 'Новый лид',
     lead_processed: 'Лид обработан',
     brief_filled: 'Бриф заполнен',
-    offer_sent: 'Предложение отправлено',
+    offer_sent: 'КП отправлено',
     contract_signed: 'Договор подписан',
     bill_paid: 'Счёт оплачен',
-    paused: 'Приостановлено',
+    paused: 'Клиент думает',
     refused: 'Отказ',
     failed: 'Ошибка',
 };

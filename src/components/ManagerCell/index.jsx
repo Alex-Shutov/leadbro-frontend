@@ -16,7 +16,7 @@ const ManagerCell = ({ manager, ...rest }) => {
             {manager?.name} {manager?.surname ?? manager?.lastName} {manager?.fio}
           </Link>
         </div>
-        <div>{manager?.role}</div>
+        <div style={{whiteSpace:'pre'}}>{manager?.role}</div>
       </div>
     </div>
   );

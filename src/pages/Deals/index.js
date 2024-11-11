@@ -52,7 +52,7 @@ const Deals = observer(() => {
     };
 
     return (
-        <LoadingProvider isLoading={api.isLoading}>
+        <LoadingProvider isLoading={false}>
             <Title
                 title={'Сделки'}
                 actions={{

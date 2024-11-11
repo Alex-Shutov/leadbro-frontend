@@ -88,6 +88,11 @@ const ClientPage = observer(() => {
     }
   };
 
+  const handleChangeStatus = (name,value) => {
+    handleChange(name,value)
+    handleSubmit(name,'Статус успешно изменен!')
+  }
+
   return (
     <motion.div
       initial={'hidden'}
@@ -109,6 +114,7 @@ const ClientPage = observer(() => {
             <ClientStatus
               className={cn(styles.card, styles.card_status)}
               client={client}
+              handleChange={handleChangeStatus}
             />
             <ClientService
               currentClient={client}

@@ -158,7 +158,7 @@ const Dropdown = ({
           onClick={() => !isAsync && setVisible(!visible)}
         >
           {renderHead()}
-          <Chevron isOpen={visible} />
+          <Chevron direction={''} isOpen={visible} />
         </div>
         {shouldShowOptions && (
           <div className={cn(styles.body, { [styles.bodyUp]: upBody })}>

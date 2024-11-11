@@ -5,9 +5,10 @@ import ManagerCell from "../../../../../../components/ManagerCell";
 import styles from './DealStatus.module.sass'
 import Badge, {statusTypes} from "../../../../../../shared/Badge";
 import {formatDateWithOnlyDigits} from "../../../../../../utils/formate.date";
-import {colorStatsuDealTypesForPage} from "../../../../deals.types";
+import {colorStatsuDealTypesForPage, colorStatusDealTypes} from "../../../../deals.types";
+import StatusDropdown from "../../../../../../components/StatusDropdown";
 
-const DealStatus = ({ deal, className }) => {
+const DealStatus = ({ deal, className, handleChange }) => {
     return (
         <Card className={cn(styles.card, className)}>
             <div className={styles.adaptive}>
@@ -24,7 +25,13 @@ const DealStatus = ({ deal, className }) => {
             </div>
             <div className={styles.container}>
                 <ManagerCell manager={deal?.manager}/>
-                <Badge status={deal?.status} statusType={colorStatsuDealTypesForPage}/>
+                {/*<Badge status={deal?.status} statusType={colorStatsuDealTypesForPage}/>*/}
+                <StatusDropdown
+                    statuses={colorStatusDealTypes}
+                    value={colorStatusDealTypes[deal?.status]}
+                    onChange={(option) => handleChange('status', option.key)}
+                />
+
             </div>
             <div className={styles.deal_info}>
             <div className={styles.dealId}>
