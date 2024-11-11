@@ -13,7 +13,7 @@ export class EmployesStore {
     employeTypes = [];
     drafts = {};
     metaInfoTable = {};
-    currentService=null
+    currentEmploye=null
     changedProps = new Set();
 
 
@@ -31,7 +31,7 @@ export class EmployesStore {
 
     getById(id, isReset = false) {
         const employe =
-            this.currentService || this.employes.find((x) => x.id === Number(id));
+            this.currentEmploye || this.employes.find((x) => x.id === Number(id));
         const draft = this.drafts[id];
         return isReset ? employe : draft ? { ...employe, ...draft } : employe;
     }

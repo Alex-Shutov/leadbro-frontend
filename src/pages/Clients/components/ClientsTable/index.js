@@ -33,6 +33,9 @@ const ClientsTable = observer(() => {
   } = usePagingData(clientsStore, fetchClients, () =>
     clientsStore?.getClients(),
   );
+
+  const [editData,setEditData] = useState(null)
+  const [editModalOpen,setEditModalIpen] = useState(false)
   const cols = React.useMemo(
     () => [
       {
@@ -97,10 +100,15 @@ const ClientsTable = observer(() => {
     [],
   );
 
+  const handleEditClient = (data) =>{
+    setEditModalIpen(true)
+    setEditData(data)
+  }
+
   const getActions = (data) => {
     return [
       { label: 'Скачать', onClick: () => console.log('Скачать') },
-      { label: 'Редактировать', onClick: () => console.log('Редактировать') },
+      { label: 'Редактировать', onClick: () => handleEditClient(data) },
       {
         label: 'Удалить',
         onClick: () => console.log('Удалить'),
@@ -122,7 +130,6 @@ const ClientsTable = observer(() => {
             add: {
               action: () => {
                 setModalOpen(true);
-                console.log('123', createModalOpen);
               },
               title: 'Добавить клиента',
             },
@@ -140,6 +147,11 @@ const ClientsTable = observer(() => {
         />
       </div>
       {createModalOpen && <CreateModal onClose={() => setModalOpen(false)} />}
+      {editModalOpen && <CreateModal clientId={editData.id} onClose={() => {
+        setEditModalIpen(false)
+        setEditData(null)
+        clientsStore.clearCurrentClient()
+      }} />}
     </>
   );
 });

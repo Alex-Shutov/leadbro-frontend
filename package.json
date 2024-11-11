@@ -81,6 +81,7 @@
     ]
   },
   "devDependencies": {
+    "lodash": "^4.17.21",
     "prettier": "^3.3.2"
   }
 }

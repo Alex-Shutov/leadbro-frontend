@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import TextareaAutosize from 'react-textarea-autosize';
 
 const TextArea = forwardRef((props, ref) => {
-  const textAreaRef = useRef(null);
+  const textAreaRef =  useRef(ref?.current);
   const [rendered, setRendered] = useState(false);
   const {rows,value,hovered} = props
   useEffect(() => {
@@ -37,8 +37,7 @@ const TextArea = forwardRef((props, ref) => {
   return (
     <textarea
       value={props.value}
-      ref={ref ?? textAreaRef}
-      rows={props.rows ?? 1}
+      ref={textAreaRef}
       {...props}
     />
     //

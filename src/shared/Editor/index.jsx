@@ -7,7 +7,9 @@ const Editor = createReactEditorJS();
 
 const Index = ({ onChange, initialHTML, name }) => {
   const editorCore = useRef(null);
-  initialHTML =   /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML) ? initialHTML : `<p>${initialHTML}</p>`
+  initialHTML = /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML)
+    ? initialHTML
+    : `<p>${initialHTML}</p>`;
 
   const handleInitialize = useCallback((instance) => {
     editorCore.current = instance;
@@ -17,7 +19,7 @@ const Index = ({ onChange, initialHTML, name }) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const blocks = [];
-    debugger;
+
     doc.body.childNodes.forEach((node) => {
       if (node.nodeName === 'H1') {
         const text = handleSpanFormatting(node);
@@ -45,7 +47,6 @@ const Index = ({ onChange, initialHTML, name }) => {
   };
 
   const handleSpanFormatting = (node) => {
-
     // const htmlContent = node.innerHTML || node.textContent;
     //
     // // Обработка <span>: удаляем <span> и применяем без bold

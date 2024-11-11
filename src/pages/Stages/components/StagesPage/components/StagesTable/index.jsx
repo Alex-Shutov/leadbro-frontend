@@ -18,6 +18,8 @@ import useStore from '../../../../../../hooks/useStore';
 import usePagingData from '../../../../../../hooks/usePagingData';
 import EditStage from '../../../../../../components/EditStage';
 import { useParams } from 'react-router';
+import TaskEditModal from '../../../../../../components/TaskModal';
+import useTasksApi from '../../../../../Tasks/tasks.api';
 
 const StagesTable = observer(({ stage }) => {
   const { stagesStore } = useStore();
@@ -27,7 +29,7 @@ const StagesTable = observer(({ stage }) => {
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   const ref = useRef();
-
+  const taskApi = useTasksApi();
   const fetchStages = useCallback((stageId) => {
     api.getTaskStages(stageId);
   }, []);
@@ -45,16 +47,15 @@ const StagesTable = observer(({ stage }) => {
     setEditTaskModalOpen(true);
   };
   const handleCreateTask = () => {
-    setTaskData(null)
-    setEditTaskModalOpen(true)
-  }
+    setTaskData(null);
+    setEditTaskModalOpen(true);
+  };
 
   const handleCloseTaskModal = () => {
-    setTaskData(null)
-    setEditTaskModalOpen(false)
-  }
+    setTaskData(null);
+    setEditTaskModalOpen(false);
+  };
   const handleDelete = (id) => {
-    // Реализуйте логику удаления
     console.log(`Удалить услугу с ID: ${id}`);
   };
 
@@ -80,7 +81,7 @@ const StagesTable = observer(({ stage }) => {
           return (
             <TextLink
               onClick={() => {
-               handleEditTask(data)
+                handleEditTask(data);
               }}
             >
               {data.title}
@@ -97,7 +98,10 @@ const StagesTable = observer(({ stage }) => {
         Cell: ({ row }) => {
           const data = row?.original;
           return (
-            <StageBadge statusType={StageStatuses.tasks} status={data.taskStatus} />
+            <StageBadge
+              statusType={StageStatuses.tasks}
+              status={data.taskStatus}
+            />
           );
         },
       },
@@ -133,7 +137,7 @@ const StagesTable = observer(({ stage }) => {
 
         Cell: ({ row }) => {
           const data = row?.original;
-          debugger
+
           return (
             <DeadLineTimeCell
               deadLine={data.deadlineTime}
@@ -187,11 +191,13 @@ const StagesTable = observer(({ stage }) => {
       />
       {/*{stage && <ClientInfo client={stage.client} />}*/}
       {editTaskModalOpen && (
-        <EditModal
-          idStage={stage.id}
-          stageId={stage.id}
+        <TaskEditModal
           data={taskData}
           handleClose={handleCloseTaskModal}
+          stage={stage}
+          stagesStore={stagesStore}
+          stageApi={api}
+          taskApi={taskApi}
         />
       )}
       {editStageModalOpen && (

@@ -15,7 +15,6 @@ const useStages = (id) => {
     setIsLoading(true);
     try {
       if (id !== null) {
-        debugger;
         // Логика для загрузки конкретной услуги по ID
         await api.getStageById(Number(id));
       } else if (!stagesStore.stages.length) {

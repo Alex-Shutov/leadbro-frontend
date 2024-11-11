@@ -19,7 +19,7 @@ import useServiceApi from '../Services/services.api';
 import servicesApi from '../Services/services.api';
 import { stageStatusTypes } from './stages.types';
 import { format } from 'date-fns';
-import {useParams} from "react-router";
+import { useParams } from 'react-router';
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -53,7 +53,7 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useStageApi = () => {
   const { stagesStore } = useStore();
   const serviceApi = useServiceApi();
-  const {id:serviceId} = useParams()
+  const { id: serviceId } = useParams();
 
   const getTaskStages = (stageId, page = null) => {
     const pageFromUrl = page ?? getQueryParam('page', 1);
@@ -67,7 +67,6 @@ const useStageApi = () => {
       .then(([stageResponse, tasksResponse]) => {
         const stageData = stageResponse.body.data;
         const tasksData = tasksResponse.body.data;
-
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setStages([mappedStage]); // Сохраняем в store
         stagesStore.setMetaInfoTable(tasksResponse.body.meta); // Метаданные задач
@@ -124,13 +123,13 @@ const useStageApi = () => {
       .catch(handleHttpError);
   };
 
-  const updateStage = (stageId,taskId, updateData) => {
+  const updateStage = (stageId, taskId, updateData) => {
     resetApiProvider();
-    debugger;
+
     updateData = mapStageDataToBackend(
       stagesStore.drafts[stageId],
       stagesStore.changedProps,
-        taskId,
+      taskId,
     );
     return http
       .patch(`/api/stages/${stageId}`, updateData)

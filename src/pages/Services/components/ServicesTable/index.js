@@ -22,7 +22,6 @@ const ServicesTable = observer(() => {
   const [currentService, setCurrentService] = useState(null);
 
   const fetchServices = useCallback((page) => {
-    debugger;
     api.getServices(page);
   }, []);
 
@@ -36,7 +35,7 @@ const ServicesTable = observer(() => {
   } = usePagingData(servicesStore, fetchServices, () =>
     servicesStore?.getServices(),
   );
-  debugger;
+
   const handleEdit = (service) => {
     setCurrentService(service);
     setEditModalOpen(true);

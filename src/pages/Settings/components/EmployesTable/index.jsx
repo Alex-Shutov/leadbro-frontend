@@ -1,155 +1,159 @@
-import {observer} from "mobx-react";
-import useStore from "../../../../hooks/useStore";
-import useServiceApi from "../../../Services/services.api";
-import {useCallback, useState} from "react";
-import usePagingData from "../../../../hooks/usePagingData";
-import TableLink from "../../../../shared/Table/Row/Link";
-import ManagerCell from "../../../../components/ManagerCell";
-import {Tooltip} from "recharts";
-import {getCorrectWordForm} from "../../../../utils/format.string";
-import Badge, {statusTypes} from "../../../../shared/Badge";
-import StagesCell from "../../../Services/components/ServicesTable/components/StagesCell";
-import Table from "../../../../shared/Table";
-import useEmployesApi from "../../api/employes.api";
-import {genderTypeRu} from "../../settings.types";
-import styles from './Table.module.sass'
-import React from "react";
-import {LoadingProvider} from "../../../../providers/LoadingProvider";
-import EditModal from "./components/EditModal";
-import {formatDateWithDateAndYear, formatDateWithOnlyDigits} from "../../../../utils/formate.date";
+import { observer } from 'mobx-react';
+import useStore from '../../../../hooks/useStore';
+import useServiceApi from '../../../Services/services.api';
+import { useCallback, useState } from 'react';
+import usePagingData from '../../../../hooks/usePagingData';
+import TableLink from '../../../../shared/Table/Row/Link';
+import ManagerCell from '../../../../components/ManagerCell';
+import { Tooltip } from 'recharts';
+import { getCorrectWordForm } from '../../../../utils/format.string';
+import Badge, { statusTypes } from '../../../../shared/Badge';
+import StagesCell from '../../../Services/components/ServicesTable/components/StagesCell';
+import Table from '../../../../shared/Table';
+import useEmployesApi from '../../api/employes.api';
+import { genderTypeRu } from '../../settings.types';
+import styles from './Table.module.sass';
+import React from 'react';
+import { LoadingProvider } from '../../../../providers/LoadingProvider';
+import EditModal from './components/EditModal';
+import {
+  formatDateWithDateAndYear,
+  formatDateWithOnlyDigits,
+} from '../../../../utils/formate.date';
 
+const EmployesTable = observer(({ currentSwitcher }) => {
+  const { employesStore } = useStore();
+  const api = useEmployesApi();
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentEmploye, setCurrentEmploye] = useState(null);
 
-const EmployesTable = observer(({currentSwitcher}) => {
-    const { employesStore } = useStore();
-    const api = useEmployesApi();
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [currentEmploye, setCurrentEmploye] = useState(null);
+  const fetchEmployes = useCallback((page) => {
+    api.getEmployes(page);
+  }, []);
 
-    const fetchEmployes = useCallback((page) => {
-        api.getEmployes(page);
-    }, []);
+  const {
+    currentPage,
+    totalPages,
+    totalItems,
+    paginatedData,
+    itemsPerPage,
+    handlePageChange,
+  } = usePagingData(employesStore, fetchEmployes, () =>
+    employesStore?.getEmployes(),
+  );
 
-    const {
-        currentPage,
-        totalPages,
-        totalItems,
-        paginatedData,
-        itemsPerPage,
-        handlePageChange,
-    } = usePagingData(employesStore, fetchEmployes, () =>
-        employesStore?.getEmployes(),
-    );
-    debugger;
-    const handleEdit = (employe) => {
-        setCurrentEmploye(employe);
-        setEditModalOpen(true);
-    };
+  const handleEdit = (employe) => {
+    setCurrentEmploye(employe);
+    setEditModalOpen(true);
+  };
 
-    const handleDelete = (id) => {
-        // Реализуйте логику удаления
-        console.log(`Удалить услугу с ID: ${id}`);
-    };
+  const handleDelete = (id) => {
+    // Реализуйте логику удаления
+    console.log(`Удалить услугу с ID: ${id}`);
+  };
 
-    const getActions = (data) => [
-        { label: 'Редактировать', onClick: () => handleEdit(data) },
-        {
-            label: 'Уволить',
-            onClick: () => handleDelete(data.id),
-            disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
+  const getActions = (data) => [
+    { label: 'Редактировать', onClick: () => handleEdit(data) },
+    {
+      label: 'Уволить',
+      onClick: () => handleDelete(data.id),
+      disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
+    },
+  ];
+
+  const cols = React.useMemo(
+    () => [
+      {
+        Header: 'ID',
+        id: 'id',
+        accessor: 'id',
+        width: '0',
+        Cell: ({ row }) => <span>{row.original.id}</span>,
+      },
+      {
+        Header: 'Сотрудник',
+        id: 'employee',
+        accessor: 'employee',
+        width: '50%',
+        Cell: ({ row }) => {
+          const employee = {
+            ...row.original,
+            surname: row.original.lastName,
+            role: row.original.position?.title ?? row.original.position?.name,
+          };
+          return <ManagerCell manager={employee} />;
         },
-    ];
+      },
+      {
+        Header: 'Пол',
+        id: 'gender',
+        width: '12%',
+        accessor: 'gender',
+        Cell: ({ row }) => <p>{genderTypeRu[row.original.gender]}</p>,
+      },
+      {
+        Header: 'Статус',
+        id: 'status',
+        Cell: ({ row }) => (
+          <Badge
+            classname={styles.badge}
+            status={row.original.status}
+            statusType={statusTypes.employes}
+          />
+        ),
+      },
+      {
+        Header: 'Дата рождения',
+        id: 'birthday',
+        Cell: ({ row }) =>
+          row.original.birthday ? (
+            <p>{formatDateWithOnlyDigits(row.original.birthday)}</p>
+          ) : (
+            <p>Не указано</p>
+          ),
+      },
+    ],
+    [],
+  );
 
-    const cols = React.useMemo(
-        () => [
-            {
-                Header: 'ID',
-                id: 'id',
-                accessor: 'id',
-                width: '0',
-                Cell: ({ row }) => <span>{row.original.id}</span>,
+  return (
+    <LoadingProvider isLoading={api.isLoading}>
+      <div className={styles.table}>
+        <Table
+          // cardComponent={(data) => (
+          //     <AdaptiveCard data={data} statusType={statusTypes.employes} />
+          // )}
+          headerActions={{
+            sorting: true,
+            add: {
+              action: () => setEditModalOpen(true),
+              title: 'Добавить сотрудника',
             },
-            {
-                Header: 'Сотрудник',
-                id: 'employee',
-                accessor: 'employee',
-                width: '50%',
-                Cell: ({ row }) => {
-                    const employee = {
-                        ...row.original,
-                        surname:row.original.lastName,
-                        role:row.original.position?.title ?? row.original.position?.name
-                    }
-                    return <ManagerCell manager={employee}/>
-                },
-            },
-            {
-                Header: 'Пол',
-                id: 'gender',
-                width: '12%',
-                accessor: 'gender',
-                Cell: ({ row }) => <p>{genderTypeRu[row.original.gender]}</p>,
-            },
-            {
-                Header: 'Статус',
-                id: 'status',
-                Cell: ({ row }) => (
-                    <Badge
-                        classname={styles.badge}
-                        status={row.original.status}
-                        statusType={statusTypes.employes}
-                    />
-                ),
-            },
-            {
-                Header: 'Дата рождения',
-                id: 'birthday',
-                Cell: ({ row }) => (
-                    row.original.birthday ? <p>{formatDateWithOnlyDigits(row.original.birthday)}</p> : <p>Не указано</p>
-                ),
-            },
-
-        ],
-        [],
-    );
-
-    return (
-        <LoadingProvider isLoading={api.isLoading}>
-            <div className={styles.table}>
-                <Table
-                    // cardComponent={(data) => (
-                    //     <AdaptiveCard data={data} statusType={statusTypes.employes} />
-                    // )}
-                    headerActions={{
-                        sorting: true,
-                        add: {
-                            action: () => setEditModalOpen(true),
-                            title: 'Добавить сотрудника',
-                        },
-                    }}
-                    title="Сотрудники"
-                    settingsSwithcerValue={currentSwitcher}
-                    data={paginatedData}
-                    columns={cols}
-                    actions={getActions}
-                    paging={{
-                        current: currentPage,
-                        all: totalItems,
-                        offset: itemsPerPage,
-                        onPageChange: handlePageChange,
-                    }}
-                />
-            </div>
-            {editModalOpen && (
-                <EditModal
-                    employeId={currentEmploye?.id ?? null}
-                    onClose={() => {
-                        setEditModalOpen(false)
-                        setCurrentEmploye(null)
-                    }}
-                />
-            )}
-        </LoadingProvider>
-    );
+          }}
+          title="Сотрудники"
+          settingsSwithcerValue={currentSwitcher}
+          data={paginatedData}
+          columns={cols}
+          actions={getActions}
+          paging={{
+            current: currentPage,
+            all: totalItems,
+            offset: itemsPerPage,
+            onPageChange: handlePageChange,
+          }}
+        />
+      </div>
+      {editModalOpen && (
+        <EditModal
+          employeId={currentEmploye?.id ?? null}
+          onClose={() => {
+            setEditModalOpen(false);
+            setCurrentEmploye(null);
+          }}
+        />
+      )}
+    </LoadingProvider>
+  );
 });
 
 export default EmployesTable;

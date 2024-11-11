@@ -16,7 +16,7 @@ import { deepObserve } from 'mobx-utils';
 import { reaction } from 'mobx';
 import ClientsContacts from './Contacts';
 import ClientPasswords from './Passwords';
-import ClientComments from './Comments';
+import ClientComments from '../../../../components/Comments';
 import CardDropdown from '../../../../shared/Dropdown/Card';
 import { AnimatePresence } from 'framer-motion';
 import {
@@ -30,6 +30,8 @@ import CreateModal from './Passwords/Modals/CreateModal';
 import CreatePassModal from './Passwords/Modals/CreateModal';
 import { LoadingProvider } from '../../../../providers/LoadingProvider';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar';
+import CreateClientsModal from './Persons/Modals/CreateClientsModal';
+import Comments from "../../../../components/Comments";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -37,9 +39,8 @@ const ClientPage = observer(() => {
   const api = useClientsApi();
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [passModalOpen, setPassModalOpen] = useState(false);
-
+  const [personModalOpen, setPersonModalOpen] = useState(false);
   const handleChange = (name, payload, withId = true) => {
-    debugger;
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {
@@ -123,7 +124,7 @@ const ClientPage = observer(() => {
               deals={client?.deals}
             />
             <ClientActivities activities={client?.activities} />
-            <ClientComments
+            <Comments
               onChange={handleChange}
               comments={client?.comments}
             />
@@ -147,6 +148,7 @@ const ClientPage = observer(() => {
                   description={client?.description}
                 />
                 <ClientPersons
+                  onAdd={() => setPersonModalOpen(true)}
                   onChange={handleChange}
                   onReset={handleReset}
                   onSubmit={handleSubmitPersons}
@@ -191,8 +193,17 @@ const ClientPage = observer(() => {
           />
         )}
       </LoadingProvider>
+      {personModalOpen && client && (
+        <CreateClientsModal
+          onClose={() => setPersonModalOpen(false)}
+          companyId={client?.id}
+        />
+      )}
     </motion.div>
   );
 });
+
+// console.log('1:'+ setPassModalOpen);
+// console.log('2:'+ setPersonModalOpen);
 
 export default ClientPage;

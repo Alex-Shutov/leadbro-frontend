@@ -1,18 +1,20 @@
 import {
   handleHttpError,
-  handleHttpResponse, handleShowError,
+  handleHttpResponse,
+  handleShowError,
   http,
   mockHttp,
-  resetApiProvider,
+  resetApiProvider, setMockProvider,
 } from '../../shared/http';
 import mocks from './tasks.mocks';
 import useStore from '../../hooks/useStore';
 import { mapTaskFromApi } from './tasks.mapper';
-import {useCallback, useState} from "react";
-import {useParams} from "react-router";
-import useStageApi from "../Stages/stages.api";
-import {mapStageDataToBackend} from "../Stages/stages.mapper";
-import {taskStatusTypes} from "../Stages/stages.types";
+import { useCallback, useState } from 'react';
+import { useParams } from 'react-router';
+import useStageApi from '../Stages/stages.api';
+import { mapStageDataToBackend } from '../Stages/stages.mapper';
+import { taskStatusTypes } from '../Stages/stages.types';
+import {mapCommentsFromApi} from "../Clients/clients.mapper";
 
 mockHttp.onGet('/tasks').reply(200, mocks.createTasks());
 mockHttp.onPost('/tasks').reply(200, mocks.createTasks());
@@ -31,15 +33,15 @@ mockHttp.onGet(/\/tasks\/\d+/).reply((config) => {
 });
 
 const useTasksApi = () => {
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const { tasksStore } = useStore();
-  const {stagesStore} = useStore()
-  const stagesApi = useStageApi()
-  const {stageId} = useParams()
-  debugger
+  const { stagesStore } = useStore();
+  const stagesApi = useStageApi();
+  const { stageId } = useParams();
+
   const getTasks = useCallback(() => {
     resetApiProvider();
-    setIsLoading(true)
+    setIsLoading(true);
     return http
       .get('api/tasks/mine')
       .then(handleHttpResponse)
@@ -49,8 +51,8 @@ const useTasksApi = () => {
         return mappedTasks;
       })
       .catch(handleHttpError)
-        .finally(()=>setIsLoading(false));
-  },[]);
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const getTaskById = useCallback((id) => {
     return http
@@ -58,7 +60,7 @@ const useTasksApi = () => {
       .then(handleHttpResponse)
       .then((res) => tasksStore.setCurrentTask(res.body))
       .catch(handleHttpError);
-  },[]);
+  }, []);
 
   const getTasksByRole = useCallback((role) => {
     resetApiProvider();
@@ -68,53 +70,59 @@ const useTasksApi = () => {
       responsible: 'i_am_responsible',
       auditor: 'i_am_auditor',
     };
-    setIsLoading(true)
+    setIsLoading(true);
     return http
-        .get(`api/tasks/mine/${roleMapping[role]}`)
-        .then(handleHttpResponse)
-        .then((res) => {
-          const mappedTasks = res.body.data.map(mapTaskFromApi);
-          tasksStore.setTasks(mappedTasks);
-          return mappedTasks;
-        })
-        .then(()=>setIsLoading(false))
+      .get(`api/tasks/mine/${roleMapping[role]}`)
+      .then(handleHttpResponse)
+      .then((res) => {
+        const mappedTasks = res.body.data.map(mapTaskFromApi);
+        tasksStore.setTasks(mappedTasks);
+        return mappedTasks;
+      })
+      .then(() => setIsLoading(false))
 
-        .catch(handleHttpError);
-  },[]);
+      .catch(handleHttpError);
+  }, []);
 
   const createTask = useCallback((updateData) => {
-    resetApiProvider()
+    resetApiProvider();
+    debugger;
 
     return http
-        .post('/api/tasks', {...updateData, stage_id:stageId}, )
-        .then(handleHttpResponse)
-        .then(()=>stageId !== undefined && stagesApi.getStageById(stageId) )
-        .catch(handleHttpError);
+      .post('/api/tasks', { ...updateData, stage_id: stageId })
+      .then(handleHttpResponse)
+      .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
+      .catch(handleHttpError);
   }, []);
 
-  // PUT/PATCH - Обновление задачи
-  const updateTask = useCallback((id, updateData) => {
-    debugger
-    updateData = updateData ?? mapStageDataToBackend(
-        stagesStore.drafts[stageId],
-        stagesStore.changedProps,
-        id,
-    );
-    resetApiProvider()
-    return http
+  const updateTask = useCallback(
+    (
+      id,
+      updateData,
+      drafts = stagesStore.drafts[stageId],
+      props = stagesStore.changedProps,
+    ) => {
+      debugger
+      updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
+
+      debugger;
+      resetApiProvider();
+      return http
         .put(`/api/tasks/${id}`, updateData)
         .then(handleHttpResponse)
-        .then(()=>stageId !== undefined && stagesApi.getStageById(stageId) )
+        .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
         .catch(handleShowError);
-  }, []);
+    },
+    [],
+  );
 
   // DELETE - Удаление задачи
   const deleteTask = useCallback((id) => {
     return http
-        .delete(`/api/tasks/${id}`)
-        .then(handleHttpResponse)
-        .then(()=>stageId !== undefined && stagesApi.getStageById(stageId) )
-        .catch(handleHttpError);
+      .delete(`/api/tasks/${id}`)
+      .then(handleHttpResponse)
+      .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
+      .catch(handleHttpError);
   }, []);
 
   // const setTasks = (body) => {
@@ -137,6 +145,18 @@ const useTasksApi = () => {
   //   getTaskTypes()
 
 
+  const getTaskComments = useCallback((taskId) => {
+    return http
+        .get(`/api/tasks/${taskId}/comments`)
+        .then(handleHttpResponse)
+        .then((response) => {
+          debugger
+          return mapCommentsFromApi(response.body.data)
+        })
+        .catch(handleHttpError);
+  },[]);
+
+
   return {
     isLoading,
     getTasks,
@@ -144,8 +164,8 @@ const useTasksApi = () => {
     createTask,
     updateTask,
     deleteTask,
-    // setTasks,
-    getTasksByRole
+    getTaskComments,
+    getTasksByRole,
   };
 };
 

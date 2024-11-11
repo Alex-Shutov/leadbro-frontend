@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import FileUpload from "../../../../../../shared/File/Input";
-import {loadAvatar} from "../../../../clients.mocks";
+import FileUpload from "../../../shared/File/Input";
+import {loadAvatar} from "../../../pages/Clients/clients.mocks";
 import styles from './CommentsInput.module.sass'
-import FileElement from "../../../../../../shared/File/Element";
-import TextInput from "../../../../../../shared/TextInput";
-import Icon from "../../../../../../shared/Icon";
-import Tooltip from "../../../../../../shared/Tooltip";
+import FileElement from "../../../shared/File/Element";
+import TextInput from "../../../shared/TextInput";
+import Icon from "../../../shared/Icon";
+import Tooltip from "../../../shared/Tooltip";
 
 const CommentsInput = ({ onSendMessage,currentUser, commentsLength }) => {
     const [text, setText] = useState('');
@@ -23,7 +23,12 @@ const CommentsInput = ({ onSendMessage,currentUser, commentsLength }) => {
                 sender: currentUser,
                 value: {
                     text,
-                    files,
+                    files: files.map(file => ({
+                        id: file.id,
+                        name: file.name,
+                        extension: file.extension,
+                        blob:file ?? null
+                    }))
                 },
             };
             onSendMessage(newMessage);
@@ -33,13 +38,19 @@ const CommentsInput = ({ onSendMessage,currentUser, commentsLength }) => {
     };
 
     const handleFileUpload = (uploadedFiles) => {
-        setFiles([...files, ...uploadedFiles]);
+        const processedFiles = Array.from(uploadedFiles).map(file => ({
+            id: new Date().toISOString(), // Временный ID для UI
+            name: file.name.split('.')[0],
+            extension: `.${file.name.split('.').pop()}`,
+            blob: file // Сохраняем сам файл для отправки
+        }));
+
+        setFiles([...files, ...processedFiles]);
     };
 
-    const handleDeleteFile = (deletedFileId) =>{
-        const copy = [...files]
-        setFiles(copy?.filter(el=>el.id!==deletedFileId))
-    }
+    const handleDeleteFile = (deletedFileId) => {
+        setFiles(files.filter(el => el.id !== deletedFileId));
+    };
 
     return (
         <div className={styles.container}>

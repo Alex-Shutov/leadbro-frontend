@@ -2,7 +2,7 @@ export const navigation = [
     {
         title: "Сделки",
         action: () =>{},
-        url: "/",
+        url: "/deals",
 
     },
     {

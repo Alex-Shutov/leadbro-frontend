@@ -149,7 +149,6 @@ const mapLegals = (legals) => {
 };
 
 const mapServices = (backendServices, apiServices) => {
-  debugger;
   if (apiServices == undefined) {
     const { last } = backendServices;
     return {
@@ -210,9 +209,8 @@ const mapStatus = (status) => {
       return statusTypes.unknown;
   }
 };
-const mapCommentsFromApi = (apiComments) => {
+export const mapCommentsFromApi = (apiComments) => {
   return apiComments?.reduce((acc, comment) => {
-    debugger;
     acc[comment.id] = {
       id: comment.id,
       date: new Date(comment.created_at),
@@ -221,7 +219,8 @@ const mapCommentsFromApi = (apiComments) => {
         image: comment.commentator.avatar
           ? loadAvatar(comment.commentator.avatar)
           : loadAvatar(),
-        name: `${comment.commentator.name} ${comment.commentator.last_name}`,
+        name: `${comment.commentator.name}`,
+        lastName: `${comment.commentator.last_name}`
       },
       value: {
         text: comment.text,
@@ -275,10 +274,29 @@ export const mapCommentDataToBackend = (drafts, changedFieldsSet) => {
 export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   // Обработка ФИО
   const fioParams = mapFio(drafts, changedFieldsSet, propId);
+  const getCorrectStatus = (status) => {
+    const snakeStatuses = {
+      working: 'inProgress',
+      not_working: 'notInProgress',
+      partner: 'partner',
+      competitor: 'competitor',
+    };
+    if (Object.values(statusTypes).includes(status)) {
+      return (
+        Object.entries(snakeStatuses).find(
+          ([snake, camel]) => camel === status,
+        )?.[0] || 'unknown'
+      );
+    }
+
+    return snakeStatuses[status] || statusTypes.unknown;
+  };
   const castValue = (key, value) => {
     switch (key) {
       case 'manager_id':
         return Number(value.id);
+      case 'status':
+        return getCorrectStatus(value);
       default:
         return value; // По умолчанию оставить как есть
     }
@@ -301,6 +319,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       'contactData.requisites.0.BIK': 'bank_bic',
 
       'contactData.tel.0': 'phone',
+      'contactData.site.0': 'site',
       'contactData.email.0': 'email',
       manager: 'manager_id',
       title: 'name',

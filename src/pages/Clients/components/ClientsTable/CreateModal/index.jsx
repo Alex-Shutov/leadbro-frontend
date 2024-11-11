@@ -18,7 +18,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { createCompany, updateCompany } = useClientsApi();
   const [isEditMode, setIsEditMode] = useState(false);
   const { members } = useMembers();
-
+  debugger
   // Локальное состояние для создания нового клиента
   const [localClient, setLocalClient] = useState({
     title: '',
@@ -36,6 +36,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
 
   const client = useMemo(() => {
     // Если режим редактирования — берем клиента из store
+    debugger
     return isEditMode ? clientsStore.getById(clientId) : localClient;
   }, [
     isEditMode,

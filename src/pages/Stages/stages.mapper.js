@@ -3,17 +3,18 @@ import { stageStatusTypes, taskStatusTypes } from './stages.types';
 import { statusTypes } from '../Services/services.types';
 import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { format } from 'date-fns';
+import { taskableTypes } from '../Tasks/tasks.types';
 
 export const mapStageFromApi = (stageData, tasksData) => {
   return {
     id: stageData.id,
     number: stageData.number || '1234', // Номер этапа
     title: stageData.name,
-    bills:stageData?.bills ?? [],
+    bills: stageData?.bills ?? [],
     startTime: stageData.start ? new Date(stageData.start) : new Date(),
     deadline: stageData.deadline ? new Date(stageData.deadline) : new Date(),
-    deadlineTime: `${parseFloat(stageData.planned_time.toFixed(1))} ч`, // Время дедлайна по умолчанию
-    actualTime: `${parseFloat(stageData.actual_time.toFixed(1))} ч`, // Время дедлайна по умолчанию
+    deadlineTime: `${parseFloat(stageData.planned_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
+    actualTime: `${parseFloat(stageData.actual_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
     contactPerson: stageData.contactPerson || 'Александр Шилов',
     extraCosts: stageData.extraCosts || '7500',
     actSum: stageData?.actSum || stageData?.act_sum,
@@ -38,16 +39,16 @@ export const mapStageFromApi = (stageData, tasksData) => {
 };
 
 const mapTasksFromApi = (tasksData) => {
-  debugger
   return tasksData.reduce((acc, task) => {
-      const mappedTask = mapTaskFromApi(task);
-      acc[mappedTask.id] = mappedTask;
-      return acc;
-    }, {})
-
+    const mappedTask = mapTaskFromApi(task);
+    acc[mappedTask.id] = mappedTask;
+    return acc;
+  }, {});
 };
 
 const mapTaskFromApi = (task) => {
+  const taskableType = task.related_entity?.type;
+  const taskableId = task.related_entity?.id;
   return {
     id: task.id,
     title: task.name,
@@ -56,6 +57,20 @@ const mapTaskFromApi = (task) => {
       id: task.service?.id || 0,
       title: task.service?.title || 'Название услуги 1',
     },
+    stage:
+      taskableType === taskableTypes.stage
+        ? {
+            id: taskableId,
+            title: task.related_entity?.name || 'Этап не задан',
+          }
+        : null,
+    deal:
+      taskableType === taskableTypes.deal
+        ? {
+            id: taskableId,
+            title: task.related_entity?.name || 'Сделка не задана',
+          }
+        : null,
     template: {
       id: task.template?.id || 0,
       title: task.template?.title || 'Название шаблона 1',
@@ -123,9 +138,8 @@ const mapTaskStatus = (status) => {
 };
 
 export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
-  debugger
   const castValue = (key, value) => {
-    debugger
+    debugger;
     switch (key) {
       case 'active':
         return stageStatusTypes.inProgress === value;
@@ -137,15 +151,13 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       case 'planned_time':
         return parseFloat(value); // Если нужны бинарные числа, преобразуем в float
       case 'show_at_client_cabinet':
-        debugger
         return Boolean(value); // Преобразуем в булевое значение
       case 'responsible_id':
-        return value.id
+        return value.id;
       case 'performer_id':
-        debugger
-        return value.map(el=>el.id)[0]
+        return value.map((el) => el.id)[0];
       case 'auditors_ids':
-        return value.map(el=>el.id); // Преобразуем идентификаторы в строки
+        return value.map((el) => el.id); // Преобразуем идентификаторы в строки
       default:
         return value; // По умолчанию оставить как есть
     }
@@ -158,17 +170,17 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       startTime: 'start',
       actSum: 'act_sum',
       taskDescription: 'technical_specification',
-      actualTime:'actual_time',
-      type:'type',
-      deadline:'deadline',
-      responsibles:'responsible_id',
-      auditors:'auditors',
-      deadlineTime:'planned_time',
-      executors:'performer_id',
-      taskLinked:'linked_task',
-      showInLK:'show_at_client_cabinet',
-      description:'description',
-      taskStatus:'status',
+      actualTime: 'actual_time',
+      type: 'type',
+      deadline: 'deadline',
+      responsibles: 'responsible_id',
+      auditors: 'auditors_ids',
+      deadlineTime: 'planned_time',
+      executors: 'performer_id',
+      taskLinked: 'linked_task',
+      showInLK: 'show_at_client_cabinet',
+      description: 'description',
+      taskStatus: 'status',
       [`tasks.${propId}.actualTime`]: 'actual_time',
       [`tasks.${propId}.title`]: 'name',
       [`tasks.${propId}.type`]: 'type',
