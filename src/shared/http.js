@@ -28,22 +28,19 @@ http.interceptors.request.use(
   },
 );
 
-// http.interceptors.response.use(
-//   async (response) => {
-//     if (response.request.url.toString().contains('/auth')) {
-//       await handleSetToken(response);
-//     }
-//     return response;
-//   },
-//   (err) => {
-//     const shouldLogout = err.response && err.response.status === 401;
-//     if (shouldLogout) {
-//       //TODO redirect to auth
-//     }
-//
-//     throw err;
-//   },
-// );
+http.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 403) {
+        // Сохраняем текущий URL для возврата
+        const currentPath = window.location.pathname;
+
+        window.location.href = `/forbidden?from=${encodeURIComponent(currentPath)}`;
+        return Promise.reject(error);
+      }
+      return Promise.reject(error);
+    }
+);
 const setToken = async (accessToken) => {
   Cookies.set('accessToken', accessToken);
 };

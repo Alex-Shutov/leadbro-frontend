@@ -15,6 +15,7 @@ import Settings from '../pages/Settings';
 import Bills from '../pages/Bills';
 import Deals from "../pages/Deals";
 import DealPage from "../pages/Deals/components/DealPage";
+import Forbidden from "../pages/Forbidden";
 
 export const paths = {
   MAIN: '/',
@@ -29,7 +30,8 @@ export const paths = {
   LOGIN: '/login',
   NOTFOUND: '*',
   DEALS:'/deals',
-  DEALS_ID:'/deals/:id'
+  DEALS_ID:'/deals/:id',
+  FORBIDDEN: '/forbidden',
 };
 
 const PrivateRoute = ({ element }) => {
@@ -99,6 +101,10 @@ const openRoutes = [
   {
     path: paths.NOTFOUND,
     element: <NotFound />,
+  },
+  {
+    path: paths.FORBIDDEN,
+    element: <Forbidden />,
   },
 ];
 

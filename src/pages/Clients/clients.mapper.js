@@ -6,7 +6,8 @@ import {
   mapFio,
   MapFio,
 } from '../../utils/store.utils';
-import { handleError } from '../../utils/snackbar'; // Если требуется для аватара
+import { handleError } from '../../utils/snackbar';
+import {mapDealFromApi} from "../Deals/deals.mapper"; // Если требуется для аватара
 
 export const mapClientFromApi = (
   apiClient,
@@ -14,6 +15,7 @@ export const mapClientFromApi = (
   apiContactPersons = [],
   apiComments = [],
   apiServices = null,
+  apiDeals = []
 ) => {
   return {
     id: apiClient.id,
@@ -33,21 +35,7 @@ export const mapClientFromApi = (
       phone: apiClient.manager.phone,
     },
     services: mapServices(apiClient.services, apiServices),
-    deals: [
-      {
-        status: 'Догоовр подписан',
-        sum: '39000',
-        description: 'Связаться с клиентом',
-        deadline: new Date(),
-        responsible: {
-          image: loadAvatar(),
-          name: 'Александр',
-          surname: 'Шилов',
-          role: 'Директор',
-          deadline: new Date(),
-        },
-      },
-    ],
+    deals: apiDeals.map(el=>mapDealFromApi(el)),
     comments: mapCommentsFromApi(apiComments),
     activities: [
       {
@@ -77,6 +65,7 @@ export const mapClientFromApi = (
         },
       },
     ],
+
     contactPersons: mapContactPersons(apiContactPersons),
     contactData: {
       address: {

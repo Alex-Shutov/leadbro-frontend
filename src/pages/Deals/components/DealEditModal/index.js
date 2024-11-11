@@ -19,7 +19,7 @@ import useAppApi from "../../../../api";
 import useStore from "../../../../hooks/useStore";
 
 
-const DealEditModal = observer(({ data, handleClose, dealStore, dealApi }) => {
+const DealEditModal = observer(({ data, handleClose, dealStore, dealApi,...props }) => {
     const {members} = useMembers();
     const {appStore} = useStore()
     const {data: companies} = useClients();
@@ -37,7 +37,7 @@ const DealEditModal = observer(({ data, handleClose, dealStore, dealApi }) => {
 
         auditor: null,
         manager: null,
-        company: null,
+        company: props?.currentClient ?? null,
     });
 
     useEffect(() => {
@@ -215,7 +215,7 @@ const DealEditModal = observer(({ data, handleClose, dealStore, dealApi }) => {
             />
             <ValuesSelector
                 minInputLength={4}
-                readonly={false}
+                readonly={props?.currentClient ?? false}
                 placeholder={'Клиент'}
                 onChange={(e) =>{
                     handleChange(
@@ -224,6 +224,7 @@ const DealEditModal = observer(({ data, handleClose, dealStore, dealApi }) => {
                     )
                 }
                 }
+
                 isMulti={false}
                 label={
                     <div className={styles.client_label}>
@@ -241,7 +242,7 @@ const DealEditModal = observer(({ data, handleClose, dealStore, dealApi }) => {
                 }}
                 value={
                     deal?.company
-                        ? { value: deal?.company?.id, label: deal?.company?.name }
+                        ? { value: deal?.company?.id, label: deal?.company?.name ?? deal?.company?.title }
                         : null
                 }
             />

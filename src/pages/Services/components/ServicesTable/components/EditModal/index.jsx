@@ -30,7 +30,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
     data: { clients },
   } = useClients();
   const api = useServiceApi();
-
+  debugger
   const [isEditMode, setIsEditMode] = useState(false);
   const [localService, setLocalService] = useState({
     title: '',
@@ -251,7 +251,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             }}
             value={
                 serviceClient
-                    ? { value: serviceClient.id, label: serviceClient.name }
+                    ? { value: serviceClient.id, label: serviceClient?.name ?? serviceClient?.title }
                     : null
             }
         />

@@ -120,10 +120,11 @@ const ClientPage = observer(() => {
               }
             />
             <ClientDeals
+                currentClient={client}
               className={cn(styles.card, styles.card_status)}
               deals={client?.deals}
             />
-            <ClientActivities activities={client?.activities} />
+            {/*<ClientActivities activities={client?.activities} />*/}
             <Comments
               onChange={handleChange}
               comments={client?.comments}

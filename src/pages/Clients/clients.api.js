@@ -87,10 +87,11 @@ const useClientsApi = () => {
         http.get(`/api/companies/${id}/clients`), // Запрос для получения паролей
         http.get(`/api/companies/${id}/comments`), // Запрос для получения паролей
         http.get(`/api/companies/${id}/services`), // Запрос для получения паролей
+        http.get(`/api/companies/${id}/deals`), // Запрос для получения паролей
       ])
         // .then(handleHttpResponse)
         .then(
-          ([clientRes, passwordsRes, contactRes, commentsRes, servicesRes]) => {
+          ([clientRes, passwordsRes, contactRes, commentsRes, servicesRes,dealsRes]) => {
             // Деструктурируем результаты обоих запросов
 
             const clientData = clientRes.data.data;
@@ -98,6 +99,7 @@ const useClientsApi = () => {
             const contactPersonsData = contactRes.data.data;
             const commentsData = commentsRes.data.data;
             const servicesData = servicesRes.data.data;
+            const dealsData = dealsRes.data.data;
             // Сначала маппим пароли, затем клиента, передавая пароли в маппер клиента
             const mappedClient = mapClientFromApi(
               clientData,
@@ -105,7 +107,10 @@ const useClientsApi = () => {
               contactPersonsData,
               commentsData,
               servicesData,
+                dealsData
             );
+            debugger
+
             clientsStore.setCurrentClient(mappedClient); // Устанавливаем смапленного клиента в store
 
             return mappedClient; // Возвращаем смапленного клиента

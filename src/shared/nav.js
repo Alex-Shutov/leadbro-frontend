@@ -20,11 +20,11 @@ export const navigation = [
         action: () =>{},
         url: "/tasks",
     },
-    {
-        title: "Календарь",
-        action: () =>{},
-        url: "/calendar",
-    },
+    // {
+    //     title: "Календарь",
+    //     action: () =>{},
+    //     url: "/calendar",
+    // },
     {
         title: "Счета",
         action: () =>{},

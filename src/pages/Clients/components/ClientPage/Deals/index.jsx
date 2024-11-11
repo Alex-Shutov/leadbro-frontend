@@ -1,12 +1,20 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import ManagerCell from "../../../../../components/ManagerCell";
 import {formatDate} from "../../../../../utils/formate.date";
 import Table from "../../../../../shared/Table";
 import {formatSum} from "../../../../../utils/format.number";
 import AdaptiveCard from "./AdaptiveCard";
 import TextLink from "../../../../../shared/Table/TextLink";
+import Badge from "../../../../../shared/Badge";
+import {colorStatsuDealTypesForPage} from "../../../../Deals/deals.types";
+import DealEditModal from "../../../../Deals/components/DealEditModal";
+import useStore from "../../../../../hooks/useStore";
+import useDealsApi from "../../../../Deals/deals.api";
 
-const ClientDeals = ({deals}) => {
+const ClientDeals = ({deals,currentClient}) => {
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const {dealsStore} = useStore()
+    const dealsApi = useDealsApi()
     const cols = React.useMemo(() => [
         {
             Header: 'Сделка',
@@ -15,7 +23,7 @@ const ClientDeals = ({deals}) => {
             accessor: 'description',
             Cell: ({row}) => {
                 const data = row?.original
-                return <TextLink>{data.description}</TextLink>
+                return <TextLink to={`/deals/${data.id}`}>{data.description}</TextLink>
             },
 
         },
@@ -37,7 +45,7 @@ const ClientDeals = ({deals}) => {
 
             Cell: ({row}) => {
                 const data = row?.original
-                return <p>{data.status}</p>
+                    return <Badge status={data?.status} statusType={colorStatsuDealTypesForPage}/>
             },
 
         },
@@ -46,7 +54,7 @@ const ClientDeals = ({deals}) => {
             id: 'sum',
             Cell: ({row}) => {
                 const data = row?.original
-                return <p>{formatSum(data.sum)}</p>
+                return <p>{formatSum(data.price)}</p>
             },
 
         },
@@ -57,10 +65,16 @@ const ClientDeals = ({deals}) => {
             <Table smallTable={true} headerInCard={true} cardComponent={(data,onPagination)=><AdaptiveCard data={data} onPagination={onPagination} />} headerActions={{
                 sorting:true,
                 add: {
-                    action:()=>console.log('1234'),
+                    action:()=>setEditModalOpen(true),
                     title:''
                 }
             }} onPagination={true} title={'Cделки'} data={data} columns={cols}/>
+            {editModalOpen && <DealEditModal
+                currentClient={currentClient}
+                handleClose={()=>setEditModalOpen(false)}
+                dealApi={dealsApi}
+                dealStore={dealsStore}
+            />}
         </div>
     );
 };
