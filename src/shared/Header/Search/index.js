@@ -16,9 +16,10 @@ import useTasksApi from '../../../pages/Tasks/tasks.api';
 const Search = observer(({ className }) => {
   const navigate = useNavigate();
   const { appStore } = useStore();
+  const { tasksStore } = useStore();
   const { searchResults } = appStore;
   const appApi = useAppApi();
-  const { data, isLoading, store: taskStore } = useTasks();
+  // const { data, isLoading, store: taskStore } = useTasks();
   const taskApi = useTasksApi();
 
   const [visible, setVisible] = useState(false);
@@ -51,10 +52,16 @@ const Search = observer(({ className }) => {
     };
   }, [text]);
 
+  const handleClickOnTask = async (item) => {
+    debugger;
+    await taskApi.getTaskById(item.id);
+    setSelectedTask(item);
+  };
+
   const handleResultClick = (item, type) => {
     switch (type) {
       case 'tasks':
-        setSelectedTask(item);
+        handleClickOnTask(item);
         break;
       case 'deals':
         navigate(`/deals/${item.id}`);
@@ -152,7 +159,7 @@ const Search = observer(({ className }) => {
         <TaskEditModal
           data={selectedTask}
           handleClose={() => setSelectedTask(null)}
-          taskStore={taskStore}
+          taskStore={tasksStore}
           taskApi={taskApi}
         />
       )}

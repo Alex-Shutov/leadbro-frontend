@@ -11,6 +11,7 @@ export class TasksStore {
   tasks = [];
   drafts = {};
   taskStatuses = null;
+  currentTask = null;
   metaInfoTable = {};
   changedProps = new Set();
 
@@ -27,7 +28,9 @@ export class TasksStore {
   }
 
   getById(id, isReset = false) {
-    const task = this.tasks.find((x) => x.id === Number(id));
+    debugger;
+    const task =
+      this.currentTask || this.tasks.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? task : draft ? { ...task, ...draft } : task;
   }
@@ -100,5 +103,9 @@ export class TasksStore {
 
   clearChangesSet() {
     this.changedProps = new Set();
+  }
+
+  setCurrentTask(task) {
+    this.currentTask = task;
   }
 }

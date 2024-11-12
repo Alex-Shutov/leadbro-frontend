@@ -51,16 +51,16 @@ const useTasksApi = () => {
         tasksStore.setTasks(mappedTasks);
         return mappedTasks;
       })
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   }, []);
 
   const getTaskById = useCallback((id) => {
     return http
-      .get(`/tasks/${id}`)
+      .get(`api/tasks/${id}`)
       .then(handleHttpResponse)
-      .then((res) => tasksStore.setCurrentTask(res.body))
-      .catch(handleHttpError);
+      .then((res) => tasksStore.setCurrentTask(mapTaskFromApi(res.body.data)))
+      .catch(handleShowError);
   }, []);
 
   const getTasksByRole = useCallback((role) => {
@@ -82,7 +82,7 @@ const useTasksApi = () => {
       })
       .then(() => setIsLoading(false))
 
-      .catch(handleHttpError);
+      .catch(handleShowError);
   }, []);
 
   const createTask = useCallback((updateData) => {

@@ -90,6 +90,10 @@ const TaskEditModal = observer(
       }),
     };
 
+    useEffect(() => {
+      return () => taskStore.setCurrentTask(null);
+    }, []);
+
     const [localTask, setLocalTask] = useState(initialTaskState);
 
     // Получаем актуальные данные задачи в зависимости от режима
@@ -100,7 +104,7 @@ const TaskEditModal = observer(
           contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
       }
-
+      debugger;
       return taskStore.getById(data.id);
     }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts]);
 
