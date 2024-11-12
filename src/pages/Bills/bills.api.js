@@ -5,19 +5,20 @@ import { getQueryParam } from '../../utils/window.utils';
 import { mapBillDataToBackend, mapBillFromApi } from './bills.mapper';
 import {
   handleHttpError,
-  handleHttpResponse, handleShowError,
+  handleHttpResponse,
+  handleShowError,
   http,
   resetApiProvider,
 } from '../../shared/http';
-import {useState} from "react";
-import {API_URL} from "../../shared/constants";
+import { useState } from 'react';
+import { API_URL } from '../../shared/constants';
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to) => {
     resetApiProvider();
-    setIsLoading(true)
+    setIsLoading(true);
     return http
       .get('/api/bills', { params: { page, from, to } })
       .then(handleHttpResponse)
@@ -28,30 +29,26 @@ const useBillsApi = () => {
         billsStore.setStats(res.body.stats);
       })
       .catch(handleHttpError)
-        .finally(()=>setIsLoading(false));
+      .finally(() => setIsLoading(false));
   };
 
   const createBill = (body) => {
     const pageFromUrl = getQueryParam('page', 1);
     resetApiProvider();
-    setIsLoading(true)
-    const createData = mapBillDataToBackend(
-        body,
-        Object.keys(body),
-    );
+    setIsLoading(true);
+    const createData = mapBillDataToBackend(body, Object.keys(body));
     return http
       .post('/api/bills', createData)
       .then(handleHttpResponse)
       .then(() => getBills(pageFromUrl))
       .catch(handleShowError)
-  .finally(()=>setIsLoading(false));
-
+      .finally(() => setIsLoading(false));
   };
 
   const updateBill = (billId, updateData) => {
     resetApiProvider();
-    setIsLoading(true)
-    debugger
+    setIsLoading(true);
+
     updateData = mapBillDataToBackend(
       billsStore.drafts[billId],
       billsStore.changedProps,
@@ -61,13 +58,12 @@ const useBillsApi = () => {
       .then(handleHttpResponse)
       .then(() => getBillById(billId))
       .catch(handleHttpError)
-        .finally(()=>setIsLoading(false));
-
+      .finally(() => setIsLoading(false));
   };
 
   const getBillById = (billId) => {
     resetApiProvider();
-    setIsLoading(true)
+    setIsLoading(true);
 
     return http
       .get(`/api/bills/${billId}`)
@@ -77,14 +73,13 @@ const useBillsApi = () => {
         billsStore.setCurrentBill(mappedBill);
       })
       .catch(handleHttpError)
-        .finally(()=>setIsLoading(false));
-
+      .finally(() => setIsLoading(false));
   };
 
   const deleteBill = async (billId) => {
     resetApiProvider();
     setIsLoading(true);
-  debugger
+
     try {
       await http.delete(`/api/bills/${billId}`);
       const pageFromUrl = getQueryParam('page', 1);
@@ -109,7 +104,7 @@ const useBillsApi = () => {
     getBillById,
     deleteBill,
     downloadBill,
-    isLoading
+    isLoading,
   };
 };
 

@@ -9,7 +9,9 @@ import {
   resetApiProvider,
   setMockProvider,
 } from '../shared/http';
-import axios from 'axios'; // Импортируйте хук
+import axios from 'axios';
+import useUser from '../hooks/useUser';
+import useAppApi from '../api'; // Импортируйте хук
 
 export const AuthContext = createContext();
 
@@ -20,6 +22,7 @@ export const AuthProvider = ({ children }) => {
   ); // Используйте хук
   const navigate = useNavigate();
   const location = useLocation();
+  const appApi = useAppApi();
 
   const login = async (email, password) => {
     try {
@@ -41,6 +44,7 @@ export const AuthProvider = ({ children }) => {
         const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
         http.defaults.adapter = adapter;
+        appApi.getUserProfile();
       } else {
         alert('Неверный email или пароль');
       }

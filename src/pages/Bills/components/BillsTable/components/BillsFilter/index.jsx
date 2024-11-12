@@ -7,14 +7,14 @@ import { useNavigate } from 'react-router';
 import Icon from '../../../../../../shared/Icon';
 import InlineCalendar from '../../../../../../shared/Datepicker/Inline';
 import cn from 'classnames';
-import {formatDateForUrl} from "../../index";
+import { formatDateForUrl } from '../../index';
 
 const BillsFilters = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [showCalendar, setShowCalendar] = useState(false);
-  debugger
+
   const today = startOfDay(new Date());
   const weekAgo = sub(today, { weeks: 1 });
   const monthAgo = sub(today, { months: 1 });
@@ -24,8 +24,6 @@ const BillsFilters = () => {
 
   const startDate = fromParam ? new Date(fromParam) : today;
   const endDate = toParam ? new Date(toParam) : today;
-
-
 
   const formatDisplayDate = (date) => {
     return format(date, 'dd.MM.yyyy');

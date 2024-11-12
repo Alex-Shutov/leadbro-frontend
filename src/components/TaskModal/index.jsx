@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { taskableTypes, tasksTypes } from '../../pages/Tasks/tasks.types';
 import { taskStatusTypes } from '../../pages/Stages/stages.types';
@@ -9,7 +9,7 @@ import styles from './Modal.module.sass';
 import { handleSubmit as handleSubmitSnackbar } from '../../utils/snackbar';
 import TaskDescriptionPart from '../../pages/Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskDescriptionPart';
 import TaskTypePart from '../../pages/Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskTypePart';
-import Comments from "../Comments";
+import Comments from '../Comments';
 
 const draftSet = new Set();
 
@@ -30,7 +30,6 @@ const TaskEditModal = observer(
     taskStore,
     taskApi,
   }) => {
-    debugger
     const [isEditMode, _] = useState(Boolean(data));
 
     const mode = useMemo(() => {
@@ -38,10 +37,6 @@ const TaskEditModal = observer(
       if (deal) return 'deal';
       return 'task';
     }, [stage, deal]);
-
-
-
-
 
     // Получаем контекстные данные в зависимости от режима
     const contextData = useMemo(() => {
@@ -101,7 +96,6 @@ const TaskEditModal = observer(
     const taskData = useMemo(() => {
       if (!isEditMode) return localTask;
       if (mode !== 'task') {
-        debugger
         return Object.values(
           contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
@@ -109,17 +103,16 @@ const TaskEditModal = observer(
 
       return taskStore.getById(data.id);
     }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts]);
-    debugger
+
     const [comments, setComments] = useState(taskData?.comments ?? {});
 
     const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     const handleChange = (name, value, withId = true) => {
-
       if (name.includes('responsibles')) {
         value = value[0];
       }
-      debugger
+
       if (isEditMode) {
         if (mode !== 'task') {
           contextData.store.changeById(contextData.id, name, value, withId);
@@ -157,7 +150,12 @@ const TaskEditModal = observer(
       try {
         if (isEditMode)
           if (mode !== 'task') {
-            await taskApi.updateTask(taskData.id, null, contextData.store.drafts[contextData.id],contextData.store.changedProps);
+            await taskApi.updateTask(
+              taskData.id,
+              null,
+              contextData.store.drafts[contextData.id],
+              contextData.store.changedProps,
+            );
           } else
             await taskApi.updateTask(
               taskData.id,
@@ -195,7 +193,6 @@ const TaskEditModal = observer(
 
     // Получаем текст принадлежности в зависимости от режима
     const getBelongsToText = () => {
-      debugger
       switch (mode) {
         case 'stage':
           return `Принадлежит к: ${taskData.stage.title ?? stage?.title}`;
@@ -212,14 +209,12 @@ const TaskEditModal = observer(
       }
     };
 
-    const handleAddComment = (newComment,value) => {
-      debugger
+    const handleAddComment = (newComment, value) => {
       // Сначала добавляем локально
-      setComments(prev => ({
+      setComments((prev) => ({
         ...prev,
-        [value.id]: value
+        [value.id]: value,
       }));
-
     };
 
     const loadComments = async () => {
@@ -269,10 +264,19 @@ const TaskEditModal = observer(
               data={taskData}
               handleChange={handleChange}
             />
-            {isEditMode && <div className={styles.comments}>
-              <Comments belongsTo={'tasks'} entityId={taskData.id} comments={comments} prefix={isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''} onChange={handleAddComment}/>
-
-            </div>}
+            {isEditMode && (
+              <div className={styles.comments}>
+                <Comments
+                  belongsTo={'tasks'}
+                  entityId={taskData.id}
+                  comments={comments}
+                  prefix={
+                    isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
+                  }
+                  onChange={handleAddComment}
+                />
+              </div>
+            )}
             <TaskTypePart
               isEditMode={isEditMode}
               types={Object.keys(tasksTypes)}

@@ -4,7 +4,8 @@ import {
   handleShowError,
   http,
   mockHttp,
-  resetApiProvider, setMockProvider,
+  resetApiProvider,
+  setMockProvider,
 } from '../../shared/http';
 import mocks from './tasks.mocks';
 import useStore from '../../hooks/useStore';
@@ -14,7 +15,7 @@ import { useParams } from 'react-router';
 import useStageApi from '../Stages/stages.api';
 import { mapStageDataToBackend } from '../Stages/stages.mapper';
 import { taskStatusTypes } from '../Stages/stages.types';
-import {mapCommentsFromApi} from "../Clients/clients.mapper";
+import { mapCommentsFromApi } from '../Clients/clients.mapper';
 
 mockHttp.onGet('/tasks').reply(200, mocks.createTasks());
 mockHttp.onPost('/tasks').reply(200, mocks.createTasks());
@@ -86,8 +87,6 @@ const useTasksApi = () => {
 
   const createTask = useCallback((updateData) => {
     resetApiProvider();
-    debugger;
-
     return http
       .post('/api/tasks', { ...updateData, stage_id: stageId })
       .then(handleHttpResponse)
@@ -102,10 +101,8 @@ const useTasksApi = () => {
       drafts = stagesStore.drafts[stageId],
       props = stagesStore.changedProps,
     ) => {
-      debugger
       updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
 
-      debugger;
       resetApiProvider();
       return http
         .put(`/api/tasks/${id}`, updateData)
@@ -144,18 +141,15 @@ const useTasksApi = () => {
   // if(!tasksStore.getTypes()?.length)
   //   getTaskTypes()
 
-
   const getTaskComments = useCallback((taskId) => {
     return http
-        .get(`/api/tasks/${taskId}/comments`)
-        .then(handleHttpResponse)
-        .then((response) => {
-          debugger
-          return mapCommentsFromApi(response.body.data)
-        })
-        .catch(handleHttpError);
-  },[]);
-
+      .get(`/api/tasks/${taskId}/comments`)
+      .then(handleHttpResponse)
+      .then((response) => {
+        return mapCommentsFromApi(response.body.data);
+      })
+      .catch(handleHttpError);
+  }, []);
 
   return {
     isLoading,

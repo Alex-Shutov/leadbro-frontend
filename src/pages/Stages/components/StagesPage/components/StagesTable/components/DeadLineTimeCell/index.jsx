@@ -5,11 +5,9 @@ import { compareTime } from '../../../../../../../../utils/compare';
 
 const DeadLineTimeCell = ({ actualTime, deadLine }) => {
   const formatTime = (time) => {
-    const currTimeEl = time.toString().split(' ')[1] ?? 'ч'
+    const currTimeEl = time.toString().split(' ')[1] ?? 'ч';
     return parseFloat(time.toString().replace(',', '.')) + ' ' + currTimeEl;
   };
-
-  debugger
 
   const formattedActualTime = formatTime(actualTime);
   const formattedDeadLine = formatTime(deadLine);
@@ -19,7 +17,7 @@ const DeadLineTimeCell = ({ actualTime, deadLine }) => {
 
   return (
     <div className={`${styles.deadlineTimeCell} ${cellColor}`}>
-      {formattedActualTime}  / {formattedDeadLine}
+      {formattedActualTime} / {formattedDeadLine}
     </div>
   );
 };

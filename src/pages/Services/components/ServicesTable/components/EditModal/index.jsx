@@ -16,21 +16,21 @@ import useServiceApi from '../../../../services.api';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../../../utils/snackbar';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import cn from 'classnames';
-import useStore from "../../../../../../hooks/useStore";
-import useAppApi from "../../../../../../api";
+import useStore from '../../../../../../hooks/useStore';
+import useAppApi from '../../../../../../api';
 
 const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceTypes = useServiceTypes();
   const { store: serviceStore } = useServices();
-  const {appStore} = useStore()
-  const appApi = useAppApi()
+  const { appStore } = useStore();
+  const appApi = useAppApi();
   const { members } = useMembers();
   const statuses = useServiceStatuses();
   const {
     data: { clients },
   } = useClients();
   const api = useServiceApi();
-  debugger
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [localService, setLocalService] = useState({
     title: '',
@@ -96,7 +96,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   console.log(serviceTypes, 'serviceTypes');
 
   const serviceClient = service?.client ?? props?.client ?? null;
-    debugger
+
   const handleReset = () => {
     if (isEditMode) {
       serviceStore.resetDraft(serviceId); // Сброс черновика в режиме редактирования
@@ -222,39 +222,43 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
       {/*      : null*/}
       {/*  }*/}
       {/*/>*/}
-        <ValuesSelector
-            minInputLength={4}
-            readonly={props?.client || isEditMode}
-            placeholder={'Клиент'}
-            onChange={(e) =>{
-                handleChange(
-                    'client',
-                    e.length ? appStore?.companies.find((el) => el?.id === e[0]?.value) : null,
-                )
-            }
-            }
-            isMulti={false}
-            label={
-                <div className={styles.client_label}>
-                    <span>Клиент</span>
-                    {!props.client && <TextLink>Создать клиента</TextLink>}
-                </div>
-            }
-            isAsync
-            asyncSearch={async (query) => {
-                const response = await appApi.getCompanies(query);
-                const data = response
-                return data.map(item => ({
-                    value: item?.id,
-                    label: item?.name
-                }));
-            }}
-            value={
-                serviceClient
-                    ? { value: serviceClient.id, label: serviceClient?.name ?? serviceClient?.title }
-                    : null
-            }
-        />
+      <ValuesSelector
+        minInputLength={4}
+        readonly={props?.client || isEditMode}
+        placeholder={'Клиент'}
+        onChange={(e) => {
+          handleChange(
+            'client',
+            e.length
+              ? appStore?.companies.find((el) => el?.id === e[0]?.value)
+              : null,
+          );
+        }}
+        isMulti={false}
+        label={
+          <div className={styles.client_label}>
+            <span>Клиент</span>
+            {!props.client && <TextLink>Создать клиента</TextLink>}
+          </div>
+        }
+        isAsync
+        asyncSearch={async (query) => {
+          const response = await appApi.getCompanies(query);
+          const data = response;
+          return data.map((item) => ({
+            value: item?.id,
+            label: item?.name,
+          }));
+        }}
+        value={
+          serviceClient
+            ? {
+                value: serviceClient.id,
+                label: serviceClient?.name ?? serviceClient?.title,
+              }
+            : null
+        }
+      />
     </Modal>
   );
 });

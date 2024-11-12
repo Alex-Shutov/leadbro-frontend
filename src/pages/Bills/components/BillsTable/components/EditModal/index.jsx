@@ -8,24 +8,29 @@ import useClients from '../../../../../Clients/hooks/useClients';
 import useLegals from '../../../../../Settings/hooks/useLegals';
 import useBillsApi from '../../../../bills.api';
 import React, { useEffect, useMemo, useState } from 'react';
-import {handleError, handleSubmit as handleSubmitSnackbar} from '../../../../../../utils/snackbar';
+import {
+  handleError,
+  handleSubmit as handleSubmitSnackbar,
+} from '../../../../../../utils/snackbar';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Calendar from '../../../../../../shared/Datepicker';
 import { billStatusTypesRu } from '../../../../bills.types';
 import cn from 'classnames';
-import {useSelectorClients, useSelectorCompanies} from '../../../../../../hooks/useSelectors';
+import {
+  useSelectorClients,
+  useSelectorCompanies,
+} from '../../../../../../hooks/useSelectors';
 import useAppApi from '../../../../../../api';
 import useStore from '../../../../../../hooks/useStore';
 import { observer } from 'mobx-react';
-import taskStyles
-  from "../../../../../Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskDescriptionPart/Description.module.sass";
-import ServiceItems from "./components/ServiceItems";
-import useClientsApi from "../../../../../Clients/clients.api";
-import Icon from "../../../../../../shared/Icon";
-import ConfirmationModal from "../../../../../../components/ConfirmationModal";
-import useServiceApi from "../../../../../Services/services.api";
+import taskStyles from '../../../../../Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskDescriptionPart/Description.module.sass';
+import ServiceItems from './components/ServiceItems';
+import useClientsApi from '../../../../../Clients/clients.api';
+import Icon from '../../../../../../shared/Icon';
+import ConfirmationModal from '../../../../../../components/ConfirmationModal';
+import useServiceApi from '../../../../../Services/services.api';
 
-const EditModal = observer(({ billId, onClose,company,service,stage }) => {
+const EditModal = observer(({ billId, onClose, company, service, stage }) => {
   const { store: billsStore } = useBills();
   const appApi = useAppApi();
   const { appStore } = useStore();
@@ -37,7 +42,7 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
   //   data: { legalEntities },
   // } = useLegals();
   const api = useBillsApi();
-  const serviceApi = useServiceApi()
+  const serviceApi = useServiceApi();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [companySearchTerm, setCompanySearchTerm] = useState('');
@@ -52,10 +57,10 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
     legalEntity: null,
     company: company ?? null,
     status: 'created',
-    paymentReason:'',
+    paymentReason: '',
     service: service ?? null,
     stage: stage ?? null,
-    stampedBill:null,
+    stampedBill: null,
     items: [],
   });
 
@@ -63,16 +68,14 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
     return isEditMode ? billsStore.getById(billId) : localBill;
   }, [isEditMode, billId, billsStore.bills, billsStore.drafts, localBill]);
 
-
-
   useEffect(() => {
     const loadServices = async () => {
       if (bill?.company?.id) {
         try {
           const data = await appApi.getServicesByCompany(bill?.company.id);
-          const mappedServices = data.map(item => ({
+          const mappedServices = data.map((item) => ({
             value: item.id,
-            label: item.name
+            label: item.name,
           }));
           setServices(mappedServices);
         } catch (error) {
@@ -90,9 +93,9 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
       if (bill?.service?.id) {
         try {
           const data = await appApi.getStagesByService(bill?.service.id);
-          const mappedServices = data.map(item => ({
+          const mappedServices = data.map((item) => ({
             value: item.id,
-            label: item.name
+            label: item.name,
           }));
           setStages(mappedServices);
         } catch (error) {
@@ -104,7 +107,6 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
 
     loadServices();
   }, [bill?.service?.id]);
-
 
   useEffect(() => {
     if (billId) {
@@ -126,17 +128,21 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
   };
 
   const handleSubmit = async () => {
-    if (isDeleteModalOpen) return
+    if (isDeleteModalOpen) return;
 
     try {
       if (isEditMode) {
         await api.updateBill(billId, bill);
       } else {
-        await api.createBill({
-          ...localBill,
-          legalEntityId: bill?.legalEntity?.id ?? 0,
-          companyId: bill?.company?.id ?? 0,
-        }).then(()=>service && stage && serviceApi.getServiceById(service.id));
+        await api
+          .createBill({
+            ...localBill,
+            legalEntityId: bill?.legalEntity?.id ?? 0,
+            companyId: bill?.company?.id ?? 0,
+          })
+          .then(
+            () => service && stage && serviceApi.getServiceById(service.id),
+          );
       }
       handleSubmitSnackbar(
         isEditMode ? 'Счет успешно отредактирован' : 'Счет успешно создан',
@@ -144,23 +150,22 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
       onClose();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
-      handleError('Ошибка при сохранении:', error)
+      handleError('Ошибка при сохранении:', error);
     }
   };
 
   const handleClearInfoAfterCompany = () => {
-    appStore.clearProp(['servicesByCompany'])
-    handleChange('service',null)
-    handleChange('stage',null)
-  }
+    appStore.clearProp(['servicesByCompany']);
+    handleChange('service', null);
+    handleChange('stage', null);
+  };
   const handleClearInfoAfterService = () => {
-    appStore.clearProp(['stagesByService'])
-    handleChange('stage',null)
-  }
-
+    appStore.clearProp(['stagesByService']);
+    handleChange('stage', null);
+  };
 
   const handleReset = () => {
-    if (isDeleteModalOpen) return
+    if (isDeleteModalOpen) return;
 
     if (isEditMode) {
       billsStore.resetDraft(billId);
@@ -172,7 +177,6 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
     api.downloadBill(bill?.stampedBill);
   };
 
-
   const handleDeleteBill = async () => {
     const success = await api.deleteBill(billId);
     if (success) {
@@ -182,55 +186,61 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
     setIsDeleteModalOpen(false);
   };
   return (
-      <>
-        <ConfirmationModal
-            label={'Вы действительно хотите удалить счет?'}
-            isOpen={isDeleteModalOpen}
-            onClose={() => {
-              setIsDeleteModalOpen(false)}}
-            onConfirm={handleDeleteBill}
-        />
-    <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}
-           customButtons={isEditMode && <div className={styles.addButtons}>
-             <DownloadButton handleDownload={handleDownloadBill} />
-             <DeleteButton handleDelete={()=>setIsDeleteModalOpen(true)} />
-           </div>}
-    >
-
-      <div className={styles.name}>
-        {isEditMode ? 'Редактирование счета' : 'Создание счета'}
-      </div>
-      <Dropdown
-        isAsync={true}
-        asyncSearch={async (search) => {
-          const response = await appApi.getLegalEntities(search);
-          return response;
+    <>
+      <ConfirmationModal
+        label={'Вы действительно хотите удалить счет?'}
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
         }}
-        setValue={(e) => {
-          handleChange('legalEntity', e)
-        }
-      }
-        classNameContainer={styles.input}
-        label={'Получатель платежа'}
-        value={bill?.legalEntity}
-        renderValue={(val) => val.name}
-        renderOption={(opt) => opt.name}
-        options={appStore?.legalEntities ?? []}
+        onConfirm={handleDeleteBill}
       />
-      <div className={cn(styles.flex, styles.addZIndex)}>
-        <Calendar
-          label={'Дата создания'}
-          value={bill?.creationDate}
-          onChange={(date) => handleChange('creationDate', date)}
+      <Modal
+        handleSubmit={handleSubmit}
+        handleClose={handleReset}
+        size={'md'}
+        customButtons={
+          isEditMode && (
+            <div className={styles.addButtons}>
+              <DownloadButton handleDownload={handleDownloadBill} />
+              <DeleteButton handleDelete={() => setIsDeleteModalOpen(true)} />
+            </div>
+          )
+        }
+      >
+        <div className={styles.name}>
+          {isEditMode ? 'Редактирование счета' : 'Создание счета'}
+        </div>
+        <Dropdown
+          isAsync={true}
+          asyncSearch={async (search) => {
+            const response = await appApi.getLegalEntities(search);
+            return response;
+          }}
+          setValue={(e) => {
+            handleChange('legalEntity', e);
+          }}
+          classNameContainer={styles.input}
+          label={'Получатель платежа'}
+          value={bill?.legalEntity}
+          renderValue={(val) => val.name}
+          renderOption={(opt) => opt.name}
+          options={appStore?.legalEntities ?? []}
         />
-        <Calendar
-          label={'План. дата платежа'}
-          value={bill?.paymentDate}
-          onChange={(date) => handleChange('paymentDate', date)}
-        />
-      </div>
+        <div className={cn(styles.flex, styles.addZIndex)}>
+          <Calendar
+            label={'Дата создания'}
+            value={bill?.creationDate}
+            onChange={(date) => handleChange('creationDate', date)}
+          />
+          <Calendar
+            label={'План. дата платежа'}
+            value={bill?.paymentDate}
+            onChange={(date) => handleChange('paymentDate', date)}
+          />
+        </div>
 
-      <TextInput
+        <TextInput
           onChange={({ target }) => handleChange(target.name, target.value)}
           name={'paymentReason'}
           value={bill?.paymentReason}
@@ -239,163 +249,162 @@ const EditModal = observer(({ billId, onClose,company,service,stage }) => {
           placeholder={'Введите комментарий'}
           className={cn(taskStyles.input, taskStyles.textarea)}
           label={'Основание платежа'}
-      />
+        />
 
-      {/*<ValuesSelector*/}
-      {/*  placeholder={'Юридическое лицо'}*/}
-      {/*  onChange={(e) =>*/}
-      {/*    handleChange(*/}
-      {/*      'legalEntity',*/}
-      {/*      e.length ? legalEntities.find((el) => el.id === e[0]?.value) : null,*/}
-      {/*    )*/}
-      {/*  }*/}
-      {/*  isMulti={false}*/}
-      {/*  label={'Юридическое лицо'}*/}
-      {/*  options={legalEntities.map((el) => ({ value: el.id, label: el.name }))}*/}
-      {/*  value={*/}
-      {/*    bill?.legalEntity*/}
-      {/*      ? { value: bill?.legalEntity.id, label: bill?.legalEntity.name }*/}
-      {/*      : null*/}
-      {/*  }*/}
-      {/*/>*/}
+        {/*<ValuesSelector*/}
+        {/*  placeholder={'Юридическое лицо'}*/}
+        {/*  onChange={(e) =>*/}
+        {/*    handleChange(*/}
+        {/*      'legalEntity',*/}
+        {/*      e.length ? legalEntities.find((el) => el.id === e[0]?.value) : null,*/}
+        {/*    )*/}
+        {/*  }*/}
+        {/*  isMulti={false}*/}
+        {/*  label={'Юридическое лицо'}*/}
+        {/*  options={legalEntities.map((el) => ({ value: el.id, label: el.name }))}*/}
+        {/*  value={*/}
+        {/*    bill?.legalEntity*/}
+        {/*      ? { value: bill?.legalEntity.id, label: bill?.legalEntity.name }*/}
+        {/*      : null*/}
+        {/*  }*/}
+        {/*/>*/}
 
-      <ValuesSelector
+        <ValuesSelector
           minInputLength={4}
-        readonly={company ?? false}
-        placeholder={'Клиент'}
-        onChange={(e) =>{
-          handleChange(
-            'company',
-            e.length ? appStore?.companies.find((el) => el?.id === e[0]?.value) : null,
-          )
-          handleClearInfoAfterCompany()
-        }
-        }
-        isMulti={false}
-        label={
-          <div className={styles.client_label}>
-            Клиент
-          </div>
-        }
+          readonly={company ?? false}
+          placeholder={'Клиент'}
+          onChange={(e) => {
+            handleChange(
+              'company',
+              e.length
+                ? appStore?.companies.find((el) => el?.id === e[0]?.value)
+                : null,
+            );
+            handleClearInfoAfterCompany();
+          }}
+          isMulti={false}
+          label={<div className={styles.client_label}>Клиент</div>}
           isAsync
           asyncSearch={async (query) => {
             const response = await appApi.getCompanies(query);
-            const data = response
-            return data.map(item => ({
+            const data = response;
+            return data.map((item) => ({
               value: item?.id,
-              label: item?.name
+              label: item?.name,
             }));
           }}
-        value={
-          bill?.company
-            ? { value: bill?.company?.id, label: bill?.company?.name }
-            : null
-        }
-      />
-
-        {bill?.company?.id && <ValuesSelector
-          minInputLength={4}
-          readonly={service ?? false}
-
-          placeholder={'Услуга'}
-          onChange={(e) =>{
-              handleChange(
-                  'service',
-                  e.length ? appStore?.servicesByCompany.find((el) => el.id === e[0]?.value) : null,
-              )
-            handleClearInfoAfterService()
-
-          }
-          }
-          isMulti={false}
-          label={
-            <div className={styles.client_label}>
-                Услуга
-            </div>
-          }
-          options={services}
-          // options={( () => {
-          //   const response =  appApi.getServicesByCompany(bill?.company.id);
-          //   debugger
-          //   const data = response
-          //   return data.map(item => ({
-          //     value: item.id,
-          //     label: item.name
-          //   }));
-          // })()}
           value={
-            bill?.service
+            bill?.company
+              ? { value: bill?.company?.id, label: bill?.company?.name }
+              : null
+          }
+        />
+
+        {bill?.company?.id && (
+          <ValuesSelector
+            minInputLength={4}
+            readonly={service ?? false}
+            placeholder={'Услуга'}
+            onChange={(e) => {
+              handleChange(
+                'service',
+                e.length
+                  ? appStore?.servicesByCompany.find(
+                      (el) => el.id === e[0]?.value,
+                    )
+                  : null,
+              );
+              handleClearInfoAfterService();
+            }}
+            isMulti={false}
+            label={<div className={styles.client_label}>Услуга</div>}
+            options={services}
+            // options={( () => {
+            //   const response =  appApi.getServicesByCompany(bill?.company.id);
+            //
+            //   const data = response
+            //   return data.map(item => ({
+            //     value: item.id,
+            //     label: item.name
+            //   }));
+            // })()}
+            value={
+              bill?.service
                 ? { value: bill?.service.id, label: bill?.service.name }
                 : null
-          }
-      />}
+            }
+          />
+        )}
 
-      {bill?.service?.id && <ValuesSelector
-          minInputLength={4}
-          readonly={stage ?? false}
-
-          placeholder={'Этап'}
-          onChange={(e) =>
+        {bill?.service?.id && (
+          <ValuesSelector
+            minInputLength={4}
+            readonly={stage ?? false}
+            placeholder={'Этап'}
+            onChange={(e) =>
               handleChange(
-                  'stage',
-                  e.length ? appStore?.stagesByService.find((el) => el.id === e[0]?.value) : null,
+                'stage',
+                e.length
+                  ? appStore?.stagesByService.find(
+                      (el) => el.id === e[0]?.value,
+                    )
+                  : null,
               )
-          }
-          isMulti={false}
-          label={
-            <div className={styles.client_label}>
-              Этап
-            </div>
-          }
-          options={stages}
-          // options={( () => {
-          //   const response =  appApi.getServicesByCompany(bill?.company.id);
-          //   debugger
-          //   const data = response
-          //   return data.map(item => ({
-          //     value: item.id,
-          //     label: item.name
-          //   }));
-          // })()}
-          value={
-            bill?.stage
+            }
+            isMulti={false}
+            label={<div className={styles.client_label}>Этап</div>}
+            options={stages}
+            // options={( () => {
+            //   const response =  appApi.getServicesByCompany(bill?.company.id);
+            //
+            //   const data = response
+            //   return data.map(item => ({
+            //     value: item.id,
+            //     label: item.name
+            //   }));
+            // })()}
+            value={
+              bill?.stage
                 ? { value: bill?.stage.id, label: bill?.stage.name }
                 : null
-          }
-      />}
-      {/*<div className={styles.lowZIndex}>*/}
-      {/*  <Dropdown*/}
-      {/*    setValue={(e) => handleChange('status', e[0])}*/}
-      {/*    classNameContainer={styles.input}*/}
-      {/*    label={'Статус'}*/}
-      {/*    value={billStatusTypesRu[bill?.status] || ''}*/}
-      {/*    renderOption={(opt) => opt[1]}*/}
-      {/*    options={Object.entries(billStatusTypesRu)}*/}
-      {/*  />*/}
-      {/*</div>*/}
-      <ServiceItems
+            }
+          />
+        )}
+        {/*<div className={styles.lowZIndex}>*/}
+        {/*  <Dropdown*/}
+        {/*    setValue={(e) => handleChange('status', e[0])}*/}
+        {/*    classNameContainer={styles.input}*/}
+        {/*    label={'Статус'}*/}
+        {/*    value={billStatusTypesRu[bill?.status] || ''}*/}
+        {/*    renderOption={(opt) => opt[1]}*/}
+        {/*    options={Object.entries(billStatusTypesRu)}*/}
+        {/*  />*/}
+        {/*</div>*/}
+        <ServiceItems
           items={bill?.items}
           onChange={(items) => handleChange('items', items, true)}
-      />
-
-    </Modal>
-
-  </>
+        />
+      </Modal>
+    </>
   );
 });
 
-const DownloadButton = ({handleDownload}) => {
-  return <div className={styles.download} onClick={handleDownload}>
-    <span>Скачать счет</span>
-    <Icon name={'download'} size={20}/>
-  </div>
-}
+const DownloadButton = ({ handleDownload }) => {
+  return (
+    <div className={styles.download} onClick={handleDownload}>
+      <span>Скачать счет</span>
+      <Icon name={'download'} size={20} />
+    </div>
+  );
+};
 
-const DeleteButton = ({handleDelete}) => {
-  return <div className={styles.delete} onClick={handleDelete}>
-    <span>Удалить счет</span>
-    <Icon name={'close'} size={20}/>
-  </div>
-}
+const DeleteButton = ({ handleDelete }) => {
+  return (
+    <div className={styles.delete} onClick={handleDelete}>
+      <span>Удалить счет</span>
+      <Icon name={'close'} size={20} />
+    </div>
+  );
+};
 
 export default EditModal;

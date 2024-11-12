@@ -139,7 +139,6 @@ const mapTaskStatus = (status) => {
 
 export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
   const castValue = (key, value) => {
-    debugger;
     switch (key) {
       case 'active':
         return stageStatusTypes.inProgress === value;

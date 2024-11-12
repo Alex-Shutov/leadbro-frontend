@@ -9,11 +9,10 @@ import {
   BrowserRouter,
 } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
-import useUser from "./hooks/useUser";
+import useUser from './hooks/useUser';
 
 function App() {
   const { notificationsStore } = useStore();
-  const user = useUser()
   useEffect(() => {
     rootApi.getNotifications().then((result) => {
       notificationsStore.setNotifications(result.body);

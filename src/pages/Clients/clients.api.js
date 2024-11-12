@@ -91,7 +91,14 @@ const useClientsApi = () => {
       ])
         // .then(handleHttpResponse)
         .then(
-          ([clientRes, passwordsRes, contactRes, commentsRes, servicesRes,dealsRes]) => {
+          ([
+            clientRes,
+            passwordsRes,
+            contactRes,
+            commentsRes,
+            servicesRes,
+            dealsRes,
+          ]) => {
             // Деструктурируем результаты обоих запросов
 
             const clientData = clientRes.data.data;
@@ -107,9 +114,8 @@ const useClientsApi = () => {
               contactPersonsData,
               commentsData,
               servicesData,
-                dealsData
+              dealsData,
             );
-            debugger
 
             clientsStore.setCurrentClient(mappedClient); // Устанавливаем смапленного клиента в store
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import styles from './TextInput.module.sass';
 import Icon from '../Icon';
@@ -46,7 +46,7 @@ const TextInput = ({
   noMinWidth,
   onChange,
   value,
-                     validate,
+  validate,
   ...props
 }) => {
   const inputRef = useRef(null);
@@ -79,13 +79,12 @@ const TextInput = ({
     if (validate) {
       const isValid = validate(value);
       if (!isValid) {
-        inputRef.current.classList.add(styles.errorInput);  // Добавляем класс ошибки
+        inputRef.current.classList.add(styles.errorInput); // Добавляем класс ошибки
       } else {
-        inputRef.current.classList.remove(styles.errorInput);  // Убираем класс ошибки
+        inputRef.current.classList.remove(styles.errorInput); // Убираем класс ошибки
       }
     }
   };
-
 
   const handleInputChange = (e) => {
     const currentCursorPosition = e.target.selectionStart;
@@ -101,7 +100,7 @@ const TextInput = ({
 
     // if(!rawValue.includes('.') && rawValue!=='') return
 
-    // debugger
+    //
     const [integer, decimal] = rawValue.split('.');
     const formattedValue = integer ? formatValue(String(rawValue)) : '';
     if (
@@ -151,9 +150,9 @@ const TextInput = ({
       >
         {props.type === 'textarea' ? (
           <TextArea
-              onBlur={handleBlur}
-              onChange={onChange}
-              value={value}
+            onBlur={handleBlur}
+            onChange={onChange}
+            value={value}
             disabled={!props?.edited ?? false}
             autoFocus={props?.makeFocused}
             ref={inputRef}
@@ -161,11 +160,17 @@ const TextInput = ({
             {...props}
           />
         ) : props.type === 'editor' ? (
-            value && <Editor name={props.name ?? ''} initialHTML={value} onChange={onChange} />
+          value && (
+            <Editor
+              name={props.name ?? ''}
+              initialHTML={value}
+              onChange={onChange}
+            />
+          )
         ) : (
           <input
-              disabled={!props?.edited ?? false}
-              onBlur={handleBlur}
+            disabled={!props?.edited ?? false}
+            onBlur={handleBlur}
             ref={inputRef}
             className={cn(classInput, styles.input)}
             value={
