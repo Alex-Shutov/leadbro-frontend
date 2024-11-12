@@ -3,39 +3,39 @@ import { loadAvatar } from '../../utils/create.utils';
 import { taskableTypes } from './tasks.types';
 
 export const mapTaskFromApi = (task) => {
-  const taskableType = task.related_entity?.type;
-  const taskableId = task.related_entity?.id;
+  const taskableType = task?.related_entity?.type;
+  const taskableId = task?.related_entity?.id;
 
   return {
     id: task.id,
-    title: task.name,
-    taskStatus: mapTaskStatus(task.status),
+    title: task?.name,
+    taskStatus: mapTaskStatus(task?.status),
     stage:
       taskableType === taskableTypes.stage
         ? {
             id: taskableId,
-            title: task.related_entity?.name || 'Этап не задан',
+            title: task?.related_entity?.name || 'Этап не задан',
           }
         : null,
     deal:
       taskableType === taskableTypes.deal
         ? {
             id: taskableId,
-            title: task.related_entity?.name || 'Сделка не задана',
+            title: task?.related_entity?.name || 'Сделка не задана',
           }
         : null,
-    type: task.type,
+    type: task?.type,
     taskLinked: task?.linked_task,
-    description: task.description,
-    deadline: new Date(task.deadline),
-    deadlineTime: formatDuration(task.planned_time), // Например, '5 ч'
-    actualTime: formatDuration(task.actual_time), // Например, '2 дн'
-    isNewForUser: task.show_at_client_cabinet === 1,
-    responsibles: mapAssigned([task.responsible]),
-    executors: mapAssigned([task.performer]),
-    auditors: mapAssigned(task.auditors),
-    assigned: mapAssigned([task.responsible, task.performer]), // Ответственные и исполнители
-    comments: mapComments(task.comments || []) ?? [], // Комментарии к задаче
+    description: task?.description,
+    deadline: new Date(task?.deadline),
+    deadlineTime: formatDuration(task?.planned_time), // Например, '5 ч'
+    actualTime: formatDuration(task?.actual_time), // Например, '2 дн'
+    isNewForUser: task?.show_at_client_cabinet === 1,
+    responsibles: mapAssigned([task?.responsible]),
+    executors: mapAssigned([task?.performer]),
+    auditors: mapAssigned(task?.auditors),
+    assigned: mapAssigned([task?.responsible, task?.performer]), // Ответственные и исполнители
+    comments: mapComments(task?.comments || []) ?? [], // Комментарии к задаче
   };
 };
 

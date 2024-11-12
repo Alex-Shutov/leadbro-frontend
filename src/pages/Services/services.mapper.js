@@ -7,22 +7,22 @@ import { formatDateToBackend } from '../../utils/formate.date';
 // Маппинг данных сервиса с бэкенда
 export const mapServiceFromApi = (apiService, stagesData) => {
   return {
-    id: apiService.id,
-    title: apiService.name, // Название услуги
-    deadline: apiService.deadline,
-    contractNumber: apiService.contract_number || '4444', // Номер договора
-    client: apiService.company
+    id: apiService?.id,
+    title: apiService?.name, // Название услуги
+    deadline: apiService?.deadline,
+    contractNumber: apiService?.contract_number || '4444', // Номер договора
+    client: apiService?.company
       ? {
-          id: apiService.company.id,
-          title: apiService.company.name,
+          id: apiService?.company.id,
+          title: apiService?.company.name,
         }
       : null,
-    type: apiService.type,
-    manager: mapManager(apiService.responsible),
-    command: mapParticipants(apiService.participants),
-    status: mapServiceStatus(apiService.active), // Статус (активна ли услуга)
-    stages: mapStages(stagesData || apiService.stages), // Этапы
-    tasks: mapTasks(stagesData?.tasks || apiService.tasks), // Задачи
+    type: apiService?.type,
+    manager: mapManager(apiService?.responsible),
+    command: mapParticipants(apiService?.participants),
+    status: mapServiceStatus(apiService?.active), // Статус (активна ли услуга)
+    stages: mapStages(stagesData || apiService?.stages), // Этапы
+    tasks: mapTasks(stagesData?.tasks || apiService?.tasks), // Задачи
   };
 };
 

@@ -7,32 +7,32 @@ import { taskableTypes } from '../Tasks/tasks.types';
 
 export const mapStageFromApi = (stageData, tasksData) => {
   return {
-    id: stageData.id,
-    number: stageData.number || '1234', // Номер этапа
-    title: stageData.name,
+    id: stageData?.id,
+    number: stageData?.number,
+    title: stageData?.name,
     bills: stageData?.bills ?? [],
-    startTime: stageData.start ? new Date(stageData.start) : new Date(),
-    deadline: stageData.deadline ? new Date(stageData.deadline) : new Date(),
-    deadlineTime: `${parseFloat(stageData.planned_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
-    actualTime: `${parseFloat(stageData.actual_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
-    contactPerson: stageData.contactPerson || 'Александр Шилов',
-    extraCosts: stageData.extraCosts || '7500',
+    startTime: stageData?.start ? new Date(stageData?.start) : new Date(),
+    deadline: stageData?.deadline ? new Date(stageData?.deadline) : new Date(),
+    deadlineTime: `${parseFloat(stageData?.planned_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
+    actualTime: `${parseFloat(stageData?.actual_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
+    contactPerson: stageData?.contactPerson || 'Александр Шилов',
+    extraCosts: stageData?.extraCosts || '7500',
     actSum: stageData?.actSum || stageData?.act_sum,
-    budgetTimeValue: stageData.budgetTimeValue || 20,
-    budgetTimeType: stageData.budgetTimeType || 'minutes',
+    budgetTimeValue: stageData?.budgetTimeValue || 20,
+    budgetTimeType: stageData?.budgetTimeType || 'minutes',
     status:
-      stageData.active === 1
+      stageData?.active === 1
         ? stageStatusTypes.inProgress
         : stageStatusTypes.finished,
-    taskDescription: stageData.technical_specification || 'Нарисовать СРМ',
+    taskDescription: stageData?.technical_specification || 'Нарисовать СРМ',
     sumByHand: true,
     service: {
-      id: stageData.service?.id,
-      title: stageData.service?.name,
+      id: stageData?.service?.id,
+      title: stageData?.service?.name,
     },
     client: {
-      id: stageData.company?.id,
-      title: stageData.company?.name,
+      id: stageData?.company?.id,
+      title: stageData?.company?.name,
     },
     tasks: mapTasksFromApi(tasksData),
   };

@@ -7,35 +7,35 @@ import {
   MapFio,
 } from '../../utils/store.utils';
 import { handleError } from '../../utils/snackbar';
-import {mapDealFromApi} from "../Deals/deals.mapper"; // Если требуется для аватара
+import { mapDealFromApi } from '../Deals/deals.mapper'; // Если требуется для аватара
 
 export const mapClientFromApi = (
   apiClient,
   apiPasswords = [],
   apiContactPersons = [],
   apiComments = [],
-  apiServices = null,
-  apiDeals = []
+  apiServices = [],
+  apiDeals = [],
 ) => {
   return {
-    id: apiClient.id,
-    description: apiClient.description,
-    title: apiClient.name,
-    status: mapStatus(apiClient.status),
+    id: apiClient?.id,
+    description: apiClient?.description,
+    title: apiClient?.name,
+    status: mapStatus(apiClient?.status),
     manager: {
-      id: apiClient.manager.id,
-      name: apiClient.manager.name,
-      surname: apiClient.manager.last_name,
-      middleName: apiClient.manager.middle_name,
-      avatar: apiClient.manager.avatar
-        ? loadAvatar(apiClient.manager.avatar)
+      id: apiClient?.manager.id,
+      name: apiClient?.manager.name,
+      surname: apiClient?.manager.last_name,
+      middleName: apiClient?.manager.middle_name,
+      avatar: apiClient?.manager.avatar
+        ? loadAvatar(apiClient?.manager.avatar)
         : null,
-      position: apiClient.manager.position.name,
-      email: apiClient.manager.email,
-      phone: apiClient.manager.phone,
+      position: apiClient?.manager.position.name,
+      email: apiClient?.manager.email,
+      phone: apiClient?.manager.phone,
     },
-    services: mapServices(apiClient.services, apiServices),
-    deals: apiDeals.map(el=>mapDealFromApi(el)),
+    services: mapServices(apiClient?.services, apiServices),
+    deals: apiDeals.map((el) => mapDealFromApi(el)),
     comments: mapCommentsFromApi(apiComments),
     activities: [
       {
@@ -69,27 +69,27 @@ export const mapClientFromApi = (
     contactPersons: mapContactPersons(apiContactPersons),
     contactData: {
       address: {
-        0: apiClient.address,
+        0: apiClient?.address,
       },
       tel: {
-        0: apiClient.phone,
+        0: apiClient?.phone,
       },
       email: {
-        0: apiClient.email,
+        0: apiClient?.email,
       },
       site: {
-        0: apiClient.site,
+        0: apiClient?.site,
       },
-      requisites: { 0: mapLegals(apiClient.legals) },
+      requisites: { 0: mapLegals(apiClient?.legals) },
     },
     passwords: mapPasswords(apiPasswords),
-    ymetricsToken: apiClient.ymetrics_token,
-    topvisorToken: apiClient.topvisor_token,
+    ymetricsToken: apiClient?.ymetrics_token,
+    topvisorToken: apiClient?.topvisor_token,
   };
 };
 
 const mapPasswords = (apiPasswords) => {
-  return apiPasswords.reduce((acc, password, index) => {
+  return apiPasswords?.reduce((acc, password, index) => {
     acc[password.id] = {
       id: password.id,
       name: password.service_name,
@@ -103,7 +103,7 @@ const mapPasswords = (apiPasswords) => {
 };
 
 const mapContactPersons = (apiContactPersons) => {
-  return apiContactPersons.reduce((acc, client) => {
+  return apiContactPersons?.reduce((acc, client) => {
     acc[client.id] = {
       id: client.id,
       role: client.role, // или другой подходящий роль, если есть
@@ -138,7 +138,7 @@ const mapLegals = (legals) => {
 };
 
 const mapServices = (backendServices, apiServices) => {
-  if (apiServices == undefined) {
+  if (apiServices === undefined) {
     const { last } = backendServices;
     return {
       total: backendServices.total,
@@ -209,7 +209,7 @@ export const mapCommentsFromApi = (apiComments) => {
           ? loadAvatar(comment.commentator.avatar)
           : loadAvatar(),
         name: `${comment.commentator.name}`,
-        lastName: `${comment.commentator.last_name}`
+        lastName: `${comment.commentator.last_name}`,
       },
       value: {
         text: comment.text,
