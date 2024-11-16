@@ -91,7 +91,7 @@ const Table = observer(
               if (
                   i === 1 ||
                   i === totalPages ||
-                  i >= currentPage - delta && i <= currentPage + delta 
+                  i >= currentPage - delta && i <= currentPage + delta
               ) {
                   range.push(i);
               }
