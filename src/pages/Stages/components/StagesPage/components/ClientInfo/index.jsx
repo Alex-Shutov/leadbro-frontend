@@ -16,6 +16,8 @@ import CardDropdown from '../../../../../../shared/Dropdown/Card';
 import { TranslateYTransition } from '../../../../../../utils/motion.variants';
 import { AnimatePresence, motion } from 'framer-motion';
 import {compareTime} from "../../../../../../utils/compare";
+import TextLink from "../../../../../../shared/Table/TextLink";
+import DescriptionModal from "../../../../../../components/DescriptionModal";
 const Index = ({
   data: {
     client,
@@ -26,12 +28,15 @@ const Index = ({
     deadlineTime,
     actualTime,
     extraCosts,
+      description
   },
   timeActual,
   costsExtra,
 }) => {
   console.log(actualTime,deadlineTime,'12233333')
   const [dropDownClicked, setDropDownCLicked] = useState(true);
+  const [isOpen,setIsOpen] = useState(false)
+
   return (
     <>
       <div className={styles.dropdown}>
@@ -61,19 +66,28 @@ const Index = ({
           >
             <div className={styles.container}>
               <Card
-                className={styles.card}
-                classCardHead={styles.header}
-                title={'Клиент'}
+                  className={styles.card}
+                  classCardHead={styles.header}
+                  // title={'Клиент'}
               >
+                <div className={cn(styles.head,styles.divider)}>
+                  <div className={styles.title}>ТЗ</div>
+                  {!description || description === ' ' ? <span>Отсутствует</span> : <TextLink className={styles.taskName_primary} onClick={()=>setIsOpen(true)}>Открыть</TextLink>}
+                </div>
+                <div className={styles.head}>
+                  <div className={styles.title}>Клиент</div>
+
+                </div>
+
                 <LabeledParagraph
-                  label={'Название компании'}
-                  to={`/clients/${client.id}`}
-                  text={client.title}
+                    label={'Название компании'}
+                    to={`/clients/${client.id}`}
+                    text={client.title}
                 />
                 <LabeledParagraph
-                  label={'Услуга'}
-                  to={`/services/${service.id}`}
-                  text={service.title}
+                    label={'Услуга'}
+                    to={`/services/${service.id}`}
+                    text={service.title}
                 />
                 {/*<LabeledParagraph label={'Этап'} text={title} />*/}
                 {/*<LabeledParagraph*/}
@@ -81,32 +95,32 @@ const Index = ({
                 {/*  text={contactPerson}*/}
                 {/*/>*/}
                 <LabeledParagraph
-                  label={'Дедлайн'}
-                  text={formatDateWithDateAndYear(deadline)}
+                    label={'Дедлайн'}
+                    text={formatDateWithDateAndYear(deadline)}
                 />
                 <LabeledParagraph
-                  label={'Плановое время'}
-                  text={
-                    <HoursComponent
-                      cls={styles.hours}
-                      time={convertToHours(deadlineTime)}
-                      type={'ч'}
-                    />
-                  }
+                    label={'Плановое время'}
+                    text={
+                      <HoursComponent
+                          cls={styles.hours}
+                          time={convertToHours(deadlineTime)}
+                          type={'ч'}
+                      />
+                    }
                 />
                 <LabeledParagraph
-                  label={'Фактическое время'}
-                  text={
-                    <HoursComponent
-                      cls={cn(styles.hours, styles.hours_actual,{[styles.hours_actual_true]:!compareTime(actualTime??timeActual,deadlineTime)} )}
-                      time={
-                        actualTime
-                          ? convertToHours(actualTime)
-                          : convertToHours(timeActual)
-                      }
-                      type={'ч'}
-                    />
-                  }
+                    label={'Фактическое время'}
+                    text={
+                      <HoursComponent
+                          cls={cn(styles.hours, styles.hours_actual, {[styles.hours_actual_true]: !compareTime(actualTime ?? timeActual, deadlineTime)})}
+                          time={
+                            actualTime
+                                ? convertToHours(actualTime)
+                                : convertToHours(timeActual)
+                          }
+                          type={'ч'}
+                      />
+                    }
                 />
                 {/*<LabeledParagraph*/}
                 {/*  label={'Стоимость доп. задач'}*/}
@@ -118,6 +132,8 @@ const Index = ({
             </div>
           </motion.div>
         )}
+        {isOpen && <DescriptionModal description={description} label={'ТЗ'} onClose={()=>setIsOpen(false)}/>}
+
       </AnimatePresence>
     </>
   );

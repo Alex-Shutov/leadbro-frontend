@@ -21,11 +21,11 @@ const ClientDeals = ({ deals, currentClient }) => {
         Header: 'Сделка',
         id: 'activity',
         sortType: 'basic',
-        accessor: 'description',
+        accessor: 'name',
         Cell: ({ row }) => {
           const data = row?.original;
           return (
-            <TextLink to={`/deals/${data.id}`}>{data.description}</TextLink>
+            <TextLink to={`/deals/${data.id}`}>{data.name}</TextLink>
           );
         },
       },

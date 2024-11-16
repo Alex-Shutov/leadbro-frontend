@@ -179,9 +179,9 @@ const StagesTable = observer(({ stage }) => {
         after={
           <ClientInfo timeActual={sumActualTime} data={paginatedData[0]} />
         }
-        lastColumn = {
-          <DescriptionInfo label={'ТЗ'} description={stage?.taskDescription}/>
-        }
+        // lastColumn = {
+        //   // <DescriptionInfo label={'ТЗ'} description={stage?.taskDescription}/>
+        // }
         headerActions={{
           add: {
             action: () => handleCreateTask(),
