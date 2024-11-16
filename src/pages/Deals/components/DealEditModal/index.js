@@ -107,7 +107,7 @@ const DealEditModal = observer(
           label={'Название сделки'}
         />
         <TextInput
-          type={'textarea'}
+          type={'editor'}
           placeholder={'Комментарий'}
           onChange={({ target }) => handleChange('description', target.value)}
           value={deal?.description || ''}
@@ -162,13 +162,13 @@ const DealEditModal = observer(
           label="Менеджер"
           options={members.map((el) => ({
             value: el.id,
-            label: `${el.surname} ${el.name} ${el.middleName}`,
+            label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
             deal.manager
               ? {
                   value: deal.manager.id,
-                  label: `${deal.manager.surname ?? deal.manager.lastName} ${deal.manager.name} ${deal.manager.middleName}`,
+                  label: `${deal?.manager?.surname ?? deal?.manager?.lastName ?? ''} ${deal?.manager?.name ?? ''} ${deal?.manager?.middleName ?? ''}`,
                 }
               : null
           }
@@ -184,13 +184,13 @@ const DealEditModal = observer(
           label="Ответственный"
           options={members.map((el) => ({
             value: el.id,
-            label: `${el.surname} ${el.name} ${el.middleName}`,
+            label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
             deal.responsible
               ? {
                   value: deal.responsible.id,
-                  label: `${deal.responsible.surname ?? deal.responsible.lastName} ${deal.responsible.name} ${deal.responsible.middleName}`,
+                  label: `${deal?.responsible?.surname ?? deal?.responsible?.lastName ?? ''} ${deal?.responsible?.name ?? ''} ${deal?.responsible?.middleName ?? ''}`,
                 }
               : null
           }
@@ -206,13 +206,13 @@ const DealEditModal = observer(
           label="Аудитор"
           options={members.map((el) => ({
             value: el.id,
-            label: `${el.surname} ${el.name} ${el.middleName}`,
+            label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
             deal.auditor
               ? {
                   value: deal.auditor.id,
-                  label: `${deal.auditor.surname ?? deal.auditor.lastName} ${deal.auditor.name} ${deal.auditor.middleName}`,
+                  label: `${deal?.auditor?.surname ?? deal?.auditor?.lastName ?? ''} ${deal?.auditor?.name ?? ''} ${deal?.auditor?.middleName ?? ''}`,
                 }
               : null
           }
@@ -244,7 +244,7 @@ const DealEditModal = observer(
             deal?.company
               ? {
                   value: deal?.company?.id,
-                  label: deal?.company?.name ?? deal?.company?.title,
+                  label: deal?.company?.name ?? deal?.company?.title ?? '',
                 }
               : null
           }

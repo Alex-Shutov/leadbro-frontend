@@ -14,10 +14,12 @@ const DealMembers = ({ creator, client, auditor, manager }) => {
         classCardHead={styles.header}
         title={'Участники'}
       >
-        <MemberComponent member={creator} label={'Создатель'} />
-        <MemberComponent member={client} label={'Клиент'} type={'company'} />
-        <MemberComponent member={auditor} label={'Аудитор'} />
-        <MemberComponent member={manager} label={'Менеджер'} />
+        {creator && <MemberComponent member={creator} label={'Создатель'} />}
+        {client && (
+          <MemberComponent member={client} label={'Клиент'} type={'company'} />
+        )}
+        {auditor && <MemberComponent member={auditor} label={'Аудитор'} />}
+        {manager && <MemberComponent member={manager} label={'Менеджер'} />}
       </Card>
     </div>
   );

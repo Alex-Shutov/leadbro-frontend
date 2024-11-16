@@ -17,6 +17,7 @@ import { formatDate } from '../../../../../../utils/formate.date';
 
 const DealTasks = ({ deal }) => {
   const { dealsStore } = useStore();
+  const { tasksStore } = useStore();
   const dealsApi = useDealsApi();
   const taskApi = useTasksApi();
   const [taskData, setTaskData] = useState(null);
@@ -148,6 +149,7 @@ const DealTasks = ({ deal }) => {
           deal={deal}
           dealsStore={dealsStore}
           taskApi={taskApi}
+          taskStore={tasksStore}
         />
       )}
     </div>

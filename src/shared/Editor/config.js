@@ -3,6 +3,7 @@ import List from '@editorjs/list';
 import Header from '@editorjs/header';
 import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
+import BreakLine from 'editorjs-break-line';
 
 export const EDITOR_JS_TOOLS = {
   paragraph: {
@@ -11,6 +12,11 @@ export const EDITOR_JS_TOOLS = {
     config: {
       // defaultStyle: 'italic',
     },
+  },
+  breakLine: {
+    class: BreakLine,
+    inlineToolbar: true,
+    shortcut: 'ENTER',
   },
   header: {
     class: Header,

@@ -75,7 +75,7 @@ const mapTaskFromApi = (task) => {
       id: task.template?.id || 0,
       title: task.template?.title || 'Название шаблона 1',
     },
-    description: task.description || 'Описание отсутствует',
+    description: task?.description || ' ',
     showInLK: task.show_at_client_cabinet === 1,
     comments: task.comments ? mapComments(task.comments) : {},
     taskLinked: task?.linked_task,

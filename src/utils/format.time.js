@@ -7,7 +7,7 @@ export const getFormattedTimeType = (type) => {
     case 'дней':
       return 'дн';
     default:
-      return 'ч';
+      return '';
   }
 };
 
@@ -29,8 +29,8 @@ export const convertToMinutes = (time) => {
 
 export const convertToHours = (time) => {
   const timeValue = parseFloat(time);
-  if(Number.isNaN(timeValue)){
-    return null
+  if (Number.isNaN(timeValue)) {
+    return null;
   }
   if (time.includes('ч')) {
     return timeValue;

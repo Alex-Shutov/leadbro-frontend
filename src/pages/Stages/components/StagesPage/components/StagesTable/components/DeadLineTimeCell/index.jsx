@@ -5,6 +5,12 @@ import { compareTime } from '../../../../../../../../utils/compare';
 
 const DeadLineTimeCell = ({ actualTime, deadLine }) => {
   const formatTime = (time) => {
+    if (
+      time === null ||
+      (time && Number.isNaN(time.toString().split(' ')[0])) ||
+      time === 'Не указано'
+    )
+      return 'Не указано';
     const currTimeEl = time.toString().split(' ')[1] ?? 'ч';
     return parseFloat(time.toString().replace(',', '.')) + ' ' + currTimeEl;
   };

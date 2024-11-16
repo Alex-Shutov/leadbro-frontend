@@ -66,30 +66,30 @@ const mapStages = (stages) => {
       number: '1234',
       time: {
         planned: {
-          planned: 5,
-          actual: 8,
-          type: 'часов',
+          planned: stage.planned_time ?? '-',
+          type: stage.planned_time ? 'часов' : '',
         },
         extra: {
-          planned: 5,
-          actual: 8,
-          type: 'часов',
+          actual: stage.actual_time,
+          type: stage.actual_time ? 'часов' : '',
           cost: 7500,
         },
       },
       act: {
-        scanStatus: statusActTypes.notAssignedScan,
-        originalStatus: statusActTypes.notAssignedOriginal,
-        withSign: {
-          id: 0,
-          file: 'Act with sign',
-          extension: '.pdf',
-        },
-        withoutSign: {
-          id: 1,
-          file: 'Act without sign',
-          extension: '.pdf',
-        },
+        stampedAct: stage.stamped_act,
+        unstampedAct: stage.unstamped_act,
+        // scanStatus: statusActTypes.notAssignedScan,
+        // originalStatus: statusActTypes.notAssignedOriginal,
+        // withSign: {
+        //   id: 0,
+        //   file: 'Act with sign',
+        //   extension: '.pdf',
+        // },
+        // withoutSign: {
+        //   id: 1,
+        //   file: 'Act without sign',
+        //   extension: '.pdf',
+        // },
       },
       taskCount: stage?.task_count,
       bills: mapBill(stage?.bills ?? []),
@@ -97,7 +97,7 @@ const mapStages = (stages) => {
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),
       endDate: stage.deadline ? new Date(stage.deadline) : null,
-      description: stage.technical_specification,
+      description: stage?.technical_specification ?? ' ',
       cost: stage.act_sum, // Стоимость этапа
       active: stage.active === 1 ? serviceStatuses.tasks.inProgress : '',
     }));
@@ -113,7 +113,7 @@ const mapStages = (stages) => {
       title: stages.last.name,
       startDate: new Date(stages.last.start),
       endDate: new Date(stages.last.deadline),
-      description: stages.last.technical_specification,
+      description: stages?.last?.technical_specification ?? ' ',
       cost: stages.last.actSum, // Стоимость услуги на данном этапе
       active: stages.last.active === 1, // Признак активности
     },
@@ -163,7 +163,7 @@ const mapTasks = (tasks) => {
     last: {
       id: tasks.last.id,
       name: tasks.last.name,
-      description: tasks.last.description,
+      description: tasks?.last?.description ?? ' ',
       type: tasks.last.type,
       status: tasks.last.status,
       startDate: new Date(tasks.last.startDate || tasks.last.deadline),

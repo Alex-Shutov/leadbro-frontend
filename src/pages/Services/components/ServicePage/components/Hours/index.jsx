@@ -7,8 +7,8 @@ import cn from 'classnames';
 import { getFormattedTimeType } from '../../../../../../utils/format.time';
 import HoursComponent from '../../../../../../components/HoursComponent';
 import CostView from '../../../../../../components/CostView';
-const Hours = ({ time,actSum,el }) => {
-  console.log(time,actSum,el,'sum')
+const Hours = ({ time, actSum, el }) => {
+  console.log(time, actSum, el, 'sum');
   return (
     <div className="hours">
       {/*<div>*/}
@@ -31,13 +31,13 @@ const Hours = ({ time,actSum,el }) => {
         ></HoursView>
         <HoursView
           basis={292}
-          type={getFormattedTimeType(time.planned.type)}
-          time={time.planned.actual}
+          type={getFormattedTimeType(time.extra.type)}
+          time={time.extra.actual}
           label={'фактическое время'}
         ></HoursView>
-          <Basis basis={900} className={styles.costs}>
+        <Basis basis={900} className={styles.costs}>
           <CostView cost={actSum}></CostView>
-          </Basis>
+        </Basis>
       </CardField>
       {/*<CardField*/}
       {/*  labelCls={styles.labelExtra}*/}

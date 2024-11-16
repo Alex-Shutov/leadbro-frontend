@@ -145,13 +145,13 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
         label="Ответственный"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el.surname} ${el.name} ${el.middleName}`,
+          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
           service.manager
             ? {
                 value: service.manager?.id,
-                label: `${service.manager.surname} ${service.manager.name} ${service.manager.middleName}`,
+                label: `${service?.manager?.surname ?? ''} ${service?.manager?.name ?? ''} ${service?.manager?.middleName ?? ''}`,
               }
             : null
         }
@@ -171,13 +171,13 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
         label="Участники"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el.surname} ${el.name} ${el.middleName}`,
+          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
           service.command
             ? service.command.map((el) => ({
                 value: el.id,
-                label: `${el.surname} ${el.name} ${el.middleName}`,
+                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
               }))
             : []
         }
@@ -254,7 +254,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
           serviceClient
             ? {
                 value: serviceClient.id,
-                label: serviceClient?.name ?? serviceClient?.title,
+                label: serviceClient?.name ?? serviceClient?.title ?? '',
               }
             : null
         }

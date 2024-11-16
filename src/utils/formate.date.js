@@ -18,6 +18,8 @@ export const formatDateWithoutHours = (date) => {
 };
 
 export const formatDateWithDateAndYear = (date) => {
+  if (!date) return 'Не указано';
+
   let formatDate = format(date, 'dd MMMM, yyyy', { locale: ru });
   formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
   return formatDate;

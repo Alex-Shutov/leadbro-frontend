@@ -1,23 +1,26 @@
-export const formatSum = (num) =>{
-    const numStr = num.toString();
-    const length = numStr.length;
+export const formatSum = (num) => {
+  if (!num) {
+    return 'Не указано';
+  }
+  const numStr = num.toString();
+  const length = numStr.length;
 
-    if (length <= 3) {
-        return numStr;
+  if (length <= 3) {
+    return numStr;
+  }
+
+  let formattedNumber = '';
+  let count = 0;
+
+  for (let i = length - 1; i >= 0; i--) {
+    formattedNumber = numStr[i] + formattedNumber;
+    count++;
+
+    if (count === 3 && i !== 0) {
+      formattedNumber = ' ' + formattedNumber;
+      count = 0;
     }
+  }
 
-    let formattedNumber = "";
-    let count = 0;
-
-    for (let i = length - 1; i >= 0; i--) {
-        formattedNumber = numStr[i] + formattedNumber;
-        count++;
-
-        if (count === 3 && i !== 0) {
-            formattedNumber = " " + formattedNumber;
-            count = 0;
-        }
-    }
-
-    return formattedNumber;
-}
+  return formattedNumber;
+};

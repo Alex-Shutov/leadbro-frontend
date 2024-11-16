@@ -200,13 +200,13 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           label="Ответственный"
           options={members.map((el) => ({
             value: el.id,
-            label: `${el.name} ${el.surname}`,
+            label: `${el?.name ?? ''} ${el?.surname ?? ''}`,
           }))}
           value={
             client?.manager?.id != null
               ? {
                   value: client?.manager?.id,
-                  label: `${client?.manager?.name} ${client?.manager?.surname}`,
+                  label: `${client?.manager?.name ?? ''} ${client?.manager?.surname ?? ''}`,
                 }
               : null
           }
@@ -218,7 +218,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           edited={true}
           className={styles.input}
           label={'Описание'}
-          type={'textarea'}
+          type={'editor'}
           placeholder={'Введите описание клиента'}
         />
         <TextInput

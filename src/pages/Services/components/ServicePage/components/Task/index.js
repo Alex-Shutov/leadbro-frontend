@@ -36,12 +36,12 @@ const Task = ({ stage, task, taskName, ...rest }) => {
               status={localTask.status}
             />
           </Basis>
-          <Button
-            classname={styles.button}
-            type={'primary'}
-            isSmallButton={true}
-            adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'} name={'add'} />}
-          />
+          {/*<Button*/}
+          {/*  classname={styles.button}*/}
+          {/*  type={'primary'}*/}
+          {/*  isSmallButton={true}*/}
+          {/*  adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'} name={'add'} />}*/}
+          {/*/>*/}
         </CardField>
         <CardField label={'Задачи'}>
           <Basis className={styles.taskName}>

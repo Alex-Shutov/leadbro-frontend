@@ -26,7 +26,7 @@ export const mapTaskFromApi = (task) => {
         : null,
     type: task?.type,
     taskLinked: task?.linked_task,
-    description: task?.description,
+    description: task?.description ?? ' ',
     deadline: new Date(task?.deadline),
     deadlineTime: formatDuration(task?.planned_time), // Например, '5 ч'
     actualTime: formatDuration(task?.actual_time), // Например, '2 дн'

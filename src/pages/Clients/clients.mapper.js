@@ -19,7 +19,7 @@ export const mapClientFromApi = (
 ) => {
   return {
     id: apiClient?.id,
-    description: apiClient?.description,
+    description: apiClient?.description ?? ' ',
     title: apiClient?.name,
     status: mapStatus(apiClient?.status),
     manager: {
@@ -107,7 +107,7 @@ const mapContactPersons = (apiContactPersons) => {
     acc[client.id] = {
       id: client.id,
       role: client.role, // или другой подходящий роль, если есть
-      fio: `${client.last_name} ${client.name} ${client.middle_name ? client.middle_name : ''}`,
+      fio: `${client?.last_name ?? ''} ${client?.name ?? ''} ${client?.middle_name ? client.middle_name : ''}`,
       tel: client.phone ? client.phone : null,
       email: client.email ? client.email : null,
       messengers: [
@@ -209,7 +209,7 @@ export const mapCommentsFromApi = (apiComments) => {
           ? loadAvatar(comment.commentator.avatar)
           : loadAvatar(),
         name: `${comment.commentator.name}`,
-        lastName: `${comment.commentator.last_name}`,
+        lastName: `${comment.commentator?.last_name ?? ''}`,
       },
       value: {
         text: comment.text,

@@ -295,7 +295,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           }}
           value={
             bill?.company
-              ? { value: bill?.company?.id, label: bill?.company?.name }
+              ? { value: bill?.company?.id, label: bill?.company?.name ?? '' }
               : null
           }
         />
@@ -330,7 +330,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             // })()}
             value={
               bill?.service
-                ? { value: bill?.service.id, label: bill?.service.name }
+                ? { value: bill?.service.id, label: bill?.service?.name ?? '' }
                 : null
             }
           />
@@ -365,7 +365,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             // })()}
             value={
               bill?.stage
-                ? { value: bill?.stage.id, label: bill?.stage.name }
+                ? { value: bill?.stage.id, label: bill?.stage?.name ?? '' }
                 : null
             }
           />

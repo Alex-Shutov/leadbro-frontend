@@ -98,13 +98,13 @@ const Index = ({
         label="Ответственный"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el.surname} ${el.name} ${el.middleName}`,
+          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
           initialResponsibles
             ? initialResponsibles.map((el) => ({
                 value: el.id,
-                label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
               }))
             : []
         }
@@ -135,13 +135,13 @@ const Index = ({
         label="Аудиторы"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el.surname} ${el.name} ${el.middleName}`,
+          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
           initialAuditors
             ? initialAuditors.map((el) => ({
                 value: el.id,
-                label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
               }))
             : []
         }
@@ -180,13 +180,13 @@ const Index = ({
         label="Исполнитель"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el.surname} ${el.name} ${el.middleName}`,
+          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
           initialExecutors
             ? initialExecutors.map((el) => ({
                 value: el.id,
-                label: `${el.surname} ${el.name} ${el?.middleName ?? ''}`,
+                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
               }))
             : []
         }

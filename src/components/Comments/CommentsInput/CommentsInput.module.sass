@@ -7,17 +7,18 @@
 
 .input
   &_attach
-    margin-bottom: 4px
+    margin-bottom: 16px
     align-self: flex-end
     padding-right: 1rem
   &_send
-    margin-bottom: 4px
+    margin-bottom: 16px
     padding-left: 1rem
     align-self: flex-end
   display: flex
   &_field
     flex-grow: 5
-
+    div[class*=codex-editor__redactor]
+      padding-bottom: 16px!important
   //align-items: center
   flex-grow: 5
   //height: 48px
@@ -35,3 +36,8 @@
   display: flex
   flex-direction: row
   gap: 14px
+.comment_input
+  div[class*=codex-editor__redactor]
+    padding: unset !important
+    padding-top: 6px !important
+    padding-bottom: 6px !important

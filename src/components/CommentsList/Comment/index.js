@@ -1,6 +1,7 @@
 import React from 'react';
 import FileElement from '../../../shared/File/Element';
 import styles from './Comment.module.sass';
+import EditorRenderer from '../../../shared/Editor/Rendered/EditorRendered';
 const Comment = ({
   sender,
   text,
@@ -15,8 +16,12 @@ const Comment = ({
         <img src={sender?.image} alt={sender?.name} />
       </div>
       <div className={styles.comment}>
-        <span>{sender?.lastName} {sender?.name}</span>
-        {!filterComments && <div>{text}</div>}
+        <span>
+          {sender?.lastName ?? ''} {sender?.name ?? ''}
+        </span>
+        {!filterComments && (
+          <EditorRenderer className={styles.comment_text} content={text} />
+        )}
         {!filterFiles && Boolean(files?.length) && (
           <div className={styles.files}>
             {files?.map((file) => (

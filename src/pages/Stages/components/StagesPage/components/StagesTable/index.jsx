@@ -23,6 +23,7 @@ import useTasksApi from '../../../../../Tasks/tasks.api';
 
 const StagesTable = observer(({ stage }) => {
   const { stagesStore } = useStore();
+  const { tasksStore } = useStore();
   const { stageId } = useParams();
   const api = useStageApi();
   const [taskData, setTaskData] = useState(null);
@@ -198,6 +199,7 @@ const StagesTable = observer(({ stage }) => {
           stagesStore={stagesStore}
           stageApi={api}
           taskApi={taskApi}
+          taskStore={tasksStore}
         />
       )}
       {editStageModalOpen && (
