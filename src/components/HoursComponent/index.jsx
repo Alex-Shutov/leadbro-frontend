@@ -9,7 +9,7 @@ const Index = ({ label, time, type, cls }) => {
       <Icon size={20} name={'clock'} />
       <p className={styles.hoursView_text}>
         <span>
-          {time} {type}{' '}
+          {time ?? '-'} {type}{' '}
         </span>
         {label}
       </p>

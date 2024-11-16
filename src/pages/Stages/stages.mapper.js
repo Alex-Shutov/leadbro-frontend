@@ -84,8 +84,8 @@ const mapTaskFromApi = (task) => {
     executors: task.performer ? [task.performer].map(mapManager) : [],
     responsibles: task.responsible ? mapManager(task.responsible) : [],
     deadline: task.deadline ? new Date(task.deadline) : new Date(),
-    deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не задано',
-    actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не задано',
+    deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не указано',
+    actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не указано',
     isNewForUser: task.isNewForUser || false,
   };
 };

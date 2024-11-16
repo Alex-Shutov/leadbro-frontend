@@ -19,6 +19,7 @@ const EditorRenderer = ({ content, className, maxHeight }) => {
       'code',
       'em',
       'br',
+        'b',
       'mark',
     ],
     ALLOWED_ATTR: ['style', 'class'],
