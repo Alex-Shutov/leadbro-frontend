@@ -18,7 +18,7 @@ const ManagerCell = ({ manager, ...rest }) => {
       manager?.name || manager?.surname || manager?.lastName,
     );
     if (hasNameOrSurname) {
-      const surname = manager?.surname ?? manager?.lastName ?? '';
+      const surname = manager?.surnamerea ?? manager?.lastName ?? '';
       return `${manager?.name ?? ''} ${surname}`.trim();
     }
 

@@ -5,6 +5,7 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import BreakLine from 'editorjs-break-line';
 
+
 export const EDITOR_JS_TOOLS = {
   paragraph: {
     class: Paragraph,
