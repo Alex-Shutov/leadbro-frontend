@@ -58,6 +58,8 @@ const mapParticipants = (participants) => {
 // Маппинг этапов
 // Маппинг этапов
 const mapStages = (stages) => {
+  debugger
+
   // Если это массив этапов (пришел из /api/services/{service_id}/stages)
   if (Array.isArray(stages)) {
     return stages.map((stage) => ({
@@ -102,7 +104,6 @@ const mapStages = (stages) => {
       active: stage.active === 1 ? serviceStatuses.tasks.inProgress : '',
     }));
   }
-
   // Если это объект этапов (пришел из getServices)
   if (!stages || !stages.last) return null;
 

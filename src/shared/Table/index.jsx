@@ -34,13 +34,13 @@ const Table = observer(
     const location = useLocation();
 
     // Получение номера страницы из query параметра
-
+      console.log(paging,'paging')
     const tableInstance = useTable(
       {
         columns,
         data,
         initialState: {
-          pageIndex: paging?.current ?? undefined,
+          pageIndex: paging?.current ? Number(paging?.current) : undefined,
           columnWidths: columns.map((col) =>
             col.width ? `${col.width}%` : 'auto',
           ),
@@ -81,6 +81,36 @@ const Table = observer(
     //     });
     //   }
     // }, [location.pathname, pageIndex, paging]);
+      const getVisiblePages = (currentPage, totalPages) => {
+          const delta = 3;
+          const range = [];
+          const rangeWithDots = [];
+          let l;
+
+          for (let i = 1; i <= totalPages; i++) {
+              if (
+                  i === 1 ||
+                  i === totalPages ||
+                  i >= currentPage - delta && i <= currentPage + delta 
+              ) {
+                  range.push(i);
+              }
+          }
+
+          for (let i of range) {
+              if (l) {
+                  if (i - l === 2) {
+                      rangeWithDots.push(l + 1);
+                  } else if (i - l !== 1) {
+                      rangeWithDots.push('...');
+                  }
+              }
+              rangeWithDots.push(i);
+              l = i;
+          }
+
+          return rangeWithDots;
+      };
 
     const headerSortingRef = useRef(null);
     const titleJsx = (
@@ -326,49 +356,52 @@ const Table = observer(
                 </table>
               </div>
             </Card>
-            {paging && (
-              <Card className={styles.pagingCard}>
-                {paging && (
-                  <div className={styles.pagination}>
-                    <PreviousButton
-                      disabled={paging.current === 1}
-                      onClick={() =>
-                        paging.onPageChange(Number(paging.current) - 1)
-                      }
-                    />
-                    <div className={cn(styles.divider_line, styles.left)} />
-                    {allPages && (
-                      <div className={styles.pagesCount}>
-                        {[...Array(allPages).keys()].map((page, index) => (
-                          <div
-                            key={index}
-                            className={
-                              pageIndex === index + 1
-                                ? cn(styles.page, styles.active)
-                                : styles.page
-                            }
-                            onClick={() => {
-                              paging.onPageChange(Number(index) + 1);
-                            }}
-                          >
-                            {index + 1}
+              {paging && (
+                  <Card className={styles.pagingCard}>
+                      {paging && (
+                          <div className={styles.pagination}>
+                              <PreviousButton
+                                  disabled={Number(paging.current) === 1}
+                                  onClick={() => paging.onPageChange(Number(paging.current) - 1)}
+                              />
+                              <div className={cn(styles.divider_line, styles.left)} />
+                              {allPages && (
+                                  <div className={styles.pagesCount}>
+                                      {getVisiblePages(Number(paging.current), allPages).map((pageNum, index) => (
+                                          <React.Fragment key={index}>
+                                              {pageNum === '...' ? (
+                                                  <div className={styles.dots}>...</div>
+                                              ) : (
+                                                  <div
+                                                      className={
+                                                          Number(paging.current) === pageNum
+                                                              ? cn(styles.page, styles.active)
+                                                              : styles.page
+                                                      }
+                                                      onClick={() => {
+                                                          if (typeof pageNum === 'number') {
+                                                              paging.onPageChange(pageNum);
+                                                          }
+                                                      }}
+                                                  >
+                                                      {pageNum}
+                                                  </div>
+                                              )}
+                                          </React.Fragment>
+                                      ))}
+                                  </div>
+                              )}
+                              <div className={cn(styles.divider_line, styles.right)} />
+                              <NextButton
+                                  disabled={Number(paging.current) === allPages}
+                                  onClick={() => paging.onPageChange(Number(paging.current) + 1)}
+                              />
                           </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className={cn(styles.divider_line, styles.right)} />
-
-                    <NextButton
-                      disabled={paging.current === allPages}
-                      onClick={() =>
-                        paging.onPageChange(Number(paging.current) + 1)
-                      }
-                    />
-                  </div>
-                )}
-              </Card>
-            )}
+                      )}
+                  </Card>
+              )}
             {rest?.after}
+              {rest?.lastColumn}
           </div>
 
           {cardComponent && (

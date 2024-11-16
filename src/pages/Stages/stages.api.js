@@ -20,6 +20,7 @@ import servicesApi from '../Services/services.api';
 import { stageStatusTypes } from './stages.types';
 import { format } from 'date-fns';
 import { useParams } from 'react-router';
+import {formatDateToBackend} from "../../utils/formate.date";
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -148,8 +149,8 @@ const useStageApi = () => {
       ...data,
       name: data.title,
       active: data.status === stageStatusTypes.inProgress,
-      start: format(data.startTime, "yyyy-MM-dd'T'HH:mm:ss"),
-      deadline: format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss"),
+      start: formatDateToBackend(data.startTime),
+      deadline: formatDateToBackend(data.deadline),
       act_sum: data.actSum,
       technical_specification: data.taskDescription,
     };

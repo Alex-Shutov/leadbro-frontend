@@ -14,11 +14,11 @@ export const EDITOR_JS_TOOLS = {
       // defaultStyle: 'italic',
     },
   },
-  breakLine: {
-    class: BreakLine,
-    inlineToolbar: true,
-    shortcut: 'ENTER',
-  },
+  // breakLine: {
+  //   class: BreakLine,
+  //   inlineToolbar: true,
+  //   shortcut: 'ENTER',
+  // },
   header: {
     class: Header,
     inlineToolbar: true,

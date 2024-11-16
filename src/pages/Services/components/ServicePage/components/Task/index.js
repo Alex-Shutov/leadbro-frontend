@@ -15,26 +15,29 @@ import TextLink from '../../../../../../shared/Table/TextLink';
 import Basis from '../../../../../../shared/Basis';
 import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 import { declineWord } from '../../../../../../utils/format.string';
+import DescriptionModal from "../../../../../../components/DescriptionModal";
 
 const Task = ({ stage, task, taskName, ...rest }) => {
-  const { last: localTask, total } = task;
+  console.log(task,stage,'task')
+  // const { last: localTask, total } = task;
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef();
+  const [isDescriptionOpen,setDescriptionOpen] = useState(false)
   // useOutsideClick(ref, () => setIsOpen(false));
   return (
     <div key={rest?.key} className={styles.task_container}>
       <div>
-        <CardField label={'ТЗ и сроки'}>
+        <CardField label={'Сроки'}>
           <Basis className={styles.taskDatesAndStatus}>
             <Icon size={20} name={'calendar'} />
             <span>
-              {formatDateWithOnlyDigits(localTask.startDate)} -{' '}
-              {formatDateWithOnlyDigits(localTask.endDate)}
+              {formatDateWithOnlyDigits(stage.startDate)} -{' '}
+              {formatDateWithOnlyDigits(stage.endDate)}
             </span>
-            <ServiceBadge
-              statusType={serviceStatuses.tasks}
-              status={localTask.status}
-            />
+            {/*<ServiceBadge*/}
+            {/*  statusType={serviceStatuses.tasks}*/}
+            {/*  status={localTask.status}*/}
+            {/*/>*/}
           </Basis>
           {/*<Button*/}
           {/*  classname={styles.button}*/}
@@ -43,18 +46,23 @@ const Task = ({ stage, task, taskName, ...rest }) => {
           {/*  adaptiveIcon={<Icon size={16} viewBox={'0 0 20 20'} name={'add'} />}*/}
           {/*/>*/}
         </CardField>
+        {stage?.description && stage?.description!==' ' && <CardField label={'ТЗ'}>
+          <Basis className={styles.taskName}>
+            <TextLink   className={styles.taskName_primary} onClick={()=>setDescriptionOpen(true)}>Подробнее...</TextLink>
+          </Basis>
+        </CardField>}
         <CardField label={'Задачи'}>
           <Basis className={styles.taskName}>
             <div>
-              <TextLink
-                onClick={() => setIsOpen(true)}
+              <span
+                // onClick={() => setIsOpen(true)}
                 className={styles.taskName_primary}
               >
                 <span>
                   {stage.taskCount}{' '}
                   {`${declineWord('задача', stage.taskCount)}`}
                 </span>
-              </TextLink>
+              </span>
             </div>
             {/*<div className={styles.dateDeadline}>*/}
             {/*  <Icon size={20} name={'calendar'} />*/}
@@ -64,7 +72,7 @@ const Task = ({ stage, task, taskName, ...rest }) => {
           </Basis>
         </CardField>
       </div>
-      <div></div>
+      {isDescriptionOpen && <DescriptionModal label={'ТЗ'} description={stage.description} onClose={()=>setDescriptionOpen(false)}/>}
     </div>
   );
 };

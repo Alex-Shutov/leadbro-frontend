@@ -24,27 +24,29 @@ const Index = forwardRef(
       const blocks = [];
 
       doc.body.childNodes.forEach((node) => {
-        if (node.nodeName === 'H1') {
-          const text = handleSpanFormatting(node);
-          blocks.push({ type: 'header', data: { text, level: 1 } });
-        } else if (node.nodeName === 'H2') {
-          const text = handleSpanFormatting(node);
-          blocks.push({ type: 'header', data: { text, level: 2 } });
-        } else if (node.nodeName === 'H3') {
-          const text = handleSpanFormatting(node);
-          blocks.push({ type: 'header', data: { text, level: 3 } });
-        } else if (node.nodeName === 'UL') {
-          const items = Array.from(node.querySelectorAll('li')).map((li) =>
-            handleSpanFormatting(li),
-          );
-          blocks.push({ type: 'list', data: { items, style: 'unordered' } });
-        } else if (node.nodeName === 'P') {
-          const text = handleSpanFormatting(node);
-          if (text) {
-            blocks.push({ type: 'paragraph', data: { text } });
+          if (node.nodeName === 'H1') {
+              const text = handleSpanFormatting(node);
+              blocks.push({type: 'header', data: {text, level: 1}});
+          } else if (node.nodeName === 'H2') {
+              const text = handleSpanFormatting(node);
+              blocks.push({type: 'header', data: {text, level: 2}});
+          } else if (node.nodeName === 'H3') {
+              const text = handleSpanFormatting(node);
+              blocks.push({type: 'header', data: {text, level: 3}});
+          } else if (node.nodeName === 'UL') {
+              const items = Array.from(node.querySelectorAll('li')).map((li) =>
+                  handleSpanFormatting(li),
+              );
+              blocks.push({type: 'list', data: {items, style: 'unordered'}});
+          } else if (node.nodeName === 'P') {
+              const text = handleSpanFormatting(node);
+              if (text) {
+                  blocks.push({type: 'paragraph', data: {text}});
+              }
           }
-        } else if (node.nodeName === 'BR')
-          blocks.push({ type: 'breakLine', data: { divider: false } });
+          //   else if (node.nodeName === 'BR')
+          //     blocks.push({ type: 'breakLine', data: { divider: false } });
+          // }
       });
 
       return blocks;
