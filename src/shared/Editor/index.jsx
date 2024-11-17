@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, forwardRef } from 'react';
+import React, {useRef, useEffect, useCallback, forwardRef, useMemo} from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './config';
 import './editor.sass';
@@ -16,7 +16,7 @@ const Index = forwardRef(
     }
     const handleInitialize = useCallback((instance) => {
       editorCore.current = instance;
-    }, []);
+    }, [initialHTML]);
 
     const htmlToBlocks = (html) => {
       const parser = new DOMParser();
@@ -44,9 +44,9 @@ const Index = forwardRef(
                   blocks.push({type: 'paragraph', data: {text}});
               }
           }
-          //   else if (node.nodeName === 'BR')
-          //     blocks.push({ type: 'breakLine', data: { divider: false } });
-          // }
+            else if (node.nodeName === 'BR')
+              blocks.push({ type: 'paragraph', data: {text:''} });
+
       });
 
       return blocks;
@@ -90,7 +90,18 @@ const Index = forwardRef(
         console.error('Ошибка сохранения данных редактора:', error);
       }
     };
-    debugger;
+    const memo = useMemo(()=>(
+        <Editor
+            ref={ref ?? null}
+            placeholder={placeholder}
+            onInitialize={handleInitialize}
+            tools={EDITOR_JS_TOOLS}
+            defaultValue={{
+                blocks: htmlToBlocks(initialHTML),
+            }}
+            onChange={handleEditorChange}
+        />
+    ),[initialHTML])
     return (
       <Editor
         ref={ref ?? null}

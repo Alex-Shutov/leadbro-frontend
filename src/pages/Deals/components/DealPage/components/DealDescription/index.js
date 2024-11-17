@@ -62,7 +62,7 @@ const DealDescription = ({
         />
       ) : (
         // <div className={styles.description_text}>{description}</div>
-        <EditorRendered maxHeight={300} content={description} />
+        <EditorRendered maxHeight={100} content={description} />
       )}
     </Card>
   );

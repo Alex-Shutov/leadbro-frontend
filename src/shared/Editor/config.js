@@ -17,7 +17,7 @@ export const EDITOR_JS_TOOLS = {
   // breakLine: {
   //   class: BreakLine,
   //   inlineToolbar: true,
-  //   shortcut: 'ENTER',
+  //   // shortcut: 'ENTER',
   // },
   header: {
     class: Header,
