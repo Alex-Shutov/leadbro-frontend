@@ -3,6 +3,8 @@ import { API_URL } from './constants';
 import Cookies from 'js-cookie';
 import MockAdapter from 'axios-mock-adapter';
 import { handleError } from '../utils/snackbar';
+import * as Sentry from "@sentry/react";
+
 
 export let http = axios.create({
   baseURL: API_URL,
@@ -56,6 +58,13 @@ export const handleHttpResponse = (response) => {
 };
 
 export const handleHttpError = (error) => {
+    Sentry.captureException(error, {
+        extra: {
+            url: error.config?.url,
+            method: error.config?.method,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+        }})
   const code = error?.code;
   console.warn({ status: 'error', message: error?.message, code });
   return { status: 'error', message: error?.message, code };
@@ -73,15 +82,44 @@ export const handleShowError = (errors, delay = 100) => {
     Object.entries(errorsResponse).flatMap(([field, messages]) => {
       return messages?.map((message) => `${field}: ${message}`);
     });
+    const errorContext = {
+        originalError: errors,
+        response: {
+            status: errors.response?.status,
+            statusText: errors.response?.statusText,
+            data: errors.response?.data
+        },
+        request: {
+            url: errors.config?.url,
+            method: errors.config?.method,
+            headers: errors.config?.headers
+        }
+    };
 
-  // Показываем каждую ошибку с задержкой
-  (errorsResp ? getErrorMessages() : [errorsResponse]).forEach((message) => {
-    setTimeout(() => {
-      handleError(message ?? 'Произошла ошибка'); // Показ ошибки через notistack
-    }, delayTime);
 
-    delayTime += delay; // Увеличиваем задержку
-  });
+
+  
+
+    // Показываем каждую ошибку с задержкой
+    const messages = errorsResp ? getErrorMessages() : [errorsResponse];
+
+    messages.forEach((message) => {
+        // Отправляем в Sentry с низким приоритетом
+        Sentry.captureMessage(message ?? 'Произошла ошибка', {
+            level: 'info', // Используем info вместо error
+            extra: errorContext,
+            tags: {
+                errorType: 'user_facing_error',
+                source: 'handleShowError'
+            }
+        });
+
+        setTimeout(() => {
+            handleError(message ?? 'Произошла ошибка'); // Показ ошибки через notistack
+        }, delayTime);
+
+        delayTime += delay;
+    });
   throw errorsResponse;
 };
 

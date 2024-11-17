@@ -7,9 +7,14 @@ import StoreProvider from "./providers/StoreProvider";
 import {BrowserRouter} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import {SnackbarProvider} from "notistack";
+import * as Sentry from "@sentry/react";
+import initSentry from "./sentry";
+
+initSentry()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+    <Sentry.ErrorBoundary fallback={<div>Произошла ошибка. Попробуйте обновить страницу.</div>}>
             <StoreProvider>
                 <SnackbarProvider
                     autoHideDuration={3000}
@@ -17,6 +22,7 @@ root.render(
                 />
                     <App/>
             </StoreProvider>
+    </Sentry.ErrorBoundary>
 );
 
 // If you want to start measuring performance in your app, pass a function

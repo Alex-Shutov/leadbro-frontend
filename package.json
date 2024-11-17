@@ -9,6 +9,7 @@
     "@editorjs/list": "^1.10.0",
     "@editorjs/marker": "^1.4.0",
     "@editorjs/paragraph": "^2.11.6",
+    "@sentry/react": "^8.38.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import { AuthProvider } from './providers/AuthProvider';
 import useUser from './hooks/useUser';
+import {withSentryRouting} from "@sentry/react";
 
 function App() {
   const { notificationsStore } = useStore();
@@ -19,10 +20,13 @@ function App() {
     });
   }, []);
 
+  const SentryRouter = withSentryRouting(BrowserRouter);
+
+
   return (
-    <BrowserRouter>
+    <SentryRouter>
       <AuthProvider>{prepareRoutes()}</AuthProvider>
-    </BrowserRouter>
+    </SentryRouter>
   );
 }
 
