@@ -127,6 +127,7 @@ const StagesTable = observer(({ stage }) => {
         Header: 'Дедлайн',
         id: 'deadline',
         width: '25%',
+        minWidth:'200px',
 
         Cell: ({ row }) => {
           const data = row?.original;

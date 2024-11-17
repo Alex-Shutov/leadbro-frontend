@@ -41,9 +41,10 @@ const Table = observer(
         data,
         initialState: {
           pageIndex: paging?.current ? Number(paging?.current) : undefined,
-          columnWidths: columns.map((col) =>
-            col.width ? `${col.width}%` : 'auto',
-          ),
+            columnWidths: columns.map((col) => ({
+                width: col.width ? `${col.width}` : 'auto',
+                minWidth: col.minWidth || 'unset'
+            }))
         },
         manualPagination: !!paging, // Управляем пагинацией вручную
         pageCount: paging ? Math.floor(paging.all / paging.offset) : undefined,
@@ -255,7 +256,10 @@ const Table = observer(
                               {...column.getHeaderProps(
                                 column.getSortByToggleProps(),
                               )}
-                              style={{ width: column.width }}
+                              style={{
+                                  width: column.width || 'auto',
+                                  minWidth: column.minWidth || 'unset'
+                              }}
                             >
                               <div
                                 onClick={() => {

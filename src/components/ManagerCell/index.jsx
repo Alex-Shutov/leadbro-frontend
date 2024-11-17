@@ -13,7 +13,6 @@ const ManagerCell = ({ manager, ...rest }) => {
     if (manager?.fio) {
       return manager.fio;
     }
-    debugger;
     const hasNameOrSurname = Boolean(
       manager?.name || manager?.surname || manager?.lastName,
     );
@@ -32,7 +31,7 @@ const ManagerCell = ({ manager, ...rest }) => {
         <div>
           <Link>{renderName()}</Link>
         </div>
-        <div style={{ whiteSpace: 'pre' }}>{manager?.role}</div>
+        <div style={{  }}>{manager?.role}</div>
       </div>
     </div>
   );

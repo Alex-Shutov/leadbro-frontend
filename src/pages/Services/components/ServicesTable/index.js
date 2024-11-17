@@ -62,14 +62,16 @@ const ServicesTable = observer(() => {
         Header: 'ID',
         id: 'id',
         accessor: 'id',
-        width: '0',
+        // minWidth: '10px',
+        // width: '16px',
         Cell: ({ row }) => <span>{row.original.id}</span>,
       },
       {
         Header: 'Услуга',
         id: 'title',
         accessor: 'title',
-        width: '20%',
+        minWidth:'250px',
+        width: '35%',
         Cell: ({ row }) => (
           <TableLink
             to={`/services/${row.original.id}`}
@@ -80,20 +82,22 @@ const ServicesTable = observer(() => {
       {
         Header: '№ договора',
         id: 'contractNumber',
-        width: '12%',
+        width: '4px',
         accessor: 'contractNumber',
         Cell: ({ row }) => <p>{row.original.contractNumber}</p>,
       },
       {
         Header: 'Создатель',
         id: 'manager',
-        width: '15%',
+        minWidth: '80px',
+        width: '25%',
         accessor: 'manager.name',
         Cell: ({ row }) => <ManagerCell manager={row.original.manager} />,
       },
       {
         Header: 'Команда',
         id: 'command',
+        minWidth: '80px',
         width: '10%',
         Cell: ({ row }) => {
           const data = row.original;
@@ -129,6 +133,7 @@ const ServicesTable = observer(() => {
         Header: 'Этапы',
         id: 'stages',
         width: '20%',
+        minWidth: '100px',
         Cell: ({ row }) => {
           const maxCellLength = Math.floor(800 / 18);
           return (
