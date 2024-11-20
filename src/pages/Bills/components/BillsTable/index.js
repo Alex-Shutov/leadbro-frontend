@@ -41,8 +41,6 @@ const BillsTable = observer(() => {
     },
     [from, to],
   );
-  // Поправить редактирвоание счета
-  // Активные дела заголовок оставить,а значения пустые
 
   const {
     currentPage,
@@ -52,7 +50,7 @@ const BillsTable = observer(() => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(billsStore, fetchBills, () => billsStore?.getBills());
-
+  debugger;
   const handleEdit = (bill) => {
     setCurrentBill(bill);
     setEditModalOpen(true);
@@ -192,6 +190,7 @@ const BillsTable = observer(() => {
           columns={cols}
           actions={getActions}
           paging={{
+            totalPages,
             current: currentPage,
             all: totalItems,
             offset: itemsPerPage,

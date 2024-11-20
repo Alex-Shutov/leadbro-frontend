@@ -23,10 +23,13 @@ export const stageStatusTypesRu = {
 };
 
 export const colorStatusTaskTypes = {
-  in_work: { status: taskStatusTypesRu.in_work, class: 'status-green' },
-  finished: { status: taskStatusTypesRu.finished, class: 'status-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-blue' },
-  waiting_for_approval: { status: taskStatusTypesRu.waiting_for_approval, class: 'status-yellow' },
+  in_work: { status: taskStatusTypesRu.in_work, class: 'status-green' },
+  waiting_for_approval: {
+    status: taskStatusTypesRu.waiting_for_approval,
+    class: 'status-yellow',
+  },
+  finished: { status: taskStatusTypesRu.finished, class: 'status-red' },
   paused: { status: taskStatusTypesRu.paused, class: 'status-disabled' },
 };
 
@@ -37,6 +40,9 @@ export const colorStatusTaskTypesForTaskList = {
   },
   finished: { status: taskStatusTypesRu.finished, class: 'status-task-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-task-blue' },
-  waiting_for_approval: { status: taskStatusTypesRu.waiting_for_approval, class: 'status-task-yellow' },
+  waiting_for_approval: {
+    status: taskStatusTypesRu.waiting_for_approval,
+    class: 'status-task-yellow',
+  },
   paused: { status: taskStatusTypesRu.paused, class: 'status-task-disabled' },
 };

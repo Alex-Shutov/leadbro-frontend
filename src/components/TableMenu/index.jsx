@@ -22,17 +22,22 @@ const TableMenu = ({ actions, position, isVisible, onClose }) => {
       transition={{ duration: 0.2 }}
     >
       <ul className={styles.menuList}>
-        {actions.map((action, index) => (
-          <li
-            key={index}
-            onClick={() => handleClick(action)}
-            className={cn(styles.menuItem, {
-              [styles.disabled]: action.disabled,
-            })}
-          >
-            {action.label}
-          </li>
-        ))}
+        {actions
+          .filter(
+            (action) =>
+              action?.visible === true || !action.hasOwnProperty('visible'),
+          )
+          .map((action, index) => (
+            <li
+              key={index}
+              onClick={() => handleClick(action)}
+              className={cn(styles.menuItem, {
+                [styles.disabled]: action.disabled,
+              })}
+            >
+              {action.label}
+            </li>
+          ))}
       </ul>
     </motion.div>
   );

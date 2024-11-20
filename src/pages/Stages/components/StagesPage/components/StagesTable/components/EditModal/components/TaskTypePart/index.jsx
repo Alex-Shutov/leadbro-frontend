@@ -36,21 +36,23 @@ const Index = ({
   const [mappedExecutors, setMappedExecutors] = useState([]);
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
   const { members } = useMembers();
-  const mapValuesForInput = (values) => {
-    if (Array.isArray(values)) {
-      return values.map((el, index) => ({
-        value: el.id !== null ? el.id : index,
-        label: el.id !== null ? `${el.surname} ${el.name}` : el.fio,
-      }));
-    }
-    return [];
-  };
 
-  useEffect(() => {
-    setMappedAuditors(mapValuesForInput(initialAuditors));
-    setMappedExecutors(mapValuesForInput(initialExecutors));
-    setMappedResponsibles(mapValuesForInput(initialResponsibles));
-  }, [initialAuditors, initialExecutors, initialResponsibles]);
+  debugger;
+  // const mapValuesForInput = (values) => {
+  //   if (Array.isArray(values)) {
+  //     return values.map((el, index) => ({
+  //       value: el.id !== null ? el.id : index,
+  //       label: el.id !== null ? `${el.surname} ${el.name}` : el.fio,
+  //     }));
+  //   }
+  //   return [];
+  // };
+  //
+  // useEffect(() => {
+  //   // setMappedAuditors(mapValuesForInput(initialAuditors));
+  //   // setMappedExecutors(mapValuesForInput(initialExecutors));
+  //   // setMappedResponsibles(mapValuesForInput(initialResponsibles));
+  // }, [initialAuditors, initialExecutors, initialResponsibles]);
   return (
     <div className={className}>
       <TextInput
@@ -101,9 +103,9 @@ const Index = ({
           label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
         }))}
         value={
-          initialResponsibles
+          initialResponsibles && initialResponsibles[0]
             ? initialResponsibles.map((el) => ({
-                value: el.id,
+                value: el?.id ?? null,
                 label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
               }))
             : []

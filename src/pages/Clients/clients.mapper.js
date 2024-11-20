@@ -213,11 +213,11 @@ export const mapCommentsFromApi = (apiComments) => {
       },
       value: {
         text: comment.text,
-        files: comment.files.map((file) => ({
-          id: file.id,
-          name: file.original_name,
-          extension: `.${file.original_name.split('.').pop()}`,
-          url: file.url,
+        files: comment?.files.map((file) => ({
+          id: file?.id,
+          name: file?.original_name,
+          extension: `.${file?.original_name.split('.').pop()}`,
+          url: file?.url,
         })),
       },
     };

@@ -1,8 +1,10 @@
 import { taskStatusTypes } from '../Stages/stages.types';
 import { loadAvatar } from '../../utils/create.utils';
 import { taskableTypes } from './tasks.types';
+import { mapCommentsFromApi } from '../Clients/clients.mapper';
 
-export const mapTaskFromApi = (task) => {
+export const mapTaskFromApi = (task, commentsData = null) => {
+  debugger;
   const taskableType = task?.related_entity?.type;
   const taskableId = task?.related_entity?.id;
 
@@ -35,7 +37,9 @@ export const mapTaskFromApi = (task) => {
     executors: mapAssigned([task?.performer]),
     auditors: mapAssigned(task?.auditors),
     assigned: mapAssigned([task?.responsible, task?.performer]), // Ответственные и исполнители
-    comments: mapComments(task?.comments || []) ?? [], // Комментарии к задаче
+    comments: commentsData
+      ? mapCommentsFromApi(commentsData)
+      : mapComments(task?.comments || []) ?? [], // Комментарии к задаче
   };
 };
 

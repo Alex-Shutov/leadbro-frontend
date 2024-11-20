@@ -7,6 +7,8 @@
   color: $n7
   display: flex
   flex-direction: row
+  width: 100%
+  min-width: 0
 .sender
   img
     width: 32px
@@ -18,18 +20,35 @@
   gap: 14px
   flex-wrap: wrap
 .comment
-  .comment_text
-    padding-top: 4px
-    h1
-      padding-top: 4px
-  flex-grow: 2
-  padding: 0px 24px
+  flex: 1
+  min-width: 0 // Важно для работы word-break
+  padding: 0 24px
   display: flex
   flex-direction: column
   +m
-    padding:  0px 1px
+    padding: 0 1px
+
   &>span
     font-weight: 500
     color: $shades2
+    word-break: break-word // Для имени пользователя
+
+  .comment_text
+    padding-top: 4px
+    word-break: break-word
+    overflow-wrap: break-word
+    width: 100%
+
+    h1
+      padding-top: 4px
+      word-break: break-word
+
 .hours
+  flex-shrink: 0
   color: $shades2
+
+.rightSide
+  position: relative
+  div[class*=TableMenu_contextMenu]
+    top: unset
+    right: unset

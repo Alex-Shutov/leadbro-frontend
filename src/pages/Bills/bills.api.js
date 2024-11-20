@@ -12,6 +12,7 @@ import {
 } from '../../shared/http';
 import { useState } from 'react';
 import { API_URL } from '../../shared/constants';
+import { sanitizeObjectForBackend } from '../../utils/create.utils';
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
@@ -37,8 +38,17 @@ const useBillsApi = () => {
     resetApiProvider();
     setIsLoading(true);
     const createData = mapBillDataToBackend(body, Object.keys(body));
+    const finalData = sanitizeObjectForBackend(createData, [
+      'legal_entity_id',
+      'creation_date',
+      'number',
+      'payment_date',
+      'payment_reason',
+      'stage_id',
+      'bill_items',
+    ]);
     return http
-      .post('/api/bills', createData)
+      .post('/api/bills', finalData)
       .then(handleHttpResponse)
       .then(() => getBills(pageFromUrl))
       .catch(handleShowError)

@@ -211,22 +211,34 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         <div className={styles.name}>
           {isEditMode ? 'Редактирование счета' : 'Создание счета'}
         </div>
-        <Dropdown
-          isAsync={true}
-          asyncSearch={async (search) => {
-            const response = await appApi.getLegalEntities(search);
-            return response;
-          }}
-          setValue={(e) => {
-            handleChange('legalEntity', e);
-          }}
-          classNameContainer={styles.input}
-          label={'Получатель платежа'}
-          value={bill?.legalEntity}
-          renderValue={(val) => val.name}
-          renderOption={(opt) => opt.name}
-          options={appStore?.legalEntities ?? []}
-        />
+        <div className={cn(styles.flex, styles.addZIndex)}>
+          <Dropdown
+            isAsync={true}
+            asyncSearch={async (search) => {
+              const response = await appApi.getLegalEntities(search);
+              return response;
+            }}
+            setValue={(e) => {
+              handleChange('legalEntity', e);
+            }}
+            classNameContainer={styles.input}
+            label={'Получатель платежа'}
+            value={bill?.legalEntity}
+            renderValue={(val) => val.name}
+            renderOption={(opt) => opt.name}
+            options={appStore?.legalEntities ?? []}
+          />
+          <TextInput
+            onChange={({ target }) => handleChange(target.name, target.value)}
+            name={'number'}
+            value={bill?.number}
+            edited={true}
+            placeholder={'Введите номер счета'}
+            className={cn(taskStyles.input, taskStyles.textarea)}
+            label={'Номер счета'}
+          />
+        </div>
+
         <div className={cn(styles.flex, styles.addZIndex)}>
           <Calendar
             label={'Дата создания'}

@@ -24,3 +24,19 @@ export const getTaskableTypeFromUrl = (url) => {
 
   return urlPatterns[matches[1]] || null;
 };
+
+export const getPageTypeFromUrl = (url) => {
+  if (!url) return null;
+
+  const urlPatterns = {
+    clients: 'companies',
+    deals: 'deals',
+    tasks: 'tasks',
+  };
+
+  // Извлекаем нужную часть из URL
+  const matches = url.match(/\/(clients|deals|tasks)/);
+  if (!matches) return null;
+
+  return urlPatterns[matches[1]] || null;
+};

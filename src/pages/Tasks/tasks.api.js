@@ -47,7 +47,7 @@ const useTasksApi = () => {
       .get('api/tasks/mine')
       .then(handleHttpResponse)
       .then((res) => {
-        const mappedTasks = res.body.data.map(mapTaskFromApi);
+        const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
         tasksStore.setTasks(mappedTasks);
         return mappedTasks;
       })
@@ -56,10 +56,18 @@ const useTasksApi = () => {
   }, []);
 
   const getTaskById = useCallback((id) => {
-    return http
-      .get(`api/tasks/${id}`)
-      .then(handleHttpResponse)
-      .then((res) => tasksStore.setCurrentTask(mapTaskFromApi(res.body.data)))
+    resetApiProvider();
+
+    return Promise.all([
+      http.get(`api/tasks/${id}`),
+      http.get(`/api/tasks/${id}/comments`),
+    ])
+      .then(([taskData, commentsData]) => {
+        debugger;
+        tasksStore.setCurrentTask(
+          mapTaskFromApi(taskData.data.data, commentsData.data.data),
+        );
+      })
       .catch(handleShowError);
   }, []);
 
@@ -76,7 +84,7 @@ const useTasksApi = () => {
       .get(`api/tasks/mine/${roleMapping[role]}`)
       .then(handleHttpResponse)
       .then((res) => {
-        const mappedTasks = res.body.data.map(mapTaskFromApi);
+        const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
         tasksStore.setTasks(mappedTasks);
         return mappedTasks;
       })
@@ -101,6 +109,7 @@ const useTasksApi = () => {
       drafts = stagesStore.drafts[stageId],
       props = stagesStore.changedProps,
     ) => {
+      debugger;
       updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
 
       resetApiProvider();
@@ -115,6 +124,8 @@ const useTasksApi = () => {
 
   // DELETE - Удаление задачи
   const deleteTask = useCallback((id) => {
+    resetApiProvider();
+
     return http
       .delete(`/api/tasks/${id}`)
       .then(handleHttpResponse)
@@ -142,6 +153,8 @@ const useTasksApi = () => {
   //   getTaskTypes()
 
   const getTaskComments = useCallback((taskId) => {
+    resetApiProvider();
+
     return http
       .get(`/api/tasks/${taskId}/comments`)
       .then(handleHttpResponse)

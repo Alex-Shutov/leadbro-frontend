@@ -113,7 +113,8 @@ const TaskEditModal = observer(
     const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     const handleChange = (name, value, withId = true) => {
-      if (name.includes('responsibles')) {
+      debugger;
+      if (name.includes('responsibles') && value.length) {
         value = value[0];
       }
 
@@ -221,6 +222,15 @@ const TaskEditModal = observer(
       }));
     };
 
+    const handleRemoveComment = (commentId) => {
+      // Удаляем комментарий локально
+      setComments((prev) => {
+        const updatedComments = { ...prev };
+        delete updatedComments[commentId];
+        return updatedComments;
+      });
+    };
+
     const loadComments = async () => {
       if (!taskData?.id) return;
 
@@ -271,6 +281,11 @@ const TaskEditModal = observer(
             {isEditMode && (
               <div className={styles.comments}>
                 <Comments
+                  onDelete={(commentId) =>
+                    taskApi
+                      .getTaskById(data?.id)
+                      .then(() => handleRemoveComment(commentId))
+                  }
                   belongsTo={'tasks'}
                   entityId={taskData.id}
                   comments={comments}

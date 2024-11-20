@@ -31,7 +31,7 @@ import CreatePassModal from './Passwords/Modals/CreateModal';
 import { LoadingProvider } from '../../../../providers/LoadingProvider';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar';
 import CreateClientsModal from './Persons/Modals/CreateClientsModal';
-import Comments from "../../../../components/Comments";
+import Comments from '../../../../components/Comments';
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -88,10 +88,10 @@ const ClientPage = observer(() => {
     }
   };
 
-  const handleChangeStatus = (name,value) => {
-    handleChange(name,value)
-    handleSubmit(name,'Статус успешно изменен!')
-  }
+  const handleChangeStatus = (name, value) => {
+    handleChange(name, value);
+    handleSubmit(name, 'Статус успешно изменен!');
+  };
 
   return (
     <motion.div
@@ -126,12 +126,17 @@ const ClientPage = observer(() => {
               }
             />
             <ClientDeals
-                currentClient={client}
+              currentClient={client}
               className={cn(styles.card, styles.card_status)}
               deals={client?.deals}
             />
             {/*<ClientActivities activities={client?.activities} />*/}
             <Comments
+              onDelete={() =>
+                api
+                  .getClientById(client.id, false)
+                  .then(() => clients?.resetDraft(client?.id, 'comments'))
+              }
               onChange={handleChange}
               comments={client?.comments}
             />

@@ -77,9 +77,9 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const getClientById = (id) => {
+  const getClientById = (id, needToReload = true) => {
     resetApiProvider();
-    setIsLoading(true);
+    needToReload && setIsLoading(true);
     return (
       Promise.all([
         http.get(`/api/companies/${id}`), // Запрос для получения данных клиента

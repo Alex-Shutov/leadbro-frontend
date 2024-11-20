@@ -1,14 +1,14 @@
-import {useState, useEffect, useCallback, useMemo} from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router';
-import useQueryParam from "./useQueryParam";
+import useQueryParam from './useQueryParam';
 
 const usePagingData = (store, fetchData, getDataFromStore) => {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
   const pageFromUrl = useQueryParam('page', 1);
   const [currentPage, setCurrentPage] = useState(1);
-
+  debugger;
 
   useEffect(() => {
     {

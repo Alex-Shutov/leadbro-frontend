@@ -14,6 +14,7 @@ const Comments = ({
   prefix = '',
   entityId,
   belongsTo = null,
+  onDelete,
 }) => {
   const commentsLength = useMemo(
     () => Object.keys(comments ?? {}).length,
@@ -45,7 +46,7 @@ const Comments = ({
   function countFiles() {
     return Object.values(comments ?? {}).reduce((totalFiles, comment) => {
       return (
-        totalFiles + (comment.value.files ? comment.value.files.length : 0)
+        totalFiles + (comment.value?.files ? comment.value.files.length : 0)
       );
     }, 0);
   }
@@ -66,13 +67,17 @@ const Comments = ({
     <Card>
       <CommentsInput
         commentsLength={commentsLength}
-        onSendMessage={(val) => {
-          onChange(`${prefix}comments.${commentsLength}`, val);
-          appApi.sendComment(
+        onSendMessage={async (val) => {
+          const result = await appApi.sendComment(
             belongsTo ?? getCurrentEntityType(),
             entityId ?? id,
             { text: val.value.text, files: val.value.files },
           );
+          result?.id &&
+            onChange(`${prefix}comments.${result.id}`, {
+              ...val,
+              id: result.id,
+            });
         }}
         currentUser={user}
       />
@@ -84,6 +89,7 @@ const Comments = ({
         commentsLength={countComments()}
       />
       <CommentsList
+        onDelete={onDelete}
         filterFiles={isFilterFiles}
         filterComments={isFilterComments}
         comments={comments}

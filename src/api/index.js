@@ -6,19 +6,25 @@ import {
   resetApiProvider,
 } from '../shared/http';
 import { mapEmployeesFromApi } from '../pages/Settings/settings.mapper';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
+import useClientsApi from '../pages/Clients/clients.api';
+import useDealsApi from '../pages/Deals/deals.api';
+import useTasksApi from '../pages/Tasks/tasks.api';
 
 const useAppApi = () => {
   const { appStore } = useStore();
+  const { getClientById } = useClientsApi();
+  const { getDealById } = useDealsApi();
+  const { getTaskById } = useTasksApi();
   const [isLoading, setIsLoading] = useState(false);
-  const [entityForLoad,setEntityForLoad] = useState(null)
+  const [entityForLoad, setEntityForLoad] = useState(null);
 
-    useEffect(() => {
-        if(!isLoading) setEntityForLoad(null)
-    }, [isLoading]);
+  useEffect(() => {
+    if (!isLoading) setEntityForLoad(null);
+  }, [isLoading]);
 
-   const sendComment = (entityType, entityId, { text, files }) => {
-       resetApiProvider()
+  const sendComment = (entityType, entityId, { text, files }) => {
+    resetApiProvider();
     const formData = new FormData();
     formData.append('text', text);
 
@@ -26,18 +32,21 @@ const useAppApi = () => {
     files.forEach((file) => {
       formData.append('files', file.blob); // Добавляем сам файл
     });
-     setIsLoading(true)
-       setEntityForLoad('comment')
+    setIsLoading(true);
+    setEntityForLoad('comment');
     return http
-        .post(`/api/${entityType}/${entityId}/comment`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then(handleHttpResponse)
-        .catch(handleHttpError)
-        .finally(()=>setIsLoading(false))
-        ;
+      .post(`/api/${entityType}/${entityId}/comment`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(handleHttpResponse)
+      .then((res) => {
+        debugger;
+        return res.body.data;
+      })
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getEmployees = (query) => {
@@ -195,21 +204,36 @@ const useAppApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-    const getUserProfile = () => {
-        setIsLoading(true)
-        setEntityForLoad('user')
-        return http
-            .get('/api/me')
-            .then(handleHttpResponse)
-            .catch(handleHttpError)
-            .finally(()=>setIsLoading(false))
-    };
+  const getUserProfile = () => {
+    resetApiProvider();
+    setIsLoading(true);
+    setEntityForLoad('user');
+    return http
+      .get('/api/me')
+      .then(handleHttpResponse)
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
+  const deleteComments = (commentId, onDelete) => {
+    resetApiProvider();
+    setIsLoading(true);
+    setEntityForLoad('user');
+    debugger;
+
+    return http
+      .delete(`/api/comments/${commentId}`)
+      .then(() => onDelete(commentId))
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
 
   return {
     getEmployees,
+    deleteComments,
     getCompanies,
     getClients,
-      getUserProfile,
+    getUserProfile,
     getEmployeePositions,
     getTasks,
     getServices,
@@ -217,9 +241,9 @@ const useAppApi = () => {
     getStagesByService,
     getLegalEntities,
     search,
-      sendComment,
+    sendComment,
     isLoading,
-      entityForLoad
+    entityForLoad,
   };
 };
 
