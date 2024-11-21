@@ -39,10 +39,8 @@ const Dropdown = ({
   const ref = useRef(null);
   useOutsideClick(ref, () => setVisible(false));
 
-  // Интеграция с react-hook-form - перемещаем всю логику формы вместе
   const formContext = useFormContext();
   const isInForm = !!formContext && !!name;
-  debugger;
   const {
     register = () => ({}),
     formState: { errors = {}, isSubmitted = false } = {

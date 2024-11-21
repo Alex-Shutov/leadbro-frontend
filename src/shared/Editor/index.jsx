@@ -1,4 +1,10 @@
-import React, {useRef, useEffect, useCallback, forwardRef, useMemo} from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  forwardRef,
+  useMemo,
+} from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './config';
 import './editor.sass';
@@ -14,9 +20,12 @@ const Index = forwardRef(
     if (ref) {
       ref.current = editorCore.current;
     }
-    const handleInitialize = useCallback((instance) => {
-      editorCore.current = instance;
-    }, [initialHTML]);
+    const handleInitialize = useCallback(
+      (instance) => {
+        editorCore.current = instance;
+      },
+      [initialHTML],
+    );
 
     const htmlToBlocks = (html) => {
       const parser = new DOMParser();
@@ -24,29 +33,28 @@ const Index = forwardRef(
       const blocks = [];
 
       doc.body.childNodes.forEach((node) => {
-          if (node.nodeName === 'H1') {
-              const text = handleSpanFormatting(node);
-              blocks.push({type: 'header', data: {text, level: 1}});
-          } else if (node.nodeName === 'H2') {
-              const text = handleSpanFormatting(node);
-              blocks.push({type: 'header', data: {text, level: 2}});
-          } else if (node.nodeName === 'H3') {
-              const text = handleSpanFormatting(node);
-              blocks.push({type: 'header', data: {text, level: 3}});
-          } else if (node.nodeName === 'UL') {
-              const items = Array.from(node.querySelectorAll('li')).map((li) =>
-                  handleSpanFormatting(li),
-              );
-              blocks.push({type: 'list', data: {items, style: 'unordered'}});
-          } else if (node.nodeName === 'P') {
-              const text = handleSpanFormatting(node);
-              if (text) {
-                  blocks.push({type: 'paragraph', data: {text}});
-              }
+        if (node.nodeName === 'H1') {
+          const text = handleSpanFormatting(node);
+          blocks.push({ type: 'header', data: { text, level: 1 } });
+        } else if (node.nodeName === 'H2') {
+          const text = handleSpanFormatting(node);
+          blocks.push({ type: 'header', data: { text, level: 2 } });
+        } else if (node.nodeName === 'H3') {
+          const text = handleSpanFormatting(node);
+          blocks.push({ type: 'header', data: { text, level: 3 } });
+        } else if (node.nodeName === 'UL') {
+          const items = Array.from(node.querySelectorAll('li')).map((li) =>
+            handleSpanFormatting(li),
+          );
+          blocks.push({ type: 'list', data: { items, style: 'unordered' } });
+        } else if (node.nodeName === 'P') {
+          const text = handleSpanFormatting(node);
+          if (text) {
+            blocks.push({ type: 'paragraph', data: { text } });
           }
-            else if (node.nodeName === 'BR')
-              blocks.push({ type: 'paragraph', data: {text:''} });
-
+        }
+        // else if (node.nodeName === 'BR')
+        //   blocks.push({ type: 'paragraph', data: {text:''} });
       });
 
       return blocks;
@@ -90,18 +98,21 @@ const Index = forwardRef(
         console.error('Ошибка сохранения данных редактора:', error);
       }
     };
-    const memo = useMemo(()=>(
+    const memo = useMemo(
+      () => (
         <Editor
-            ref={ref ?? null}
-            placeholder={placeholder}
-            onInitialize={handleInitialize}
-            tools={EDITOR_JS_TOOLS}
-            defaultValue={{
-                blocks: htmlToBlocks(initialHTML),
-            }}
-            onChange={handleEditorChange}
+          ref={ref ?? null}
+          placeholder={placeholder}
+          onInitialize={handleInitialize}
+          tools={EDITOR_JS_TOOLS}
+          defaultValue={{
+            blocks: htmlToBlocks(initialHTML),
+          }}
+          onChange={handleEditorChange}
         />
-    ),[initialHTML])
+      ),
+      [initialHTML],
+    );
     return (
       <Editor
         ref={ref ?? null}

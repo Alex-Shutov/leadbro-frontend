@@ -179,6 +179,8 @@ const Index = ({
               : [],
           )
         }
+        required={true}
+        name={'executors'}
         isMulti={false}
         label="Исполнитель"
         options={members.map((el) => ({

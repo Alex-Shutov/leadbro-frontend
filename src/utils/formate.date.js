@@ -3,7 +3,7 @@ import { ru } from 'date-fns/locale/ru';
 
 export const formatDate = (date) => {
   console.log(date, 'date');
-  if (!date) return '';
+  if (!date) return 'Не указано';
   let formatDate = format(date, 'cccccc, dd LLL, HH:mm', { locale: ru });
   formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
   return formatDate;

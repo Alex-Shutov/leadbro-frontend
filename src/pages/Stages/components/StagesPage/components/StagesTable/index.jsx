@@ -20,7 +20,7 @@ import EditStage from '../../../../../../components/EditStage';
 import { useParams } from 'react-router';
 import TaskEditModal from '../../../../../../components/TaskModal';
 import useTasksApi from '../../../../../Tasks/tasks.api';
-import DescriptionInfo from "../DescriptionInfo";
+import DescriptionInfo from '../DescriptionInfo';
 
 const StagesTable = observer(({ stage }) => {
   const { stagesStore } = useStore();
@@ -36,7 +36,7 @@ const StagesTable = observer(({ stage }) => {
     api.getTaskStages(stageId);
   }, []);
 
-  console.log(stage,'stage')
+  console.log(stage, 'stage');
   const {
     currentPage,
     totalPages,
@@ -109,17 +109,17 @@ const StagesTable = observer(({ stage }) => {
         },
       },
       {
-        Header: 'Ответственный',
+        Header: 'Исполнитель',
         id: 'responsible',
         width: '25%',
         accessor: 'responsible',
         // editing: true,
         Cell: ({ row }) => {
           const data = row?.original;
-          return Array.isArray(data.responsibles) ? (
-            data.responsibles.map((el) => <ManagerCell manager={el} />)
+          return Array.isArray(data.executors) ? (
+            data.executors.map((el) => <ManagerCell manager={el} />)
           ) : (
-            <ManagerCell manager={data.responsibles} />
+            <ManagerCell manager={data.executors} />
           );
         },
       },
@@ -127,7 +127,7 @@ const StagesTable = observer(({ stage }) => {
         Header: 'Дедлайн',
         id: 'deadline',
         width: '25%',
-        minWidth:'200px',
+        minWidth: '200px',
 
         Cell: ({ row }) => {
           const data = row?.original;

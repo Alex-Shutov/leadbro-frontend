@@ -24,8 +24,8 @@ const EditStage = ({ handleClose, stageId }) => {
   const [localStage, setLocalStage] = useState({
     title: '',
     status: stageStatuses.inProgress,
-    plannedTime: '',
-    actualTime: '',
+    stagePlannedTime: null,
+    timeOverPlan: null,
     startTime: null,
     deadline: null,
     actSum: 0,
@@ -111,30 +111,30 @@ const EditStage = ({ handleClose, stageId }) => {
               value={stageStatusTypesRu[stage.status] || ''}
             />
           </div>
-          {/*<div className={cn(styles.flex, styles.flex__lowerGap)}>*/}
-          {/*  <TextInput*/}
-          {/*    type={'number'}*/}
-          {/*    onChange={({ target }) =>*/}
-          {/*      handleChange('plannedTime', target.value)*/}
-          {/*    }*/}
-          {/*    name="plannedTime"*/}
-          {/*    value={stage?.plannedTime || ''}*/}
-          {/*    edited={true}*/}
-          {/*    className={styles.input}*/}
-          {/*    label="Планируемое время"*/}
-          {/*  />*/}
-          {/*  <TextInput*/}
-          {/*    type={'number'}*/}
-          {/*    onChange={({ target }) =>*/}
-          {/*      handleChange('actualTime', target.value)*/}
-          {/*    }*/}
-          {/*    name="actualTime"*/}
-          {/*    value={stage?.actualTime || ''}*/}
-          {/*    edited={true}*/}
-          {/*    className={styles.input}*/}
-          {/*    label="Фактическое время"*/}
-          {/*  />*/}
-          {/*</div>*/}
+          <div className={cn(styles.flex, styles.flex__lowerGap)}>
+            <TextInput
+              type={'number'}
+              onChange={({ target }) =>
+                handleChange('stagePlannedTime', target.value)
+              }
+              name="stageActualTime"
+              value={stage?.stagePlannedTime || ''}
+              edited={true}
+              className={styles.input}
+              label="Планируемое время (ч)"
+            />
+            <TextInput
+              type={'number'}
+              onChange={({ target }) =>
+                handleChange('timeOverPlan', target.value)
+              }
+              name="timeOverPlan"
+              value={stage?.timeOverPlan || ''}
+              edited={true}
+              className={styles.input}
+              label="Время сверх плана (ч)"
+            />
+          </div>
           <div className={cn(styles.flex, styles.flex__lowerGap)}>
             <Calendar
               name={'startTime'}
@@ -174,7 +174,7 @@ const EditStage = ({ handleClose, stageId }) => {
                 handleChange('taskDescription', target.value)
               }
               name="taskDescription"
-              value={stage.taskDescription || ''}
+              value={stage.taskDescription === '' ? ' ' : stage.taskDescription}
               edited={true}
               className={styles.textarea}
               label="Задача"

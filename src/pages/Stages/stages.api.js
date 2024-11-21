@@ -20,7 +20,7 @@ import servicesApi from '../Services/services.api';
 import { stageStatusTypes } from './stages.types';
 import { format } from 'date-fns';
 import { useParams } from 'react-router';
-import {formatDateToBackend} from "../../utils/formate.date";
+import { formatDateToBackend } from '../../utils/formate.date';
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -145,15 +145,16 @@ const useStageApi = () => {
   };
 
   const createStage = (serviceId, data) => {
-    data = {
-      ...data,
-      name: data.title,
-      active: data.status === stageStatusTypes.inProgress,
-      start: formatDateToBackend(data.startTime),
-      deadline: formatDateToBackend(data.deadline),
-      act_sum: data.actSum,
-      technical_specification: data.taskDescription,
-    };
+    // data = {
+    //   ...data,
+    //   name: data.title,
+    //   active: data.status === stageStatusTypes.inProgress,
+    //   start: formatDateToBackend(data.startTime),
+    //   deadline: formatDateToBackend(data.deadline),
+    //   act_sum: data.actSum,
+    //   technical_specification: data.taskDescription,
+    // };
+    data = mapStageDataToBackend(data, Object.keys(data));
     resetApiProvider();
     return http
       .post(`api/services/${serviceId}/stages`, data)

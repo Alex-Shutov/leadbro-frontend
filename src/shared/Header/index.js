@@ -10,13 +10,16 @@ import User from './User';
 import Image from '../Image';
 import Logo from '../Logo';
 import notification from './Notification';
-import { navigation } from '../nav';
 import useOutsideClick from '../../hooks/useOutsideClick';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
+import { useAppNavigation } from '../../hooks/useAppNavigation';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const Header = ({ onOpen }) => {
   const [visible, setVisible] = useState(false);
+  const { navigation, isLogoutModalOpen, setIsLogoutModalOpen, handleLogout } =
+    useAppNavigation();
   const handleClick = () => {
     onOpen();
     setVisible(false);
@@ -25,33 +28,36 @@ const Header = ({ onOpen }) => {
   useOutsideClick(ref, () => setVisible(false));
 
   return (
-    <header className={styles.header}>
-      <button className={styles.burger} onClick={() => handleClick()}>
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
-        <span className={styles.bar}></span>
-      </button>
-      <Logo />
-      <div style={{ display: 'contents' }} ref={ref}>
-        <Search className={cn(styles.search, { [styles.visible]: visible })} />
-      </div>
-      <button
-        className={cn(styles.buttonSearch, { [styles.active]: visible })}
-        onClick={() => setVisible(!visible)}
-      >
-        <Icon name="search" size="24" />
-      </button>
-      <HeadersList />
-      <div className={styles.control} onClick={() => setVisible(false)}>
-        {/*<Link className={cn("button", styles.button)} to="">*/}
-        {/*  <Icon name="add" size="24" />*/}
-        {/*  <span>Create</span>*/}
-        {/*</Link>*/}
-        {/*<Messages className={styles.messages} />*/}
-        {/*<Notification className={styles.notification}/>*/}
-        {/*<User className={styles.user} />*/}
-      </div>
-      {/* <div className={styles.btns}>
+    <>
+      <header className={styles.header}>
+        <button className={styles.burger} onClick={() => handleClick()}>
+          <span className={styles.bar}></span>
+          <span className={styles.bar}></span>
+          <span className={styles.bar}></span>
+        </button>
+        <Logo />
+        <div style={{ display: 'contents' }} ref={ref}>
+          <Search
+            className={cn(styles.search, { [styles.visible]: visible })}
+          />
+        </div>
+        <button
+          className={cn(styles.buttonSearch, { [styles.active]: visible })}
+          onClick={() => setVisible(!visible)}
+        >
+          <Icon name="search" size="24" />
+        </button>
+        <HeadersList navigation={navigation} />
+        <div className={styles.control} onClick={() => setVisible(false)}>
+          {/*<Link className={cn("button", styles.button)} to="">*/}
+          {/*  <Icon name="add" size="24" />*/}
+          {/*  <span>Create</span>*/}
+          {/*</Link>*/}
+          {/*<Messages className={styles.messages} />*/}
+          {/*<Notification className={styles.notification}/>*/}
+          {/*<User className={styles.user} />*/}
+        </div>
+        {/* <div className={styles.btns}>
         <Link className={styles.link} to="/sign-in">
           Sign in
         </Link>
@@ -59,11 +65,21 @@ const Header = ({ onOpen }) => {
           Sign up
         </Link>
       </div> */}
-    </header>
+      </header>
+      <ConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          handleLogout();
+          setIsLogoutModalOpen(false);
+        }}
+        label="Вы уверены, что хотите выйти?"
+      />
+    </>
   );
 };
 
-const HeadersList = () => {
+const HeadersList = ({ navigation }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -71,7 +87,7 @@ const HeadersList = () => {
   const handleClick = (x, index) => {
     setActiveIndex(index);
     x.action();
-    navigate(x.url);
+    x?.url && navigate(x.url);
   };
 
   const isActive = (url) => {
@@ -84,19 +100,28 @@ const HeadersList = () => {
   return (
     <div className={styles.links}>
       {navigation.map((x, index) => (
-        <motion.p
-          whileHover={{ scale: 1.0 }}
-          className={cn(styles.button, {
-            [styles.active]: isActive(x.url),
-          })}
-          key={index}
-          onClick={() => handleClick(x, index)}
-        >
-          {x.title}
-        </motion.p>
+        <React.Fragment key={index}>
+          <motion.p
+            whileHover={{ scale: 1.0 }}
+            className={cn(styles.button, {
+              [styles.active]: isActive(x.url),
+              [styles.buttonWithIcon]: x?.button,
+            })}
+            onClick={() => handleClick(x, index)}
+          >
+            {x.title}
+          </motion.p>
+          {x?.icon && (
+            <span
+              onClick={() => handleClick(x, index)}
+              className={cn(styles.none, { [styles.icon]: x?.icon })}
+            >
+              {x?.icon}
+            </span>
+          )}
+        </React.Fragment>
       ))}
     </div>
   );
 };
-
 export default Header;

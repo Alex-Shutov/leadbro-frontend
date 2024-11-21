@@ -14,7 +14,10 @@ import {
 } from '../../../../../../utils/snackbar';
 import TextLink from '../../../../../../shared/Table/TextLink';
 import Calendar from '../../../../../../shared/Datepicker';
-import { billStatusTypesRu } from '../../../../bills.types';
+import {
+  billStatusTypesRu,
+  colorBillStatusTypes,
+} from '../../../../bills.types';
 import cn from 'classnames';
 import {
   useSelectorClients,
@@ -30,6 +33,8 @@ import Icon from '../../../../../../shared/Icon';
 import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useServiceApi from '../../../../../Services/services.api';
 import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
+import { colorStatusDealTypes } from '../../../../../Deals/deals.types';
+import StatusDropdown from '../../../../../../components/StatusDropdown';
 
 const EditModal = observer(({ billId, onClose, company, service, stage }) => {
   const { store: billsStore } = useBills();
@@ -211,6 +216,13 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
       >
         <div className={styles.name}>
           {isEditMode ? 'Редактирование счета' : 'Создание счета'}
+          <StatusDropdown
+            required={true}
+            name={'status'}
+            statuses={colorBillStatusTypes}
+            value={colorBillStatusTypes[bill.status]}
+            onChange={(option) => handleChange('status', option.key)}
+          />
         </div>
         <div className={cn(styles.flex, styles.addZIndex)}>
           <Dropdown

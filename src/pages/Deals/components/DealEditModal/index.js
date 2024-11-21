@@ -34,7 +34,7 @@ const DealEditModal = observer(
     const { data: companies } = useClients();
     const serviceTypes = useServiceTypes();
     const appApi = useAppApi();
-    const [isEditMode, setIsEditMode] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(data?.id ?? false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const [localDeal, setLocalDeal] = useState({
@@ -50,17 +50,18 @@ const DealEditModal = observer(
       company: props?.currentClient ?? null,
     });
 
-    useEffect(() => {
-      if (data?.id) {
-        setIsEditMode(true);
-      } else {
-        setIsEditMode(false);
-      }
-    }, [data]);
+    // useEffect(() => {
+    //   if (data?.id) {
+    //     setIsEditMode(true);
+    //   } else {
+    //     setIsEditMode(false);
+    //   }
+    // }, [data]);
 
     const deal = isEditMode ? dealStore.getById(data.id) : localDeal;
 
     const handleChange = (name, value, withId = true) => {
+      debugger;
       if (isEditMode) {
         dealStore.changeById(data.id, name, value, withId);
       } else {
@@ -75,6 +76,7 @@ const DealEditModal = observer(
       if (isDeleteModalOpen) return;
       try {
         if (isEditMode) {
+          debugger;
           await dealApi.updateDeal(data.id, deal);
         } else {
           await dealApi.createDeal(localDeal);
@@ -159,7 +161,7 @@ const DealEditModal = observer(
             type={'editor'}
             placeholder={'Комментарий'}
             onChange={({ target }) => handleChange('description', target.value)}
-            value={deal?.description || ''}
+            value={deal?.description === '' ? ' ' : deal?.description}
             edited={true}
             className={styles.input}
             label={'Комментарий'}

@@ -8,11 +8,15 @@ import Dropdown from './Dropdown';
 import Help from './Help';
 import Image from '../Image';
 import OutsideClickLayout from '../Layouts/outsideClickLayout';
-import { navigation } from '../nav';
+import TextLink from '../Table/TextLink';
+import { useAppNavigation } from '../../hooks/useAppNavigation';
+import ConfirmationModal from '../../components/ConfirmationModal';
 
 const Sidebar = ({ className, onClose, sideVisible, sideSetVisible }) => {
   const [visibleHelp, setVisibleHelp] = useState(false);
   const [visible, setVisible] = [sideVisible, sideSetVisible];
+  const { navigation, isLogoutModalOpen, setIsLogoutModalOpen, handleLogout } =
+    useAppNavigation();
 
   const handleCLose = () => {
     setVisible(false);
@@ -40,9 +44,16 @@ const Sidebar = ({ className, onClose, sideVisible, sideSetVisible }) => {
                 exact
                 onClick={onClose}
               >
-                {x.icon && <Icon name={x.icon} size="24" />}
+                {x?.icon}
                 {x.title}
               </NavLink>
+            ) : x?.button ? (
+              <TextLink
+                className={cn(styles.button, styles.item)}
+                onClick={x.action}
+              >
+                <div className={styles.title}>{x.title}</div>
+              </TextLink>
             ) : (
               <Dropdown
                 className={styles.dropdown}
@@ -82,6 +93,15 @@ const Sidebar = ({ className, onClose, sideVisible, sideSetVisible }) => {
       {/*  onClick={() => setVisible(false)}*/}
       {/*></div>*/}
       {/*// </OutsideClickLayout>*/}
+      <ConfirmationModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={() => {
+          handleLogout();
+          setIsLogoutModalOpen(false);
+        }}
+        label="Вы уверены, что хотите выйти?"
+      />
     </>
   );
 };

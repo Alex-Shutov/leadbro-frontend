@@ -228,6 +228,16 @@ const useAppApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getUserRights = () => {
+    resetApiProvider();
+    setIsLoading(true);
+    return http
+      .get('/api/my_permissions')
+      .then(handleHttpResponse)
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     getEmployees,
     deleteComments,
@@ -237,6 +247,7 @@ const useAppApi = () => {
     getEmployeePositions,
     getTasks,
     getServices,
+    getUserRights,
     getServicesByCompany,
     getStagesByService,
     getLegalEntities,

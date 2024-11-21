@@ -98,8 +98,13 @@ const useTasksApi = () => {
     return http
       .post('/api/tasks', { ...updateData, stage_id: stageId })
       .then(handleHttpResponse)
+      .then((res) => {
+        debugger;
+        const newTask = mapTaskFromApi(res.body.data);
+        tasksStore.setTasks([...tasksStore.tasks, newTask]);
+      })
       .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
-      .catch(handleHttpError);
+      .catch(handleShowError);
   }, []);
 
   const updateTask = useCallback(

@@ -61,11 +61,11 @@ const DealTasks = ({ deal }) => {
         },
       },
       {
-        Header: 'Ответственный',
-        id: 'responsible',
+        Header: 'Исполнитель',
+        id: 'executors',
         Cell: ({ row }) => {
           const data = row?.original;
-          return <ManagerCell manager={data.responsibles[0]} />;
+          return <ManagerCell manager={data.executors[0]} />;
         },
       },
       {

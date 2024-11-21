@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState } from 'react';
 import TableLink from '../../../../../shared/Table/Row/Link';
 import Badge, { statusTypes } from '../../../../../shared/Badge';
 import ManagerCell from '../../../../../components/ManagerCell';
@@ -11,11 +11,11 @@ import { formatDate } from '../../../../../utils/formate.date';
 import styles from './Services.module.sass';
 import { Link } from 'react-router-dom';
 import TextLink from '../../../../../shared/Table/TextLink';
-import EditModal from "../../../../Services/components/ServicesTable/components/EditModal";
+import EditModal from '../../../../Services/components/ServicesTable/components/EditModal';
 
-const ClientService = ({ services,currentClient }) => {
-    const [editModalOpen, setEditModalOpen] = useState(false);
-    const [currentService, setCurrentService] = useState(null);
+const ClientService = ({ services, currentClient }) => {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentService, setCurrentService] = useState(null);
 
   const cols = React.useMemo(
     () => [
@@ -24,9 +24,11 @@ const ClientService = ({ services,currentClient }) => {
         id: 'service',
         Cell: ({ row }) => {
           const data = row?.original;
-            console.log(data,'data')
+          console.log(data, 'data');
           return (
-            <TextLink to={`/services/${data.id}`} className={styles.link}>{data?.description}</TextLink>
+            <TextLink to={`/services/${data.id}`} className={styles.link}>
+              {data?.description}
+            </TextLink>
           );
         },
       },
@@ -44,7 +46,7 @@ const ClientService = ({ services,currentClient }) => {
         },
       },
       {
-        Header: 'Ответственный',
+        Header: 'Исполнитель',
         id: 'responsible',
         sortType: 'basic',
         accessor: 'responsible.name',
@@ -81,7 +83,7 @@ const ClientService = ({ services,currentClient }) => {
         headerActions={{
           sorting: true,
           add: {
-              action: () => setEditModalOpen(true),
+            action: () => setEditModalOpen(true),
             title: '',
           },
         }}
@@ -89,13 +91,13 @@ const ClientService = ({ services,currentClient }) => {
         data={data}
         columns={cols}
       />
-        {editModalOpen && (
-            <EditModal
-                client={currentClient}
-                serviceId={currentService?.id ?? null}
-                onClose={() => setEditModalOpen(false)}
-            />
-        )}
+      {editModalOpen && (
+        <EditModal
+          client={currentClient}
+          serviceId={currentService?.id ?? null}
+          onClose={() => setEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

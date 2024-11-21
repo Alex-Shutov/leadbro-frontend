@@ -131,7 +131,8 @@ const mapLegals = (legals) => {
     OGRN: legals.ogrn,
     RS: legals.checking_account,
     CORR_RS: legals.correspondent_account,
-
+    LEGAL_ADDRESS: legals.legal_address,
+    REAL_ADDRESS: legals.real_address,
     BIK: legals.bank_bic,
     BankName: legals.bank_name,
   };
@@ -157,7 +158,7 @@ const mapServices = (backendServices, apiServices) => {
           role: last.responsible.position.name,
           image: loadAvatar(last.responsible.avatar),
         },
-        deadline: new Date(last.deadline), // Преобразуем строку в дату
+        deadline: last?.deadline ? new Date(last.deadline) : null, // Преобразуем строку в дату
       },
     };
   }
@@ -166,7 +167,7 @@ const mapServices = (backendServices, apiServices) => {
   }
   return apiServices.map((service) => ({
     id: service.id,
-    description: service.name, // Используем поле name для description
+    description: service.name,
     creator: {
       name: service.responsible.name, // Отсутствует creator в API, поэтому используем responsible
       surname: service.responsible.last_name,
@@ -179,7 +180,7 @@ const mapServices = (backendServices, apiServices) => {
       role: service.responsible.position.name,
       image: loadAvatar(service.responsible.avatar),
     },
-    deadline: new Date(service.deadline), // Преобразуем строку в дату
+    deadline: service?.deadline ? new Date(service.deadline) : null,
   }));
 };
 
@@ -306,6 +307,8 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       'contactData.requisites.0.RS': 'checking_account',
       'contactData.requisites.0.CORR_RS': 'correspondent_account',
       'contactData.requisites.0.BIK': 'bank_bic',
+      'contactData.requisites.0.LEGAL_ADDRESS': 'legal_address',
+      'contactData.requisites.0.REAL_ADDRESS': 'real_address',
 
       'contactData.tel.0': 'phone',
       'contactData.site.0': 'site',

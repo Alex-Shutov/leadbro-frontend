@@ -4,6 +4,7 @@ import { statusTypes } from '../Services/services.types';
 import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { format } from 'date-fns';
 import { taskableTypes } from '../Tasks/tasks.types';
+import { formatDateToBackend } from '../../utils/formate.date';
 
 export const mapStageFromApi = (stageData, tasksData) => {
   return {
@@ -11,8 +12,14 @@ export const mapStageFromApi = (stageData, tasksData) => {
     number: stageData?.number,
     title: stageData?.name,
     bills: stageData?.bills ?? [],
-    startTime: stageData?.start ? new Date(stageData?.start) : new Date(),
-    deadline: stageData?.deadline ? new Date(stageData?.deadline) : new Date(),
+    startTime: stageData?.start ? new Date(stageData?.start) : null,
+    deadline: stageData?.deadline ? new Date(stageData?.deadline) : null,
+    stagePlannedTime:
+      stageData?.planned_time !== null ? stageData?.planned_time : null,
+    timeOverPlan:
+      stageData?.time_over_planned !== null
+        ? stageData?.time_over_planned
+        : null,
     deadlineTime: `${parseFloat(stageData?.planned_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
     actualTime: `${parseFloat(stageData?.actual_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
     contactPerson: stageData?.contactPerson || 'Александр Шилов',
@@ -143,12 +150,13 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       case 'active':
         return stageStatusTypes.inProgress === value;
       case 'start':
-        return format(value, "yyyy-MM-dd'T'HH:mm:ss");
+        return formatDateToBackend(value);
       case 'deadline':
-        return format(value, "yyyy-MM-dd'T'HH:mm:ss");
+        return formatDateToBackend(value);
       case 'actual_time':
       case 'planned_time':
-        return parseFloat(value); // Если нужны бинарные числа, преобразуем в float
+      case 'time_over_planned':
+        return parseFloat(value);
       case 'show_at_client_cabinet':
         return Boolean(value); // Преобразуем в булевое значение
       case 'responsible_id':
@@ -179,6 +187,9 @@ export const mapStageDataToBackend = (drafts, changedFieldsSet, propId) => {
       taskLinked: 'linked_task',
       showInLK: 'show_at_client_cabinet',
       description: 'description',
+      stagePlannedTime: 'planned_time',
+      stageActualTime: 'actual_time',
+      timeOverPlan: 'time_over_planned',
       taskStatus: 'status',
       [`tasks.${propId}.actualTime`]: 'actual_time',
       [`tasks.${propId}.title`]: 'name',

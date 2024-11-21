@@ -3,6 +3,7 @@ import { StoreContext } from '../providers/StoreProvider';
 import useStore from './useStore';
 import useAppApi from '../api';
 import { loadAvatar } from '../utils/create.utils';
+import { toCamelCase } from '../utils/mapper';
 
 const mapUser = (userApi) => {
   return {
@@ -17,9 +18,21 @@ const mapUser = (userApi) => {
   };
 };
 
+const mapPermissions = (permissions) => {
+  if (!permissions || typeof permissions !== 'object') {
+    return {};
+  }
+
+  return Object.entries(permissions).reduce((acc, [key, value]) => {
+    const camelCaseKey = toCamelCase(key);
+    acc[camelCaseKey] = value;
+    return acc;
+  }, {});
+};
+
 const useUser = () => {
   const { userStore } = useStore();
-  const { getUserProfile, isLoading } = useAppApi();
+  const { getUserProfile, isLoading, getUserRights } = useAppApi();
 
   const fetchUser = async () => {
     try {
@@ -29,6 +42,23 @@ const useUser = () => {
       console.error('Error fetching user profile:', error);
     }
   };
+
+  const fetchUserRights = async () => {
+    try {
+      const response = await getUserRights();
+      debugger;
+      userStore.setRights(mapPermissions(response.body));
+      debugger;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!userStore.rigths) {
+      fetchUserRights();
+    }
+  }, []);
 
   useEffect(() => {
     if (!userStore.user) {

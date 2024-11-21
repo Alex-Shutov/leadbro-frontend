@@ -12,6 +12,8 @@ const RequisitesToValues = {
   RS: 'Р/с №',
   CORR_RS: 'Корр/с №',
   BIK: 'БИК банка',
+  LEGAL_ADDRESS: 'Почтовый адрес',
+  REAL_ADDRESS: 'Фактический адрес',
 };
 const RequisitesOnSave = {
   INN: 'ИНН сохранен',
@@ -21,6 +23,8 @@ const RequisitesOnSave = {
   RS: 'Расчетный счет сохранен',
   CORR_RS: 'Корреспондентский счет сохранен',
   BIK: 'БИК сохранен',
+  LEGAL_ADDRESS: 'Почтовый адрес сохранен',
+  REAL_ADDRESS: 'Фактический адрес сохранен',
 };
 
 const RequisitesOnClose = {
@@ -31,6 +35,8 @@ const RequisitesOnClose = {
   RS: 'Расчетный счет восстановлен',
   CORR_RS: 'Корреспондентский счет восстановлен',
   BIK: 'БИК восстановлен',
+  LEGAL_ADDRESS: 'Почтовый адрес восстановлен',
+  REAL_ADDRESS: 'Фактический адрес восстановлен',
 };
 const RequisitesComponent = ({ label, contactData, onActions, onAdd }) => {
   const length = useMemo(

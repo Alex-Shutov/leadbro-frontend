@@ -56,7 +56,7 @@ const useDealsApi = () => {
       .patch(`/api/deals/${dealId}`, mappedData)
       .then(handleHttpResponse)
       .then(() => getDealById(dealId))
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
 

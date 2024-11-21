@@ -230,7 +230,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
         <TextInput
           onChange={({ target }) => handleChange('description', target.value)}
           name={'description'}
-          value={client?.description || ''}
+          value={client?.description === '' ? ' ' : client?.description}
           edited={true}
           className={styles.input}
           label={'Описание'}

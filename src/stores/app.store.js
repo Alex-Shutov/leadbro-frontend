@@ -16,6 +16,7 @@ export class AppStore {
     tasks: [],
     services: [],
   };
+  isExitModalOpened = false;
 
   constructor(root) {
     this.root = root;
@@ -29,6 +30,9 @@ export class AppStore {
       tasks: results.tasks || [],
       services: results.services || [],
     };
+  }
+  setIsExitModalOpened(value) {
+    this.isExitModalOpened = true;
   }
 
   clearSearchResults() {
