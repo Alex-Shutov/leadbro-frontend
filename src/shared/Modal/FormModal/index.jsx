@@ -1,11 +1,63 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import cn from 'classnames';
 import styles from './styles.module.sass';
 import Modal from '../index';
 import FormTextInput from '../../Input/FormTextInput';
 import FormDropdown from '../../Dropdown/FormDropdown';
-import Icon from '../../Icon';
+
+// Оптимизированный компонент формы
+const FormContent = React.memo(({ children, control }) => {
+  const enhanceChildren = useCallback(
+    (children) => {
+      return React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+
+        // Проверяем наличие name в props
+        if (!child.props?.name) {
+          console.warn('Form field components must have a name prop');
+          return child;
+        }
+
+        let enhancedChild = child;
+
+        switch (child.props?.componentType) {
+          case 'TextInput':
+            enhancedChild = (
+              <FormTextInput
+                key={child.props.name}
+                {...child.props}
+                control={control}
+              />
+            );
+            break;
+          case 'Dropdown':
+            enhancedChild = (
+              <FormDropdown
+                key={child.props.name}
+                {...child.props}
+                control={control}
+              />
+            );
+            break;
+          default:
+            if (child.props?.children) {
+              enhancedChild = React.cloneElement(child, {
+                children: enhanceChildren(child.props.children),
+              });
+            }
+        }
+
+        return enhancedChild;
+      });
+    },
+    [control],
+  );
+
+  return enhanceChildren(children);
+});
+
+FormContent.displayName = 'FormContent';
 
 const FormValidatedModal = ({
   children,
@@ -26,45 +78,16 @@ const FormValidatedModal = ({
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
     control,
   } = methods;
 
-  // Функция обработки подтверждения формы
-  const onSubmit = (data) => {
-    console.log('Form submitted with data:', data);
-    onSubmitCallback(data);
-  };
-
-  // Рекурсивная функция для клонирования дочерних элементов
-  const enhanceChildren = (children) => {
-    return React.Children.map(children, (child) => {
-      if (!React.isValidElement(child)) return child;
-
-      let enhancedChild = child;
-
-      switch (child.props?.componentType) {
-        case 'TextInput':
-          enhancedChild = (
-            <FormTextInput {...child.props} control={control} errors={errors} />
-          );
-          break;
-        case 'Dropdown':
-          enhancedChild = (
-            <FormDropdown {...child.props} control={control} errors={errors} />
-          );
-          break;
-        default:
-          if (child.props?.children) {
-            enhancedChild = React.cloneElement(child, {
-              children: enhanceChildren(child.props.children),
-            });
-          }
-      }
-
-      return enhancedChild;
-    });
-  };
+  const onSubmit = useCallback(
+    (data) => {
+      onSubmitCallback(data);
+    },
+    [onSubmitCallback],
+  );
 
   return (
     <FormProvider {...methods}>
@@ -75,23 +98,10 @@ const FormValidatedModal = ({
         modalRef={modalRef}
         closeButton={closeButton}
         customButtons={customButtons}
-        cls={cn(cls, {
-          [styles.hasErrors]: Object.keys(errors).length > 0,
-        })}
+        cls={cls}
       >
         <form onSubmit={(e) => e.preventDefault()}>
-          {enhanceChildren(children)}
-
-          {Object.keys(errors).length > 0 && (
-            <div className={styles.errorSummary}>
-              {Object.entries(errors).map(([field, error]) => (
-                <div key={field} className={styles.errorItem}>
-                  <Icon name="warning" size={16} />
-                  <span>{error.message}</span>
-                </div>
-              ))}
-            </div>
-          )}
+          <FormContent children={children} control={control} />
         </form>
       </Modal>
     </FormProvider>

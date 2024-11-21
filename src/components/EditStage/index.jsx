@@ -1,6 +1,6 @@
 import useStages from '../../pages/Stages/hooks/useStages';
 import useStageApi from '../../pages/Stages/stages.api';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { handleSubmit as handleSubmitSnackbar } from '../../utils/snackbar';
 import TextInput from '../../shared/TextInput';
 import Calendar from '../../shared/Datepicker';
@@ -43,16 +43,19 @@ const EditStage = ({ handleClose, stageId }) => {
     }
   }, [stageId]);
 
-  const handleChange = (name, value, withId = true) => {
-    if (isEditMode) {
-      stagesStore.changeById(stageId, name, value, withId);
-    } else {
-      setLocalStage((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  const handleChange = useCallback(
+    (name, value, withId = true) => {
+      if (isEditMode) {
+        stagesStore.changeById(stageId, name, value, withId);
+      } else {
+        setLocalStage((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    },
+    [isEditMode],
+  );
 
   const handleSubmit = async () => {
     try {
@@ -114,11 +117,13 @@ const EditStage = ({ handleClose, stageId }) => {
           </div>
           <div className={cn(styles.flex, styles.flex__lowerGap)}>
             <Calendar
+              name={'startTime'}
               label="Дата начала"
               value={stage.startTime}
               onChange={(date) => handleChange('startTime', date)}
             />
             <Calendar
+              name={'deadline'}
               label="Дата окончания"
               value={stage.deadline}
               onChange={(date) => handleChange('deadline', date)}
