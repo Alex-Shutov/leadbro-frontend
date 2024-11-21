@@ -3,7 +3,7 @@ import cn from 'classnames';
 import styles from '../../shared/Dropdown/Default/Dropdown.module.sass';
 import Dropdown from '../../shared/Dropdown/Default';
 
-const StatusDropdown = ({ statuses, value, onChange }) => {
+const StatusDropdown = ({ statuses, value, onChange, name, required }) => {
   const options = useMemo(() => {
     return Object.entries(statuses).map(
       ([key, { status, class: className }]) => ({
@@ -18,6 +18,8 @@ const StatusDropdown = ({ statuses, value, onChange }) => {
 
   return (
     <Dropdown
+      name={name ?? ''}
+      required={required ?? false}
       classNameContainer={cn(styles.statusDropdown, styles[value?.class])}
       classDropdownHead={value?.class}
       options={dropdownOptions}

@@ -12,6 +12,11 @@ import cn from 'classnames';
 import useClientsApi from '../../../clients.api';
 import { colorStatusTypes } from '../../../clients.types';
 import StatusDropdown from '../../../../../components/StatusDropdown';
+import FormValidatedModal from '../../../../../shared/Modal/FormModal';
+import {
+  handleError,
+  handleSubmit as handleSubmitSnackbar,
+} from '../../../../../utils/snackbar';
 
 const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { clientsStore } = useStore(); // Подключение к MobX Store
@@ -77,6 +82,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     try {
       if (isEditMode) {
         await updateCompany(clientId, client); // Обновляем компанию
+        handleSubmitSnackbar('Клиент успешно обновлен');
       } else {
         await createCompany({
           ...localClient,
@@ -85,9 +91,11 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           name: localClient.title,
         }); // Создаём новую компанию
       }
+      handleSubmitSnackbar('Клиент успешно создан');
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      handleError('Ошибка при сохранении клиента');
     }
   };
 
@@ -117,10 +125,16 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
 
   return (
     client && (
-      <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}>
+      <FormValidatedModal
+        handleSubmit={handleSubmit}
+        handleClose={handleReset}
+        size={'md'}
+      >
         <div className={modlaStyles.header}>
           <p>{isEditMode ? 'Редактирование клиента' : 'Создание клиента'}</p>
           <StatusDropdown
+            name={'status'}
+            required={true}
             statuses={colorStatusTypes}
             value={selectedStatus}
             onChange={(option) => handleChange('status', option.key)}
@@ -185,6 +199,8 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           label={'Адрес'}
         />
         <ValuesSelector
+          name={'manager'}
+          required={true}
           onChange={(e) =>
             handleChange(
               'manager',
@@ -235,7 +251,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           label={'Сайт'}
           placeholder={'Введите сайт'}
         />
-      </Modal>
+      </FormValidatedModal>
     )
   );
 });

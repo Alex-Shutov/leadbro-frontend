@@ -23,7 +23,6 @@ const FormValidatedModal = ({
 
   const onSubmit = useCallback(
     async (data, e) => {
-      // При сабмите проверяем все поля
       const isFormValid = await trigger();
 
       if (isFormValid) {

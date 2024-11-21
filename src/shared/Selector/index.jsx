@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import Tooltip from '../Tooltip';
 import AsyncSelect from 'react-select/async';
@@ -11,6 +11,7 @@ import {
   opacityTransition,
 } from '../../utils/motion.variants';
 import Select from 'react-select';
+import { useFormContext, get } from 'react-hook-form';
 
 const ValuesSelector = ({
   className,
@@ -26,6 +27,7 @@ const ValuesSelector = ({
   tooltip,
   placeholder,
   readonly,
+  required,
   small,
   upBody,
   renderOption,
@@ -38,12 +40,78 @@ const ValuesSelector = ({
   noOptionsMessage = 'Нет результатов',
 }) => {
   const ref = useRef(false);
-  const handleChange = (selectedOptions) => {
-    if (!isMulti && selectedOptions.length > 1) {
-      onChange([selectedOptions[selectedOptions.length - 1]]);
-    } else {
-      onChange(selectedOptions);
+
+  const [isTouched, setIsTouched] = useState(false);
+
+  // Интеграция с react-hook-form
+  const formContext = useFormContext();
+  const isInForm = !!formContext && !!name;
+
+  const {
+    register = () => ({}),
+    formState: { errors = {}, isSubmitted = false } = {
+      errors: {},
+      isSubmitted: false,
+    },
+    setValue: setFormValue = () => {},
+    trigger = () => {},
+  } = formContext || {};
+
+  useEffect(() => {
+    if (isInForm) {
+      register(name, {
+        required: required ? 'Это поле обязательно' : false,
+        validate: (value) => {
+          if (required) {
+            if (!value) return 'Это поле обязательно';
+            if (Array.isArray(value) && value.length === 0)
+              return 'Это поле обязательно';
+          }
+          return true;
+        },
+      });
+
+      // Устанавливаем начальное значение
+      if (value !== undefined) {
+        setFormValue(name, value, { shouldValidate: true });
+      }
     }
+  }, [isInForm, name, register, value, required]);
+
+  useEffect(() => {
+    if (isSubmitted) {
+      setIsTouched(true);
+    }
+  }, [isSubmitted]);
+
+  const error =
+    isInForm && (isTouched || isSubmitted) ? get(errors, name) : null;
+
+  const handleChange = (selectedOptions) => {
+    setIsTouched(true);
+    let newValue;
+
+    if (
+      !isMulti &&
+      Array.isArray(selectedOptions) &&
+      selectedOptions.length > 1
+    ) {
+      newValue = [selectedOptions[selectedOptions.length - 1]];
+    } else {
+      newValue = selectedOptions;
+    }
+
+    if (isInForm) {
+      setFormValue(name, newValue, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      trigger(name);
+    }
+
+    // Вызываем оригинальный onChange
+    onChange(newValue);
   };
 
   const loadOptions = async (inputValue) => {
@@ -85,6 +153,14 @@ const ValuesSelector = ({
         ...base,
         borderRadius: '8px',
       }),
+      control: (base, state) => ({
+        ...base,
+        borderColor: error ? '#ee7373' : base.borderColor,
+        '&:hover': {
+          borderColor: error ? '#ee7373' : base.borderColor,
+        },
+        boxShadow: error ? '0 0 5px rgba(255, 0, 0, 0.47)' : base.boxShadow,
+      }),
     },
     classNames: {
       placeholder: () => styles.selector__container__control__placeholder,
@@ -98,6 +174,7 @@ const ValuesSelector = ({
           ? styles.selector__container__control_focused
           : cn(styles.selector__container__control, {
               [styles.hasValue]: isMulti ? !value?.length : !value,
+              [styles.error]: error,
             }),
     },
   };
@@ -119,7 +196,7 @@ const ValuesSelector = ({
     <div ref={ref} className={classNameContainer}>
       {label && (
         <div className={cn(styles.label, classDropdownLabel)}>
-          {label}{' '}
+          {label} {required && <span className={styles.required}>*</span>}
           {tooltip && (
             <Tooltip
               className={styles.tooltip}
@@ -135,6 +212,7 @@ const ValuesSelector = ({
       ) : (
         <Select {...commonProps} options={options} />
       )}
+      {error && <div className={styles.errorMessage}>{error.message}</div>}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import Tooltip from '../../Tooltip';
 import useOutsideClick from '../../../hooks/useOutsideClick';
 import Chevron from './Chevron';
 import Loader from '../../Loader';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, get } from 'react-hook-form';
 
 const Dropdown = ({
   className,
@@ -41,29 +41,32 @@ const Dropdown = ({
 
   // Интеграция с react-hook-form - перемещаем всю логику формы вместе
   const formContext = useFormContext();
-  const isInForm = !!formContext && name;
-
+  const isInForm = !!formContext && !!name;
+  debugger;
   const {
-    register,
-    formState: { errors, isSubmitted },
-    setValue: setFormValue,
-    trigger,
+    register = () => ({}),
+    formState: { errors = {}, isSubmitted = false } = {
+      errors: {},
+      isSubmitted: false,
+    },
+    setValue: setFormValue = () => {},
+    trigger = () => {},
   } = formContext || {};
 
-  // Регистрируем поле в форме если компонент внутри формы
   const { ref: hiddenInputRef, ...registerProps } = isInForm
     ? register(name, {
         required: required ? 'Это поле обязательно' : false,
         validate: (value) => {
-          if (required && !value && isTouched) {
+          if (required && !value) {
             return 'Это поле обязательно';
           }
           return true;
         },
       })
-    : {};
+    : { ref: () => {}, ...{} };
 
-  const error = isInForm && (isTouched || isSubmitted) ? errors[name] : null;
+  const error =
+    isInForm && (isTouched || isSubmitted) ? get(errors, name) : null;
 
   const shouldShowOptions = isAsync
     ? visible && inputValue.length >= 4

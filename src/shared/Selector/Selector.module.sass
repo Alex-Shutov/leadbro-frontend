@@ -5,6 +5,7 @@
   +body1-m
   +dark
   color: $n4
+  display: flex
 
 .selector__container
   &__control
@@ -54,3 +55,26 @@
         //line-height: 24px
         //letter-spacing: -.015em
         color: $n7 !important
+
+.hasError
+  .selector__container__control
+    border-color: #ee7373 !important
+    &:hover
+      border-color: #ee7373 !important
+    &:focus-within
+      box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)
+
+.error
+  border-color: #ee7373 !important
+  border: 2px solid #ee7373 !important
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.47) !important
+
+.errorMessage
+
+  color: $n4
+  +body1-m
+  margin-top: -16px
+  margin-bottom: 16px
+.required
+  color: $ph1 // Задайте красный цвет для звездочки
+  margin-left: 4px // Немного отступа от текста метки

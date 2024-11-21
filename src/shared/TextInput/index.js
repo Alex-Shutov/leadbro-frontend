@@ -4,7 +4,7 @@ import styles from './TextInput.module.sass';
 import Icon from '../Icon';
 import Tooltip from '../Tooltip';
 import TextArea from '../TextArea';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, get } from 'react-hook-form';
 import Editor from '../Editor';
 import ActionList from './Actions/ActionList';
 import Dots from './Dots';
@@ -29,13 +29,14 @@ const TextInput = forwardRef(
       value,
       validate,
       name,
+      required,
       ...props
     },
     ref,
   ) => {
     const inputRef = useRef(null);
     const wrapRef = useRef(null);
-    const [hasError, setHasError] = useState(false);
+    const [isTouched, setIsTouched] = useState(false);
 
     // Проверяем, находимся ли мы внутри формы
     const formContext = useFormContext();
@@ -44,24 +45,50 @@ const TextInput = forwardRef(
     // Получаем методы формы, если они есть
     const {
       register,
-      formState: { errors } = {},
-      setValue,
+      formState: { errors, isSubmitted } = {},
+      setValue: setFormValue,
+      trigger,
+      clearErrors,
     } = formContext || {};
-    const error = isInForm ? errors[name] : null;
+    const error = isInForm && isSubmitted ? get(errors, name) : null;
 
     // Регистрируем поле в форме, если мы внутри FormProvider
     useEffect(() => {
       if (isInForm) {
         // Регистрируем поле с валидацией
         register(name, {
-          required: props.required && 'Это поле обязательно',
-          validate: validate, // Сохраняем существующую валидацию
+          required: required && 'Это поле обязательно',
+          validate: (value) => {
+            // Сначала проверяем required
+            if (required && !value) {
+              return 'Это поле обязательно';
+            }
+
+            // Затем выполняем кастомную валидацию
+            if (validate) {
+              const result = validate(value);
+              // Если результат === true, валидация прошла успешно
+              // Иначе возвращаем сообщение об ошибке
+              return result === true ? true : result;
+            }
+
+            return true;
+          },
         });
 
-        // Устанавливаем начальное значение
-        setValue(name, value || '');
+        if (value !== undefined) {
+          setFormValue(name, value, {
+            shouldValidate: isTouched || isSubmitted,
+          });
+        }
       }
-    }, [isInForm, name, register, setValue, value, props.required, validate]);
+    }, [isInForm, name, register, setFormValue, value, required, validate]);
+
+    useEffect(() => {
+      if (isSubmitted) {
+        setIsTouched(true);
+      }
+    }, [isSubmitted]);
 
     const formatValue = (inputValue) => {
       if (!inputValue) return inputValue;
@@ -77,17 +104,18 @@ const TextInput = forwardRef(
     };
 
     const handleBlur = (e) => {
-      if (validate) {
-        const isValid = validate(value);
-        if (!isValid) {
-          inputRef.current.classList.add(styles.errorInput);
-        } else {
-          inputRef.current.classList.remove(styles.errorInput);
-        }
+      setIsTouched(true);
+      if (isInForm) {
+        // Запускаем валидацию при потере фокуса
+        trigger(name);
+      }
+      if (props.onBlur) {
+        props.onBlur();
       }
     };
 
     const handleInputChange = (e) => {
+      debugger;
       const rawValue = e.target.value;
 
       // Обработка для money типа
@@ -114,20 +142,22 @@ const TextInput = forwardRef(
     };
 
     // Общий обработчик изменений
-    const handleChange = (newValue) => {
-      // Если мы в форме, обновляем значение в форме
+    const handleChange = (e) => {
+      debugger;
+      const newValue = e;
+
       if (isInForm) {
-        setValue(name, newValue, { shouldValidate: true });
+        setFormValue(name, newValue, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+        // Запускаем валидацию при изменении
+        trigger(name);
       }
 
-      // Вызываем оригинальный onChange
       if (onChange) {
-        onChange({
-          target: {
-            name,
-            value: newValue,
-          },
-        });
+        onChange(e);
       }
     };
 
@@ -193,7 +223,7 @@ const TextInput = forwardRef(
         {label && (
           <div className={cn(classLabel, styles.label)}>
             {label}
-            {props.required && <span className={styles.required}>*</span>}
+            {required && <span className={styles.required}>*</span>}
             {tooltip && (
               <Tooltip
                 className={styles.tooltip}

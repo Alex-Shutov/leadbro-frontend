@@ -15,6 +15,7 @@ import { genderType, genderTypeRu } from '../../../../settings.types';
 import cn from 'classnames';
 import { formatDateToBackend } from '../../../../../../utils/formate.date';
 import RadioGenderInput from '../../../../../../components/RadioGenderInput';
+import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
 const EditModal = observer(({ employeId, onClose }) => {
   const { store: employeStore } = useEmployes();
@@ -90,11 +91,11 @@ const EditModal = observer(({ employeId, onClose }) => {
   };
 
   const validatePassword = (value) => {
-    return value.length >= 4; // Пароль должен быть не менее 4 символов
+    return value.length >= 4 ? true : 'Пароль должен быть не менее 4 символов';
   };
 
   const validateConfirmPassword = (value) => {
-    return value === employe.password; // Пароли должны совпадать
+    return value === employe.password ? true : 'Пароли должны совпадать';
   };
 
   const handleReset = () => {
@@ -105,7 +106,7 @@ const EditModal = observer(({ employeId, onClose }) => {
   };
 
   return (
-    <Modal
+    <FormValidatedModal
       closeButton={'Отменить'}
       handleSubmit={handleSubmit}
       handleClose={handleReset}
@@ -152,6 +153,7 @@ const EditModal = observer(({ employeId, onClose }) => {
           label={'Фамилия'}
         />
         <TextInput
+          required={true}
           placeholder={'Имя'}
           onChange={({ target }) =>
             handleChange(isEditMode ? 'name' : 'name', target.value)
@@ -215,6 +217,7 @@ const EditModal = observer(({ employeId, onClose }) => {
           label={'Почта'}
         />
         <TextInput
+          required={true}
           placeholder={'Телефон'}
           onChange={({ target }) =>
             handleChange(isEditMode ? 'phone' : 'phone', target.value)
@@ -230,6 +233,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       {!isEditMode && (
         <div className={styles.flex}>
           <TextInput
+            required={true}
             placeholder={'Новый пароль'}
             onChange={(e) => {
               console.log('target', e);
@@ -355,7 +359,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       {/*            : null*/}
       {/*    }*/}
       {/*/>*/}
-    </Modal>
+    </FormValidatedModal>
   );
 });
 

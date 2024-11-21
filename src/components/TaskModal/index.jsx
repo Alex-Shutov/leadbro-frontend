@@ -10,6 +10,7 @@ import { handleSubmit as handleSubmitSnackbar } from '../../utils/snackbar';
 import TaskDescriptionPart from '../../pages/Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskDescriptionPart';
 import TaskTypePart from '../../pages/Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskTypePart';
 import Comments from '../Comments';
+import FormValidatedModal from '../../shared/Modal/FormModal';
 
 const draftSet = new Set();
 
@@ -104,7 +105,6 @@ const TaskEditModal = observer(
           contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
       }
-      debugger;
       return taskStore.getById(data.id);
     }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts]);
 
@@ -255,7 +255,7 @@ const TaskEditModal = observer(
 
     return (
       taskData && (
-        <Modal
+        <FormValidatedModal
           handleClose={handleReset}
           handleSubmit={handleSubmit}
           size={mode !== 'task' ? 'lg' : 'md_up'}
@@ -321,7 +321,7 @@ const TaskEditModal = observer(
               }}
             />
           </div>
-        </Modal>
+        </FormValidatedModal>
       )
     );
   },

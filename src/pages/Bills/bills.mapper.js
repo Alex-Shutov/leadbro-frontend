@@ -41,7 +41,7 @@ export const mapBillDataToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value) => {
     switch (key) {
       case 'legal_entity_id':
-        return Number(value.id);
+        return value ? Number(value?.id) : null;
       case 'company_id':
         return Number(value.id);
       case 'stage_id':

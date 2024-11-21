@@ -18,6 +18,7 @@ import TextLink from '../../../../../../shared/Table/TextLink';
 import cn from 'classnames';
 import useStore from '../../../../../../hooks/useStore';
 import useAppApi from '../../../../../../api';
+import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
 const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceTypes = useServiceTypes();
@@ -105,11 +106,16 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   };
 
   return (
-    <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}>
+    <FormValidatedModal
+      handleSubmit={handleSubmit}
+      handleClose={handleReset}
+      size={'md'}
+    >
       <div className={styles.name}>
         {isEditMode ? 'Редактирование услуги' : 'Создание услуги'}
       </div>
       <TextInput
+        required
         placeholder={'Название услуги'}
         onChange={({ target }) =>
           handleChange(isEditMode ? 'title' : 'title', target.value)
@@ -121,6 +127,8 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
         label={'Название услуги'}
       />
       <Dropdown
+        name={'type'}
+        required
         setValue={(e) => handleChange(isEditMode ? 'type' : 'type', e[0])}
         classNameContainer={styles.input}
         renderValue={(val) => serviceTypeEnumRu[val]}
@@ -259,7 +267,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             : null
         }
       />
-    </Modal>
+    </FormValidatedModal>
   );
 });
 

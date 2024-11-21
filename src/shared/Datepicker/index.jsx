@@ -6,7 +6,7 @@ import styles from './datepicker.module.sass';
 import { parse, isValid } from 'date-fns';
 import { formatDateWithOnlyDigits } from '../../utils/formate.date';
 import cn from 'classnames';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, get } from 'react-hook-form';
 
 registerLocale('ru', ru);
 
@@ -27,14 +27,18 @@ const Calendar = ({
   const isInForm = !!formContext && name;
 
   const {
-    register,
-    formState: { errors, isSubmitted },
-    setValue: setFormValue,
-    trigger,
+    register = () => ({}),
+    formState: { errors = {}, isSubmitted = false } = {
+      errors: {},
+      isSubmitted: false,
+    },
+    setValue: setFormValue = () => {},
+    trigger = () => {},
   } = formContext || {};
 
   // Показываем ошибку если поле тронуто ИЛИ была попытка отправки формы
-  const error = isInForm && (isTouched || isSubmitted) ? errors[name] : null;
+  const error =
+    isInForm && (isTouched || isSubmitted) ? get(errors, name) : null;
 
   // Регистрируем поле в форме
   useEffect(() => {

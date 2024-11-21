@@ -24,6 +24,8 @@ const EditStage = ({ handleClose, stageId }) => {
   const [localStage, setLocalStage] = useState({
     title: '',
     status: stageStatuses.inProgress,
+    plannedTime: '',
+    actualTime: '',
     startTime: null,
     deadline: null,
     actSum: 0,
@@ -41,7 +43,6 @@ const EditStage = ({ handleClose, stageId }) => {
       setIsEditMode(false);
     }
   }, [stageId]);
-
   const handleChange = useCallback(
     (name, value, withId = true) => {
       if (isEditMode) {
@@ -73,9 +74,15 @@ const EditStage = ({ handleClose, stageId }) => {
   };
   if (stageId && !isEditMode) return <></>;
 
+  const handleReset = () => {
+    debugger;
+    stagesStore.resetDraft(stage?.id);
+    handleClose();
+  };
+
   return (
     <FormValidatedModal
-      handleClose={() => handleClose()}
+      handleClose={handleReset}
       handleSubmit={() => handleSubmit()}
       size={'lg'}
     >
@@ -96,7 +103,6 @@ const EditStage = ({ handleClose, stageId }) => {
             />
             <Dropdown
               name={'status'}
-              required={true}
               setValue={(e) => handleChange('status', e[0])}
               classNameContainer={styles.input}
               label="Статус"
@@ -105,16 +111,38 @@ const EditStage = ({ handleClose, stageId }) => {
               value={stageStatusTypesRu[stage.status] || ''}
             />
           </div>
+          {/*<div className={cn(styles.flex, styles.flex__lowerGap)}>*/}
+          {/*  <TextInput*/}
+          {/*    type={'number'}*/}
+          {/*    onChange={({ target }) =>*/}
+          {/*      handleChange('plannedTime', target.value)*/}
+          {/*    }*/}
+          {/*    name="plannedTime"*/}
+          {/*    value={stage?.plannedTime || ''}*/}
+          {/*    edited={true}*/}
+          {/*    className={styles.input}*/}
+          {/*    label="Планируемое время"*/}
+          {/*  />*/}
+          {/*  <TextInput*/}
+          {/*    type={'number'}*/}
+          {/*    onChange={({ target }) =>*/}
+          {/*      handleChange('actualTime', target.value)*/}
+          {/*    }*/}
+          {/*    name="actualTime"*/}
+          {/*    value={stage?.actualTime || ''}*/}
+          {/*    edited={true}*/}
+          {/*    className={styles.input}*/}
+          {/*    label="Фактическое время"*/}
+          {/*  />*/}
+          {/*</div>*/}
           <div className={cn(styles.flex, styles.flex__lowerGap)}>
             <Calendar
               name={'startTime'}
-              required
               label="Дата начала"
               value={stage.startTime}
               onChange={(date) => handleChange('startTime', date)}
             />
             <Calendar
-              required
               name={'deadline'}
               label="Дата окончания"
               value={stage.deadline}

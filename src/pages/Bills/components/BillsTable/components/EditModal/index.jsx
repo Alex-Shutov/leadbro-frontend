@@ -29,6 +29,7 @@ import useClientsApi from '../../../../../Clients/clients.api';
 import Icon from '../../../../../../shared/Icon';
 import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useServiceApi from '../../../../../Services/services.api';
+import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
 const EditModal = observer(({ billId, onClose, company, service, stage }) => {
   const { store: billsStore } = useBills();
@@ -195,7 +196,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         }}
         onConfirm={handleDeleteBill}
       />
-      <Modal
+      <FormValidatedModal
         handleSubmit={handleSubmit}
         handleClose={handleReset}
         size={'md'}
@@ -213,6 +214,8 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         </div>
         <div className={cn(styles.flex, styles.addZIndex)}>
           <Dropdown
+            required={true}
+            name={'legalEntity'}
             isAsync={true}
             asyncSearch={async (search) => {
               const response = await appApi.getLegalEntities(search);
@@ -229,6 +232,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             options={appStore?.legalEntities ?? []}
           />
           <TextInput
+            required={true}
             onChange={({ target }) => handleChange(target.name, target.value)}
             name={'number'}
             value={bill?.number}
@@ -241,11 +245,15 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
         <div className={cn(styles.flex, styles.addZIndex)}>
           <Calendar
+            required={true}
+            name={'creationDate'}
             label={'Дата создания'}
             value={bill?.creationDate}
             onChange={(date) => handleChange('creationDate', date)}
           />
           <Calendar
+            required={true}
+            name={'paymentDate'}
             label={'План. дата платежа'}
             value={bill?.paymentDate}
             onChange={(date) => handleChange('paymentDate', date)}
@@ -253,6 +261,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         </div>
 
         <TextInput
+          required={true}
           onChange={({ target }) => handleChange(target.name, target.value)}
           name={'paymentReason'}
           value={bill?.paymentReason}
@@ -282,6 +291,8 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         {/*/>*/}
 
         <ValuesSelector
+          required={true}
+          name={'company'}
           minInputLength={4}
           readonly={company ?? false}
           placeholder={'Клиент'}
@@ -314,6 +325,8 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
         {bill?.company?.id && (
           <ValuesSelector
+            required={true}
+            name={'service'}
             minInputLength={4}
             readonly={service ?? false}
             placeholder={'Услуга'}
@@ -350,6 +363,8 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
         {bill?.service?.id && (
           <ValuesSelector
+            required={true}
+            name={'stage'}
             minInputLength={4}
             readonly={stage ?? false}
             placeholder={'Этап'}
@@ -396,7 +411,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           items={bill?.items}
           onChange={(items) => handleChange('items', items, true)}
         />
-      </Modal>
+      </FormValidatedModal>
     </>
   );
 });

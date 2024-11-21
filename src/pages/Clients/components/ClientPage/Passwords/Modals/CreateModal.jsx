@@ -6,6 +6,7 @@ import styles from '../../../../../Services/components/ServicesTable/components/
 import cn from 'classnames';
 import ValuesSelector from '../../../../../../shared/Selector';
 import useClientsApi from '../../../../clients.api';
+import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
 const CreatePassModal = ({ companyId, onClose }) => {
   const { createPassword } = useClientsApi();
@@ -26,10 +27,18 @@ const CreatePassModal = ({ companyId, onClose }) => {
     onClose();
   };
   const handleSubmit = () => {
-    createPassword(companyId, newPass);
+    try {
+      createPassword(companyId, newPass).then(() => onClose());
+    } catch (error) {
+      console.error('Ошибка при сохранении:', error);
+    }
   };
   return (
-    <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'sm'}>
+    <FormValidatedModal
+      handleSubmit={handleSubmit}
+      handleClose={handleReset}
+      size={'sm'}
+    >
       <div className={modlaStyles.header}>
         <p>Создание пароля</p>
       </div>
@@ -45,6 +54,7 @@ const CreatePassModal = ({ companyId, onClose }) => {
       />
       <div className={modlaStyles.flexDiv}>
         <TextInput
+          required
           onChange={({ target }) => handleChange('login', target.value)}
           name={'login'}
           value={newPass.login}
@@ -54,6 +64,7 @@ const CreatePassModal = ({ companyId, onClose }) => {
           placeholder={'login'}
         />
         <TextInput
+          required
           onChange={({ target }) => handleChange('password', target.value)}
           name={'password'}
           value={newPass.password}
@@ -63,7 +74,7 @@ const CreatePassModal = ({ companyId, onClose }) => {
           placeholder={'pass'}
         />
       </div>
-    </Modal>
+    </FormValidatedModal>
   );
 };
 

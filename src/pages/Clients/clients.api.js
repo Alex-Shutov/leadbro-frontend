@@ -67,8 +67,6 @@ const useClientsApi = () => {
     setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
 
-    console.log(http.defaults, 'adapter');
-
     return http
       .post('/api/companies', body)
       .then(handleHttpResponse)

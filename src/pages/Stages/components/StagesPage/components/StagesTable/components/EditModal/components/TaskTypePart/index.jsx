@@ -37,7 +37,6 @@ const Index = ({
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
   const { members } = useMembers();
 
-  debugger;
   // const mapValuesForInput = (values) => {
   //   if (Array.isArray(values)) {
   //     return values.map((el, index) => ({
@@ -64,6 +63,8 @@ const Index = ({
         className={styles.input}
       />
       <Dropdown
+        required={true}
+        name={'type'}
         // value={selectedService}
         // setValue={handleServiceChange}
         // options={serviceOptions}

@@ -76,9 +76,10 @@ const ClientPage = observer(() => {
     }
   };
 
-  const handleSubmitPasswords = async (path, passId, submitText) => {
+  const handleSubmitPasswords = (path, passId, submitText) => {
     try {
-      await api
+      setPassModalOpen(false);
+      api
         .updatePasswords(Number(id), passId)
         .then(() => handleSubmitSnackbar(submitText));
       clients.submitDraft();
