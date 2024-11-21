@@ -34,7 +34,6 @@ const EditStage = ({ handleClose, stageId }) => {
   const stage = useMemo(() => {
     return isEditMode ? stagesStore.getById(+stageId) : localStage;
   }, [isEditMode, stageId, stagesStore.stages, stagesStore.drafts, localStage]);
-  console.log(stage.taskDescription, 'taskDescription');
   useEffect(() => {
     if (stageId) {
       setIsEditMode(true);
@@ -79,15 +78,6 @@ const EditStage = ({ handleClose, stageId }) => {
       handleClose={() => handleClose()}
       handleSubmit={() => handleSubmit()}
       size={'lg'}
-      defaultValues={{
-        title: stage.title,
-        status: stage.status,
-        startTime: stage.startTime,
-        deadline: stage.deadline,
-        actSum: stage.actSum,
-        sumByHand: stage.sumByHand,
-        taskDescription: stage.taskDescription,
-      }}
     >
       <div className={cn(styles.stageModal, additionStyles.flex)}>
         <div className={styles.flexBig}>
@@ -96,7 +86,6 @@ const EditStage = ({ handleClose, stageId }) => {
           </div>
           <div className={cn(styles.flex, additionStyles.flex)}>
             <TextInput
-              componentType="TextInput"
               onChange={({ target }) => handleChange('title', target.value)}
               name="title"
               value={stage?.title || ''}
@@ -106,7 +95,8 @@ const EditStage = ({ handleClose, stageId }) => {
               label="Название этапа"
             />
             <Dropdown
-              componentType="Dropdown"
+              name={'status'}
+              required={true}
               setValue={(e) => handleChange('status', e[0])}
               classNameContainer={styles.input}
               label="Статус"
@@ -118,11 +108,13 @@ const EditStage = ({ handleClose, stageId }) => {
           <div className={cn(styles.flex, styles.flex__lowerGap)}>
             <Calendar
               name={'startTime'}
+              required
               label="Дата начала"
               value={stage.startTime}
               onChange={(date) => handleChange('startTime', date)}
             />
             <Calendar
+              required
               name={'deadline'}
               label="Дата окончания"
               value={stage.deadline}

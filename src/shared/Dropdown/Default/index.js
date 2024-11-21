@@ -5,6 +5,7 @@ import Tooltip from '../../Tooltip';
 import useOutsideClick from '../../../hooks/useOutsideClick';
 import Chevron from './Chevron';
 import Loader from '../../Loader';
+import { useFormContext } from 'react-hook-form';
 
 const Dropdown = ({
   className,
@@ -22,41 +23,106 @@ const Dropdown = ({
   noMinWidth,
   placeholder,
   renderValue,
-  // Новые пропсы для асинхронной функциональности
   asyncSearch,
-  isAsync = false, // флаг для определения режима работы компонента
+  isAsync = false,
+  name,
+  required,
+  ...props
 }) => {
   const [visible, setVisible] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState(initialOptions);
   const [loading, setLoading] = useState(false);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [isTouched, setIsTouched] = useState(false);
 
   const ref = useRef(null);
   useOutsideClick(ref, () => setVisible(false));
+
+  // Интеграция с react-hook-form - перемещаем всю логику формы вместе
+  const formContext = useFormContext();
+  const isInForm = !!formContext && name;
+
+  const {
+    register,
+    formState: { errors, isSubmitted },
+    setValue: setFormValue,
+    trigger,
+  } = formContext || {};
+
+  // Регистрируем поле в форме если компонент внутри формы
+  const { ref: hiddenInputRef, ...registerProps } = isInForm
+    ? register(name, {
+        required: required ? 'Это поле обязательно' : false,
+        validate: (value) => {
+          if (required && !value && isTouched) {
+            return 'Это поле обязательно';
+          }
+          return true;
+        },
+      })
+    : {};
+
+  const error = isInForm && (isTouched || isSubmitted) ? errors[name] : null;
 
   const shouldShowOptions = isAsync
     ? visible && inputValue.length >= 4
     : visible;
 
-  // Эффект для обновления options при изменении initialOptions в синхронном режиме
+  const handleOpen = () => {
+    if (!isAsync) {
+      setVisible(!visible);
+    }
+    // Отмечаем поле как тронутое при первом взаимодействии
+    if (!isTouched) {
+      setIsTouched(true);
+    }
+  };
+
+  useEffect(() => {
+    if (isSubmitted) {
+      setIsTouched(true);
+    }
+  }, [isSubmitted]);
+  // При изменении value обновляем значение в форме
+  useEffect(() => {
+    if (isInForm && value !== undefined) {
+      setFormValue(name, value, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [isInForm, name, value, setFormValue]);
+
+  // Effect для initialOptions
   useEffect(() => {
     if (!isAsync) {
       setOptions(initialOptions);
     }
   }, [initialOptions, isAsync]);
 
+  // Effect для async value
   useEffect(() => {
     if (isAsync && value) {
       setInputValue(renderValue ? renderValue(value) : value);
     }
-  }, [value, isAsync]);
+  }, [value, isAsync, renderValue]);
 
-  const handleClick = (value) => {
-    setValue(value);
+  const handleClick = (selectedValue) => {
+    setValue(selectedValue);
     setVisible(false);
+    setIsTouched(true);
     if (isAsync) {
-      setInputValue(renderValue ? renderValue(value) : value);
+      setInputValue(renderValue ? renderValue(selectedValue) : selectedValue);
+    }
+
+    if (isInForm) {
+      setFormValue(name, selectedValue, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+      trigger(name);
     }
   };
 
@@ -65,14 +131,12 @@ const Dropdown = ({
     setInputValue(value);
 
     if (isAsync) {
-      // Очищаем предыдущий таймаут
       if (searchTimeout) {
         clearTimeout(searchTimeout);
       }
 
       if (value.length >= 4) {
         setLoading(true);
-        // Устанавливаем новый таймаут для дебаунса
         const newTimeout = setTimeout(async () => {
           try {
             const results = await asyncSearch(value);
@@ -83,7 +147,7 @@ const Dropdown = ({
           } finally {
             setLoading(false);
           }
-        }, 100); // 300ms дебаунс
+        }, 100);
 
         setSearchTimeout(newTimeout);
       } else {
@@ -99,6 +163,7 @@ const Dropdown = ({
           type="text"
           className={cn(styles.input, {
             [styles.input_placeholder]: !inputValue,
+            [styles.errorInput]: error,
           })}
           value={inputValue}
           onChange={handleInputChange}
@@ -112,6 +177,7 @@ const Dropdown = ({
       <div
         className={cn(styles.selection, {
           [styles.selection_placeholder]: !value,
+          [styles.errorInput]: error,
         })}
       >
         {value
@@ -126,11 +192,29 @@ const Dropdown = ({
   return (
     <div
       ref={ref}
-      className={cn(classNameContainer, { [styles.noMinWidth]: noMinWidth })}
+      className={cn(classNameContainer, {
+        [styles.noMinWidth]: noMinWidth,
+        [styles.hasError]: error,
+      })}
+      onBlur={() => setIsTouched(true)}
     >
+      {/* Скрытый input для работы с формой */}
+      {isInForm && (
+        <input
+          type="hidden"
+          {...registerProps}
+          ref={(e) => {
+            hiddenInputRef(e);
+          }}
+          value={value || ''}
+          name={name}
+        />
+      )}
+
       {label && (
         <div className={cn(styles.label, classDropdownLabel)}>
-          {label}{' '}
+          {label}
+          {required && <span className={styles.required}>*</span>}
           {tooltip && (
             <Tooltip
               className={styles.tooltip}
@@ -147,13 +231,14 @@ const Dropdown = ({
           className,
           { [styles.small]: small },
           { [styles.active]: visible },
+          { [styles.error]: error },
         )}
       >
         <div
           className={cn(styles.head, classDropdownHead, {
             [styles.head_placeholder]: isAsync ? !inputValue : !value,
           })}
-          onClick={() => !isAsync && setVisible(!visible)}
+          onClick={handleOpen}
         >
           {renderHead()}
           <Chevron direction={''} isOpen={visible} />
@@ -182,6 +267,9 @@ const Dropdown = ({
           </div>
         )}
       </div>
+      {error && isTouched && (
+        <div className={styles.errorMessage}>{error.message}</div>
+      )}
     </div>
   );
 };

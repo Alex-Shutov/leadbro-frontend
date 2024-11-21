@@ -324,3 +324,19 @@
     align-items: center
     padding: 16px
     min-height: 100px
+
+.required
+    color: $ph1 // Задайте красный цвет для звездочки
+    margin-left: 4px // Немного отступа от текста метки
+
+.error
+    &.active .head
+        box-shadow: unset
+    .head
+        &:hover
+          box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)
+
+        border-radius: 12px
+        border: 2px solid
+        border-color: #ee7373 !important  // Цвет границы, например красный
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)

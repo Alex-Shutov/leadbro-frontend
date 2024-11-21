@@ -49,3 +49,25 @@
 .datepicker_wrapper
   flex: 1
 
+.hasError
+  .datepicker_input
+    border-color: #ee7373 !important  // Цвет границы, например красный
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)
+
+.errorMessage
+  color: $n4
+  +body1-m
+  margin-top: 8px
+
+.error
+  &.active .head
+    box-shadow: unset
+  .head
+    &:hover
+      box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)
+
+    border-radius: 12px
+    border: 2px solid
+    border-color: #ee7373 !important  // Цвет границы, например красный
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.47)
+
