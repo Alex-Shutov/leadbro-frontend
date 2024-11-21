@@ -36,8 +36,8 @@ const Dropdown = ({
   useOutsideClick(ref, () => setVisible(false));
 
   const shouldShowOptions = isAsync
-      ? visible && inputValue.length >= 4
-      : visible;
+    ? visible && inputValue.length >= 4
+    : visible;
 
   // Эффект для обновления options при изменении initialOptions в синхронном режиме
   useEffect(() => {
@@ -51,8 +51,6 @@ const Dropdown = ({
       setInputValue(renderValue ? renderValue(value) : value);
     }
   }, [value, isAsync]);
-
-
 
   const handleClick = (value) => {
     setValue(value);
@@ -166,7 +164,7 @@ const Dropdown = ({
               <div className={styles.loader_container}>
                 <Loader />
               </div>
-            ) : options.length ?  (
+            ) : options.length ? (
               options.map((option, index) => (
                 <div
                   className={cn(styles.option, {
@@ -178,12 +176,16 @@ const Dropdown = ({
                   {renderOption ? renderOption(option) : option}
                 </div>
               ))
-            ) : <p className={styles.noOptions}>Нет опций для выбора</p>}
+            ) : (
+              <p className={styles.noOptions}>Нет опций для выбора</p>
+            )}
           </div>
         )}
       </div>
     </div>
   );
 };
+
+Dropdown.displayName = 'Dropdown';
 
 export default Dropdown;

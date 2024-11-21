@@ -13,6 +13,7 @@ import cn from 'classnames';
 import { stageStatusTypesRu } from '../../pages/Stages/stages.types';
 import useStageStatuses from '../../pages/Stages/hooks/useStageStatuses';
 import { useParams } from 'react-router';
+import FormValidatedModal from '../../shared/Modal/FormModal';
 
 const EditStage = ({ handleClose, stageId }) => {
   const { store: stagesStore } = useStages(stageId);
@@ -71,10 +72,19 @@ const EditStage = ({ handleClose, stageId }) => {
   if (stageId && !isEditMode) return <></>;
 
   return (
-    <Modal
+    <FormValidatedModal
       handleClose={() => handleClose()}
       handleSubmit={() => handleSubmit()}
       size={'lg'}
+      defaultValues={{
+        title: stage.title,
+        status: stage.status,
+        startTime: stage.startTime,
+        deadline: stage.deadline,
+        actSum: stage.actSum,
+        sumByHand: stage.sumByHand,
+        taskDescription: stage.taskDescription,
+      }}
     >
       <div className={cn(styles.stageModal, additionStyles.flex)}>
         <div className={styles.flexBig}>
@@ -83,14 +93,17 @@ const EditStage = ({ handleClose, stageId }) => {
           </div>
           <div className={cn(styles.flex, additionStyles.flex)}>
             <TextInput
+              componentType="TextInput"
               onChange={({ target }) => handleChange('title', target.value)}
               name="title"
               value={stage?.title || ''}
               edited={true}
+              required={true}
               className={styles.input}
               label="Название этапа"
             />
             <Dropdown
+              componentType="Dropdown"
               setValue={(e) => handleChange('status', e[0])}
               classNameContainer={styles.input}
               label="Статус"
@@ -145,7 +158,7 @@ const EditStage = ({ handleClose, stageId }) => {
           </div>
         </div>
       </div>
-    </Modal>
+    </FormValidatedModal>
   );
 };
 
