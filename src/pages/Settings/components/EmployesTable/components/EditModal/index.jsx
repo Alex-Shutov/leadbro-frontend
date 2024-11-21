@@ -142,6 +142,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       </div>
       <div className={cn(styles.flex, styles.lowZIndex)}>
         <TextInput
+          required={true}
           placeholder={'Фамилия'}
           onChange={({ target }) =>
             handleChange(isEditMode ? 'lastName' : 'last_name', target.value)
@@ -167,6 +168,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       </div>
       <div className={styles.flex}>
         <TextInput
+          required={true}
           placeholder={'Отчество'}
           onChange={({ target }) =>
             handleChange(
@@ -205,6 +207,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       </div>
       <div className={styles.flex}>
         <TextInput
+          required={true}
           placeholder={'Почта'}
           onChange={({ target }) =>
             handleChange(isEditMode ? 'email' : 'email', target.value)

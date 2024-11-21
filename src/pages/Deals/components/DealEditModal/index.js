@@ -24,6 +24,7 @@ import DeleteButton from '../../../../shared/Button/Delete';
 import CustomButtonContainer from '../../../../shared/Button/CustomButtonContainer';
 import { useNavigate } from 'react-router';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
+import FormValidatedModal from '../../../../shared/Modal/FormModal';
 
 const DealEditModal = observer(
   ({ data, handleClose, dealStore, dealApi, ...props }) => {
@@ -119,7 +120,7 @@ const DealEditModal = observer(
           }}
           onConfirm={handleDeleteDeal}
         />
-        <Modal
+        <FormValidatedModal
           customButtons={
             isEditMode && (
               <CustomButtonContainer>
@@ -137,12 +138,16 @@ const DealEditModal = observer(
           <div className={cn(styles.name, styles.name_flex)}>
             {isEditMode ? 'Редактирование сделки' : 'Создание сделки'}
             <StatusDropdown
+              required={true}
+              name={'status'}
               statuses={colorStatusDealTypes}
               value={colorStatusDealTypes[deal.status]}
               onChange={(option) => handleChange('status', option.key)}
             />
           </div>
           <TextInput
+            required={true}
+            name={'name'}
             placeholder={'Название сделки'}
             onChange={({ target }) => handleChange('name', target.value)}
             value={deal?.name || ''}
@@ -196,6 +201,8 @@ const DealEditModal = observer(
             label={'Стоимость сделки'}
           />
           <ValuesSelector
+            required={true}
+            name={'manager'}
             onChange={(e) =>
               handleChange(
                 'manager',
@@ -262,6 +269,8 @@ const DealEditModal = observer(
             }
           />
           <ValuesSelector
+            required={true}
+            name={'company'}
             minInputLength={4}
             readonly={props?.currentClient ?? false}
             placeholder={'Клиент'}
@@ -293,7 +302,7 @@ const DealEditModal = observer(
                 : null
             }
           />
-        </Modal>
+        </FormValidatedModal>
       </>
     );
   },

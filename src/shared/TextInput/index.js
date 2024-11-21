@@ -121,7 +121,12 @@ const TextInput = forwardRef(
       // Обработка для money типа
       if (props.type === 'money') {
         if (rawValue === '') {
-          handleChange('');
+          handleChange({
+            target: {
+              ...e.target,
+              value: '',
+            },
+          });
           return;
         }
 
@@ -134,17 +139,22 @@ const TextInput = forwardRef(
         ) {
           return;
         }
-        handleChange(formattedValue);
+        handleChange({
+          target: {
+            ...e.target,
+            value: formattedValue,
+          },
+        });
         return;
       }
 
-      handleChange(rawValue);
+      handleChange(e);
     };
 
     // Общий обработчик изменений
     const handleChange = (e) => {
       debugger;
-      const newValue = e;
+      const newValue = e.target.value;
 
       if (isInForm) {
         setFormValue(name, newValue, {

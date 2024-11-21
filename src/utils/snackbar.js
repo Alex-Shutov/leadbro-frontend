@@ -15,7 +15,7 @@ const showErrorsWithDelay = (errors, delay = 100) => {
 
   // Преобразуем ошибки в массив, чтобы легко итерировать
   const errorMessages = Object.entries(errors).flatMap(([field, messages]) => {
-    return messages.map((message) => `${field}: ${message}`);
+    return messages.map((message) => `${message}`);
   });
 
   // Показываем каждое сообщение с задержкой
