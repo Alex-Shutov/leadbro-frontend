@@ -74,6 +74,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   };
 
   const handleSubmit = async () => {
+    debugger;
     try {
       if (isEditMode) {
         await api.updateService(serviceId, service); // Обновляем услугу
@@ -89,6 +90,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
           ? 'Услуга успешно отредактирована'
           : 'Услуга успешно создана',
       );
+      serviceStore.submitDraft(serviceId);
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
@@ -99,6 +101,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceClient = service?.client ?? props?.client ?? null;
 
   const handleReset = () => {
+    debugger;
     if (isEditMode) {
       serviceStore.resetDraft(serviceId); // Сброс черновика в режиме редактирования
     }
@@ -120,7 +123,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
         onChange={({ target }) =>
           handleChange(isEditMode ? 'title' : 'title', target.value)
         }
-        name={isEditMode ? 'title' : 'name'}
+        name={isEditMode ? 'title' : 'title'}
         value={service?.title || ''}
         edited={true}
         className={styles.input}
@@ -232,8 +235,9 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
       {/*/>*/}
       <ValuesSelector
         minInputLength={4}
-        readonly={props?.client || isEditMode}
+        // readonly={props?.client || isEditMode}
         placeholder={'Клиент'}
+        name={'client'}
         onChange={(e) => {
           handleChange(
             'client',

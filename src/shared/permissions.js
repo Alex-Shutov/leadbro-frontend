@@ -84,3 +84,19 @@ export const PermissionGroups = {
     Permissions.DELETE_BILLS,
   ],
 };
+
+export const isValidPermission = (permission) => {
+  // Создаем список всех возможных разрешений
+  const allPermissions = [
+    ...Object.values(Permissions),
+    ...Object.values(PermissionGroups).flat(),
+  ];
+
+  // Если передан массив - проверяем каждое разрешение
+  if (Array.isArray(permission)) {
+    return permission.every((p) => allPermissions.includes(p));
+  }
+
+  // Если передано одно разрешение - проверяем его наличие в списке
+  return allPermissions.includes(permission);
+};

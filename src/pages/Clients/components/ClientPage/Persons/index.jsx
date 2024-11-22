@@ -60,6 +60,7 @@ const ClientPersons = ({ persons, onChange, onSubmit, onReset, onAdd }) => {
               <CardInput
                 name={`contactPersons.${values.id}.fio`}
                 // class
+                placeholder={'ФИО...'}
                 classInput={styles.fioInput}
                 type={'text'}
                 value={values.fio}
@@ -76,6 +77,7 @@ const ClientPersons = ({ persons, onChange, onSubmit, onReset, onAdd }) => {
           >
             <motion.div>
               <CardInput
+                placeholder={'Роль...'}
                 name={`contactPersons.${values.id}.role`}
                 type={'text'}
                 value={values.role}
@@ -87,6 +89,7 @@ const ClientPersons = ({ persons, onChange, onSubmit, onReset, onAdd }) => {
                 )}
               />
               <CardInput
+                placeholder={'Телефон...'}
                 label={'Телефон'}
                 name={`contactPersons.${values.id}.tel`}
                 type={'tel'}
@@ -99,6 +102,7 @@ const ClientPersons = ({ persons, onChange, onSubmit, onReset, onAdd }) => {
                 )}
               />
               <CardInput
+                placeholder={'Почта...'}
                 label={'Почта'}
                 name={`contactPersons.${values.id}.email`}
                 type={'email'}

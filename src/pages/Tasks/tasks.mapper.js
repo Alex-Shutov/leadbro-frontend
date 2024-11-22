@@ -4,7 +4,6 @@ import { taskableTypes } from './tasks.types';
 import { mapCommentsFromApi } from '../Clients/clients.mapper';
 
 export const mapTaskFromApi = (task, commentsData = null) => {
-  debugger;
   const taskableType = task?.related_entity?.type;
   const taskableId = task?.related_entity?.id;
 

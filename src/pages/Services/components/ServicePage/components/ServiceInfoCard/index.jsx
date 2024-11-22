@@ -15,11 +15,12 @@ import {
   formatDateWithDateAndYear,
   formatDateWithoutHours,
 } from '../../../../../../utils/formate.date';
+import PasswordsDisplay from '../PasswordsDisplay';
 
-const Index = ({ service }) => {
-  console.log(service, 'service');
+const Index = ({ service, passwords }) => {
+  console.log(service, 'service', passwords);
   return (
-    <>
+    <div className={styles.infoCards}>
       <Card
         classCardHead={styles.card_title}
         className={cn(styles.card, styles.infoCard)}
@@ -70,8 +71,19 @@ const Index = ({ service }) => {
           />
         )}
       </Card>
-    </>
+      {passwords && Object.keys(passwords).length > 0 && (
+        <PasswordsDisplay passwordsData={passwords} />
+      )}
+    </div>
   );
 };
+
+const ServicePasswordInfo = ({ password }) => (
+  <div className={styles.passwordContainer}>
+    <span className={styles.loginInfo}>{password.values.login}</span>
+    <span className={styles.separator}>|</span>
+    <span className={styles.passwordInfo}>{password.values.password}</span>
+  </div>
+);
 
 export default Index;

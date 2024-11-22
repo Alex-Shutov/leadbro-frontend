@@ -1,46 +1,85 @@
-// useBills.js
-import { useState, useCallback, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import useStore from '../../../hooks/useStore';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import useBillsApi from '../bills.api';
+import useStore from '../../../hooks/useStore';
+import { isEqual } from 'lodash';
 
 const useBills = (id = null) => {
   const { billsStore } = useStore();
   const api = useBillsApi();
   const [isLoading, setIsLoading] = useState(true);
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const currentPage = parseInt(query.get('page')) || 1;
+  const [data, setData] = useState(id ? null : []);
+  const prevDataRef = useRef(null);
+  const initialLoadDone = useRef(false);
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      if (id !== null) {
-        await api.getBillById(id);
-      } else if (!billsStore.bills.length) {
-        await api.getBills(currentPage);
+  const getActualData = useCallback(() => {
+    if (id !== null) {
+      const draft = billsStore.drafts[id];
+      if (draft) return draft;
+
+      if (billsStore.currentBill?.id === id) {
+        return billsStore.currentBill;
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id, billsStore, api, currentPage]);
 
-  useMemo(() => {
-    fetchData();
+      return billsStore.getById(id);
+    }
+    return billsStore.getBills();
   }, [id, billsStore]);
 
-  const result = useMemo(() => {
-    if (id && !billsStore.currentBill) return null;
-    if (id !== null) {
-      return billsStore.getById(id);
-    } else {
-      return billsStore;
-    }
-  }, [billsStore.currentBill, billsStore.drafts, billsStore.bills]);
+  const fetchData = useCallback(async () => {
+    if (!id || !initialLoadDone.current) {
+      setIsLoading(true);
+      try {
+        if (id !== null) {
+          await api.getBillById(id);
+        } else if (!billsStore.bills.length) {
+          await api.getBills();
+        }
 
-  return { data: result, isLoading, store: billsStore, fetchData };
+        const result = getActualData();
+        if (!isEqual(prevDataRef.current, result)) {
+          prevDataRef.current = result;
+          setData(result);
+        }
+        initialLoadDone.current = true;
+      } catch (error) {
+        console.error('Error fetching bills:', error);
+        setData(id ? null : []);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }, [id, api, billsStore, getActualData]);
+
+  useEffect(() => {
+    fetchData();
+    return () => {
+      initialLoadDone.current = false;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (initialLoadDone.current && !isLoading) {
+      const newData = getActualData();
+      if (!isEqual(prevDataRef.current, newData)) {
+        prevDataRef.current = newData;
+        setData(newData);
+      }
+    }
+  }, [
+    id,
+    billsStore.bills,
+    billsStore.drafts,
+    billsStore.currentBill,
+    isLoading,
+    getActualData,
+  ]);
+
+  return {
+    data,
+    isLoading,
+    store: billsStore,
+    refetch: fetchData,
+  };
 };
 
 export default useBills;

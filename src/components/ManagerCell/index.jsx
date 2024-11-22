@@ -5,6 +5,7 @@ import cn from 'classnames';
 import { Link } from 'react-router-dom';
 import Tooltip from '../../shared/Tooltip';
 import { loadAvatar } from '../../utils/create.utils';
+import TextLink from '../../shared/Table/TextLink';
 
 const ManagerCell = ({ manager, ...rest }) => {
   const imageSrc = manager?.image ?? manager?.avatar;
@@ -29,9 +30,9 @@ const ManagerCell = ({ manager, ...rest }) => {
       <Avatar size={42} imageSrc={imageSrc ?? loadAvatar()} />
       <div className={styles.fioContainer}>
         <div>
-          <Link>{renderName()}</Link>
+          <TextLink>{renderName()}</TextLink>
         </div>
-        <div style={{  }}>{manager?.role}</div>
+        <div style={{}}>{manager?.role}</div>
       </div>
     </div>
   );

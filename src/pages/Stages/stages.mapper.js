@@ -90,7 +90,7 @@ const mapTaskFromApi = (task) => {
     auditors: task.auditors ? task.auditors.map(mapManager) : [],
     executors: task.performer ? [task.performer].map(mapManager) : [],
     responsibles: task.responsible ? mapManager(task.responsible) : [],
-    deadline: task.deadline ? new Date(task.deadline) : new Date(),
+    deadline: task.deadline ? new Date(task.deadline) : null,
     deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не указано',
     actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не указано',
     isNewForUser: task.isNewForUser || false,
@@ -111,7 +111,7 @@ const mapComments = (comments) => {
     const comment = comments[key];
     acc[key] = {
       id: comment.id,
-      date: comment.date ? new Date(comment.date) : new Date(),
+      date: comment.date ? new Date(comment.date) : null,
       sender: mapParticipant(comment.sender),
       value: comment.value || { text: 'Текст комментария отсутствует' },
     };

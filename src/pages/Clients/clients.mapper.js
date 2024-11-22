@@ -88,7 +88,7 @@ export const mapClientFromApi = (
   };
 };
 
-const mapPasswords = (apiPasswords) => {
+export const mapPasswords = (apiPasswords) => {
   return apiPasswords?.reduce((acc, password, index) => {
     acc[password.id] = {
       id: password.id,

@@ -3,7 +3,7 @@ import useStore from '../../../hooks/useStore';
 import useServiceApi from '../services.api';
 import { useLocation } from 'react-router-dom';
 
-const useServices = (id = null) => {
+const useServices = (id = null, fromServicePage = false) => {
   const { servicesStore } = useStore();
   const api = useServiceApi();
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,8 @@ const useServices = (id = null) => {
     try {
       if (id !== null) {
         // Логика для загрузки конкретной услуги по ID
-        await api.getServiceById(id);
+
+        await api.getServiceById(id, fromServicePage);
       } else if (!servicesStore.services.length) {
         // Логика для загрузки всех услуг при пустом сторе
         await api.getServices(currentPage);
@@ -31,11 +32,11 @@ const useServices = (id = null) => {
   // Используем useMemo для вызова fetchData
   useMemo(() => {
     fetchData();
-  }, [id,servicesStore]);
+  }, [id, servicesStore]);
 
   // Возвращаем данные в зависимости от наличия ID
   const result = useMemo(() => {
-    if(id && !servicesStore.currentService) return null
+    if (id && !servicesStore.currentService) return null;
     if (id !== null) {
       return servicesStore.getById(id);
     } else {
@@ -45,7 +46,7 @@ const useServices = (id = null) => {
     // id,
     servicesStore.currentService,
     servicesStore.drafts,
-    servicesStore.services
+    servicesStore.services,
   ]);
 
   return { data: result, isLoading, store: servicesStore, fetchData };

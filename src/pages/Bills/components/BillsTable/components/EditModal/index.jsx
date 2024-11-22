@@ -7,7 +7,13 @@ import useBills from '../../../../hooks/useBills';
 import useClients from '../../../../../Clients/hooks/useClients';
 import useLegals from '../../../../../Settings/hooks/useLegals';
 import useBillsApi from '../../../../bills.api';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   handleError,
   handleSubmit as handleSubmitSnackbar,
@@ -35,12 +41,14 @@ import useServiceApi from '../../../../../Services/services.api';
 import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 import { colorStatusDealTypes } from '../../../../../Deals/deals.types';
 import StatusDropdown from '../../../../../../components/StatusDropdown';
+import { LoadingProvider } from '../../../../../../providers/LoadingProvider';
 
 const EditModal = observer(({ billId, onClose, company, service, stage }) => {
-  const { store: billsStore } = useBills();
+  const { data: data, store: billsStore, isLoading } = useBills(billId);
   const appApi = useAppApi();
   const { appStore } = useStore();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   // const {
   //   data: { clients },
   // } = useClients();
@@ -72,13 +80,24 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
   const bill = useMemo(() => {
     return isEditMode ? billsStore.getById(billId) : localBill;
-  }, [isEditMode, billId, billsStore.bills, billsStore.drafts, localBill]);
+  }, [
+    isEditMode,
+    billId,
+    billsStore.bills,
+    billsStore.currentBill,
+    billsStore.drafts,
+    localBill,
+  ]);
 
   useEffect(() => {
     const loadServices = async () => {
-      if (bill?.company?.id) {
+      debugger;
+      if (bill?.company?.id && !appStore.servicesByCompany.length) {
         try {
-          const data = await appApi.getServicesByCompany(bill?.company.id);
+          const data = await appApi.getServicesByCompany(
+            bill?.company.id ?? company?.id,
+          );
+
           const mappedServices = data.map((item) => ({
             value: item.id,
             label: item.name,
@@ -96,9 +115,11 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
   useEffect(() => {
     const loadServices = async () => {
-      if (bill?.service?.id) {
+      if (bill?.service?.id && !appStore.stagesByService.length) {
         try {
-          const data = await appApi.getStagesByService(bill?.service.id);
+          const data = await appApi.getStagesByService(
+            bill?.service.id ?? service?.id,
+          );
           const mappedServices = data.map((item) => ({
             value: item.id,
             label: item.name,
@@ -110,9 +131,21 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
         }
       }
     };
-
     loadServices();
   }, [bill?.service?.id]);
+
+  useEffect(() => {
+    // asyncSearch={async (search) => {
+    //   const response = await appApi.getLegalEntities(search);
+    //   return response;
+    // }}
+    const loadLegalEntities = async () => {
+      if (!appStore.legalEntities.length) {
+        await appApi.getLegalEntities('');
+      }
+    };
+    loadLegalEntities();
+  }, []);
 
   useEffect(() => {
     if (billId) {
@@ -220,7 +253,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             required={true}
             name={'status'}
             statuses={colorBillStatusTypes}
-            value={colorBillStatusTypes[bill.status]}
+            value={colorBillStatusTypes[bill?.status]}
             onChange={(option) => handleChange('status', option.key)}
           />
         </div>
@@ -228,11 +261,10 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           <Dropdown
             required={true}
             name={'legalEntity'}
-            isAsync={true}
-            asyncSearch={async (search) => {
-              const response = await appApi.getLegalEntities(search);
-              return response;
-            }}
+            // asyncSearch={async (search) => {
+            //   const response = await appApi.getLegalEntities(search);
+            //   return response;
+            // }}
             setValue={(e) => {
               handleChange('legalEntity', e);
             }}
@@ -367,7 +399,10 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             // })()}
             value={
               bill?.service
-                ? { value: bill?.service.id, label: bill?.service?.name ?? '' }
+                ? {
+                    value: bill?.service.id,
+                    label: bill?.service?.name ?? '',
+                  }
                 : null
             }
           />

@@ -46,16 +46,14 @@ const useUser = () => {
   const fetchUserRights = async () => {
     try {
       const response = await getUserRights();
-      debugger;
       userStore.setRights(mapPermissions(response.body));
-      debugger;
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }
   };
 
   useEffect(() => {
-    if (!userStore.rigths) {
+    if (!userStore.rights) {
       fetchUserRights();
     }
   }, []);
@@ -65,9 +63,11 @@ const useUser = () => {
       fetchUser();
     }
   }, []);
-
+  debugger;
   const user = useMemo(() => userStore.user, [userStore.user]);
+  const permissions = useMemo(() => userStore.rights, [userStore.rights]);
   return {
+    permissions,
     user,
     isLoading,
     refetch: fetchUser,

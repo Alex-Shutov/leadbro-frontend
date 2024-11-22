@@ -20,6 +20,7 @@ const MultiInputPasswords = ({
   onActions,
   param,
   index,
+  isInput = true,
 }) => {
   const length = useMemo(
     () => Object.keys(passwordData?.values ?? {}).length,
@@ -32,7 +33,7 @@ const MultiInputPasswords = ({
         ...onActions(`passwords.${index}.name`, `passwords.${index}`),
         copy: null,
       }}
-      isInput={true}
+      isInput={isInput}
       name={`passwords.${index}.name`}
       label={label}
       onAdd={() => {

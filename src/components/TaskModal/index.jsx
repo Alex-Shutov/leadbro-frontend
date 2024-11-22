@@ -11,6 +11,10 @@ import TaskDescriptionPart from '../../pages/Stages/components/StagesPage/compon
 import TaskTypePart from '../../pages/Stages/components/StagesPage/components/StagesTable/components/EditModal/components/TaskTypePart';
 import Comments from '../Comments';
 import FormValidatedModal from '../../shared/Modal/FormModal';
+import { usePermissions } from '../../providers/PermissionProvider';
+import { useNavigate } from 'react-router';
+import { Permissions } from '../../shared/permissions';
+import cn from 'classnames';
 
 const draftSet = new Set();
 
@@ -32,6 +36,8 @@ const TaskEditModal = observer(
     taskApi,
   }) => {
     const [isEditMode, _] = useState(Boolean(data));
+    const { hasPermission } = usePermissions();
+    const navigate = useNavigate();
 
     const mode = useMemo(() => {
       if (stage) return 'stage';
@@ -111,6 +117,17 @@ const TaskEditModal = observer(
     const [comments, setComments] = useState(taskData?.comments ?? {});
 
     const [isLoadingComments, setIsLoadingComments] = useState(false);
+
+    const canNavigate = useMemo(
+      () =>
+        (mode === 'stage' && hasPermission(Permissions.ACCESS_SERVICES)) ||
+        (mode === 'deal' && hasPermission(Permissions.ACCESS_DEALS)) ||
+        (mode === 'task' &&
+          ((taskData?.stage?.id &&
+            hasPermission(Permissions.ACCESS_SERVICES)) ||
+            (taskData?.deal?.id && hasPermission(Permissions.ACCESS_DEALS)))),
+      [stage, deal],
+    );
 
     const handleChange = (name, value, withId = true) => {
       debugger;
@@ -253,6 +270,21 @@ const TaskEditModal = observer(
       }
     }, [taskData?.id, isEditMode]);
 
+    const handleNavigateToTaskableEntity = () => {
+      if (!canNavigate) return;
+      if (!taskData) return;
+
+      if (taskData.stage?.id) {
+        if (hasPermission(Permissions.ACCESS_SERVICES)) {
+          // navigate(`/services/${taskData.}/stages`);
+        }
+      } else if (taskData.deal?.id) {
+        if (hasPermission(Permissions.ACCESS_DEALS)) {
+          navigate(`/deals/${taskData.deal.id}`);
+        }
+      }
+    };
+
     return (
       taskData && (
         <FormValidatedModal
@@ -264,7 +296,16 @@ const TaskEditModal = observer(
             <div>
               {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
             </div>
-            {<span>{getBelongsToText() ?? ''}</span>}
+            {
+              <span
+                onClick={handleNavigateToTaskableEntity}
+                className={cn(styles.entityLink, {
+                  [styles.clickable]: canNavigate,
+                })}
+              >
+                {getBelongsToText() ?? ''}
+              </span>
+            }
           </div>
           <div className={styles.gridContainer}>
             <TaskDescriptionPart

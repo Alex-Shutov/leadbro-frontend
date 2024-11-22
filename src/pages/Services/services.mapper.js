@@ -3,9 +3,14 @@ import { serviceStatuses } from './components/ServicePage/components/Statuses';
 import { loadAvatar } from '../../utils/create.utils';
 import { statusActTypes, statusTypes } from './services.types';
 import { formatDateToBackend } from '../../utils/formate.date';
+import { mapPasswords } from '../Clients/clients.mapper';
 
 // Маппинг данных сервиса с бэкенда
-export const mapServiceFromApi = (apiService, stagesData) => {
+export const mapServiceFromApi = (
+  apiService,
+  stagesData,
+  apiPasswords = null,
+) => {
   return {
     id: apiService?.id,
     title: apiService?.name, // Название услуги
@@ -23,6 +28,7 @@ export const mapServiceFromApi = (apiService, stagesData) => {
     status: mapServiceStatus(apiService?.active), // Статус (активна ли услуга)
     stages: mapStages(stagesData || apiService?.stages), // Этапы
     tasks: mapTasks(stagesData?.tasks || apiService?.tasks), // Задачи
+    passwords: apiPasswords ? mapPasswords(apiPasswords) : {},
   };
 };
 
@@ -58,7 +64,7 @@ const mapParticipants = (participants) => {
 // Маппинг этапов
 // Маппинг этапов
 const mapStages = (stages) => {
-  debugger
+  debugger;
 
   // Если это массив этапов (пришел из /api/services/{service_id}/stages)
   if (Array.isArray(stages)) {
@@ -206,7 +212,7 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
         return statusTypes.inProgress === value;
       case 'deadline':
         return formatDateToBackend(value);
-      case 'client':
+      case 'company_id':
         return value.id;
       default:
         return value; // По умолчанию оставить как есть
@@ -216,7 +222,7 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
   const mapKeyToBackend = (key, draft) => {
     const keyMapping = {
       manager: 'responsible_id',
-      client: 'client',
+      client: 'company_id',
       // 'client': 'company_id',
       deadline: 'deadline',
       status: 'active',

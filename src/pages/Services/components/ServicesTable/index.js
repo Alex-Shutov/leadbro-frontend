@@ -70,7 +70,7 @@ const ServicesTable = observer(() => {
         Header: 'Услуга',
         id: 'title',
         accessor: 'title',
-        minWidth:'250px',
+        minWidth: '250px',
         width: '35%',
         Cell: ({ row }) => (
           <TableLink
@@ -110,7 +110,7 @@ const ServicesTable = observer(() => {
             <Tooltip title={teamMembers}>
               <div>
                 <TableLink
-                    cls={styles.teamLink}
+                  cls={styles.teamLink}
                   name={getCorrectWordForm(data.command.length, 'участник')}
                 />
               </div>
@@ -178,7 +178,10 @@ const ServicesTable = observer(() => {
       {editModalOpen && (
         <EditModal
           serviceId={currentService?.id ?? null}
-          onClose={() => setEditModalOpen(false)}
+          onClose={() => {
+            setEditModalOpen(false);
+            setCurrentService(null);
+          }}
         />
       )}
     </>

@@ -25,21 +25,21 @@ let fakeFile = blob;
 
 resetApiProvider();
 
-mockHttp.onGet('/api/companies').reply(200, mocks.createClients());
-mockHttp.onPost('/api/companies').reply(200, mocks.createClients());
-mockHttp.onGet(/\/api\/companies\/\d+/).reply((config) => {
-  const id = parseInt(config.url.split('/').pop());
-
-  const clients = mocks.createClients();
-  const client = clients.find((c) => c.id === id);
-
-  if (client) {
-    return [200, client];
-  } else {
-    console.log(`Client with id ${id} not found`);
-    return [404, { message: 'Client not found' }];
-  }
-});
+// mockHttp.onGet('/api/companies').reply(200, mocks.createClients());
+// mockHttp.onPost('/api/companies').reply(200, mocks.createClients());
+// mockHttp.onGet(/\/api\/companies\/\d+/).reply((config) => {
+//   const id = parseInt(config.url.split('/').pop());
+//
+//   const clients = mocks.createClients();
+//   const client = clients.find((c) => c.id === id);
+//
+//   if (client) {
+//     return [200, client];
+//   } else {
+//     console.log(`Client with id ${id} not found`);
+//     return [404, { message: 'Client not found' }];
+//   }
+// });
 mockHttp.onGet(`/download/file`).reply((config) => {
   return [200, fakeFile];
 });

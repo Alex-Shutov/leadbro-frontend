@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Modal from '../index';
+import uuid from 'draft-js/lib/uuid';
 
 const FormValidatedModal = ({
   children,
@@ -41,7 +42,9 @@ const FormValidatedModal = ({
         handleClose={handleClose}
         handleSubmit={handleSubmit(onSubmit)}
       >
-        <form onSubmit={(e) => e.preventDefault()}>{children}</form>
+        <form id={uuid()} onSubmit={(e) => e.preventDefault()}>
+          {children}
+        </form>
       </Modal>
     </FormProvider>
   );

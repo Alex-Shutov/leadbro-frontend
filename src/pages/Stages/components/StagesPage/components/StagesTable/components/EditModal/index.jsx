@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { observer } from 'mobx-react';
 import useStages from '../../../../../../hooks/useStages';
 import {
@@ -16,13 +22,14 @@ import cn from 'classnames';
 import CommentsList from '../../../../../../../../components/CommentsList';
 import taskStyles from './components/TaskDescriptionPart/Description.module.sass';
 import { tasksTypes } from '../../../../../../../Tasks/tasks.types';
-import { useParams } from 'react-router';
+import { useNavigation, useParams } from 'react-router';
 import useTasksApi from '../../../../../../../Tasks/tasks.api';
 import { mapStageDataToBackend } from '../../../../../../stages.mapper';
 import {
   colorStatusTaskTypes,
   taskStatusTypes,
 } from '../../../../../../stages.types';
+import { usePermissions } from '../../../../../../../../providers/PermissionProvider';
 const draftSet = new Set();
 
 const EditModal = observer(({ stage, data, handleClose }) => {
@@ -64,6 +71,9 @@ const EditModal = observer(({ stage, data, handleClose }) => {
       stagesStore.drafts,
     ],
   );
+
+  const { hasPermission } = usePermissions();
+  const navigate = useNavigation();
 
   useEffect(() => {
     if (data) {
@@ -134,6 +144,10 @@ const EditModal = observer(({ stage, data, handleClose }) => {
     }
   };
 
+  const handleNavigateToTaskableEntity = () => {
+    hasPermission();
+  };
+
   return (
     stageTask && (
       <Modal
@@ -144,7 +158,9 @@ const EditModal = observer(({ stage, data, handleClose }) => {
       >
         <div className={styles.name}>
           <div>{isEditMode ? 'Редактирование задачи' : 'Создание задачи'}</div>
-          <span>Принадлежит к {stageTask?.stage?.title}</span>
+          <span onClick={handleNavigateToTaskableEntity}>
+            Принадлежит к {stageTask?.stage?.title}
+          </span>
         </div>
         <div className={styles.gridContainer}>
           <TaskDescriptionPart

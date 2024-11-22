@@ -143,6 +143,7 @@ const EditStage = ({ handleClose, stageId }) => {
               onChange={(date) => handleChange('startTime', date)}
             />
             <Calendar
+              required={true}
               name={'deadline'}
               label="Дата окончания"
               value={stage.deadline}

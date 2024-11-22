@@ -154,7 +154,7 @@ const Index = ({
         name={'deadlineTime'}
         type={'number'}
         value={convertToHours(deadlineTime)}
-        disabled={isEditMode}
+        // disabled={isEditMode}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
@@ -164,7 +164,7 @@ const Index = ({
         name={'actualTime'}
         onChange={({ target }) => handleChange(target.name, target.value)}
         value={convertToHours(actualTime)}
-        disabled={isEditMode}
+        // disabled={isEditMode}
         className={styles.input}
       />
 

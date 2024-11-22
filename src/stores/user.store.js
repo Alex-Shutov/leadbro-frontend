@@ -3,7 +3,7 @@ import { loadAvatar } from '../utils/create.utils';
 
 export class UserStore {
   user = null;
-  rigths = null;
+  rights = null;
   constructor(root) {
     this.root = root;
     makeAutoObservable(this);
@@ -13,13 +13,13 @@ export class UserStore {
     this.user = result;
   }
   setRights(result) {
-    this.rigths = result;
+    this.rights = result;
   }
 
   getUser() {
     return this.user;
   }
   getRigths() {
-    return this.rigths;
+    return this.rights;
   }
 }

@@ -8,7 +8,7 @@ import {
 } from '../../shared/http';
 import mocks from './services.mocks';
 import useStore from '../../hooks/useStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   mapClientDataToBackend,
   mapClientFromApi,
@@ -31,8 +31,10 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useServiceApi = () => {
   const { servicesStore } = useStore();
   const { getClientById } = useClientsApi();
+  const [isLoading, setIsLoading] = useState(false);
   const getServices = (page = 1) => {
     resetApiProvider();
+    setIsLoading(true);
     return http
       .get('/api/services', { params: { page } })
       .then(handleHttpResponse)
@@ -41,24 +43,32 @@ const useServiceApi = () => {
         servicesStore.setServices(mappedServices); // Устанавливаем клиентов в store
         servicesStore.setMetaInfoTable(res.body.meta);
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const setServices = (body) => {
+    resetApiProvider();
+    setIsLoading(true);
+
     return http
       .post('/api/services', body)
       .then(handleHttpResponse)
       .then((res) => servicesStore.setServices(res.body))
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getServiceTypes = () => {
+    resetApiProvider();
+    setIsLoading(true);
     return http
       .get('/api/services/types')
       .then(handleHttpResponse)
       .then((res) => servicesStore.setServiceTypes(res.body))
       .then(() => servicesStore.getServiceTypes())
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const postFile = (blobFile, fileName) => {
@@ -76,6 +86,7 @@ const useServiceApi = () => {
   };
 
   const createService = (body) => {
+    setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
     const currentPage = getCurrentPage();
     const clientId = body?.client?.id;
@@ -93,11 +104,13 @@ const useServiceApi = () => {
         }
         return res;
       })
-      .catch(handleShowError);
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   };
 
   const updateService = (serviceId, updateData) => {
     resetApiProvider();
+    setIsLoading(true);
     updateData = mapServiceDataToBackend(
       servicesStore.drafts[serviceId],
       servicesStore.changedProps,
@@ -106,27 +119,48 @@ const useServiceApi = () => {
       .patch(`/api/services/${serviceId}`, updateData)
       .then(handleHttpResponse)
       .then(() => getServiceById(serviceId))
-      .catch(handleShowError);
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   };
 
-  const getServiceById = (serviceId) => {
+  const getServiceById = (serviceId, fromServicePage = false) => {
+    setIsLoading(true);
     resetApiProvider();
+
+    // Сначала получаем основные данные сервиса и этапы
     return Promise.all([
       http.get(`/api/services/${serviceId}`),
       http.get(`/api/services/${serviceId}/stages`),
     ])
       .then(([serviceRes, stagesRes]) => {
-        const serviceData = serviceRes.data.data; // Данные сервиса
-        const stagesData = stagesRes.data.data; // Массив этапов
+        const serviceData = serviceRes.data.data;
+        const stagesData = stagesRes.data.data;
+        debugger;
+        // Если мы на странице сервиса и есть id клиента, получаем пароли
+        if (fromServicePage && serviceData?.company.id !== null) {
+          resetApiProvider();
+          return http
+            .get(`/api/companies/${serviceData.company.id}/passwords`)
+            .then((passwordsRes) => {
+              debugger;
+              const passwordsData = passwordsRes.data.data;
+              // Маппим сервис с паролями
+              const mappedService = mapServiceFromApi(
+                serviceData,
+                stagesData,
+                passwordsData,
+              );
+              servicesStore.setCurrentService(mappedService);
+              return mappedService;
+            });
+        }
 
         const mappedService = mapServiceFromApi(serviceData, stagesData);
-
-        // changeCurrentElementById(servicesStore.services, setServices, mappedService);
         servicesStore.setCurrentService(mappedService);
-
         return mappedService;
       })
-      .catch(handleHttpError);
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   };
 
   return {
@@ -136,6 +170,7 @@ const useServiceApi = () => {
     getServices,
     getServiceTypes,
     createService,
+    isLoading,
   };
 };
 
