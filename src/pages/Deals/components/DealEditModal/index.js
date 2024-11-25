@@ -179,7 +179,7 @@ const DealEditModal = observer(
               value={sourceTypeRu[deal.status] || ''}
               edited={true}
               className={styles.input}
-              options={Object.entries(sourceType)}
+              options={Object.entries(sourceTypeRu)}
               label={'Рекламный источник'}
             />
             <Dropdown
