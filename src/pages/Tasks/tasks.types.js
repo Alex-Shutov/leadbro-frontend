@@ -7,6 +7,9 @@ export const tasksTypes = {
   analytics: 'analytics',
   brief: 'brief',
   calculation: 'calculation',
+  target: 'target',
+  context: 'context',
+  copywriting: 'copywriting',
 };
 
 export const tasksTypesRu = {

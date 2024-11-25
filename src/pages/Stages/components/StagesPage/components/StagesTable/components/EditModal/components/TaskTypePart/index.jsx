@@ -58,7 +58,7 @@ const Index = ({
         label={'Связанная задача'}
         name={'taskLinked'}
         value={taskLinked}
-        disabled={isEditMode}
+        disabled={false}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />

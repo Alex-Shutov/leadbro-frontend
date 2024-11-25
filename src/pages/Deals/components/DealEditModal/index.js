@@ -31,6 +31,8 @@ import { useNavigate } from 'react-router';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import FormValidatedModal from '../../../../shared/Modal/FormModal';
 import { stageStatusTypesRu } from '../../../Stages/stages.types';
+import { tasksTypesRu } from '../../../Tasks/tasks.types';
+import useMappedObj from '../../../../hooks/useMappedObj';
 
 const DealEditModal = observer(
   ({ data, handleClose, dealStore, dealApi, ...props }) => {
@@ -39,6 +41,7 @@ const DealEditModal = observer(
     const navigate = useNavigate();
     const { data: companies } = useClients();
     const serviceTypes = useServiceTypes();
+    const sourceTypes = useMappedObj(sourceType);
     const appApi = useAppApi();
     const [isEditMode, setIsEditMode] = useState(data?.id ?? false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -46,7 +49,7 @@ const DealEditModal = observer(
     const [localDeal, setLocalDeal] = useState({
       name: '',
       description: ' ',
-      source: '',
+      source: sourceType.seo,
       serviceType: serviceTypeEnum.seo,
       price: '',
       status: dealStatusTypes.new_lead,
@@ -97,7 +100,7 @@ const DealEditModal = observer(
         console.error('Ошибка при сохранении:', error);
       }
     };
-
+    console.log(deal, 'deal123');
     const handleDeleteDeal = () => {
       dealApi
         .deleteDeal(deal.id)
@@ -174,12 +177,22 @@ const DealEditModal = observer(
           />
           <div className={styles.flex}>
             <Dropdown
+              classNameContainer={styles.input}
+              name={'source'}
               placeholder={'Источник'}
-              setValue={(e) => handleChange('source', e[0])}
-              value={sourceTypeRu[deal.status] || ''}
+              setValue={(e) => {
+                return handleChange('source', e[0]);
+              }}
+              value={
+                deal?.source
+                  ? serviceTypes?.find((el) => el[0] === deal?.source)[0]
+                  : ''
+              }
               edited={true}
-              className={styles.input}
-              options={Object.entries(sourceTypeRu)}
+              renderValue={(value) => sourceTypeRu[value]}
+              // renderValue={(value)=>value}
+              renderOption={(option) => sourceTypeRu[option[0]]}
+              options={sourceTypes}
               label={'Рекламный источник'}
             />
             <Dropdown
