@@ -151,7 +151,7 @@ const StagesTable = observer(({ stage }) => {
         },
       },
     ];
-  }, [paginatedData]);
+  }, []);
 
   const sumActualTime = useMemo(() => {
     const totalHours = Object.values(stage?.tasks)?.reduce(
