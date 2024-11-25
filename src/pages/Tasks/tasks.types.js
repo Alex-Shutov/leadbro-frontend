@@ -10,14 +10,17 @@ export const tasksTypes = {
 };
 
 export const tasksTypesRu = {
-  frontend: 'Фронтенд',
-  backend: 'Бэкенд',
+  frontend: 'Frontend',
+  backend: 'Backend',
   seo: 'SEO',
   design: 'Дизайн',
-  internal: 'Внутренний',
+  internal: 'Задача LEadBRO',
   analytics: 'Аналитика',
   brief: 'Бриф',
-  calculation: 'Расчет',
+  calculation: 'Оценка',
+  target: 'Контекстная реклама',
+  context: 'Таргетированная реклама',
+  copywriting: 'Наполнение',
 };
 
 export const taskableTypes = {
@@ -34,4 +37,7 @@ export const colorTasksTypes = {
   analytics: { status: tasksTypesRu.analytics, class: 'status-grey' },
   brief: { status: tasksTypesRu.brief, class: 'status-brown' },
   calculation: { status: tasksTypesRu.calculation, class: 'status-pink' },
+  target: { status: tasksTypesRu.target, class: 'status-aqua' },
+  context: { status: tasksTypesRu.context, class: 'status-light-green' },
+  copywriting: { status: tasksTypesRu.copywriting, class: 'status-dark-green' },
 };

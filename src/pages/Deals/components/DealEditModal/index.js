@@ -3,7 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import useMembers from '../../../Members/hooks/useMembers';
 import useClients from '../../../Clients/hooks/useClients';
-import { colorStatusDealTypes, dealStatusTypes } from '../../deals.types';
+import {
+  colorStatusDealTypes,
+  dealStatusTypes,
+  sourceType,
+  sourceTypeRu,
+} from '../../deals.types';
 import {
   serviceTypeEnum,
   serviceTypeEnumRu,
@@ -25,6 +30,7 @@ import CustomButtonContainer from '../../../../shared/Button/CustomButtonContain
 import { useNavigate } from 'react-router';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import FormValidatedModal from '../../../../shared/Modal/FormModal';
+import { stageStatusTypesRu } from '../../../Stages/stages.types';
 
 const DealEditModal = observer(
   ({ data, handleClose, dealStore, dealApi, ...props }) => {
@@ -167,12 +173,13 @@ const DealEditModal = observer(
             label={'Комментарий'}
           />
           <div className={styles.flex}>
-            <TextInput
+            <Dropdown
               placeholder={'Источник'}
-              onChange={({ target }) => handleChange('source', target.value)}
-              value={deal?.source || ''}
+              setValue={(e) => handleChange('source', e[0])}
+              value={sourceTypeRu[deal.status] || ''}
               edited={true}
               className={styles.input}
+              options={Object.entries(sourceType)}
               label={'Рекламный источник'}
             />
             <Dropdown

@@ -56,7 +56,7 @@ const useClientsApi = () => {
       .then((res) => {
         const mappedClients = res.body.data.map((e) => mapClientFromApi(e));
         clientsStore.setClients(mappedClients); // Устанавливаем клиентов в store
-        clientsStore.setMetaInfoTable(res.body.meta);
+        clientsStore.setMetaInfoTable(res.body?.meta);
       })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
