@@ -44,7 +44,8 @@ import StatusDropdown from '../../../../../../components/StatusDropdown';
 import { LoadingProvider } from '../../../../../../providers/LoadingProvider';
 
 const EditModal = observer(({ billId, onClose, company, service, stage }) => {
-  const { data: data, store: billsStore, isLoading } = useBills(billId);
+  stage && useBills(billId);
+  const { billsStore } = useStore();
   const appApi = useAppApi();
   const { appStore } = useStore();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -171,7 +172,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
 
     try {
       if (isEditMode) {
-        await api.updateBill(billId, bill);
+        await api.updateBill(billId, bill, Boolean(stage?.id));
       } else {
         await api
           .createBill({

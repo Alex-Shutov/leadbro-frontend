@@ -76,6 +76,7 @@ const BillsTable = observer(() => {
   ];
 
   useEffect(() => {
+    debugger;
     api.getBills(
       currentPage,
       from ?? formatDateToQuery(new Date()),

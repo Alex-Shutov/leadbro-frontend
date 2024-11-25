@@ -1,7 +1,7 @@
 // billsApi.js
 
 import useStore from '../../hooks/useStore';
-import { getQueryParam } from '../../utils/window.utils';
+import { getPageTypeFromUrl, getQueryParam } from '../../utils/window.utils';
 import { mapBillDataToBackend, mapBillFromApi } from './bills.mapper';
 import {
   handleHttpError,
@@ -13,9 +13,17 @@ import {
 import { useState } from 'react';
 import { API_URL } from '../../shared/constants';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
+import { startOfDay, sub } from 'date-fns';
+import useQueryParam from '../../hooks/useQueryParam';
+import { formatDateForUrl } from './components/BillsTable';
+import useStageApi from '../Stages/stages.api';
+import useServiceApi from '../Services/services.api';
+import { useParams } from 'react-router';
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
+  const serviceApi = useServiceApi();
+  const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to) => {
     resetApiProvider();
@@ -55,23 +63,67 @@ const useBillsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const updateBill = (billId, updateData) => {
+  const updateBill = (billId, updateData, stageMode = false) => {
+    const today = startOfDay(new Date());
+    const page = getQueryParam('page', 1);
+    const monthAgo = sub(today, { months: 1 });
+    const todayFormatted = formatDateForUrl(today);
+
+    const monthAgoFormatted = formatDateForUrl(monthAgo);
+
+    const from = getQueryParam('from', monthAgoFormatted);
+    const to = getQueryParam('to', todayFormatted);
     resetApiProvider();
     setIsLoading(true);
 
-    updateData = mapBillDataToBackend(
+    const allowedFields = [
+      'legal_entity_id',
+      'creation_date',
+      'number',
+      'payment_date',
+      'payment_reason',
+      'stage_id',
+      'status',
+      'bill_items',
+    ];
+
+    let dataToUpdate = mapBillDataToBackend(
       billsStore.drafts[billId],
       billsStore.changedProps,
     );
+    if (dataToUpdate.bill_items) {
+      const allowedItemFields = [
+        'name',
+        'price',
+        'quantity',
+        'measurement_unit',
+      ];
+      dataToUpdate.bill_items = dataToUpdate.bill_items.map((item) => {
+        const sanitizedItem = sanitizeObjectForBackend(item, allowedItemFields);
+
+        if (sanitizedItem.hasOwnProperty('measurementUnit')) {
+          delete sanitizedItem.measurementUnit;
+        }
+
+        return sanitizedItem;
+      });
+    }
+
+    const sanitizedData = sanitizeObjectForBackend(dataToUpdate, allowedFields);
+
     return http
-      .patch(`/api/bills/${billId}`, updateData)
+      .patch(`/api/bills/${billId}`, sanitizedData)
       .then(handleHttpResponse)
-      .then(() => getBillById(billId))
+      .then(() => {
+        if (!stageMode) return getBills(page, from, to);
+        return serviceApi.getServiceById(id, true);
+      })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
   };
 
   const getBillById = (billId) => {
+    const page = getQueryParam('page', 1);
     resetApiProvider();
     setIsLoading(true);
 

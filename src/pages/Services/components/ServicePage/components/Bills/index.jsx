@@ -11,7 +11,8 @@ import Button from '../../../../../../shared/Button';
 import Icon from '../../../../../../shared/Icon';
 import cn from 'classnames';
 import EditModal from '../../../../../Bills/components/BillsTable/components/EditModal';
-const Bills = ({ bills, service, company, stage }) => {
+import { observer } from 'mobx-react';
+const Bills = observer(({ bills, service, company, stage }) => {
   const downloadBill = (url) => {
     window.open(url, '_blank');
   };
@@ -160,6 +161,6 @@ const Bills = ({ bills, service, company, stage }) => {
   //         ))}
   //     </div>
   // );
-};
+});
 
 export default Bills;
