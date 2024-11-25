@@ -32,6 +32,7 @@ import { LoadingProvider } from '../../../../providers/LoadingProvider';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar';
 import CreateClientsModal from './Persons/Modals/CreateClientsModal';
 import Comments from '../../../../components/Comments';
+import useParamSearch from '../../../../hooks/useParamSearch';
 
 const ClientPage = observer(() => {
   let { id } = useParams();

@@ -256,14 +256,14 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  // Удаление клиента
-  const deleteClient = (id) => {
+  const deleteClient = (id, page) => {
     resetApiProvider();
+    const pageFromUrl = page ?? getQueryParam('page', 1);
     setIsLoading(true);
     return http
       .delete(`/api/clients/${id}`)
       .then(handleHttpResponse)
-      .then(() => getClientById(id))
+      .then(() => getClients(pageFromUrl))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
   };

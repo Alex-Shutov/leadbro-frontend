@@ -8,7 +8,7 @@ import {
 } from '../../shared/http';
 import mocks from './stages.mocks';
 import useStore from '../../hooks/useStore';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getQueryParam } from '../../utils/window.utils';
 import {
   mapServiceDataToBackend,
@@ -54,6 +54,7 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useStageApi = () => {
   const { stagesStore } = useStore();
   const serviceApi = useServiceApi();
+  const [isLoading, setIsLoading] = useState(false);
   const { id: serviceId } = useParams();
 
   const getTaskStages = (stageId, page = null) => {
@@ -167,6 +168,18 @@ const useStageApi = () => {
     const form = new FormData();
   };
 
+  const deleteStage = (id, page) => {
+    resetApiProvider();
+    const pageFromUrl = page ?? getQueryParam('page', 1);
+    setIsLoading(true);
+    return http
+      .delete(`/api/service/${id}`)
+      .then(handleHttpResponse)
+      .then(() => servicesApi.getServiceById(id))
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     createStage,
     updateStage,
@@ -175,6 +188,8 @@ const useStageApi = () => {
     getStageTypes,
     getStageById,
     getTemplateTypes,
+    deleteStage,
+    isLoading,
   };
 };
 

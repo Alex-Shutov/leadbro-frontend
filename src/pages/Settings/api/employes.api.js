@@ -108,6 +108,18 @@ const useEmployesApi = () => {
       .catch(handleHttpError);
   };
 
+  const deleteEmployee = (id, page) => {
+    resetApiProvider();
+    const pageFromUrl = page ?? getQueryParam('page', 1);
+    setIsLoading(true);
+    return http
+      .delete(`/api/legal_enitites/${id}`)
+      .then(handleHttpResponse)
+      .then(() => getEmployes(pageFromUrl))
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     isLoading,
     getEmployeById,
@@ -115,6 +127,7 @@ const useEmployesApi = () => {
     getEmployeTypes,
     createEmploye,
     updateEmploye,
+    deleteEmployee,
   };
 };
 

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { taskableTypes, tasksTypes } from '../../pages/Tasks/tasks.types';
 import { taskStatusTypes } from '../../pages/Stages/stages.types';
-import { handleError } from '../../utils/snackbar';
+import { handleError, handleInfo } from '../../utils/snackbar';
 import { mapStageDataToBackend } from '../../pages/Stages/stages.mapper';
 import Modal from '../../shared/Modal';
 import styles from './Modal.module.sass';
@@ -12,9 +12,13 @@ import TaskTypePart from '../../pages/Stages/components/StagesPage/components/St
 import Comments from '../Comments';
 import FormValidatedModal from '../../shared/Modal/FormModal';
 import { usePermissions } from '../../providers/PermissionProvider';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Permissions } from '../../shared/permissions';
 import cn from 'classnames';
+import ConfirmationModal from '../ConfirmationModal';
+import useParamSearch from '../../hooks/useParamSearch';
+import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
+import DeleteButton from '../../shared/Button/Delete';
 
 const draftSet = new Set();
 
@@ -38,6 +42,9 @@ const TaskEditModal = observer(
     const [isEditMode, _] = useState(Boolean(data));
     const { hasPermission } = usePermissions();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const pageFrom = useParamSearch('page' ?? 1);
 
     const mode = useMemo(() => {
       if (stage) return 'stage';
@@ -217,9 +224,9 @@ const TaskEditModal = observer(
     const getBelongsToText = () => {
       switch (mode) {
         case 'stage':
-          return `Принадлежит к: ${taskData.stage.title ?? stage?.title}`;
+          return `Принадлежит к: ${taskData?.stage?.title ?? stage?.title}`;
         case 'deal':
-          return `Принадлежит к: ${taskData.deal.title ?? deal?.name}`;
+          return `Принадлежит к: ${taskData?.deal?.title ?? deal?.name}`;
         case 'task':
           return isEditMode
             ? taskData?.stage?.id || taskData?.deal?.id
@@ -285,84 +292,114 @@ const TaskEditModal = observer(
       }
     };
 
+    const handleDeleteTask = async () => {
+      try {
+        await taskApi.deleteTask(taskData?.id, pageFrom);
+        handleInfo('Задача удалена');
+        navigate(location.search);
+      } catch (e) {
+        handleInfo('Ошибка при удалении задача:', e);
+      }
+    };
+
     return (
       taskData && (
-        <FormValidatedModal
-          handleClose={handleReset}
-          handleSubmit={handleSubmit}
-          size={mode !== 'task' ? 'lg' : 'md_up'}
-        >
-          <div className={styles.name}>
-            <div>
-              {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
-            </div>
-            {
-              <span
-                onClick={handleNavigateToTaskableEntity}
-                className={cn(styles.entityLink, {
-                  [styles.clickable]: canNavigate,
-                })}
-              >
-                {getBelongsToText() ?? ''}
-              </span>
+        <>
+          <ConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleDeleteTask}
+            label="Вы уверены, что хотите удалить задачу?"
+          />
+          <FormValidatedModal
+            handleClose={handleReset}
+            handleSubmit={handleSubmit}
+            customButtons={
+              isEditMode && (
+                <CustomButtonContainer>
+                  <DeleteButton
+                    handleDelete={() => setIsDeleteModalOpen(true)}
+                    label={'Удалить задачу '}
+                  />
+                </CustomButtonContainer>
+              )
             }
-          </div>
-          <div className={styles.gridContainer}>
-            <TaskDescriptionPart
-              selectedStatus={taskData.taskStatus}
-              prefix={
-                isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
-              }
-              handleSave={() => handleSubmit('Задача принята')}
-              handleDecline={handleDecline}
-              className={styles.taskDescription}
-              data={taskData}
-              handleChange={handleChange}
-            />
-            {isEditMode && (
-              <div className={styles.comments}>
-                <Comments
-                  onDelete={(commentId) =>
-                    taskApi
-                      .getTaskById(data?.id)
-                      .then(() => handleRemoveComment(commentId))
-                  }
-                  belongsTo={'tasks'}
-                  entityId={taskData.id}
-                  comments={comments}
-                  prefix={
-                    isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
-                  }
-                  onChange={handleAddComment}
-                />
+            size={mode !== 'task' ? 'lg' : 'md_up'}
+          >
+            <div className={styles.name}>
+              <div>
+                {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
               </div>
-            )}
-            <TaskTypePart
-              isEditMode={isEditMode}
-              types={Object.keys(tasksTypes)}
-              className={styles.taskType}
-              data={
-                Array.isArray(taskData.responsibles)
-                  ? taskData
-                  : { ...taskData, responsibles: [taskData.responsibles] }
+              {
+                <span
+                  onClick={handleNavigateToTaskableEntity}
+                  className={cn(styles.entityLink, {
+                    [styles.clickable]: canNavigate,
+                  })}
+                >
+                  {getBelongsToText() ?? ''}
+                </span>
               }
-              handleAdd={(name, payload) => {
-                const fieldName =
-                  isEditMode && mode !== 'task'
-                    ? `tasks.${data.id}.${name}`
-                    : name;
-                handleChange(fieldName, payload, false);
-              }}
-              handleChange={(name, value, withId) => {
-                const fieldName =
-                  isEditMode && mode !== 'task'
-                    ? `tasks.${data.id}.${name}`
-                    : name;
-                handleChange(fieldName, value, withId);
-              }}
-            />
-          </div>
-        </FormValidatedModal>
+            </div>
+            <div className={styles.gridContainer}>
+              <TaskDescriptionPart
+                selectedStatus={taskData.taskStatus}
+                prefix={
+                  isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
+                }
+                handleSave={() => handleSubmit('Задача принята')}
+                handleDecline={handleDecline}
+                className={styles.taskDescription}
+                data={taskData}
+                handleChange={handleChange}
+              />
+              {isEditMode && (
+                <div className={styles.comments}>
+                  <Comments
+                    onDelete={(commentId) =>
+                      taskApi
+                        .getTaskById(data?.id)
+                        .then(() => handleRemoveComment(commentId))
+                    }
+                    belongsTo={'tasks'}
+                    entityId={taskData.id}
+                    comments={comments}
+                    prefix={
+                      isEditMode && mode !== 'task'
+                        ? `tasks.${taskData.id}.`
+                        : ''
+                    }
+                    onChange={handleAddComment}
+                  />
+                </div>
+              )}
+              <TaskTypePart
+                isEditMode={isEditMode}
+                types={Object.keys(tasksTypes)}
+                className={styles.taskType}
+                data={
+                  Array.isArray(taskData.responsibles)
+                    ? taskData
+                    : { ...taskData, responsibles: [taskData.responsibles] }
+                }
+                handleAdd={(name, payload) => {
+                  const fieldName =
+                    isEditMode && mode !== 'task'
+                      ? `tasks.${data.id}.${name}`
+                      : name;
+                  handleChange(fieldName, payload, false);
+                }}
+                handleChange={(name, value, withId) => {
+                  const fieldName =
+                    isEditMode && mode !== 'task'
+                      ? `tasks.${data.id}.${name}`
+                      : name;
+                  handleChange(fieldName, value, withId);
+                }}
+              />
+            </div>
+          </FormValidatedModal>
+        </>
       )
     );
   },

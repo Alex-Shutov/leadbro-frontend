@@ -55,10 +55,10 @@ const Index = ({
   return (
     <div className={className}>
       <TextInput
+        disabled={false}
         label={'Связанная задача'}
         name={'taskLinked'}
         value={taskLinked}
-        disabled={isEditMode}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
@@ -155,6 +155,7 @@ const Index = ({
         type={'number'}
         value={convertToHours(deadlineTime)}
         // disabled={isEditMode}
+        disabled={false}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
@@ -164,7 +165,7 @@ const Index = ({
         name={'actualTime'}
         onChange={({ target }) => handleChange(target.name, target.value)}
         value={convertToHours(actualTime)}
-        // disabled={isEditMode}
+        disabled={false}
         className={styles.input}
       />
 

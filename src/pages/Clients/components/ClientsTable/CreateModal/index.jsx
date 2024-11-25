@@ -15,15 +15,23 @@ import StatusDropdown from '../../../../../components/StatusDropdown';
 import FormValidatedModal from '../../../../../shared/Modal/FormModal';
 import {
   handleError,
+  handleInfo,
   handleSubmit as handleSubmitSnackbar,
 } from '../../../../../utils/snackbar';
+import DownloadButton from '../../../../../shared/Button/Download';
+import DeleteButton from '../../../../../shared/Button/Delete';
+import useParamSearch from '../../../../../hooks/useParamSearch';
+import ConfirmationModal from '../../../../../components/ConfirmationModal';
 
 const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { clientsStore } = useStore(); // Подключение к MobX Store
-  const { createCompany, updateCompany } = useClientsApi();
+  const { createCompany, updateCompany, deleteClient } = useClientsApi();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { members } = useMembers();
   // Локальное состояние для создания нового клиента
+  const pageFrom = useParamSearch('page');
+
   const [localClient, setLocalClient] = useState({
     title: '',
     address: '',
@@ -117,6 +125,15 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     return [];
   };
 
+  const handleDeleteClient = async () => {
+    try {
+      await deleteClient(clientId, pageFrom);
+      handleInfo('Клиент удален');
+    } catch (e) {
+      handleInfo('Ошибка при удалении клиента:', e);
+    }
+  };
+
   useEffect(() => {
     if (client?.manager) {
       setMappedResponsibles(mapValuesForInput([client.manager]));
@@ -125,133 +142,159 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
 
   return (
     client && (
-      <FormValidatedModal
-        handleSubmit={handleSubmit}
-        handleClose={handleReset}
-        size={'md'}
-      >
-        <div className={modlaStyles.header}>
-          <p>{isEditMode ? 'Редактирование клиента' : 'Создание клиента'}</p>
-          <StatusDropdown
-            name={'status'}
-            required={true}
-            statuses={colorStatusTypes}
-            value={selectedStatus}
-            onChange={(option) => handleChange('status', option.key)}
-          />
-        </div>
-        <TextInput
-          onChange={({ target }) => handleChange('title', target.value)}
-          name={'title'}
-          value={client?.title || ''}
-          edited={true}
-          className={styles.input}
-          label={'Название'}
-          placeholder={'ООО «Компания»'}
-          required
+      <>
+        <ConfirmationModal
+          label={'Вы действительно хотите удалить клиента?'}
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+          }}
+          onConfirm={handleDeleteClient}
         />
-        <div className={modlaStyles.flexDiv}>
+        <FormValidatedModal
+          handleSubmit={handleSubmit}
+          handleClose={handleReset}
+          size={'md'}
+          customButtons={
+            isEditMode && (
+              <>
+                <DeleteButton
+                  label={'Удалить клиента'}
+                  handleDelete={() => setIsDeleteModalOpen(true)}
+                />
+              </>
+            )
+          }
+        >
+          <div className={modlaStyles.header}>
+            <p>{isEditMode ? 'Редактирование клиента' : 'Создание клиента'}</p>
+            <StatusDropdown
+              name={'status'}
+              required={true}
+              statuses={colorStatusTypes}
+              value={selectedStatus}
+              onChange={(option) => handleChange('status', option.key)}
+            />
+          </div>
           <TextInput
-            onChange={({ target }) =>
-              handleChange(
-                isEditMode ? 'contactData.tel.0' : 'tel',
-                target.value,
-              )
-            }
-            name={isEditMode ? 'contactData.tel.0' : 'tel'}
-            value={isEditMode ? client?.contactData?.tel[0] || '' : client.tel}
+            onChange={({ target }) => handleChange('title', target.value)}
+            name={'title'}
+            value={client?.title || ''}
             edited={true}
-            className={cn(styles.input, modlaStyles.grow)}
-            label={'Телефон'}
-            placeholder={'+79999999999'}
+            className={styles.input}
+            label={'Название'}
+            placeholder={'ООО «Компания»'}
+            required
           />
+          <div className={modlaStyles.flexDiv}>
+            <TextInput
+              onChange={({ target }) =>
+                handleChange(
+                  isEditMode ? 'contactData.tel.0' : 'tel',
+                  target.value,
+                )
+              }
+              name={isEditMode ? 'contactData.tel.0' : 'tel'}
+              value={
+                isEditMode ? client?.contactData?.tel[0] || '' : client.tel
+              }
+              edited={true}
+              className={cn(styles.input, modlaStyles.grow)}
+              label={'Телефон'}
+              placeholder={'+79999999999'}
+            />
+            <TextInput
+              onChange={({ target }) =>
+                handleChange(
+                  isEditMode ? 'contactData.email.0' : 'email',
+                  target.value,
+                )
+              }
+              name={'contactData.email.0'}
+              value={
+                isEditMode ? client?.contactData?.email[0] || '' : client.email
+              }
+              edited={true}
+              className={cn(styles.input, modlaStyles.grow)}
+              label={'Почта'}
+              placeholder={'email@example.ru'}
+            />
+          </div>
           <TextInput
+            placeholder={'Страна, регион, город, адрес'}
             onChange={({ target }) =>
               handleChange(
-                isEditMode ? 'contactData.email.0' : 'email',
+                isEditMode ? 'contactData.address.0' : 'address',
                 target.value,
               )
             }
-            name={'contactData.email.0'}
+            name={'contactData.address.0'}
             value={
-              isEditMode ? client?.contactData?.email[0] || '' : client.email
+              isEditMode
+                ? client?.contactData?.address[0] || ''
+                : client.address
             }
             edited={true}
-            className={cn(styles.input, modlaStyles.grow)}
-            label={'Почта'}
-            placeholder={'email@example.ru'}
+            className={styles.input}
+            label={'Адрес'}
           />
-        </div>
-        <TextInput
-          placeholder={'Страна, регион, город, адрес'}
-          onChange={({ target }) =>
-            handleChange(
-              isEditMode ? 'contactData.address.0' : 'address',
-              target.value,
-            )
-          }
-          name={'contactData.address.0'}
-          value={
-            isEditMode ? client?.contactData?.address[0] || '' : client.address
-          }
-          edited={true}
-          className={styles.input}
-          label={'Адрес'}
-        />
-        <ValuesSelector
-          name={'manager'}
-          required={true}
-          onChange={(e) =>
-            handleChange(
-              'manager',
-              e.length
-                ? members.filter((member) =>
-                    e.some((option) => option.value === member.id),
-                  )[0]
-                : null,
-            )
-          }
-          isMulti={false}
-          placeholder={'Выберите ответственного'}
-          label="Ответственный"
-          options={members.map((el) => ({
-            value: el.id,
-            label: `${el?.name ?? ''} ${el?.surname ?? ''}`,
-          }))}
-          value={
-            client?.manager?.id != null
-              ? {
-                  value: client?.manager?.id,
-                  label: `${client?.manager?.name ?? ''} ${client?.manager?.surname ?? ''}`,
-                }
-              : null
-          }
-        />
-        <TextInput
-          onChange={({ target }) => handleChange('description', target.value)}
-          name={'description'}
-          value={client?.description === '' ? ' ' : client?.description}
-          edited={true}
-          className={styles.input}
-          label={'Описание'}
-          type={'editor'}
-          placeholder={'Введите описание клиента'}
-        />
-        <TextInput
-          onChange={({ target }) =>
-            handleChange(
-              isEditMode ? 'contactData.site.0' : 'site',
-              target.value,
-            )
-          }
-          name={'contactData.site.0'}
-          value={isEditMode ? client?.contactData?.site[0] || '' : client.site}
-          edited={true}
-          className={styles.input}
-          label={'Сайт'}
-          placeholder={'Введите сайт'}
-        />
-      </FormValidatedModal>
+          <ValuesSelector
+            name={'manager'}
+            required={true}
+            onChange={(e) =>
+              handleChange(
+                'manager',
+                e.length
+                  ? members.filter((member) =>
+                      e.some((option) => option.value === member.id),
+                    )[0]
+                  : null,
+              )
+            }
+            isMulti={false}
+            placeholder={'Выберите ответственного'}
+            label="Ответственный"
+            options={members.map((el) => ({
+              value: el.id,
+              label: `${el?.name ?? ''} ${el?.surname ?? ''}`,
+            }))}
+            value={
+              client?.manager?.id != null
+                ? {
+                    value: client?.manager?.id,
+                    label: `${client?.manager?.name ?? ''} ${client?.manager?.surname ?? ''}`,
+                  }
+                : null
+            }
+          />
+          <TextInput
+            onChange={({ target }) => handleChange('description', target.value)}
+            name={'description'}
+            value={client?.description === '' ? ' ' : client?.description}
+            edited={true}
+            className={styles.input}
+            label={'Описание'}
+            type={'editor'}
+            placeholder={'Введите описание клиента'}
+          />
+          <TextInput
+            onChange={({ target }) =>
+              handleChange(
+                isEditMode ? 'contactData.site.0' : 'site',
+                target.value,
+              )
+            }
+            name={'contactData.site.0'}
+            value={
+              isEditMode ? client?.contactData?.site[0] || '' : client.site
+            }
+            edited={true}
+            className={styles.input}
+            label={'Сайт'}
+            placeholder={'Введите сайт'}
+          />
+        </FormValidatedModal>
+      </>
     )
   );
 });

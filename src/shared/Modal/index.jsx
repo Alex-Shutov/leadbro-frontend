@@ -20,12 +20,12 @@ const Modal = ({
   handleSubmit,
   children,
   cls,
-    modalRef,
+  modalRef,
   closeButton,
-    customButtons
+  customButtons,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const ref = useRef( null);
+  const ref = useRef(null);
   const innerRef = useRef(modalRef ?? null);
   const isFirstRender = useRef(true);
 
@@ -114,26 +114,28 @@ const Modal = ({
         {children}
         <div className={styles.buttons}>
           <div className={styles.left}>
-          {handleSubmit && (
-            <Button
-              isSmall={false}
-              onClick={() => handleSubmitModal()}
-              classname={styles.button}
-              name={'Сохранить'}
-              type={'primary'}
-            />
-          )}
-          {handleClose && closeButton && (
-            <Button
-              isSmall={false}
-              onClick={() => handleCloseModal()}
-              classname={styles.button}
-              name={closeButton??'Удалить'}
-              type={'secondary'}
-            />
-          )}
+            {handleSubmit && (
+              <Button
+                isSmall={false}
+                onClick={() => handleSubmitModal()}
+                classname={styles.button}
+                name={'Сохранить'}
+                type={'primary'}
+              />
+            )}
+            {handleClose && closeButton && (
+              <Button
+                isSmall={false}
+                onClick={() => handleCloseModal()}
+                classname={styles.button}
+                name={closeButton ?? 'Удалить'}
+                type={'secondary'}
+              />
+            )}
           </div>
-          {customButtons && customButtons}
+          {customButtons && (
+            <div className={styles.addButtons}>{customButtons}</div>
+          )}
         </div>
       </div>
     </motion.div>,

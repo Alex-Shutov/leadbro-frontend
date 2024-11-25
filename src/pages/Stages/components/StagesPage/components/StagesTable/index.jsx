@@ -21,22 +21,22 @@ import { useParams } from 'react-router';
 import TaskEditModal from '../../../../../../components/TaskModal';
 import useTasksApi from '../../../../../Tasks/tasks.api';
 import DescriptionInfo from '../DescriptionInfo';
+import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
 
-const StagesTable = observer(({ stage }) => {
+const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
   const { stagesStore } = useStore();
-  const { tasksStore } = useStore();
-  const { stageId } = useParams();
+  // const { tasksStore } = useStore();
+  // const { stageId } = useParams();
   const api = useStageApi();
-  const [taskData, setTaskData] = useState(null);
+  // const [taskData, setTaskData] = useState(null);
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
-  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
-  const ref = useRef();
-  const taskApi = useTasksApi();
+  // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  // const ref = useRef();
+  // const taskApi = useTasksApi();
   const fetchStages = useCallback((stageId) => {
     api.getTaskStages(stageId);
   }, []);
 
-  console.log(stage, 'stage');
   const {
     currentPage,
     totalPages,
@@ -45,25 +45,25 @@ const StagesTable = observer(({ stage }) => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
-  const handleEditTask = (data) => {
-    setTaskData(data);
-    setEditTaskModalOpen(true);
-  };
-  const handleCreateTask = () => {
-    setTaskData(null);
-    setEditTaskModalOpen(true);
-  };
+  // const handleEditTask = (data) => {
+  //   setTaskData(data);
+  //   setEditTaskModalOpen(true);
+  // };
+  // const handleCreateTask = () => {
+  //   setTaskData(null);
+  //   setEditTaskModalOpen(true);
+  // };
 
-  const handleCloseTaskModal = () => {
-    setTaskData(null);
-    setEditTaskModalOpen(false);
-  };
+  // const handleCloseTaskModal = () => {
+  //   setTaskData(null);
+  //   setEditTaskModalOpen(false);
+  // };
   const handleDelete = (id) => {
     console.log(`Удалить услугу с ID: ${id}`);
   };
 
   const getActions = (data) => [
-    { label: 'Редактировать', onClick: () => handleEditTask(data) },
+    { label: 'Редактировать', onClick: () => onEditTask(data) },
     {
       label: 'Удалить',
       onClick: () => handleDelete(data.id),
@@ -84,7 +84,7 @@ const StagesTable = observer(({ stage }) => {
           return (
             <TextLink
               onClick={() => {
-                handleEditTask(data);
+                onEditTask(data);
               }}
             >
               {data.title}
@@ -154,6 +154,7 @@ const StagesTable = observer(({ stage }) => {
   }, [paginatedData]);
 
   const sumActualTime = useMemo(() => {
+    if (!stage) return '';
     const totalHours = Object.values(stage?.tasks)?.reduce(
       (sum, task) =>
         task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
@@ -185,7 +186,7 @@ const StagesTable = observer(({ stage }) => {
         // }
         headerActions={{
           add: {
-            action: () => handleCreateTask(),
+            action: () => onCreateTask(),
             title: 'Создать задачу',
           },
           edit: {
@@ -197,20 +198,20 @@ const StagesTable = observer(({ stage }) => {
         columns={cols}
       />
       {/*{stage && <ClientInfo client={stage.client} />}*/}
-      {editTaskModalOpen && (
-        <TaskEditModal
-          data={taskData}
-          handleClose={handleCloseTaskModal}
-          stage={stage}
-          stagesStore={stagesStore}
-          stageApi={api}
-          taskApi={taskApi}
-          taskStore={tasksStore}
-        />
-      )}
+      {/*{editTaskModalOpen && (*/}
+      {/*  <TaskEditModal*/}
+      {/*    data={taskData}*/}
+      {/*    handleClose={handleCloseTaskModal}*/}
+      {/*    stage={stage}*/}
+      {/*    stagesStore={stagesStore}*/}
+      {/*    stageApi={api}*/}
+      {/*    taskApi={taskApi}*/}
+      {/*    taskStore={tasksStore}*/}
+      {/*  />*/}
+      {/*)}*/}
       {editStageModalOpen && (
         <EditStage
-          stageId={Number(stageId)}
+          stageId={Number(stage?.id)}
           handleClose={() => setEditStageModalOpen(false)}
         />
       )}
@@ -218,4 +219,6 @@ const StagesTable = observer(({ stage }) => {
   );
 });
 
-export default StagesTable;
+export { StagesTable };
+
+export const StagesTableWithTasksQuery = withTaskModalHandler(StagesTable);

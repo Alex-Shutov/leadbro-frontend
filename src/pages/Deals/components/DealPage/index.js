@@ -15,17 +15,22 @@ import {
   opacityTransition,
   TranslateYTransition,
 } from '../../../../utils/motion.variants';
-import DealTasks from './components/DealTasks';
+import { DealTasks, DealsTaskWithQueryTask } from './components/DealTasks';
 import DealStatus from './components/DealStatus';
 import DealInfo from './components/DealInfo';
 import { serviceTypeEnumRu } from '../../../Services/services.types';
 import DealMembers from './components/DealMembers';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar';
+import useStore from '../../../../hooks/useStore';
+import useTasksApi from '../../../Tasks/tasks.api';
 
 const DealPage = observer(() => {
   const { id } = useParams();
   const { data: deal, store: deals } = useDeals(+id);
   const api = useDealsApi();
+  const { dealsStore } = useStore();
+  const { tasksStore } = useStore();
+  const taskApi = useTasksApi();
   const [dropDownClicked, setDropDownClicked] = useState(true);
 
   const handleChange = (name, payload, withId = true) => {
@@ -75,9 +80,13 @@ const DealPage = observer(() => {
               className={cn(styles.card, styles.card_status)}
               deal={deal}
             />
-            <DealTasks
+            <DealsTaskWithQueryTask
               className={cn(styles.card, styles.card_status)}
               deal={deal}
+              dealApi={api}
+              dealsStore={dealsStore}
+              taskStore={tasksStore}
+              taskApi={taskApi}
             />
             <Comments
               onDelete={() =>

@@ -23,6 +23,7 @@ export const mapServiceFromApi = (
         }
       : null,
     type: apiService?.type,
+    creator: mapManager(apiService?.creator),
     manager: mapManager(apiService?.responsible),
     command: mapParticipants(apiService?.participants),
     status: mapServiceStatus(apiService?.active), // Статус (активна ли услуга)

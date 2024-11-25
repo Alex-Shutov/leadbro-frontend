@@ -20,12 +20,15 @@ import {
   formatDateWithDateAndYear,
   formatDateWithOnlyDigits,
 } from '../../../../utils/formate.date';
+import ConfirmationModal from '../../../../components/ConfirmationModal';
+import { handleError, handleInfo } from '../../../../utils/snackbar';
 
 const EmployesTable = observer(({ currentSwitcher }) => {
   const { employesStore } = useStore();
   const api = useEmployesApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentEmploye, setCurrentEmploye] = useState(null);
+  const [employeeDelete, setEmployeeDelete] = useState(null);
 
   const fetchEmployes = useCallback((page) => {
     api.getEmployes(page);
@@ -47,16 +50,21 @@ const EmployesTable = observer(({ currentSwitcher }) => {
     setEditModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    // Реализуйте логику удаления
-    console.log(`Удалить услугу с ID: ${id}`);
+  const handleDeleteEmployee = async (employeeId) => {
+    try {
+      await api.deleteEmployee(employeeId, currentPage);
+      handleInfo('Клиент удален');
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
+      handleError('Ошибка при удалении:', error);
+    }
   };
 
   const getActions = (data) => [
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
       label: 'Уволить',
-      onClick: () => handleDelete(data.id),
+      onClick: () => setEmployeeDelete(data.id),
       disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
     },
   ];
@@ -150,6 +158,19 @@ const EmployesTable = observer(({ currentSwitcher }) => {
             setEditModalOpen(false);
             setCurrentEmploye(null);
           }}
+        />
+      )}
+
+      {employeeDelete !== null && (
+        <ConfirmationModal
+          isOpen={employeeDelete !== null}
+          onClose={() => setEmployeeDelete(null)}
+          onConfirm={() => {
+            handleDeleteEmployee(employeeDelete).then(() => {
+              setEmployeeDelete(null);
+            });
+          }}
+          label="Вы уверены, что хотите удалить клиента?"
         />
       )}
     </LoadingProvider>

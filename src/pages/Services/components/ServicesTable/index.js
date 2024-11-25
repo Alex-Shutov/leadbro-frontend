@@ -14,13 +14,15 @@ import EditModal from './components/EditModal';
 import AdaptiveCard from './components/AdaptiveCard';
 import styles from './Table.module.sass';
 import useStore from '../../../../hooks/useStore';
+import ConfirmationModal from '../../../../components/ConfirmationModal';
+import { handleError, handleInfo } from '../../../../utils/snackbar';
 
 const ServicesTable = observer(() => {
   const { servicesStore } = useStore();
   const api = useServiceApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentService, setCurrentService] = useState(null);
-
+  const [serviceToDelete, setServiceToDelete] = useState(null);
   const fetchServices = useCallback((page) => {
     api.getServices(page);
   }, []);
@@ -41,9 +43,14 @@ const ServicesTable = observer(() => {
     setEditModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    // Реализуйте логику удаления
-    console.log(`Удалить услугу с ID: ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      await api.deleteService(id, currentPage);
+      handleInfo('Услуга удалена');
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
+      handleError('Ошибка при удалении:', error);
+    }
   };
 
   const getActions = (data) => [
@@ -51,7 +58,7 @@ const ServicesTable = observer(() => {
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
       label: 'Удалить',
-      onClick: () => handleDelete(data.id),
+      onClick: () => setServiceToDelete(data.id),
       disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
     },
   ];
@@ -182,6 +189,18 @@ const ServicesTable = observer(() => {
             setEditModalOpen(false);
             setCurrentService(null);
           }}
+        />
+      )}
+      {serviceToDelete !== null && (
+        <ConfirmationModal
+          isOpen={serviceToDelete !== null}
+          onClose={() => setServiceToDelete(null)}
+          onConfirm={() => {
+            handleDelete(serviceToDelete).then(() => {
+              setServiceToDelete(null);
+            });
+          }}
+          label="Вы уверены, что хотите удалить клиента?"
         />
       )}
     </>
