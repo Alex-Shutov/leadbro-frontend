@@ -185,7 +185,7 @@ const DealEditModal = observer(
               }}
               value={
                 deal?.source
-                  ? serviceTypes?.find((el) => el[0] === deal?.source)[0]
+                  ? sourceTypes?.find((el) => el[0] === deal?.source)[0]
                   : ''
               }
               edited={true}
