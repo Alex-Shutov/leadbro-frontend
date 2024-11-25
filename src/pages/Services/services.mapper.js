@@ -205,15 +205,15 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
   const castValue = (key, value) => {
     switch (key) {
       case 'responsible_id':
-        return Number(value.id);
+        return value?.id ? Number(value.id) : null;
       case 'participants_ids':
-        return value.map((el) => el.id);
+        return value?.map((el) => el?.id ?? null) ?? [];
       case 'active':
         return statusTypes.inProgress === value;
       case 'deadline':
         return formatDateToBackend(value);
       case 'company_id':
-        return value.id;
+        return value?.id ? Number(value.id) : null;
       default:
         return value; // По умолчанию оставить как есть
     }

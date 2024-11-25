@@ -152,7 +152,8 @@ const useServiceApi = () => {
               );
               servicesStore.setCurrentService(mappedService);
               return mappedService;
-            });
+            })
+            .catch(handleShowError);
         }
 
         const mappedService = mapServiceFromApi(serviceData, stagesData);

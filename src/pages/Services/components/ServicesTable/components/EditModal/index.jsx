@@ -235,6 +235,8 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
       {/*/>*/}
       <ValuesSelector
         minInputLength={4}
+        required={true}
+        classDropdownLabel={styles.label_dropdown}
         // readonly={props?.client || isEditMode}
         placeholder={'Клиент'}
         name={'client'}
