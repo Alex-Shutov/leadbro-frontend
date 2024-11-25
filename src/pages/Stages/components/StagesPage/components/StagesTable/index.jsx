@@ -32,8 +32,8 @@ const StagesTable = observer(({ stage }) => {
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   const ref = useRef();
   const taskApi = useTasksApi();
-  const fetchStages = useCallback((stageId) => {
-    api.getTaskStages(stageId);
+  const fetchStages = useCallback((page) => {
+    api.getTaskStages(stageId, page);
   }, []);
 
   console.log(stage, 'stage');
