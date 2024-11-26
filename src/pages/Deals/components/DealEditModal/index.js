@@ -30,6 +30,7 @@ import CustomButtonContainer from '../../../../shared/Button/CustomButtonContain
 import { useNavigate } from 'react-router';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import FormValidatedModal from '../../../../shared/Modal/FormModal';
+import useQueryParam from '../../../../hooks/useQueryParam';
 import { stageStatusTypesRu } from '../../../Stages/stages.types';
 import { tasksTypesRu } from '../../../Tasks/tasks.types';
 import useMappedObj from '../../../../hooks/useMappedObj';
@@ -45,7 +46,7 @@ const DealEditModal = observer(
     const appApi = useAppApi();
     const [isEditMode, setIsEditMode] = useState(data?.id ?? false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
+    const page = useQueryParam('page', 1);
     const [localDeal, setLocalDeal] = useState({
       name: '',
       description: ' ',
@@ -120,7 +121,6 @@ const DealEditModal = observer(
       }
       handleClose();
     };
-    console.log(deal.responsible, 'deal');
     return (
       <>
         <ConfirmationModal

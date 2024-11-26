@@ -185,13 +185,14 @@ const useClientsApi = () => {
   };
 
   // Удаление компании
-  const deleteCompany = (id) => {
+  const deleteCompany = (id, page) => {
+    const pageFromUrl = page ?? getQueryParam('page', 1);
     resetApiProvider();
     setIsLoading(true);
     return http
       .delete(`/api/companies/${id}`)
       .then(handleHttpResponse)
-      .then(() => getClientById(id))
+      .then(() => getClients(pageFromUrl))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
   };
@@ -257,14 +258,13 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  // Удаление клиента
-  const deleteClient = (id) => {
+  const deleteClient = (clientId, companyId) => {
     resetApiProvider();
     setIsLoading(true);
     return http
-      .delete(`/api/clients/${id}`)
+      .delete(`/api/clients/${clientId}`)
       .then(handleHttpResponse)
-      .then(() => getClientById(id))
+      .then(() => getClientById(companyId))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
   };

@@ -4,6 +4,7 @@ import Icon from '../../shared/Icon';
 import Button from '../../shared/Button';
 import Modal from '../../shared/Modal';
 import useOutsideClick from '../../hooks/useOutsideClick';
+import { createPortal } from 'react-dom';
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
   const confirmRef = useRef();
@@ -11,8 +12,8 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
   if (!isOpen) return null;
 
   return (
-    <div className={styles.confirmationOverlay}>
       <Modal
+          id={'confirmModal'}
         modalRef={confirmRef}
         size="sm"
         handleClose={onClose}
@@ -21,7 +22,9 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
             <Button
               type="danger"
               name="Да"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 onConfirm();
               }}
               classname={styles.confirmButton}
@@ -29,7 +32,12 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
             <Button
               type="secondary"
               name="Нет"
-              onClick={onClose}
+              onClick={(e) => {
+                e.preventDefault();
+
+                e.stopPropagation();
+                onClose();
+              }}
               classname={styles.cancelButton}
             />
           </div>
@@ -39,7 +47,6 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
           <h3>{label}</h3>
         </div>
       </Modal>
-    </div>
   );
 };
 

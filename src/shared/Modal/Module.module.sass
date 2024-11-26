@@ -24,7 +24,22 @@
   animation: showModal .4s forwards
   overflow: auto
   z-index: 999
+  .addButtons
+    >div
+      cursor: pointer
+    align-items: center
+    display: flex
+    flex-direction: row
+    margin-left: auto
+    gap: 32px
+    +body1-s
+    color: $n4
+    .download,.delete
+      cursor: pointer
+      svg
+        margin-left: 8px
 
+        fill: $n4
   +m
     padding: 16px
   &__closeIcon

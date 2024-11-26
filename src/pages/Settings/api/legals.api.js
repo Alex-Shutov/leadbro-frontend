@@ -124,7 +124,6 @@ const useLegalsApi = () => {
     resetApiProvider();
     setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
-
     return http
       .delete(`/api/legal_entities/${legalId}`)
       .then(handleHttpResponse)

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import usePagingData from '../../../../hooks/usePagingData';
 import TableLink from '../../../../shared/Table/Row/Link';
 import EditModal from './components/EditModal';
@@ -15,6 +15,8 @@ import BillsStats from './components/BillsStats';
 import useQueryParam from '../../../../hooks/useQueryParam';
 import { formatDateToQuery } from '../../../../utils/formate.date';
 import { format, startOfDay, sub } from 'date-fns';
+import ConfirmationModal from "../../../../components/ConfirmationModal";
+import {handleError, handleInfo} from "../../../../utils/snackbar";
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -25,6 +27,7 @@ const BillsTable = observer(() => {
   const api = useBillsApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
+  const [billToDelete,setBillToDelete] = useState(null)
 
   const today = startOfDay(new Date());
   const monthAgo = sub(today, { months: 1 });
@@ -56,9 +59,13 @@ const BillsTable = observer(() => {
     setEditModalOpen(true);
   };
 
-  const handleDelete = (id) => {
-    // Реализуйте логику удаления
-    console.log(`Удалить счет с ID: ${id}`);
+  const handleDelete = async(id) => {
+    try {
+      await api.deleteBill(id, currentPage,from,to);
+      handleInfo('Услуга удалена');
+    } catch (error) {
+      handleError('Ошибка при удалении:', error);
+    }
   };
 
   const handleDownload = (urlToBill) => {
@@ -70,8 +77,8 @@ const BillsTable = observer(() => {
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
       label: 'Удалить',
-      onClick: () => handleDelete(data.id),
-      disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
+      onClick: () => setBillToDelete(data.id),
+      disabled: data.id === 0,
     },
   ];
 
@@ -207,6 +214,18 @@ const BillsTable = observer(() => {
             setCurrentBill(null);
           }}
         />
+      )}
+      {billToDelete !== null && (
+          <ConfirmationModal
+              isOpen={billToDelete !== null}
+              onClose={() => setBillToDelete(null)}
+              onConfirm={() => {
+                handleDelete(billToDelete).then(() => {
+                  setBillToDelete(null);
+                });
+              }}
+              label="Вы уверены, что хотите удалить счет?"
+          />
       )}
     </>
   );

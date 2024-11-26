@@ -138,14 +138,14 @@ const useBillsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const deleteBill = async (billId) => {
+  const deleteBill = async (billId,currentPage,from,to) => {
     resetApiProvider();
     setIsLoading(true);
 
     try {
       await http.delete(`/api/bills/${billId}`);
-      const pageFromUrl = getQueryParam('page', 1);
-      await getBills(pageFromUrl);
+      const pageFromUrl = currentPage ?? getQueryParam('page', 1);
+      await getBills(pageFromUrl,from,to);
       return true;
     } catch (error) {
       handleHttpError(error);

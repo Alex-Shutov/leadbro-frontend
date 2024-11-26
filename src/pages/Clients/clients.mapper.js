@@ -147,10 +147,10 @@ const mapServices = (backendServices, apiServices) => {
         id: last.id,
         description: last.name, // Используем поле name для description
         creator: {
-          name: last.responsible.name, // Отсутствует creator в API, поэтому используем responsible
-          surname: last.responsible.last_name,
-          role: last.responsible.position.name,
-          image: loadAvatar(last.responsible.avatar),
+          name: last.creator.name, // Отсутствует creator в API, поэтому используем responsible
+          surname: last.creator.last_name,
+          role: last.creator.position.name,
+          image: loadAvatar(last.creator.avatar),
         },
         responsible: {
           name: last.responsible.name,

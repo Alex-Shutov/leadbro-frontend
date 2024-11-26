@@ -1,12 +1,17 @@
 import { enqueueSnackbar } from 'notistack';
 
 export const handleSubmit = (text) => {
+  console.log(text);
+
   enqueueSnackbar(text, { variant: 'success' });
 };
-export const handleError = (text) => {
+export const handleError = (text,error) => {
+  console.warn(text,error);
+
   enqueueSnackbar(text, { variant: 'error', autoHideDuration: 3000 });
 };
-export const handleInfo = (text) => {
+export const handleInfo = (text,error) => {
+  console.log(text,error);
   enqueueSnackbar(text, { variant: 'info' });
 };
 

@@ -12,6 +12,7 @@ import useTasksApi from './tasks.api';
 import TaskEditModal from '../../components/TaskModal';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import withTaskModalHandler from '../../components/TaskModal/HocHandler';
 
 const filters = [
   { label: 'Все', value: 'all' },
@@ -21,10 +22,8 @@ const filters = [
   { label: 'Я - Аудитор', value: 'auditor' },
 ];
 
-const Index = observer(() => {
+const Tasks = observer(({ onEditTask, onCreateTasks }) => {
   const api = useTasksApi();
-  const [taskData, setTaskData] = useState(null);
-  const [isCreateMode, setIsCreateMode] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -32,18 +31,6 @@ const Index = observer(() => {
   const initialFilter = searchParams.get('filter') || 'all';
   const [statusFilter, setStatusFilter] = useState(initialFilter);
   const { data, isLoading, store: tasksStore } = useTasksByStatus(statusFilter);
-
-  // Обработчик создания новой задачи
-  const handleCreateTask = () => {
-    setIsCreateMode(true);
-    setTaskData(null); // Очищаем данные предыдущей задачи
-  };
-
-  // Обработчик закрытия модального окна
-  const handleCloseModal = () => {
-    setTaskData(null);
-    setIsCreateMode(false);
-  };
 
   const handleRadioChange = async (filterValue) => {
     setStatusFilter(filterValue);
@@ -80,7 +67,7 @@ const Index = observer(() => {
         title={'Мои задачи'}
         actions={{
           add: {
-            action: handleCreateTask,
+            action: onCreateTasks,
             title: 'Создать задачу',
           },
           filter: {
@@ -98,24 +85,22 @@ const Index = observer(() => {
         }}
       />
       <TasksTable
-        onClick={(data) => {
-          setIsCreateMode(false);
-          setTaskData(data);
-        }}
+        onClick={(data) => onEditTask(data)}
         counts={taskCounts}
         data={filteredTasks}
         handleChange={handleChange}
       />
-      {(taskData || isCreateMode) && (
-        <TaskEditModal
-          data={taskData} // при создании будет null
-          handleClose={handleCloseModal}
-          taskStore={tasksStore}
-          taskApi={api}
-        />
-      )}
     </LoadingProvider>
   );
 });
 
-export default Index;
+const TasksPageWithHoc = withTaskModalHandler(Tasks);
+
+const TasksWithQuery = () => {
+  const api = useTasksApi();
+  const { tasksStore } = useStore();
+
+  return <TasksPageWithHoc taskApi={api} taskStore={tasksStore} />;
+};
+
+export { Tasks, TasksWithQuery };

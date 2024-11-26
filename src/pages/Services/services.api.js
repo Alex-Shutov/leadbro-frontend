@@ -164,6 +164,19 @@ const useServiceApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const deleteService = (id, page) => {
+    resetApiProvider();
+    const pageFromUrl = page ?? getQueryParam('page', 1);
+    setIsLoading(true);
+    return http
+      .delete(`/api/services/${id}`)
+      .then(handleHttpResponse)
+        .then(()=>servicesStore.setCurrentService(null))
+      .then(() => getServices(pageFromUrl))
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
+  };
+
   return {
     setServices,
     getServiceById,
@@ -171,6 +184,7 @@ const useServiceApi = () => {
     getServices,
     getServiceTypes,
     createService,
+    deleteService,
     isLoading,
   };
 };

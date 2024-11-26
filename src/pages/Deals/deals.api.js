@@ -9,7 +9,7 @@ import {
 } from '../../shared/http';
 import { useCallback, useState } from 'react';
 import { mapDealDataToBackend, mapDealFromApi } from './deals.mapper';
-import { getQueryParam } from '../../utils/window.utils';
+import { getPageTypeFromUrl, getQueryParam } from '../../utils/window.utils';
 import './deals.mock';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
 

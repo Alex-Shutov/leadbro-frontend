@@ -20,12 +20,14 @@ const Modal = ({
   handleSubmit,
   children,
   cls,
-    modalRef,
+  modalRef,
   closeButton,
-    customButtons
+  customButtons,
+    withPortal=true,
+  id,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const ref = useRef( null);
+  const ref = useRef(null);
   const innerRef = useRef(modalRef ?? null);
   const isFirstRender = useRef(true);
 
@@ -81,8 +83,61 @@ const Modal = ({
     return null;
   }
 
-  return createPortal(
+  return withPortal ? (
+    createPortal(
+      <ModalBase
+          id={id}
+        handleClose={handleClose}
+        handleCloseModal={handleCloseModal}
+        ref={ref}
+        innerRef={innerRef}
+        handleSubmit={handleSubmit}
+        handleSubmitModal={handleSubmitModal}
+        customButtons={customButtons}
+        closeButton={closeButton}
+        size={size}
+        children={children}
+        cls={cls}
+      />,
+      document.body,
+    )
+  ) : (
+    <ModalBase
+        id={id}
+      handleClose={handleClose}
+      handleCloseModal={handleCloseModal}
+      ref={ref}
+      innerRef={innerRef}
+      handleSubmit={handleSubmit}
+      handleSubmitModal={handleSubmitModal}
+      customButtons={customButtons}
+      closeButton={closeButton}
+      size={size}
+      children={children}
+      cls={cls}
+    />
+  );
+};
+
+export default Modal;
+
+const ModalBase = ({
+    id,
+  ref,
+  size,
+  innerRef,
+  handleCloseModal,
+  handleSubmit,
+  children,
+  closeButton,
+  handleSubmitModal,
+  handleClose,
+  customButtons,
+  cls,
+}) => {
+  return (
     <motion.div
+        id={id??''}
       ref={ref}
       animate={'show'}
       initial={'hidden'}
@@ -114,31 +169,30 @@ const Modal = ({
         {children}
         <div className={styles.buttons}>
           <div className={styles.left}>
-          {handleSubmit && (
-            <Button
-              isSmall={false}
-              onClick={() => handleSubmitModal()}
-              classname={styles.button}
-              name={'Сохранить'}
-              type={'primary'}
-            />
-          )}
-          {handleClose && closeButton && (
-            <Button
-              isSmall={false}
-              onClick={() => handleCloseModal()}
-              classname={styles.button}
-              name={closeButton??'Удалить'}
-              type={'secondary'}
-            />
-          )}
+            {handleSubmit && (
+              <Button
+                isSmall={false}
+                onClick={() => handleSubmitModal()}
+                classname={styles.button}
+                name={'Сохранить'}
+                type={'primary'}
+              />
+            )}
+            {handleClose && closeButton && (
+              <Button
+                isSmall={false}
+                onClick={() => handleCloseModal()}
+                classname={styles.button}
+                name={closeButton ?? 'Удалить'}
+                type={'secondary'}
+              />
+            )}
           </div>
-          {customButtons && customButtons}
+          {customButtons && (
+            <div className={styles.addButtons}>{customButtons}</div>
+          )}
         </div>
       </div>
-    </motion.div>,
-    document.body,
+    </motion.div>
   );
 };
-
-export default Modal;

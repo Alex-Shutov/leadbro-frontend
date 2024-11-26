@@ -55,10 +55,10 @@ const Index = ({
   return (
     <div className={className}>
       <TextInput
+        disabled={false}
         label={'Связанная задача'}
         name={'taskLinked'}
         value={taskLinked}
-        disabled={false}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />

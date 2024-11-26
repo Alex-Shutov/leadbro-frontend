@@ -63,10 +63,12 @@ const useTasksApi = () => {
       http.get(`/api/tasks/${id}/comments`),
     ])
       .then(([taskData, commentsData]) => {
-        debugger;
-        tasksStore.setCurrentTask(
-          mapTaskFromApi(taskData.data.data, commentsData.data.data),
+        const mappedTask = mapTaskFromApi(
+          taskData.data.data,
+          commentsData.data.data,
         );
+        tasksStore.setCurrentTask(mappedTask);
+        return mappedTask;
       })
       .catch(handleShowError);
   }, []);
@@ -134,7 +136,6 @@ const useTasksApi = () => {
     return http
       .delete(`/api/tasks/${id}`)
       .then(handleHttpResponse)
-      .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
       .catch(handleHttpError);
   }, []);
 

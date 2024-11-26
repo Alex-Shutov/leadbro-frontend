@@ -14,15 +14,9 @@ import StageBadge, {
 import Badge, { statusTypes } from '../../../../../../shared/Badge';
 import DeadLineTimeCell from '../../../../../Stages/components/StagesPage/components/StagesTable/components/DeadLineTimeCell';
 import { formatDate } from '../../../../../../utils/formate.date';
-
-const DealTasks = ({ deal }) => {
-  const { dealsStore } = useStore();
-  const { tasksStore } = useStore();
-  const dealsApi = useDealsApi();
-  const taskApi = useTasksApi();
-  const [taskData, setTaskData] = useState(null);
-  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
-
+import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
+const DealTasks = ({ deal, onEditTask, onCreateTask }) => {
+  debugger;
   const cols = useMemo(
     () => [
       {
@@ -35,7 +29,7 @@ const DealTasks = ({ deal }) => {
           return (
             <TextLink
               onClick={() => {
-                handleEditTask(data);
+                onEditTask(data);
               }}
               className={styles.link}
             >
@@ -96,20 +90,6 @@ const DealTasks = ({ deal }) => {
     [],
   );
 
-  const handleEditTask = (data) => {
-    setTaskData(data);
-    setEditTaskModalOpen(true);
-  };
-  const handleCreateTask = () => {
-    setTaskData(null);
-    setEditTaskModalOpen(true);
-  };
-
-  const handleCloseTaskModal = () => {
-    setTaskData(null);
-    setEditTaskModalOpen(false);
-  };
-
   const handleDelete = (id) => {
     console.log(`Удалить услугу с ID: ${id}`);
   };
@@ -117,7 +97,7 @@ const DealTasks = ({ deal }) => {
   const data = useMemo(() => Object.values(deal?.tasks ?? []), [deal?.tasks]);
 
   const getActions = (data) => [
-    { label: 'Редактировать', onClick: () => handleEditTask(data) },
+    { label: 'Редактировать', onClick: () => onEditTask(data) },
     {
       label: 'Удалить',
       onClick: () => handleDelete(data.id),
@@ -134,7 +114,7 @@ const DealTasks = ({ deal }) => {
         actions={getActions}
         headerActions={{
           add: {
-            action: () => handleCreateTask(),
+            action: onCreateTask,
             title: 'Создать задачу',
           },
         }}
@@ -142,18 +122,20 @@ const DealTasks = ({ deal }) => {
         data={data}
         columns={cols}
       />
-      {editTaskModalOpen && (
-        <TaskEditModal
-          data={taskData}
-          handleClose={handleCloseTaskModal}
-          deal={deal}
-          dealsStore={dealsStore}
-          taskApi={taskApi}
-          taskStore={tasksStore}
-        />
-      )}
+      {/*{editTaskModalOpen && (*/}
+      {/*  <TaskEditModal*/}
+      {/*    data={taskData}*/}
+      {/*    handleClose={handleCloseTaskModal}*/}
+      {/*    deal={deal}*/}
+      {/*    dealsStore={dealsStore}*/}
+      {/*    taskApi={taskApi}*/}
+      {/*    taskStore={tasksStore}*/}
+      {/*  />*/}
+      {/*)}*/}
     </div>
   );
 };
 
-export default DealTasks;
+const DealsTaskWithQueryTask = withTaskModalHandler(DealTasks);
+
+export { DealTasks, DealsTaskWithQueryTask };

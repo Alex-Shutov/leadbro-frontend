@@ -4,20 +4,37 @@ import ClientInfo from './components/ClientInfo';
 import useParamSearch from '../../../../hooks/useParamSearch';
 import { useParams } from 'react-router';
 import useStages from '../../hooks/useStages';
-import StagesTable from './components/StagesTable';
+import {
+  StagesTable,
+  StagesTableWithTasksQuery,
+} from './components/StagesTable';
 import styles from './stages.module.sass';
 import { motion } from 'framer-motion';
-import {observer} from "mobx-react";
+import { observer } from 'mobx-react';
+import useStore from '../../../../hooks/useStore';
+import useStageApi from '../../stages.api';
+import useTasksApi from '../../../Tasks/tasks.api';
 
 const StagesPage = observer(() => {
-  // const clientId = useParamSearch('clientId');
+  const { stagesStore } = useStore();
+  const { tasksStore } = useStore();
+  const api = useStageApi();
+  const taskApi = useTasksApi();
 
   const { stageId } = useParams();
-  // const { data: currentClient } = useClients(Number(clientId));
+
   const { data: stage } = useStages(Number(stageId));
   return (
     <motion.div className={styles.container}>
-      {stage && <StagesTable stage={stage} />}
+      {stage && (
+        <StagesTableWithTasksQuery
+          stage={stage}
+          stagesStore={stagesStore}
+          stageApi={api}
+          taskStore={tasksStore}
+          taskApi={taskApi}
+        />
+      )}
     </motion.div>
   );
 });

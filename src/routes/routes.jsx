@@ -5,7 +5,7 @@ import ClientPage from '../pages/Clients/components/ClientPage';
 import Page from '../shared/Page';
 import Services from '../pages/Services';
 import ServicePage from '../pages/Services/components/ServicePage';
-import Tasks from '../pages/Tasks';
+import { Tasks, TasksWithQuery } from '../pages/Tasks';
 import NotFound from '../pages/NotFound';
 import { AuthContext } from '../providers/AuthProvider';
 import LoginPage from '../pages/Login';
@@ -13,9 +13,9 @@ import { useLocation } from 'react-router';
 import StagesPage from '../pages/Stages/components/StagesPage';
 import Settings from '../pages/Settings';
 import Bills from '../pages/Bills';
-import Deals from "../pages/Deals";
-import DealPage from "../pages/Deals/components/DealPage";
-import Forbidden from "../pages/Forbidden";
+import Deals from '../pages/Deals';
+import DealPage from '../pages/Deals/components/DealPage';
+import Forbidden from '../pages/Forbidden';
 
 export const paths = {
   MAIN: '/',
@@ -29,8 +29,8 @@ export const paths = {
   BILLS: '/bills',
   LOGIN: '/login',
   NOTFOUND: '*',
-  DEALS:'/deals',
-  DEALS_ID:'/deals/:id',
+  DEALS: '/deals',
+  DEALS_ID: '/deals/:id',
   FORBIDDEN: '/forbidden',
 };
 
@@ -81,7 +81,7 @@ const protectedRoutes = [
   },
   {
     path: paths.TASKS,
-    element: <Tasks />,
+    element: <TasksWithQuery />,
   },
   {
     path: paths.SETTINGS,
