@@ -210,6 +210,7 @@ const TextInput = forwardRef(
 
       return (
         <input
+          onWheel={(e) => e.target.blur()}
           {...commonProps}
           value={
             props.type === 'money' ? formatValue(String(value) || '') : value

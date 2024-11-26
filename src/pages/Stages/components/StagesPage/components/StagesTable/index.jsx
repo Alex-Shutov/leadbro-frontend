@@ -37,8 +37,8 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const ref = useRef();
   const taskApi = useTasksApi();
-  const fetchStages = useCallback((stageId) => {
-    api.getTaskStages(stageId);
+  const fetchStages = useCallback((page) => {
+    api.getTaskStages(stageId, page);
   }, []);
 
   const {
@@ -163,7 +163,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
         },
       },
     ];
-  }, [paginatedData]);
+  }, []);
 
   const sumActualTime = useMemo(() => {
     if (!stage) return '';

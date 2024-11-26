@@ -27,7 +27,7 @@ const useEmployesApi = () => {
       .then((res) => {
         const mappedEmployes = res.body.data.map((e) => mapEmployeesFromApi(e));
         employesStore.setEmployes(mappedEmployes); // Устанавливаем клиентов в store
-        employesStore.setMetaInfoTable(res.body.meta);
+        employesStore.setMetaInfoTable(res.body?.meta);
       })
       .then(() => setIsLoading(false))
 

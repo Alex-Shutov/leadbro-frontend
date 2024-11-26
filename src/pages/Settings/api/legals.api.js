@@ -27,7 +27,7 @@ const useLegalsApi = () => {
       .then((res) => {
         const mappedLegalEntities = res.body.data.map(mapLegalEntitiesFromApi);
         legalsStore.setLegals(mappedLegalEntities);
-        legalsStore.setMetaInfoTable(res.body.meta);
+        legalsStore.setMetaInfoTable(res.body?.meta);
       })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

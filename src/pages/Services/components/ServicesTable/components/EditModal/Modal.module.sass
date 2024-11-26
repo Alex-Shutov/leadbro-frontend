@@ -73,7 +73,9 @@
 .lowZIndex
   z-index: 2
 .client
+
   &_label
+    flex-grow: 1
     display: flex
     flex-direction: row
     justify-content: space-between
@@ -127,4 +129,11 @@
       .input
         margin-bottom: 5px
 
-  .addButtons
+.label_dropdown
+  div[class*=client_label]
+    >span:after
+      content: '*'
+      color: #E13F29
+      margin-left: 4px
+  *[class*=Selector_required]
+    display: none

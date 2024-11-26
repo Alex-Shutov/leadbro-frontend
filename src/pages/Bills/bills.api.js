@@ -34,7 +34,7 @@ const useBillsApi = () => {
       .then((res) => {
         const mappedBills = res.body.data.map((bill) => mapBillFromApi(bill));
         billsStore.setBills(mappedBills);
-        billsStore.setMetaInfoTable(res.body.meta);
+        billsStore.setMetaInfoTable(res.body?.meta);
         billsStore.setStats(res.body.stats);
       })
       .catch(handleHttpError)

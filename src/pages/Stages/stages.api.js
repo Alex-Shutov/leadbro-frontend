@@ -71,7 +71,7 @@ const useStageApi = () => {
         const tasksData = tasksResponse.body.data;
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setStages([mappedStage]); // Сохраняем в store
-        stagesStore.setMetaInfoTable(tasksResponse.body.meta); // Метаданные задач
+        stagesStore.setMetaInfoTable(tasksResponse.body?.meta); // Метаданные задач
 
         return mappedStage;
       })
@@ -92,7 +92,7 @@ const useStageApi = () => {
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setCurrentStage(mappedStage);
         // stagesStore.setStages(mappedStage); // Сохраняем в store
-        stagesStore.setMetaInfoTable(tasksResponse.body.meta); // Метаданные задач
+        stagesStore.setMetaInfoTable(tasksResponse.body?.meta); // Метаданные задач
 
         return mappedStage;
       })

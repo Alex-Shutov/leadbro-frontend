@@ -20,8 +20,12 @@ export const mapStageFromApi = (stageData, tasksData) => {
       stageData?.time_over_planned !== null
         ? stageData?.time_over_planned
         : null,
-    deadlineTime: `${parseFloat(stageData?.planned_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
-    actualTime: `${parseFloat(stageData?.actual_time?.toFixed(1))} ч`, // Время дедлайна по умолчанию
+    deadlineTime: stageData?.planned_time
+      ? `${parseFloat(stageData?.planned_time?.toFixed(1))} ч`
+      : null, // Время дедлайна по умолчанию
+    actualTime: stageData?.actual_time
+      ? `${parseFloat(stageData?.actual_time?.toFixed(1))} ч`
+      : null, // Время дедлайна по умолчанию
     contactPerson: stageData?.contactPerson || 'Александр Шилов',
     extraCosts: stageData?.extraCosts || '7500',
     actSum: stageData?.actSum || stageData?.act_sum,

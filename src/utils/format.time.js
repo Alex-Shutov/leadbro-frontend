@@ -13,6 +13,9 @@ export const getFormattedTimeType = (type) => {
 
 export const convertToMinutes = (time) => {
   const timeValue = parseFloat(time);
+  if (Number.isNaN(timeValue)) {
+    return null;
+  }
   if (time.includes('ч')) {
     return timeValue * 60;
   } else if (time.includes('м')) {

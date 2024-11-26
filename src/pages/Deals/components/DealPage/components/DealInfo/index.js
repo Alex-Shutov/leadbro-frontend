@@ -8,6 +8,7 @@ import { convertToHours } from '../../../../../../utils/format.time';
 import cn from 'classnames';
 import { compareTime } from '../../../../../../utils/compare';
 import mainStyles from './DealInfo.module.sass';
+import {sourceTypeRu} from "../../../../deals.types";
 
 const DealInfo = ({ source, serviceType, price }) => {
   return (
@@ -18,7 +19,7 @@ const DealInfo = ({ source, serviceType, price }) => {
         title={'Информация'}
       >
         {source && (
-          <LabeledParagraph label={'Рекламный источник'} text={source} />
+          <LabeledParagraph label={'Рекламный источник'} text={sourceTypeRu[source]} />
         )}
         {serviceType && (
           <LabeledParagraph label={'Тип услуги'} text={serviceType} />

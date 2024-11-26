@@ -41,7 +41,7 @@ const useServiceApi = () => {
       .then((res) => {
         const mappedServices = res.body.data.map((e) => mapServiceFromApi(e));
         servicesStore.setServices(mappedServices); // Устанавливаем клиентов в store
-        servicesStore.setMetaInfoTable(res.body.meta);
+        servicesStore.setMetaInfoTable(res.body?.meta);
       })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
@@ -152,7 +152,8 @@ const useServiceApi = () => {
               );
               servicesStore.setCurrentService(mappedService);
               return mappedService;
-            });
+            })
+            .catch(handleShowError);
         }
 
         const mappedService = mapServiceFromApi(serviceData, stagesData);
