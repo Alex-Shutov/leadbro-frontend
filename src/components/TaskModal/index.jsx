@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import { taskableTypes, tasksTypes } from '../../pages/Tasks/tasks.types';
 import { taskStatusTypes } from '../../pages/Stages/stages.types';
-import { handleError } from '../../utils/snackbar';
+import {handleError, handleInfo} from '../../utils/snackbar';
 import { mapStageDataToBackend } from '../../pages/Stages/stages.mapper';
 import Modal from '../../shared/Modal';
 import styles from './Modal.module.sass';
@@ -15,6 +15,7 @@ import { usePermissions } from '../../providers/PermissionProvider';
 import { useNavigate } from 'react-router';
 import { Permissions } from '../../shared/permissions';
 import cn from 'classnames';
+import Icon from "../../shared/Icon";
 
 const draftSet = new Set();
 
@@ -285,6 +286,10 @@ const TaskEditModal = observer(
       }
     };
 
+    const handleCopyTask = () => {
+      navigator.clipboard.writeText(`${window.location.origin}/tasks?taskId=${taskData?.id}`).then((r) => handleInfo('Ссылка на задачу скопирована!'));
+    }
+
     return (
       taskData && (
         <FormValidatedModal
@@ -294,7 +299,8 @@ const TaskEditModal = observer(
         >
           <div className={styles.name}>
             <div>
-              {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
+              {isEditMode ? `Задача#${taskData?.id}` : 'Создание задачи'}
+              {isEditMode && <Icon size={20} onClick={()=>handleCopyTask()} className={styles.copy} name={'copy'}/>}
             </div>
             {
               <span

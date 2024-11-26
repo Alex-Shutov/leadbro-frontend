@@ -31,19 +31,20 @@ const Task = ({ task }) => {
       {/*<p>{task.description}</p>*/}
       {/*<p>Status: {task.status}</p>*/}
       <Card className={styles.task}>
+        <div className={styles.task_stageTitle}>Задача #{task.id}</div>
         <div className={styles.task_stageTitle}>{getBelongsTo()}</div>
         <div className={styles.task_description}>{task.title}</div>
         <div className={styles.task_deadline}>
           {formatDateWithoutHours(task.deadline)}
         </div>
         <div className={styles.task_footer}>
-          <Badge statusType={statusTypes.tasks} status={task.type} />
+          <Badge statusType={statusTypes.tasks} status={task.type}/>
           <div>
             {task.assigned.map((el) => (
-              <TooltipedAvatar
-                imageSrc={el.image}
-                title={`${el.name} ${el.surname}`}
-              />
+                <TooltipedAvatar
+                    imageSrc={el.image}
+                    title={`${el.name} ${el.surname}`}
+                />
             ))}
           </div>
         </div>
