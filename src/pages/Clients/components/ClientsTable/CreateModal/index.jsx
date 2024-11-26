@@ -86,7 +86,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
       } else {
         await createCompany({
           ...localClient,
-          manager_id: localClient?.manager?.id ?? 0,
+          // manager_id: localClient?.manager?.id ?? 0,
           phone: localClient.tel,
           name: localClient.title,
         }); // Создаём новую компанию

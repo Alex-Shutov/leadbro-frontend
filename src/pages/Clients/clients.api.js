@@ -65,10 +65,11 @@ const useClientsApi = () => {
   const createCompany = (body) => {
     resetApiProvider();
     setIsLoading(true);
+    debugger
     const pageFromUrl = getQueryParam('page', 1);
-
+    const updateData = mapClientDataToBackend(body,Object.keys(body))
     return http
-      .post('/api/companies', body)
+      .post('/api/companies', updateData)
       .then(handleHttpResponse)
       .then(() => getClients(pageFromUrl))
       .catch(handleShowError)
