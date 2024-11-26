@@ -35,16 +35,17 @@ export const convertToHours = (time) => {
   if (Number.isNaN(timeValue)) {
     return null;
   }
-  if (time.includes('ч')) {
-    return timeValue;
-  } else if (time.includes('м')) {
-    return timeValue / 60;
-  } else if (time.includes('дн')) {
-    return timeValue * 24; // 1 день = 24 часа
-  } else if (time.includes('нед')) {
-    return timeValue * 168; // 1 неделя = 168 часов (7 дней * 24 часа)
-  } else {
-    // TODO: Возможно изменить возврат или кидать ошибку
-    return null; // если не удалось распознать единицу времени, возвращаем null
-  }
+  return timeValue
+  // if (time.includes('ч')) {
+  //   return timeValue;
+  // } else if (time.includes('м')) {
+  //   return timeValue / 60;
+  // } else if (time.includes('дн')) {
+  //   return timeValue * 24; // 1 день = 24 часа
+  // } else if (time.includes('нед')) {
+  //   return timeValue * 168; // 1 неделя = 168 часов (7 дней * 24 часа)
+  // } else {
+  //   // TODO: Возможно изменить возврат или кидать ошибку
+  //   return null; // если не удалось распознать единицу времени, возвращаем null
+  // }
 };

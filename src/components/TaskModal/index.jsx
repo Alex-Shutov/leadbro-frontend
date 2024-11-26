@@ -92,6 +92,7 @@ const TaskEditModal = observer(
           };
       }
     }, [mode, stage, deal, stagesStore, dealsStore, taskStore]);
+    debugger
 
     // Начальное состояние для новой задачи
     const initialTaskState = {
