@@ -51,11 +51,11 @@ const DealCard = ({ deal }) => {
               <>
                 <Avatar
                   className={styles.avatar}
-                  imageSrc={deal?.responsible?.image ?? loadAvatar()}
+                  imageSrc={deal?.manager?.image ?? loadAvatar()}
                   size={24}
                 />
                 <span className={styles.deal_assignee_name}>
-                  {formatName(deal?.responsible)}
+                  {formatName(deal?.manager)}
                 </span>
               </>
             }
