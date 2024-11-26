@@ -5,13 +5,13 @@ export const handleSubmit = (text) => {
 
   enqueueSnackbar(text, { variant: 'success' });
 };
-export const handleError = (text) => {
-  console.log(text);
+export const handleError = (text,error) => {
+  console.warn(text,error);
 
   enqueueSnackbar(text, { variant: 'error', autoHideDuration: 3000 });
 };
-export const handleInfo = (text) => {
-  console.log(text);
+export const handleInfo = (text,error) => {
+  console.log(text,error);
   enqueueSnackbar(text, { variant: 'info' });
 };
 

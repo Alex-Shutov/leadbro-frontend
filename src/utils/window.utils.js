@@ -40,3 +40,9 @@ export const getPageTypeFromUrl = (url) => {
 
   return urlPatterns[matches[1]] || null;
 };
+
+export const removeLastPathSegment = (pathname) => {
+  const segments = pathname.split('/').filter(Boolean);
+  segments.pop();
+  return segments.length ? `/${segments.join('/')}` : '/';
+};

@@ -14,6 +14,7 @@ import useClients from '../../../../../Clients/hooks/useClients';
 import useServices from '../../../../hooks/useServices';
 import useServiceApi from '../../../../services.api';
 import {
+  handleError,
   handleInfo,
   handleSubmit as handleSubmitSnackbar,
 } from '../../../../../../utils/snackbar';
@@ -26,6 +27,8 @@ import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useParamSearch from '../../../../../../hooks/useParamSearch';
 import CustomButtonContainer from '../../../../../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../../../../../shared/Button/Delete';
+import {useLocation, useNavigate, useParams} from "react-router";
+import {removeLastPathSegment} from "../../../../../../utils/window.utils";
 
 const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceTypes = useServiceTypes();
@@ -33,6 +36,9 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const { appStore } = useStore();
   const appApi = useAppApi();
   const { members } = useMembers();
+  const navigate = useNavigate()
+  const location = useLocation()
+  const {id} = useParams()
   const statuses = useServiceStatuses();
   const pageFrom = useParamSearch('page' ?? 1);
 
@@ -112,7 +118,6 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceClient = service?.client ?? props?.client ?? null;
 
   const handleReset = () => {
-    debugger;
     if (isEditMode) {
       serviceStore.resetDraft(serviceId); // Сброс черновика в режиме редактирования
     }
@@ -122,9 +127,11 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const handleDeleteService = async () => {
     try {
       await api.deleteService(serviceId, pageFrom);
+      onClose()
       handleInfo('Услуга удалена');
+      id && navigate(`${removeLastPathSegment(location.pathname)}${location.search}`);
     } catch (e) {
-      handleInfo('Ошибка при удалении услуги:', e);
+      handleError('Ошибка при удалении услуги:' + e?.message);
     }
   };
 
@@ -198,7 +205,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
-            service.creator
+            service?.creator
               ? {
                   value: service.creator?.id,
                   label: `${service?.creator?.surname ?? ''} ${service?.creator?.name ?? ''} ${service?.creator?.middleName ?? ''}`,
@@ -220,7 +227,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
-            service.manager
+            service?.manager
               ? {
                   value: service.manager?.id,
                   label: `${service?.manager?.surname ?? ''} ${service?.manager?.name ?? ''} ${service?.manager?.middleName ?? ''}`,
@@ -246,7 +253,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
-            service.command
+            service?.command
               ? service.command.map((el) => ({
                   value: el.id,
                   label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
@@ -261,7 +268,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
             }
             classNameContainer={styles.input}
             label={'Статус'}
-            value={statusTypesRu[service.status] || ''}
+            value={statusTypesRu[service?.status] || ''}
             renderOption={(opt) => opt[1]}
             options={statuses}
           />

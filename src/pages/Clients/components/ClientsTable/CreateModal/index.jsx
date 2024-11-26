@@ -22,15 +22,19 @@ import DownloadButton from '../../../../../shared/Button/Download';
 import DeleteButton from '../../../../../shared/Button/Delete';
 import useParamSearch from '../../../../../hooks/useParamSearch';
 import ConfirmationModal from '../../../../../components/ConfirmationModal';
+import { removeLastPathSegment } from '../../../../../utils/window.utils';
+import { useLocation, useNavigate } from 'react-router';
 
 const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { clientsStore } = useStore(); // Подключение к MobX Store
-  const { createCompany, updateCompany, deleteClient } = useClientsApi();
+  const { createCompany, updateCompany, deleteCompany } = useClientsApi();
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { members } = useMembers();
   // Локальное состояние для создания нового клиента
   const pageFrom = useParamSearch('page');
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [localClient, setLocalClient] = useState({
     title: '',
@@ -127,10 +131,12 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
 
   const handleDeleteClient = async () => {
     try {
-      await deleteClient(clientId, pageFrom);
+      await deleteCompany(clientId, pageFrom);
       handleInfo('Клиент удален');
+
+      navigate(`${removeLastPathSegment(location.pathname)}${location.search}`);
     } catch (e) {
-      handleInfo('Ошибка при удалении клиента:', e);
+      handleError('Ошибка при удалении клиента: ' + e?.message ?? e);
     }
   };
 
@@ -143,14 +149,16 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
   return (
     client && (
       <>
-        <ConfirmationModal
-          label={'Вы действительно хотите удалить клиента?'}
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            setIsDeleteModalOpen(false);
-          }}
-          onConfirm={handleDeleteClient}
-        />
+        {isEditMode && (
+          <ConfirmationModal
+            label={'Вы действительно хотите удалить клиента?'}
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+            }}
+            onConfirm={handleDeleteClient}
+          />
+        )}
         <FormValidatedModal
           handleSubmit={handleSubmit}
           handleClose={handleReset}

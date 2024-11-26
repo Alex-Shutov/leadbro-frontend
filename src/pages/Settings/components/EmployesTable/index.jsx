@@ -53,10 +53,9 @@ const EmployesTable = observer(({ currentSwitcher }) => {
   const handleDeleteEmployee = async (employeeId) => {
     try {
       await api.deleteEmployee(employeeId, currentPage);
-      handleInfo('Клиент удален');
+      handleInfo('Сотрудник уволен');
     } catch (error) {
-      console.error('Ошибка при удалении:', error);
-      handleError('Ошибка при удалении:', error);
+      handleError('Ошибка при уольнении:', error);
     }
   };
 
@@ -170,7 +169,7 @@ const EmployesTable = observer(({ currentSwitcher }) => {
               setEmployeeDelete(null);
             });
           }}
-          label="Вы уверены, что хотите удалить клиента?"
+          label="Вы уверены, что хотите уволить сотрудника?"
         />
       )}
     </LoadingProvider>

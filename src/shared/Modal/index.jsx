@@ -23,6 +23,8 @@ const Modal = ({
   modalRef,
   closeButton,
   customButtons,
+    withPortal=true,
+  id,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef(null);
@@ -81,8 +83,61 @@ const Modal = ({
     return null;
   }
 
-  return createPortal(
+  return withPortal ? (
+    createPortal(
+      <ModalBase
+          id={id}
+        handleClose={handleClose}
+        handleCloseModal={handleCloseModal}
+        ref={ref}
+        innerRef={innerRef}
+        handleSubmit={handleSubmit}
+        handleSubmitModal={handleSubmitModal}
+        customButtons={customButtons}
+        closeButton={closeButton}
+        size={size}
+        children={children}
+        cls={cls}
+      />,
+      document.body,
+    )
+  ) : (
+    <ModalBase
+        id={id}
+      handleClose={handleClose}
+      handleCloseModal={handleCloseModal}
+      ref={ref}
+      innerRef={innerRef}
+      handleSubmit={handleSubmit}
+      handleSubmitModal={handleSubmitModal}
+      customButtons={customButtons}
+      closeButton={closeButton}
+      size={size}
+      children={children}
+      cls={cls}
+    />
+  );
+};
+
+export default Modal;
+
+const ModalBase = ({
+    id,
+  ref,
+  size,
+  innerRef,
+  handleCloseModal,
+  handleSubmit,
+  children,
+  closeButton,
+  handleSubmitModal,
+  handleClose,
+  customButtons,
+  cls,
+}) => {
+  return (
     <motion.div
+        id={id??''}
       ref={ref}
       animate={'show'}
       initial={'hidden'}
@@ -138,9 +193,6 @@ const Modal = ({
           )}
         </div>
       </div>
-    </motion.div>,
-    document.body,
+    </motion.div>
   );
 };
-
-export default Modal;

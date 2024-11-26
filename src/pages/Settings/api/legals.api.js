@@ -125,7 +125,7 @@ const useLegalsApi = () => {
     setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
     return http
-      .delete(`/api/employees/${legalId}`)
+      .delete(`/api/legal_entities/${legalId}`)
       .then(handleHttpResponse)
       .then(() => getLegals(pageFromUrl))
       .catch(handleShowError)

@@ -168,8 +168,9 @@ const useServiceApi = () => {
     const pageFromUrl = page ?? getQueryParam('page', 1);
     setIsLoading(true);
     return http
-      .delete(`/api/service/${id}`)
+      .delete(`/api/services/${id}`)
       .then(handleHttpResponse)
+        .then(()=>servicesStore.setCurrentService(null))
       .then(() => getServices(pageFromUrl))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

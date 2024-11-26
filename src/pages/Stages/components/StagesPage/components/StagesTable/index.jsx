@@ -17,22 +17,26 @@ import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 import useStore from '../../../../../../hooks/useStore';
 import usePagingData from '../../../../../../hooks/usePagingData';
 import EditStage from '../../../../../../components/EditStage';
-import { useParams } from 'react-router';
+import {useNavigate, useParams} from 'react-router';
 import TaskEditModal from '../../../../../../components/TaskModal';
 import useTasksApi from '../../../../../Tasks/tasks.api';
 import DescriptionInfo from '../DescriptionInfo';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
+import ConfirmationModal from "../../../../../../components/ConfirmationModal";
+import {handleError, handleInfo} from "../../../../../../utils/snackbar";
 
 const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
   const { stagesStore } = useStore();
-  // const { tasksStore } = useStore();
-  // const { stageId } = useParams();
+  const { tasksStore } = useStore();
+  const { stageId } = useParams();
+  const navigate = useNavigate()
   const api = useStageApi();
-  // const [taskData, setTaskData] = useState(null);
+  const [taskData, setTaskData] = useState(null);
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
-  // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const ref = useRef();
-  // const taskApi = useTasksApi();
+  const taskApi = useTasksApi();
   const fetchStages = useCallback((stageId) => {
     api.getTaskStages(stageId);
   }, []);
@@ -45,28 +49,36 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
-  // const handleEditTask = (data) => {
-  //   setTaskData(data);
-  //   setEditTaskModalOpen(true);
-  // };
-  // const handleCreateTask = () => {
-  //   setTaskData(null);
-  //   setEditTaskModalOpen(true);
-  // };
+  const handleEditTask = (data) => {
+    setTaskData(data);
+    setEditTaskModalOpen(true);
+  };
+  const handleCreateTask = () => {
+    setTaskData(null);
+    setEditTaskModalOpen(true);
+  };
 
-  // const handleCloseTaskModal = () => {
-  //   setTaskData(null);
-  //   setEditTaskModalOpen(false);
-  // };
-  const handleDelete = (id) => {
-    console.log(`Удалить услугу с ID: ${id}`);
+  const handleCloseTaskModal = () => {
+    setTaskData(null);
+    setEditTaskModalOpen(false);
+  };
+  const handleDelete = async(id) => {
+    try {
+      await taskApi.deleteTask(id).then(()=>api.getStageById(stage?.id));
+      navigate('.')
+      handleCloseTaskModal()
+      handleInfo('Услуга удалена');
+    } catch (error) {
+      console.error('Ошибка при удалении:', error);
+      handleError('Ошибка при удалении:', error);
+    }
   };
 
   const getActions = (data) => [
     { label: 'Редактировать', onClick: () => onEditTask(data) },
     {
       label: 'Удалить',
-      onClick: () => handleDelete(data.id),
+      onClick: () => setTaskToDelete(data.id),
       disabled: data.id === 0,
     },
   ];
@@ -162,6 +174,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
     );
     return totalHours + ' ч';
   }, [paginatedData[0]]);
+  debugger
   return (
     <div className={styles.table}>
       <Table
@@ -197,18 +210,29 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
         title={`${stage.title}`}
         columns={cols}
       />
-      {/*{stage && <ClientInfo client={stage.client} />}*/}
-      {/*{editTaskModalOpen && (*/}
-      {/*  <TaskEditModal*/}
-      {/*    data={taskData}*/}
-      {/*    handleClose={handleCloseTaskModal}*/}
-      {/*    stage={stage}*/}
-      {/*    stagesStore={stagesStore}*/}
-      {/*    stageApi={api}*/}
-      {/*    taskApi={taskApi}*/}
-      {/*    taskStore={tasksStore}*/}
-      {/*  />*/}
-      {/*)}*/}
+      {editTaskModalOpen && (
+        <TaskEditModal
+          data={taskData}
+          handleClose={handleCloseTaskModal}
+          stage={stage}
+          stagesStore={stagesStore}
+          stageApi={api}
+          taskApi={taskApi}
+          taskStore={tasksStore}
+        />
+      )}
+      {taskToDelete !== null && (
+          <ConfirmationModal
+              isOpen={taskToDelete !== null}
+              onClose={() => setTaskToDelete(null)}
+              onConfirm={() => {
+                handleDelete(taskToDelete).then(() => {
+                  setTaskToDelete(null);
+                });
+              }}
+              label="Вы уверены, что хотите удалить этап?"
+          />
+      )}
       {editStageModalOpen && (
         <EditStage
           stageId={Number(stage?.id)}

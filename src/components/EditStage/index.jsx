@@ -2,7 +2,7 @@ import useStages from '../../pages/Stages/hooks/useStages';
 import useStageApi from '../../pages/Stages/stages.api';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  handleError,
+  handleError, handleInfo,
   handleSubmit as handleSubmitSnackbar,
 } from '../../utils/snackbar';
 import TextInput from '../../shared/TextInput';
@@ -15,7 +15,7 @@ import Modal from '../../shared/Modal';
 import cn from 'classnames';
 import { stageStatusTypesRu } from '../../pages/Stages/stages.types';
 import useStageStatuses from '../../pages/Stages/hooks/useStageStatuses';
-import { useParams } from 'react-router';
+import {useNavigate, useParams} from 'react-router';
 import FormValidatedModal from '../../shared/Modal/FormModal';
 import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../shared/Button/Delete';
@@ -27,6 +27,7 @@ const EditStage = ({ handleClose, stageId }) => {
   const { id: serviceId } = useParams();
   const [isEditMode, setIsEditMode] = useState(false);
   const stageStatuses = useStageStatuses();
+  const navigate = useNavigate()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [localStage, setLocalStage] = useState({
     title: '',
@@ -89,8 +90,10 @@ const EditStage = ({ handleClose, stageId }) => {
 
   const handleDeleteStage = async () => {
     try {
-      await api.getStageById();
-      handleSubmitSnackbar('Этап успешно удален');
+      await api.deleteStage(stageId)
+      navigate(`/services/${serviceId}`)
+      handleInfo('Этап успешно удален');
+
     } catch (e) {
       handleError(e);
     }

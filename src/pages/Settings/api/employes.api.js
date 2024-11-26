@@ -113,10 +113,10 @@ const useEmployesApi = () => {
     const pageFromUrl = page ?? getQueryParam('page', 1);
     setIsLoading(true);
     return http
-      .delete(`/api/legal_enitites/${id}`)
+      .delete(`/api/employees/${id}`)
       .then(handleHttpResponse)
       .then(() => getEmployes(pageFromUrl))
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
 

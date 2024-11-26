@@ -61,6 +61,9 @@ const TaskEditModal = observer(
             id: stage.id,
             title: stage.title,
             store: stagesStore,
+            afterDelete:()=>{
+              return stageApi.getStageById(stage.id)
+            }
           };
         case 'deal':
           return {
@@ -68,6 +71,11 @@ const TaskEditModal = observer(
             id: deal.id,
             title: deal.title,
             store: dealsStore,
+            // afterDelete:()=>dealApi.getDealById(deal?.id)
+            afterDelete:()=>{
+             return dealApi.getDealById(deal?.id)
+
+            }
           };
         default:
           return {
@@ -75,6 +83,11 @@ const TaskEditModal = observer(
             id: null,
             title: null,
             store: taskStore,
+            afterDelete:()=>{
+              taskStore.setCurrentTask(null)
+              const newTasks = taskStore.tasks.filter(el=>el.id!==taskData?.id)
+              taskStore.setTasks(newTasks)
+            }
           };
       }
     }, [mode, stage, deal, stagesStore, dealsStore, taskStore]);
@@ -294,9 +307,13 @@ const TaskEditModal = observer(
 
     const handleDeleteTask = async () => {
       try {
-        await taskApi.deleteTask(taskData?.id, pageFrom);
+        await taskApi.deleteTask(taskData?.id, pageFrom).then(()=>{
+          contextData.afterDelete()
+        })
         handleInfo('Задача удалена');
-        navigate(location.search);
+        debugger
+        handleClose()
+        navigate(location.pathname);
       } catch (e) {
         handleInfo('Ошибка при удалении задача:', e);
       }

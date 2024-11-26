@@ -78,7 +78,7 @@ const ServicesTable = observer(() => {
         id: 'title',
         accessor: 'title',
         minWidth: '250px',
-        width: '35%',
+        width: '30%',
         Cell: ({ row }) => (
           <TableLink
             to={`/services/${row.original.id}`}
@@ -86,13 +86,13 @@ const ServicesTable = observer(() => {
           />
         ),
       },
-      {
-        Header: '№ договора',
-        id: 'contractNumber',
-        width: '4px',
-        accessor: 'contractNumber',
-        Cell: ({ row }) => <p>{row.original.contractNumber}</p>,
-      },
+      // {
+      //   Header: '№ договора',
+      //   id: 'contractNumber',
+      //   width: '4px',
+      //   accessor: 'contractNumber',
+      //   Cell: ({ row }) => <p>{row.original.contractNumber}</p>,
+      // },
       {
         Header: 'Создатель',
         id: 'manager',
@@ -128,6 +128,7 @@ const ServicesTable = observer(() => {
       {
         Header: 'Статус',
         id: 'status',
+        minWidth: '160px',
         Cell: ({ row }) => (
           <Badge
             classname={styles.badge}

@@ -136,7 +136,6 @@ const useTasksApi = () => {
     return http
       .delete(`/api/tasks/${id}`)
       .then(handleHttpResponse)
-      .then(() => stageId !== undefined && stagesApi.getStageById(stageId))
       .catch(handleHttpError);
   }, []);
 

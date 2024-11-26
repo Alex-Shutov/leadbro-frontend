@@ -33,7 +33,6 @@ const Index = ({
   timeActual,
   costsExtra,
 }) => {
-  console.log(actualTime,deadlineTime,'12233333')
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [isOpen,setIsOpen] = useState(false)
 
@@ -79,11 +78,11 @@ const Index = ({
 
                 </div>
 
-                <LabeledParagraph
+                {client?.id && <LabeledParagraph
                     label={'Название компании'}
                     to={`/clients/${client.id}`}
                     text={client.title}
-                />
+                />}
                 <LabeledParagraph
                     label={'Услуга'}
                     to={`/services/${service.id}`}

@@ -16,7 +16,7 @@ const LegalsTable = observer(({ currentSwitcher }) => {
   const api = useLegalsApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentEntity, setCurrentEntity] = useState(null);
-  const [legalToDelete, setLegalToDelete] = useState(false);
+  const [legalToDelete, setLegalToDelete] = useState(null);
   const fetchLegalEntities = useCallback((page) => {
     api.getLegals(page);
   }, []);
@@ -78,7 +78,7 @@ const LegalsTable = observer(({ currentSwitcher }) => {
   const handleDeleteLegal = async (id) => {
     try {
       await api.deleteLegal(id, currentPage);
-      handleInfo('Счет удален');
+      handleInfo('Юр. лицо удалено');
     } catch (error) {
       handleError('Ошибка при удалении:', error);
     }
@@ -87,7 +87,7 @@ const LegalsTable = observer(({ currentSwitcher }) => {
   const getActions = (data) => [
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
-      label: 'Уволить',
+      label: 'Удалить',
       onClick: () => setLegalToDelete(data.id),
       disabled: data.id === 0, // Можно добавить дополнительные условия для деактивации
     },
@@ -135,7 +135,7 @@ const LegalsTable = observer(({ currentSwitcher }) => {
               setLegalToDelete(null);
             });
           }}
-          label="Вы уверены, что хотите удалить клиента?"
+          label="Вы уверены, что хотите удалить юр. лицо?"
         />
       )}
     </LoadingProvider>

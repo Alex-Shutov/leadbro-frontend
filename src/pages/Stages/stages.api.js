@@ -168,13 +168,13 @@ const useStageApi = () => {
     const form = new FormData();
   };
 
-  const deleteStage = (id, page) => {
+  const deleteStage = (id) => {
     resetApiProvider();
-    const pageFromUrl = page ?? getQueryParam('page', 1);
     setIsLoading(true);
     return http
-      .delete(`/api/service/${id}`)
+      .delete(`/api/stages/${id}`)
       .then(handleHttpResponse)
+        .then(()=>stagesStore.setCurrentStage(null))
       .then(() => servicesApi.getServiceById(id))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

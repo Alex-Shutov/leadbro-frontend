@@ -20,12 +20,17 @@ import {
   handleInfo,
   handleSubmit,
 } from '../../../../utils/snackbar';
-import { useNavigate } from 'react-router';
-import { getQueryParam } from '../../../../utils/window.utils';
+import { useLocation, useNavigate } from 'react-router';
+import {
+  getQueryParam,
+  removeLastPathSegment,
+} from '../../../../utils/window.utils';
 
 const ClientsTable = observer(() => {
   const { clientsStore } = useStore();
   const api = useClientsApi();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [createModalOpen, setModalOpen] = useState(false);
   const page = getQueryParam('page', 1);
   const fetchClients = React.useCallback((page) => {
@@ -109,8 +114,9 @@ const ClientsTable = observer(() => {
 
   const handleDeleteClient = async (clientId) => {
     try {
-      await api.deleteClient(clientId, currentPage);
+      await api.deleteCompany(clientId, currentPage);
       handleInfo('Клиент удален');
+      // navigate(`${removeLastPathSegment(location.pathname)}${location.search}`);
     } catch (error) {
       handleError('Ошибка при удалении:', error);
     }
