@@ -1,5 +1,10 @@
 @import src/styles/helpers
 
+.copy
+  margin-left: 6px
+  cursor: pointer
+  &:hover
+      fill: $p3
 .name
   display: flex
   flex-direction: row
@@ -8,6 +13,7 @@
   margin-bottom: 24px
   gap: 8px
   justify-content: space-evenly
+
   span
     +body1-s
     color: $n4

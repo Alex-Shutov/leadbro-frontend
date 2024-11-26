@@ -19,6 +19,7 @@ import ConfirmationModal from '../ConfirmationModal';
 import useParamSearch from '../../hooks/useParamSearch';
 import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../shared/Button/Delete';
+import Icon from "../../shared/Icon";
 
 const draftSet = new Set();
 
@@ -319,6 +320,10 @@ const TaskEditModal = observer(
       }
     };
 
+    const handleCopyTask = () => {
+      navigator.clipboard.writeText(`${window.location.origin}/tasks?taskId=${taskData?.id}`).then((r) => handleInfo('Ссылка на задачу скопирована!'));
+    }
+
     return (
       taskData && (
         <>
@@ -345,7 +350,8 @@ const TaskEditModal = observer(
           >
             <div className={styles.name}>
               <div>
-                {isEditMode ? 'Редактирование задачи' : 'Создание задачи'}
+              {isEditMode ? `Задача#${taskData?.id}` : 'Создание задачи'}
+              {isEditMode && <Icon size={20} onClick={()=>handleCopyTask()} className={styles.copy} name={'copy'}/>}
               </div>
               {
                 <span
