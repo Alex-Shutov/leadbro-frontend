@@ -26,6 +26,7 @@ const useBillsApi = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to) => {
+    debugger
     resetApiProvider();
     setIsLoading(true);
     return http
@@ -42,6 +43,14 @@ const useBillsApi = () => {
   };
 
   const createBill = (body) => {
+    const today = startOfDay(new Date());
+    const monthAgo = sub(today, { months: 1 });
+    const todayFormatted = formatDateForUrl(today);
+
+    const monthAgoFormatted = formatDateForUrl(monthAgo);
+
+    const from = getQueryParam('from', monthAgoFormatted);
+    const to = getQueryParam('to', todayFormatted);
     const pageFromUrl = getQueryParam('page', 1);
     resetApiProvider();
     setIsLoading(true);
@@ -58,7 +67,7 @@ const useBillsApi = () => {
     return http
       .post('/api/bills', finalData)
       .then(handleHttpResponse)
-      .then(() => getBills(pageFromUrl))
+      .then(() => getBills(pageFromUrl,from,to))
       .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };

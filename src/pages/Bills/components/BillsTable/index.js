@@ -28,7 +28,7 @@ const BillsTable = observer(() => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
   const [billToDelete,setBillToDelete] = useState(null)
-
+  debugger
   const today = startOfDay(new Date());
   const monthAgo = sub(today, { months: 1 });
   const todayFormatted = formatDateForUrl(today);
@@ -83,7 +83,6 @@ const BillsTable = observer(() => {
   ];
 
   useEffect(() => {
-    debugger;
     api.getBills(
       currentPage,
       from ?? formatDateToQuery(new Date()),
@@ -136,9 +135,12 @@ const BillsTable = observer(() => {
         id: 'sum',
         width: '15%',
         accessor: 'sum',
-        Cell: ({ row }) => (
-          <span>{row.original.sum.toLocaleString()} руб.</span>
-        ),
+        Cell: ({ row }) => {
+          debugger
+          return (
+              <span>{row.original.sum.toLocaleString()} руб.</span>
+          )
+        },
       },
       {
         Header: 'Клиент',
@@ -168,7 +170,7 @@ const BillsTable = observer(() => {
         ),
       },
     ],
-    [],
+    [billsStore?.bills],
   );
 
   return (
