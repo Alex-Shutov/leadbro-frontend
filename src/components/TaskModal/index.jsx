@@ -64,7 +64,8 @@ const TaskEditModal = observer(
             store: stagesStore,
             afterDelete:()=>{
               return stageApi.getStageById(stage.id)
-            }
+            },
+            afterCreate:()=>stageApi.getStageById(stage?.id)
           };
         case 'deal':
           return {
@@ -76,7 +77,8 @@ const TaskEditModal = observer(
             afterDelete:()=>{
              return dealApi.getDealById(deal?.id)
 
-            }
+            },
+            afterCreate:()=>dealApi.getDealById(deal?.id)
           };
         default:
           return {
@@ -88,6 +90,9 @@ const TaskEditModal = observer(
               taskStore.setCurrentTask(null)
               const newTasks = taskStore.tasks.filter(el=>el.id!==taskData?.id)
               taskStore.setTasks(newTasks)
+            },
+            afterCreate:()=>{
+
             }
           };
       }
@@ -220,7 +225,7 @@ const TaskEditModal = observer(
 
           await taskApi.createTask(
             mapStageDataToBackend(payload, Object.keys(payload)),
-          );
+          ).then(()=>contextData.afterCreate());
           draftSet.clear();
         }
 

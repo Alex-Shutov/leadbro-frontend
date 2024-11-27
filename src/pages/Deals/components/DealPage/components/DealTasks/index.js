@@ -15,7 +15,7 @@ import Badge, { statusTypes } from '../../../../../../shared/Badge';
 import DeadLineTimeCell from '../../../../../Stages/components/StagesPage/components/StagesTable/components/DeadLineTimeCell';
 import { formatDate } from '../../../../../../utils/formate.date';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
-const DealTasks = ({ deal, onEditTask, onCreateTask }) => {
+const DealTasks = ({ deal, onEditTask, onCreateTasks }) => {
   debugger;
   const cols = useMemo(
     () => [
@@ -114,7 +114,7 @@ const DealTasks = ({ deal, onEditTask, onCreateTask }) => {
         actions={getActions}
         headerActions={{
           add: {
-            action: onCreateTask,
+            action: onCreateTasks,
             title: 'Создать задачу',
           },
         }}

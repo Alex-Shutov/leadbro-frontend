@@ -56,7 +56,6 @@ export const statusBillTypesRu = {
 export const serviceTypeEnum = {
   seo: 'seo',
   development: 'development',
-  advertisement: 'advertisement',
   context: 'context',
   target: 'target',
   support: 'support',
@@ -64,12 +63,12 @@ export const serviceTypeEnum = {
   design: 'design',
   leadgen: 'leadgen',
   marketplace: 'marketplace',
+  improvements:'improvements'
 };
 
 export const serviceTypeEnumRu = {
   seo: 'SEO',
   development: 'Разработка сайта',
-  advertisement: 'Контекстная реклама',
   context: 'Контекстная реклама',
   target: 'Таргетированая реклама',
   support: 'Тех.поддержка',
@@ -77,4 +76,5 @@ export const serviceTypeEnumRu = {
   design: 'Дизайн',
   leadgen: 'Лидогенерация',
   marketplace: 'Маркетплейсы',
+  improvements:'Разовые доработки'
 };

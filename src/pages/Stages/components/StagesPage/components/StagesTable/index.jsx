@@ -25,7 +25,7 @@ import withTaskModalHandler from '../../../../../../components/TaskModal/HocHand
 import ConfirmationModal from "../../../../../../components/ConfirmationModal";
 import {handleError, handleInfo} from "../../../../../../utils/snackbar";
 
-const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
+const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   const { stagesStore } = useStore();
   const { tasksStore } = useStore();
   const { stageId } = useParams();
@@ -199,7 +199,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTask }) => {
         // }
         headerActions={{
           add: {
-            action: () => onCreateTask(),
+            action: () => onCreateTasks(),
             title: 'Создать задачу',
           },
           edit: {
