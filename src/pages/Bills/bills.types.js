@@ -5,9 +5,9 @@ export const billStatusTypes = {
 };
 
 export const billStatusTypesRu = {
-  created: 'Выставлен',
+  created: 'Создан',
   paid: 'Оплачен',
-  expired: 'Просрочен',
+  expired: 'Отменен',
 };
 
 export const colorBillStatusTypes = {
