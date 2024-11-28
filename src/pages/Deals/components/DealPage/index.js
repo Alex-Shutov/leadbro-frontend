@@ -23,6 +23,7 @@ import DealMembers from './components/DealMembers';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar';
 import useStore from '../../../../hooks/useStore';
 import useTasksApi from '../../../Tasks/tasks.api';
+import DealNote from './components/DealNote';
 
 const DealPage = observer(() => {
   const { id } = useParams();
@@ -115,6 +116,13 @@ const DealPage = observer(() => {
                   onReset={handleReset}
                   onSubmit={handleSubmit}
                   description={deal?.description}
+                />
+                <DealNote
+                  onChange={handleChange}
+                  onReset={handleReset}
+                  onSubmit={handleSubmit}
+                  onAdd={() => null}
+                  data={deal}
                 />
                 <DealInfo
                   price={deal?.price}

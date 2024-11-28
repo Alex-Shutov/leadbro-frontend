@@ -1,4 +1,5 @@
 export const taskStatusTypes = {
+  time_evaluation: 'time_evaluation',
   created: 'created',
   in_work: 'in_work',
   waiting_for_approval: 'waiting_for_approval',
@@ -6,9 +7,10 @@ export const taskStatusTypes = {
   paused: 'paused',
 };
 export const taskStatusTypesRu = {
+  time_evaluation: 'На оценке',
   in_work: 'В работе',
   finished: 'Завершено',
-  created: 'Создана',
+  created: 'На согласовании',
   waiting_for_approval: 'Ожидает проверку',
   paused: 'Отложено',
 };
@@ -23,6 +25,10 @@ export const stageStatusTypesRu = {
 };
 
 export const colorStatusTaskTypes = {
+  time_evaluation: {
+    status: taskStatusTypesRu.time_evaluation,
+    class: 'status-aqua',
+  },
   created: { status: taskStatusTypesRu.created, class: 'status-blue' },
   in_work: { status: taskStatusTypesRu.in_work, class: 'status-green' },
   waiting_for_approval: {
@@ -38,6 +44,11 @@ export const colorStatusTaskTypesForTaskList = {
     status: taskStatusTypesRu.in_work,
     class: 'status-task-green',
   },
+  time_evaluation: {
+    status: taskStatusTypesRu.time_evaluation,
+    class: 'status-task-aqua',
+  },
+
   finished: { status: taskStatusTypesRu.finished, class: 'status-task-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-task-blue' },
   waiting_for_approval: {

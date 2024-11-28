@@ -4,7 +4,7 @@ import styles from '../DealsList/List.module.sass';
 import Card from '../../../../../../../../shared/Card';
 import Avatar from '../../../../../../../../shared/Avatar';
 import { loadAvatar } from '../../../../../../../../utils/create.utils';
-import {sourceTypeRu} from "../../../../../../deals.types";
+import { sourceTypeRu } from '../../../../../../deals.types';
 
 const DealCard = ({ deal }) => {
   const [{ isDragging }, drag] = useDrag({
@@ -45,6 +45,7 @@ const DealCard = ({ deal }) => {
         </div>
         <div className={styles.deal_name}>{deal.name}</div>
         <div className={styles.deal_price}>{formatPrice(deal.price)}</div>
+        <div className={styles.deal_note}>{deal?.note}</div>
         <div className={styles.deal_footer}>
           <div className={styles.deal_assignee}>
             {

@@ -26,7 +26,7 @@ const useBillsApi = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to) => {
-    debugger
+    debugger;
     resetApiProvider();
     setIsLoading(true);
     return http
@@ -67,7 +67,7 @@ const useBillsApi = () => {
     return http
       .post('/api/bills', finalData)
       .then(handleHttpResponse)
-      .then(() => getBills(pageFromUrl,from,to))
+      .then(() => getBills(pageFromUrl, from, to))
       .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
@@ -100,6 +100,7 @@ const useBillsApi = () => {
       billsStore.drafts[billId],
       billsStore.changedProps,
     );
+    debugger;
     if (dataToUpdate.bill_items) {
       const allowedItemFields = [
         'name',
@@ -147,14 +148,14 @@ const useBillsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const deleteBill = async (billId,currentPage,from,to) => {
+  const deleteBill = async (billId, currentPage, from, to) => {
     resetApiProvider();
     setIsLoading(true);
 
     try {
       await http.delete(`/api/bills/${billId}`);
       const pageFromUrl = currentPage ?? getQueryParam('page', 1);
-      await getBills(pageFromUrl,from,to);
+      await getBills(pageFromUrl, from, to);
       return true;
     } catch (error) {
       handleHttpError(error);

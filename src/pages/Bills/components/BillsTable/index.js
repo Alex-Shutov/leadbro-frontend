@@ -15,8 +15,8 @@ import BillsStats from './components/BillsStats';
 import useQueryParam from '../../../../hooks/useQueryParam';
 import { formatDateToQuery } from '../../../../utils/formate.date';
 import { format, startOfDay, sub } from 'date-fns';
-import ConfirmationModal from "../../../../components/ConfirmationModal";
-import {handleError, handleInfo} from "../../../../utils/snackbar";
+import ConfirmationModal from '../../../../components/ConfirmationModal';
+import { handleError, handleInfo } from '../../../../utils/snackbar';
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -27,8 +27,8 @@ const BillsTable = observer(() => {
   const api = useBillsApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
-  const [billToDelete,setBillToDelete] = useState(null)
-  debugger
+  const [billToDelete, setBillToDelete] = useState(null);
+  debugger;
   const today = startOfDay(new Date());
   const monthAgo = sub(today, { months: 1 });
   const todayFormatted = formatDateForUrl(today);
@@ -59,9 +59,9 @@ const BillsTable = observer(() => {
     setEditModalOpen(true);
   };
 
-  const handleDelete = async(id) => {
+  const handleDelete = async (id) => {
     try {
-      await api.deleteBill(id, currentPage,from,to);
+      await api.deleteBill(id, currentPage, from, to);
       handleInfo('Услуга удалена');
     } catch (error) {
       handleError('Ошибка при удалении:', error);
@@ -136,10 +136,8 @@ const BillsTable = observer(() => {
         width: '15%',
         accessor: 'sum',
         Cell: ({ row }) => {
-          debugger
-          return (
-              <span>{row.original.sum.toLocaleString()} руб.</span>
-          )
+          debugger;
+          return <span>{row.original.sum.toLocaleString()} руб.</span>;
         },
       },
       {
@@ -170,7 +168,7 @@ const BillsTable = observer(() => {
         ),
       },
     ],
-    [billsStore?.bills],
+    [],
   );
 
   return (
@@ -218,16 +216,16 @@ const BillsTable = observer(() => {
         />
       )}
       {billToDelete !== null && (
-          <ConfirmationModal
-              isOpen={billToDelete !== null}
-              onClose={() => setBillToDelete(null)}
-              onConfirm={() => {
-                handleDelete(billToDelete).then(() => {
-                  setBillToDelete(null);
-                });
-              }}
-              label="Вы уверены, что хотите удалить счет?"
-          />
+        <ConfirmationModal
+          isOpen={billToDelete !== null}
+          onClose={() => setBillToDelete(null)}
+          onConfirm={() => {
+            handleDelete(billToDelete).then(() => {
+              setBillToDelete(null);
+            });
+          }}
+          label="Вы уверены, что хотите удалить счет?"
+        />
       )}
     </>
   );

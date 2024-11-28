@@ -107,12 +107,12 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           console.error('Ошибка загрузки услуг:', error);
           setServices([]);
         }
-      } else if(bill?.company?.id && appStore.servicesByCompany.length){
+      } else if (bill?.company?.id && appStore.servicesByCompany.length) {
         const mappedServices = appStore.servicesByCompany.map((item) => ({
           value: item.id,
           label: item.name,
         }));
-        setServices(mappedServices)
+        setServices(mappedServices);
       }
     };
 
@@ -135,12 +135,12 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           console.error('Ошибка загрузки этапов:', error);
           setStages([]);
         }
-      } else if (bill?.service?.id && appStore.stagesByService.length){
+      } else if (bill?.service?.id && appStore.stagesByService.length) {
         const mappedServices = appStore.stagesByService.map((item) => ({
           value: item.id,
           label: item.name,
         }));
-        setStages(mappedServices)
+        setStages(mappedServices);
       }
     };
     loadServices();
@@ -198,7 +198,8 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
       handleSubmitSnackbar(
         isEditMode ? 'Счет успешно отредактирован' : 'Счет успешно создан',
       );
-      billsStore.resetDraft(billId)
+      // billsStore.submitDraft(billId);
+      billsStore.resetDraft(billId);
       onClose();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);

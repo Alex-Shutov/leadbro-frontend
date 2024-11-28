@@ -10,6 +10,7 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
     createdAt: new Date(apiDeal?.created_at),
     name: apiDeal?.name,
     description: Boolean(apiDeal?.description) ? apiDeal?.description : ' ',
+    note: apiDeal?.note ?? '',
     source: apiDeal?.source,
     serviceType: apiDeal?.service_type,
     price: apiDeal?.price,

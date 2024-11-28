@@ -1,7 +1,10 @@
 import React from 'react';
 import cn from 'classnames';
 
-import { colorStatusTaskTypes as taskTypes } from '../../../../../../stages.types';
+import {
+  colorStatusTaskTypesForTaskList,
+  colorStatusTaskTypes as taskTypes,
+} from '../../../../../../stages.types';
 import Badge from '../../../../../../../../shared/Badge';
 import styles from './Badge.module.sass';
 
