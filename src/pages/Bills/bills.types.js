@@ -15,8 +15,8 @@ export const billStatusTypesRu = {
 export const colorBillStatusTypes = {
   created: { status: billStatusTypesRu.created, class: 'status-blue' },
   paid: { status: billStatusTypesRu.paid, class: 'status-green' },
-  canceled: { status: billStatusTypesRu.canceled, class: 'status-red' },
-  expired: { status: billStatusTypesRu.expired, class: 'status-grey' },
+  canceled: { status: billStatusTypesRu.canceled, class: 'status-grey' },
+  expired: { status: billStatusTypesRu.expired, class: 'status-red' },
 };
 
 export const measurementUnitTypes = {
