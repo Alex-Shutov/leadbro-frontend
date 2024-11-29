@@ -1,28 +1,30 @@
 export const billStatusTypes = {
   created: 'created',
   paid: 'paid',
+  canceled: 'canceled',
   expired: 'expired',
 };
 
 export const billStatusTypesRu = {
   created: 'Создан',
   paid: 'Оплачен',
-  expired: 'Отменен',
+  canceled: 'Отменен',
+  expired: 'Просрочен',
 };
 
 export const colorBillStatusTypes = {
   created: { status: billStatusTypesRu.created, class: 'status-blue' },
   paid: { status: billStatusTypesRu.paid, class: 'status-green' },
-  expired: { status: billStatusTypesRu.expired, class: 'status-red' },
+  canceled: { status: billStatusTypesRu.canceled, class: 'status-red' },
+  expired: { status: billStatusTypesRu.expired, class: 'status-grey' },
 };
-
 
 export const measurementUnitTypes = {
   pcs: 'pcs',
-  hours: 'hours'
+  hours: 'hours',
 };
 
 export const measurementUnitTypesRu = {
   pcs: 'шт',
-  hours: 'часы'
+  hours: 'часы',
 };
