@@ -1,17 +1,19 @@
 export const taskStatusTypes = {
   time_evaluation: 'time_evaluation',
   created: 'created',
+  paused: 'paused',
+  waiting: 'waiting',
   in_work: 'in_work',
   waiting_for_approval: 'waiting_for_approval',
   finished: 'finished',
-  paused: 'paused',
 };
 export const taskStatusTypesRu = {
   time_evaluation: 'На оценке',
   in_work: 'В работе',
   finished: 'Завершено',
+  waiting: 'Ожидает',
   created: 'На согласовании',
-  waiting_for_approval: 'Ожидает проверку',
+  waiting_for_approval: 'На проверке',
   paused: 'Отложено',
 };
 
@@ -30,13 +32,14 @@ export const colorStatusTaskTypes = {
     class: 'status-aqua',
   },
   created: { status: taskStatusTypesRu.created, class: 'status-blue' },
+  paused: { status: taskStatusTypesRu.paused, class: 'status-disabled' },
+  waiting: { status: taskStatusTypesRu.waiting, class: 'status-disabled' },
   in_work: { status: taskStatusTypesRu.in_work, class: 'status-green' },
   waiting_for_approval: {
     status: taskStatusTypesRu.waiting_for_approval,
     class: 'status-yellow',
   },
   finished: { status: taskStatusTypesRu.finished, class: 'status-red' },
-  paused: { status: taskStatusTypesRu.paused, class: 'status-disabled' },
 };
 
 export const colorStatusTaskTypesForTaskList = {
@@ -49,6 +52,7 @@ export const colorStatusTaskTypesForTaskList = {
     class: 'status-task-aqua',
   },
 
+  waiting: { status: taskStatusTypesRu.waiting, class: 'status-task-brown' },
   finished: { status: taskStatusTypesRu.finished, class: 'status-task-red' },
   created: { status: taskStatusTypesRu.created, class: 'status-task-blue' },
   waiting_for_approval: {
