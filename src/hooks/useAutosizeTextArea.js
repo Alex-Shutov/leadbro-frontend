@@ -1,16 +1,32 @@
 import { useEffect, useLayoutEffect } from 'react';
+import {calculateTextHeight} from "../utils/calculate";
 
-const useAutosizeTextArea = (textAreaRef, value, isRendered, setRendered) => {
+const useAutosizeTextArea = (textAreaRef, isRendered, setRendered,hovered) => {
+  debugger
   useEffect(() => {
-    if (textAreaRef.current && isRendered) {
-      debugger;
-      textAreaRef.current.style.height = textAreaRef.current.style.clientHeight;
-      const scrollHeight = textAreaRef.current.scrollHeight;
+    setTimeout(()=>{if (textAreaRef?.current && isRendered) {
+      const textarea = textAreaRef.current;
 
-      textAreaRef.current.style.height = scrollHeight + 'px';
+      // Сохраняем скролл
+      const scrollTop = textarea.scrollTop;
+
+      // Обновляем размер
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+
+      console.log(
+          textAreaRef, textarea, textarea.defaultValue, textarea.offsetWidth, textarea.clientWidth, textarea.style, 'autosize'
+      )
+
+      textarea.style.height = scrollHeight === 0 ? calculateTextHeight(textarea.defaultValue ?? '', textarea.offsetWidth ?? textarea.clientWidth, textarea.style) : scrollHeight + 'px';
+
+      // Восстанавливаем скролл
+      textarea.scrollTop = scrollTop;
+
       setRendered(false);
     }
-  }, [textAreaRef.current, value, isRendered]);
+    },50)
+  }, [textAreaRef?.current,textAreaRef?.current?.value, isRendered,hovered]);
 };
 
 export default useAutosizeTextArea;

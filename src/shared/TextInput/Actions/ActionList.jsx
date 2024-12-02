@@ -13,7 +13,7 @@ const ActionList = ({setClose,actions,classNameActions,inputRef,props,withLabels
     return (
         <div className={cn(styles.actions, classNameActions)}>
             {actions?.see && !props?.edited && <See setClose={setClose } label={withLabels ? 'Посмотреть' :''} props={props} inputRef={inputRef}/>}
-            {actions?.edit && !props?.edited && <Edit  label={withLabels ? 'Редактировать' :''} inputRef={inputRef}  actions={actions} props={props}/>}
+            {(actions?.edit || actions?.onEdit) && !props?.edited && <Edit  label={withLabels ? 'Редактировать' :''} inputRef={inputRef}  actions={actions} props={props}/>}
             {actions?.edit && props?.edited && <Submit setClose={setClose} label={withLabels ? 'Подтвердить' :''}  props={props} actions={actions}/>}
             {actions?.edit && props.edited && <Close  setClose={setClose } label={withLabels ? 'Закрыть' :''}  actions={actions} props={props}/>}
             {actions?.delete && <Delete setClose={setClose } label={withLabels ? 'Удалить' :''}  actions={actions} props={props} inputRef={inputRef}/>}

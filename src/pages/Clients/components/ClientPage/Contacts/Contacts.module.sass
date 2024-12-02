@@ -42,3 +42,46 @@
     +m
       height: 40px
 
+.name
+  +title1-s
+  color: $n7
+  margin-bottom: 24px
+  width: 100%
+  display: flex
+  gap: 16px
+
+.flex
+  div[class*='datepicker_wrapper']
+    input
+      font-weight: 600 !important
+  &__lowerGap
+    .input
+    z-index: 0
+  display: flex
+  flex-direction: row
+  gap: 25px
+  +m
+    gap: 0px
+    flex-direction: column
+    &>div
+      margin-bottom: 24px
+
+  &>div
+    flex: 1
+  &>.flexBig
+    flex: 0 0 63.1%
+    border-right: 1px solid $n3
+    padding-right: 24px
+
+.inputModal
+  margin-top: 0.5rem
+  min-width: 160px
+
+  //div[class*='selection']
+  //  font-weight: 500 !important
+  z-index: 3
+  input
+    //font-weight: 500 !important
+    //background-color: white !important
+    border-color: $n3
+

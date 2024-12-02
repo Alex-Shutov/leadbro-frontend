@@ -95,7 +95,6 @@ export const getTaskableTypeFromUrl = () => {
 
 // Функция для форматирования времени
 const formatDuration = (time) => {
-  debugger
   if (!time) return 'Не указано';
   // const days = Math.floor(time / 24);
   // const hours = Math.floor(time % 24);

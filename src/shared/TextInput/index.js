@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, memo, useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import styles from './TextInput.module.sass';
 import Icon from '../Icon';
@@ -8,6 +8,7 @@ import { useFormContext, get } from 'react-hook-form';
 import Editor from '../Editor';
 import ActionList from './Actions/ActionList';
 import Dots from './Dots';
+import uuid from 'draft-js/lib/uuid';
 
 const TextInput = forwardRef(
   (
@@ -30,6 +31,7 @@ const TextInput = forwardRef(
       validate,
       name,
       required,
+      key,
       ...props
     },
     ref,
@@ -37,7 +39,7 @@ const TextInput = forwardRef(
     const inputRef = useRef(null);
     const wrapRef = useRef(null);
     const [isTouched, setIsTouched] = useState(false);
-
+    const [cursorPosition, setCursorPosition] = useState(null);
     // Проверяем, находимся ли мы внутри формы
     const formContext = useFormContext();
     const isInForm = !!formContext && name;
@@ -90,6 +92,12 @@ const TextInput = forwardRef(
       }
     }, [isSubmitted]);
 
+    useEffect(() => {
+      if (cursorPosition !== null && inputRef.current) {
+        inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    }, [value, cursorPosition]);
+
     const formatValue = (inputValue) => {
       if (!inputValue) return inputValue;
       let formattedValue = inputValue.replace(/[^0-9.]/g, '');
@@ -115,9 +123,9 @@ const TextInput = forwardRef(
     };
 
     const handleInputChange = (e) => {
-      debugger;
       const rawValue = e.target.value;
-
+      const cursorPos = e.target.selectionStart;
+      const isTextArea = e.target.tagName.toLowerCase() === 'textarea';
       // Обработка для money типа
       if (props.type === 'money') {
         if (rawValue === '') {
@@ -149,6 +157,16 @@ const TextInput = forwardRef(
       }
 
       handleChange(e);
+      debugger;
+      if (isTextArea) {
+        // requestAnimationFrame(() => {
+        //   if (inputRef.current) {
+        //     inputRef.current.setSelectionRange(cursorPos, cursorPos);
+        //   }
+        // });
+      } else {
+        setCursorPosition(cursorPos);
+      }
     };
 
     // Общий обработчик изменений
@@ -174,13 +192,14 @@ const TextInput = forwardRef(
     const commonProps = {
       name,
       onBlur: handleBlur,
-      ref: (e) => {
-        inputRef.current = e;
-        if (typeof ref === 'function') ref(e);
-        else if (ref) ref.current = e;
-      },
+
+      // ref: (e) => {
+      //   inputRef.current = e;
+      //   if (typeof ref === 'function') ref(e);
+      //   else if (ref) ref.current = e;
+      // },
       className: cn(classInput, styles.input, { [styles.errorInput]: error }),
-      disabled: !props?.edited ?? false,
+      readOnly: !props?.edited ?? false,
       ...props,
     };
 
@@ -188,10 +207,12 @@ const TextInput = forwardRef(
       if (props.type === 'textarea') {
         return (
           <TextArea
-            {...commonProps}
+              {...commonProps}
+
             onChange={handleInputChange}
-            value={value}
+            defaultValue={value}
             className={cn(commonProps.className, styles.textarea)}
+              ref={inputRef}
           />
         );
       }
@@ -199,11 +220,11 @@ const TextInput = forwardRef(
       if (props.type === 'editor' && value) {
         return (
           <Editor
-            ref={ref}
             placeholder={props?.placeholder}
             name={name ?? ''}
             initialHTML={value}
             onChange={onChange}
+            ref={ref}
           />
         );
       }

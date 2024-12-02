@@ -65,22 +65,7 @@ const Comments = ({
   }
   return (
     <Card>
-      <CommentsInput
-        commentsLength={commentsLength}
-        onSendMessage={async (val) => {
-          const result = await appApi.sendComment(
-            belongsTo ?? getCurrentEntityType(),
-            entityId ?? id,
-            { text: val.value.text, files: val.value.files },
-          );
-          result?.id &&
-            onChange(`${prefix}comments.${result.id}`, {
-              ...val,
-              id: result.id,
-            });
-        }}
-        currentUser={user}
-      />
+
       <CommentsFilters
         filterComments={handleFilterByComments}
         filterFiles={handleFilterByFiles}
@@ -93,6 +78,22 @@ const Comments = ({
         filterFiles={isFilterFiles}
         filterComments={isFilterComments}
         comments={comments}
+      />
+      <CommentsInput
+          commentsLength={commentsLength}
+          onSendMessage={async (val) => {
+            const result = await appApi.sendComment(
+                belongsTo ?? getCurrentEntityType(),
+                entityId ?? id,
+                { text: val.value.text, files: val.value.files },
+            );
+            result?.id &&
+            onChange(`${prefix}comments.${result.id}`, {
+              ...val,
+              id: result.id,
+            });
+          }}
+          currentUser={user}
       />
     </Card>
   );

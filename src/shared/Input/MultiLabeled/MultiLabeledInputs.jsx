@@ -4,7 +4,7 @@ import styles from '../Card/CardInput.module.sass';
 import CardInput from '../Card';
 import cn from 'classnames';
 
-const MultiInputLabeled = ({ label, onAdd, children, ...props }) => {
+const MultiInputLabeled = ({ label, onAdd, children,cls, ...props }) => {
   return (
     <>
       <div

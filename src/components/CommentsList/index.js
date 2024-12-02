@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, {useEffect, useLayoutEffect, useMemo, useRef} from 'react';
 import Comment from './Comment';
 import {
   formatDateOnlyHours,
@@ -23,8 +23,14 @@ const CommentsList = ({
   onDelete,
 }) => {
   const { user } = useUser();
+  const prevCommentsLength = useRef(Object.keys(comments).length);
   const { deleteComments, isLoading } = useAppApi();
+  const ref = useRef(null)
+  const isRendered = useRef(false)
+  const isDeleting = useRef(false);
   // Преобразуем объект комментариев в массив и сортируем по дате
+
+
   const sortedComments = useMemo(() => {
     return (
       Object.entries(comments)
@@ -64,11 +70,35 @@ const CommentsList = ({
     return groups;
   }, [sortedComments]);
 
+  useLayoutEffect(() => {
+    const currentCommentsLength = Object.keys(comments).length;
+
+    if (currentCommentsLength > prevCommentsLength.current && !isDeleting.current) {
+      ref.current?.scrollTo({
+        top: ref.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+    isDeleting.current = false;
+    prevCommentsLength.current = currentCommentsLength;
+  }, [comments]);
+
+  useLayoutEffect(() => {
+    if(!isRendered.current && ref.current){
+      isRendered.current = true
+      ref.current?.scrollTo({
+        bottom: ref.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [ref.current]);
+
   if (!Object.keys(comments).length) {
     return <div className={cn(styles.empty, cls)}>Нет комментариев</div>;
   }
 
   const handleDeleteComment = (commentId) => {
+    isDeleting.current = true;
     deleteComments(commentId, onDelete);
   };
 
@@ -80,8 +110,9 @@ const CommentsList = ({
     },
   ];
 
+
   return (
-    <div className={cn(cls, styles.commentList)}>
+    <div ref={ref} className={cn(cls, styles.commentList)}>
       <LoadingProvider isLoading={isLoading || isLoadingUpper}>
         {Object.entries(groupedComments).map(([date, dateComments]) => (
           <div key={date} className={styles.dateGroup}>

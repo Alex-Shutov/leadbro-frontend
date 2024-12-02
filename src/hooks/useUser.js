@@ -63,7 +63,6 @@ const useUser = () => {
       fetchUser();
     }
   }, []);
-  debugger;
   const user = useMemo(() => userStore.user, [userStore.user]);
   const permissions = useMemo(() => userStore.rights, [userStore.rights]);
   return {

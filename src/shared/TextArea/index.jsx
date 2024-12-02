@@ -1,44 +1,61 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, {useLayoutEffect, useRef, useState, memo, forwardRef, useEffect} from 'react';
 import useAutosizeTextArea from '../../hooks/useAutosizeTextArea';
-import { observer } from 'mobx-react';
-import TextareaAutosize from 'react-textarea-autosize';
 
-const TextArea = forwardRef((props, ref) => {
-  const textAreaRef = useRef(ref?.current);
+const TextArea = forwardRef((props,ref) => {
+  const { defaultValue, hovered, key } = props;
   const [rendered, setRendered] = useState(false);
-  const { rows, value, hovered } = props;
+  const [isHovered, setIsHovered] = useState(false);
+  debugger
   useEffect(() => {
-    setTimeout(() => {
-      setRendered(true);
-    }, 50);
-  }, [value, hovered]);
-  useAutosizeTextArea(textAreaRef, value, rendered, setRendered);
+      setRendered(true)
+    setTimeout(()=>setRendered(false),1500)
+    // return () => {
+    //     setRendered(false)
+    // }
+  }, [defaultValue]);
 
-  // Модифицированный автосайз
-  // useEffect(() => {
-  //   if (!textAreaRef.current || !rendered ) return;
-  //
-  //   const textarea = textAreaRef.current;
-  //   const computedStyle = window.getComputedStyle(textarea);
-  //   const lineHeight = parseInt(computedStyle.lineHeight);
-  //
-  //   // Минимальная высота для однострочного текста
-  //   const minHeight = rows === 1 ? '48px' : `${Math.max(48, lineHeight * rows)}px`;
-  //   textarea.style.height = minHeight;
-  //
-  //   // Если контент больше минимальной высоты, увеличиваем
-  //   const scrollHeight = textarea.scrollHeight;
-  //   if (scrollHeight > parseInt(minHeight)) {
-  //     textarea.style.height = 'auto';
-  //     textarea.style.height = `${textarea.scrollHeight+12}px`;
-  //   }
-  //
-  //   setRendered(false);
-  // }, [textAreaRef.current, value, rendered, rows]);
+
+  useAutosizeTextArea(ref, rendered, setRendered,isHovered);
+
+  const handleChange = (e) => {
+    if (props.onChange) {
+      props.onChange(e);
+    }
+  };
+
+  // Фильтруем ненужные пропсы
+  const {
+    inputRef,
+    haveDots,
+    edited,
+    multiple,
+    labeled,
+    value, // удаляем value из пропсов
+      seen,
+      onSee,
+      onEdit,
+    ...textareaProps
+  } = props;
   return (
-    <textarea value={props.value} ref={textAreaRef} {...props} />
-    //
+    <textarea
+      ref={ref}
+
+      onChange={handleChange}
+      defaultValue={defaultValue}
+      {...textareaProps}
+      onMouseEnter={() => {
+        setIsHovered(true)
+        setRendered(true)
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setRendered(false)
+      }}
+
+    />
   );
-});
+})
+
+TextArea.displayName = 'TextArea';
 
 export default TextArea;

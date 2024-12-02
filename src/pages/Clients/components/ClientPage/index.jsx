@@ -42,6 +42,7 @@ const ClientPage = observer(() => {
   const [passModalOpen, setPassModalOpen] = useState(false);
   const [personModalOpen, setPersonModalOpen] = useState(false);
   const handleChange = (name, payload, withId = true) => {
+    debugger
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {
@@ -58,6 +59,9 @@ const ClientPage = observer(() => {
   };
   const handleSubmit = async (path, submitText) => {
     try {
+      debugger
+      debugger
+      debugger
       await api.updateCompany(Number(id), {}, submitText);
       clients.submitDraft();
       // api.setClients(clients);
