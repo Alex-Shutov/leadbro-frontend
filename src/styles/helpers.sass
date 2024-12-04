@@ -220,16 +220,37 @@ a
 @mixin custom-scrollbar
     scrollbar-width: thin
     scrollbar-color: rgba(0, 0, 0, 0.3) transparent
+
     &::-webkit-scrollbar
         width: 5px
+
     &::-webkit-scrollbar-track
         background: transparent !important
+
     &::-webkit-scrollbar-thumb
         background: rgba(0, 0, 0, 0.3) !important
         border-radius: 3px !important
         border: none !important
+        opacity: 0
+        transition: opacity 0.3s
+
     &::-webkit-scrollbar-button:vertical:start:decrement,
     &::-webkit-scrollbar-button:vertical:end:increment,
     &::-webkit-scrollbar-button:horizontal:start:decrement,
     &::-webkit-scrollbar-button:horizontal:end:increment
         display: none !important
+
+    // Показываем скролл при наведении или прокрутке
+    &:hover,
+    &:focus,
+    &:active
+        &::-webkit-scrollbar-thumb
+            opacity: 1
+
+    // Для Firefox
+    &
+        scrollbar-width: thin
+        &:hover
+            scrollbar-color: rgba(0, 0, 0, 0.3) transparent
+        &:not(:hover)
+            scrollbar-color: transparent transparent
