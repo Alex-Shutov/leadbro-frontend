@@ -247,11 +247,14 @@ a
         &::-webkit-scrollbar-thumb
             opacity: 1
 
-    // Для Firefox
-    &
-        //scrollbar-width: thin
-        &:hover
-            //scrollbar-color: rgba(0, 0, 0, 0.3) transparent
+    // Для Windows
+    @media (-webkit-min-device-pixel-ratio: 0)
         &:not(:hover)
             scrollbar-color: transparent transparent
             width: calc(100% + 12px)
+
+    // Для macOS
+    @media (-webkit-min-device-pixel-ratio: 2)
+        &:not(:hover)
+            scrollbar-color: transparent transparent
+            width: calc(100% - 5px)
