@@ -6,8 +6,25 @@
   padding-bottom: 1rem
   max-height: 600px
   overflow-y: auto
+  scrollbar-width: thin
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent
+
+  &::-webkit-scrollbar-button
+    display: none /* Скрываем кнопки */
+    height: 0  /* Убираем высоту */
+    width: 0   /* Убираем ширину */
+
   //border: 1px solid lighten($shades1,30)
   //box-shadow: 2px 2px 2px 4px rgba(0, 0, 0, 0.05)
+  &::-webkit-scrollbar
+    width: 5px
+  &::-webkit-scrollbar-track
+    background: transparent /* Прозрачный фон */
+  &::-webkit-scrollbar-thumb
+    background: rgba(0, 0, 0, 0.3) /* Серый цвет как на первом скриншоте */
+    border-radius: 3px /* Легкое скругление углов */
+
+
 .container
   margin-top: 1rem
   font-weight: 600

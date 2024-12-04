@@ -105,6 +105,10 @@ export class ServicesStore {
     this.currentService = service;
   }
 
+  clearCurrentService() {
+    this.currentService = null;
+  }
+
   addChangesProps(name) {
     this.changedProps.add(name);
   }

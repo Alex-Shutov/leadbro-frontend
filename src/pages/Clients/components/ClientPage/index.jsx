@@ -36,11 +36,17 @@ import useParamSearch from '../../../../hooks/useParamSearch';
 
 const ClientPage = observer(() => {
   let { id } = useParams();
-  const { data: client, store: clients } = useClients(+id);
+  const { data: client, store: clients,isLoading } = useClients(+id);
   const api = useClientsApi();
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [passModalOpen, setPassModalOpen] = useState(false);
   const [personModalOpen, setPersonModalOpen] = useState(false);
+
+  // useEffect(() => {
+  //   return () => {
+  //     clients.clearCurrentClient()
+  //   }
+  // }, []);
   const handleChange = (name, payload, withId = true) => {
     debugger
     clients.changeById(client?.id ?? +id, name, payload, withId);
@@ -102,7 +108,7 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
-      <LoadingProvider isLoading={api.isLoading}>
+      <LoadingProvider isLoading={isLoading||api.isLoading}>
         <Title title={client?.title} />
         <div className={styles.dropdown}>
           <CardDropdown

@@ -115,7 +115,7 @@ export const handleShowError = (errors, delay = 100) => {
         });
 
         setTimeout(() => {
-            handleError(message ?? 'Произошла ошибка'); // Показ ошибки через notistack
+            handleError(message ?? 'Произошла ошибка', errorContext); // Показ ошибки через notistack
         }, delayTime);
 
         delayTime += delay;

@@ -155,17 +155,16 @@ const Index = ({
         type={'number'}
         value={convertToHours(deadlineTime)}
         // disabled={isEditMode}
-        disabled={false}
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
       <TextInput
+
         type={'number'}
         label={'Фактическое время, ч'}
         name={'actualTime'}
         onChange={({ target }) => handleChange(target.name, target.value)}
         value={convertToHours(actualTime)}
-        disabled={false}
         className={styles.input}
       />
 

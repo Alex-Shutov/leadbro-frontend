@@ -160,7 +160,10 @@ const useServiceApi = () => {
         servicesStore.setCurrentService(mappedService);
         return mappedService;
       })
-      .catch(handleShowError)
+      .catch((e)=>{
+        servicesStore.clearCurrentService()
+        return handleShowError(e)
+      })
       .finally(() => setIsLoading(false));
   };
 

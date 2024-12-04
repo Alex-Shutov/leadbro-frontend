@@ -32,6 +32,7 @@ const TextInput = forwardRef(
       name,
       required,
       key,
+        disabled,
       ...props
     },
     ref,
@@ -199,7 +200,7 @@ const TextInput = forwardRef(
       //   else if (ref) ref.current = e;
       // },
       className: cn(classInput, styles.input, { [styles.errorInput]: error }),
-      readOnly: !props?.edited ?? false,
+      readOnly: props.hasOwnProperty('edited') && !props?.edited || disabled || false,
       ...props,
     };
 
