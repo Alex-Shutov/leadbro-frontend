@@ -1,5 +1,5 @@
 // contexts/PermissionsContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, {createContext, useCallback, useContext, useState} from 'react';
 import {
   isValidPermission,
   PermissionGroups,
@@ -12,8 +12,11 @@ const PermissionsContext = createContext();
 export const PermissionsProvider = ({ children }) => {
   const { permissions } = useUser();
 
-  const hasPermission = (permission) => {
-    debugger;
+  const hasPermission = useCallback((permission) => {
+    if (permissions && permissions[Permissions.SUPER_ADMIN]) {
+      return true;
+    }
+
     if (!permissions || Object.keys(permissions).length === 0) {
       return false;
     }
@@ -23,16 +26,14 @@ export const PermissionsProvider = ({ children }) => {
       return false;
     }
 
-    if (permissions[Permissions.SUPER_ADMIN]) {
-      return true;
-    }
+
 
     if (Array.isArray(permission)) {
       return permission.some((perm) => permissions[perm]);
     }
 
     return permissions[permission] === true;
-  };
+  },[permissions]);
 
   return (
     <PermissionsContext.Provider

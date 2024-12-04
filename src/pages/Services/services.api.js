@@ -135,14 +135,14 @@ const useServiceApi = () => {
       .then(([serviceRes, stagesRes]) => {
         const serviceData = serviceRes.data.data;
         const stagesData = stagesRes.data.data;
-        debugger;
+
         // Если мы на странице сервиса и есть id клиента, получаем пароли
         if (fromServicePage && serviceData?.company.id !== null) {
           resetApiProvider();
           return http
             .get(`/api/companies/${serviceData.company.id}/passwords`)
             .then((passwordsRes) => {
-              debugger;
+
               const passwordsData = passwordsRes.data.data;
               // Маппим сервис с паролями
               const mappedService = mapServiceFromApi(

@@ -5,7 +5,7 @@ import HiddenCount from '../../../../../../components/HiddenCount';
 import { truncateString } from '../../../../../../utils/format.string';
 
 const StagesCell = ({ stages, maxCellLength = -1 }) => {
-  debugger;
+
   const [showAll, setShowAll] = useState(false);
   const stageList = Array.isArray(stages)
     ? [stages[stages.length - 1]]

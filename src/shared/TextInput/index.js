@@ -157,7 +157,7 @@ const TextInput = forwardRef(
       }
 
       handleChange(e);
-      debugger;
+
       if (isTextArea) {
         // requestAnimationFrame(() => {
         //   if (inputRef.current) {
@@ -171,7 +171,7 @@ const TextInput = forwardRef(
 
     // Общий обработчик изменений
     const handleChange = (e) => {
-      debugger;
+
       const newValue = e.target.value;
 
       if (isInForm) {

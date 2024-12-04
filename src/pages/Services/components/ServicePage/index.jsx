@@ -27,6 +27,7 @@ import DocumentsCard from './components/DocumentsCard';
 import ServiceInfoCard from './components/ServiceInfoCard';
 import EditStage from '../../../../components/EditStage';
 import { LoadingProvider } from '../../../../providers/LoadingProvider';
+import {usePermissions} from "../../../../providers/PermissionProvider";
 
 const withDocuments = false;
 
@@ -37,6 +38,7 @@ const ServicePage = observer(() => {
     store: services,
     isLoading,
   } = useServices(Number(id), true);
+  const { hasPermission } = usePermissions();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [createEtapModal, setCreateEtapModal] = useState(false);
   if (!service) return <Loader />;
@@ -94,12 +96,12 @@ const ServicePage = observer(() => {
                   <Act act={el.act} />
                   {/*<Agreement/>*/}
                   {/*<AdditionalAgreement/>*/}
-                  <Bills
+                  {<Bills
                     company={{ ...service.client, name: service.client.title }}
                     service={{ id: service?.id, name: service?.title }}
                     stage={{ id: el.id, name: el.title }}
                     bills={el.bills}
-                  />
+                  />}
                 </Card>
                 {withDocuments && <DocumentsCard service={service} />}
                 {/*<AdaptiveStages data={service.tasks} />*/}

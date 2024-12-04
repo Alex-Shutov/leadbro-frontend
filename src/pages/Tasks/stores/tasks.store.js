@@ -28,7 +28,7 @@ export class TasksStore {
   }
 
   getById(id, isReset = false) {
-    debugger;
+
     const task =
       this.currentTask || this.tasks.find((x) => x.id === Number(id));
     const draft = this.drafts[id];

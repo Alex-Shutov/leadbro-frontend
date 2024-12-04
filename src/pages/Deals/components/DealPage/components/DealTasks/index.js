@@ -16,7 +16,7 @@ import DeadLineTimeCell from '../../../../../Stages/components/StagesPage/compon
 import { formatDate } from '../../../../../../utils/formate.date';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
 const DealTasks = ({ deal, onEditTask, onCreateTasks }) => {
-  debugger;
+
   const cols = useMemo(
     () => [
       {

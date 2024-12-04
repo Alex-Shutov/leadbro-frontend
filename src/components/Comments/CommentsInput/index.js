@@ -33,7 +33,6 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
         },
       };
       onSendMessage(newMessage);
-      debugger;
       if (editorRef.current) {
         editorRef.current.innerHTML = '';
         editorRef.current.clear();

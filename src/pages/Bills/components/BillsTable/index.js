@@ -28,7 +28,7 @@ const BillsTable = observer(() => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
   const [billToDelete, setBillToDelete] = useState(null);
-  debugger;
+
   const today = startOfDay(new Date());
   const monthAgo = sub(today, { months: 1 });
   const todayFormatted = formatDateForUrl(today);
@@ -53,7 +53,7 @@ const BillsTable = observer(() => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(billsStore, fetchBills, () => billsStore?.getBills());
-  debugger;
+
   const handleEdit = (bill) => {
     setCurrentBill(bill);
     setEditModalOpen(true);
@@ -136,7 +136,7 @@ const BillsTable = observer(() => {
         width: '15%',
         accessor: 'sum',
         Cell: ({ row }) => {
-          debugger;
+
           return <span>{row.original.sum.toLocaleString()} руб.</span>;
         },
       },

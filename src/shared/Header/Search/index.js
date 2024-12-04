@@ -53,7 +53,7 @@ const Search = observer(({ className }) => {
   }, [text]);
 
   const handleClickOnTask = async (item) => {
-    debugger;
+
     await taskApi.getTaskById(item.id);
     setSelectedTask(item);
   };

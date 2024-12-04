@@ -42,7 +42,6 @@ const useAppApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
         return res.body.data;
       })
       .catch(handleHttpError)
@@ -219,7 +218,6 @@ const useAppApi = () => {
     resetApiProvider();
     setIsLoading(true);
     setEntityForLoad('user');
-    debugger;
 
     return http
       .delete(`/api/comments/${commentId}`)

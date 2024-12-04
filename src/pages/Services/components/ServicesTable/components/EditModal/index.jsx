@@ -91,7 +91,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   };
 
   const handleSubmit = async () => {
-    debugger;
+
     try {
       if (isEditMode) {
         await api.updateService(serviceId, service); // Обновляем услугу

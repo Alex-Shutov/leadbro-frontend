@@ -58,20 +58,22 @@ const useStageApi = () => {
   const { id: serviceId } = useParams();
 
   const getTaskStages = (stageId, page = null) => {
+    debugger
     const pageFromUrl = page ?? getQueryParam('page', 1);
     resetApiProvider();
     return Promise.all([
-      http.get(`/api/stages/${stageId}`, { params: { page: pageFromUrl } }),
+      http.get(`/api/stages/${stageId}`),
       http.get(`/api/stages/${stageId}/tasks`, {
         params: { page: pageFromUrl },
       }),
     ])
       .then(([stageResponse, tasksResponse]) => {
-        const stageData = stageResponse.body.data;
-        const tasksData = tasksResponse.body.data;
+        const stageData = stageResponse.data.data;
+        const tasksData = tasksResponse.data.data;
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setStages([mappedStage]); // Сохраняем в store
-        stagesStore.setMetaInfoTable(tasksResponse.body?.meta); // Метаданные задач
+        debugger
+        stagesStore.setMetaInfoTable(tasksResponse.data?.meta); // Метаданные задач
 
         return mappedStage;
       })
@@ -88,11 +90,11 @@ const useStageApi = () => {
       .then(([stageResponse, tasksResponse]) => {
         const stageData = stageResponse.data.data;
         const tasksData = tasksResponse.data.data;
-
+        debugger
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setCurrentStage(mappedStage);
         // stagesStore.setStages(mappedStage); // Сохраняем в store
-        stagesStore.setMetaInfoTable(tasksResponse.body?.meta); // Метаданные задач
+        stagesStore.setMetaInfoTable(tasksResponse.data?.meta); // Метаданные задач
 
         return mappedStage;
       })

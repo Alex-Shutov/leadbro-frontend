@@ -5,6 +5,7 @@ import Card from '../../../../../../../../shared/Card';
 import Avatar from '../../../../../../../../shared/Avatar';
 import { loadAvatar } from '../../../../../../../../utils/create.utils';
 import { sourceTypeRu } from '../../../../../../deals.types';
+import {serviceTypeEnum, serviceTypeEnumRu} from "../../../../../../../Services/services.types";
 
 const DealCard = ({ deal }) => {
   const [{ isDragging }, drag] = useDrag({
@@ -41,7 +42,7 @@ const DealCard = ({ deal }) => {
     <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
       <Card className={styles.deal}>
         <div className={styles.deal_source}>
-          {sourceTypeRu[deal?.source] ?? 'Источник не указан'}
+          {serviceTypeEnumRu[deal?.serviceType] ?? 'Тип услуги не указан'}
         </div>
         <div className={styles.deal_name}>{deal.name}</div>
         <div className={styles.deal_price}>{formatPrice(deal.price)}</div>

@@ -26,7 +26,7 @@ const useBillsApi = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to) => {
-    debugger;
+
     resetApiProvider();
     setIsLoading(true);
     return http
@@ -100,7 +100,7 @@ const useBillsApi = () => {
       billsStore.drafts[billId],
       billsStore.changedProps,
     );
-    debugger;
+
     if (dataToUpdate.bill_items) {
       const allowedItemFields = [
         'name',

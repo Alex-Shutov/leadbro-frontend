@@ -44,7 +44,7 @@ export class BillsStore {
   }
 
   resetDraft(id, path) {
-    debugger;
+
     if (!this.drafts[id]) return;
     let bill = this.getById(id, true);
     this.clearChangesSet();

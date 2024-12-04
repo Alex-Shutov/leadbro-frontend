@@ -38,6 +38,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   // const ref = useRef();
   const taskApi = useTasksApi();
   const fetchStages = useCallback((page) => {
+    debugger
     api.getTaskStages(stageId, page);
   }, []);
 

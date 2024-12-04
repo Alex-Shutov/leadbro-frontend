@@ -65,7 +65,7 @@ const mapParticipants = (participants) => {
 // Маппинг этапов
 // Маппинг этапов
 const mapStages = (stages) => {
-  debugger;
+
 
   // Если это массив этапов (пришел из /api/services/{service_id}/stages)
   if (Array.isArray(stages)) {

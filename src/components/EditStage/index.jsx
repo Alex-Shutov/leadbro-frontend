@@ -83,7 +83,6 @@ const EditStage = ({ handleClose, stageId }) => {
   if (stageId && !isEditMode) return <></>;
 
   const handleReset = () => {
-    debugger;
     stagesStore.resetDraft(stage?.id);
     handleClose();
   };

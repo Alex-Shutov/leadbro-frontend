@@ -101,7 +101,7 @@ const useTasksApi = () => {
       .post('/api/tasks', { ...updateData, stage_id: stageId })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
+
         const newTask = mapTaskFromApi(res.body.data);
         tasksStore.setTasks([...tasksStore.tasks, newTask]);
       })
@@ -116,7 +116,7 @@ const useTasksApi = () => {
       drafts = stagesStore.drafts[stageId],
       props = stagesStore.changedProps,
     ) => {
-      debugger;
+
       updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
 
       resetApiProvider();

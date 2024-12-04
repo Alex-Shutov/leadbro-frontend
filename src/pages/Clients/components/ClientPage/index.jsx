@@ -59,9 +59,6 @@ const ClientPage = observer(() => {
   };
   const handleSubmit = async (path, submitText) => {
     try {
-      debugger
-      debugger
-      debugger
       await api.updateCompany(Number(id), {}, submitText);
       clients.submitDraft();
       // api.setClients(clients);

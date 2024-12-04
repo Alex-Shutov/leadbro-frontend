@@ -28,14 +28,13 @@ const Index = ({
     deadlineTime,
     actualTime,
     extraCosts,
-      description
+    taskDescription:description
   },
   timeActual,
   costsExtra,
 }) => {
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [isOpen,setIsOpen] = useState(false)
-
   return (
     <>
       <div className={styles.dropdown}>
@@ -71,7 +70,7 @@ const Index = ({
               >
                 <div className={cn(styles.head,styles.divider)}>
                   <div className={styles.title}>ТЗ</div>
-                  {!description || description === ' ' ? <span>Отсутствует</span> : <TextLink className={styles.taskName_primary} onClick={()=>setIsOpen(true)}>Открыть</TextLink>}
+                  {!description?.trim() ? <span>Отсутствует</span> : <TextLink className={styles.taskName_primary} onClick={()=>setIsOpen(true)}>Открыть</TextLink>}
                 </div>
                 <div className={styles.head}>
                   <div className={styles.title}>Клиент</div>

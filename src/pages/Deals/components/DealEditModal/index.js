@@ -71,7 +71,7 @@ const DealEditModal = observer(
     const deal = isEditMode ? dealStore.getById(data.id) : localDeal;
 
     const handleChange = (name, value, withId = true) => {
-      debugger;
+
       if (isEditMode) {
         dealStore.changeById(data.id, name, value, withId);
       } else {
@@ -86,7 +86,7 @@ const DealEditModal = observer(
       if (isDeleteModalOpen) return;
       try {
         if (isEditMode) {
-          debugger;
+
           await dealApi.updateDeal(data.id, deal);
         } else {
           await dealApi.createDeal(localDeal);

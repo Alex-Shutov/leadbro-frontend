@@ -35,7 +35,7 @@ export const mapStageFromApi = (stageData, tasksData) => {
       stageData?.active === 1
         ? stageStatusTypes.inProgress
         : stageStatusTypes.finished,
-    taskDescription: stageData?.technical_specification || 'Нарисовать СРМ',
+    taskDescription: stageData?.technical_specification || " ",
     sumByHand: true,
     service: {
       id: stageData?.service?.id,
