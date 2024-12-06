@@ -65,9 +65,9 @@ const useClientsApi = () => {
   const createCompany = (body) => {
     resetApiProvider();
     setIsLoading(true);
-    debugger
+    debugger;
     const pageFromUrl = getQueryParam('page', 1);
-    const updateData = mapClientDataToBackend(body,Object.keys(body))
+    const updateData = mapClientDataToBackend(body, Object.keys(body));
     return http
       .post('/api/companies', updateData)
       .then(handleHttpResponse)
@@ -247,11 +247,12 @@ const useClientsApi = () => {
       clientsStore.changedProps,
       clientId,
     );
+    debugger;
     setIsLoading(true);
     return http
       .patch(`/api/clients/${clientId}`, updateData)
       .then(handleHttpResponse)
-      .then(() => getClientById(companyId))
+      .then(() => getClientById(companyId, true))
       .then(() => handleSubmit(submitText ?? 'Данные клиента сохранены'))
 
       .catch(handleShowError)

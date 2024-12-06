@@ -14,13 +14,14 @@ const Button = ({
   adaptiveIcon,
   classname,
   type = 'primary',
+  disabled,
   ...rest
 }) => {
   return (
     <>
       {!rest.isSmallButton && (
         <div
-          onClick={onClick}
+          onClick={() => !disabled && onClick()}
           className={cn(
             styles.control,
             classname,
@@ -30,12 +31,19 @@ const Button = ({
               [styles.secondary_outline]: type === 'secondary_outline',
             },
             { [styles.isNotSmallTable]: rest?.isSmall ?? !rest.isSmallButton },
+            { [styles.disabled]: disabled },
           )}
         >
           {before}
-          {rest.to ? <Link className={cn(styles.button, 'button')} to={rest.to}>
-            <span>{name}</span>
-          </Link> : <div className={cn(styles.button, 'button')}><span>{name}</span></div>}
+          {rest.to ? (
+            <Link className={cn(styles.button, 'button')} to={rest.to}>
+              <span>{name}</span>
+            </Link>
+          ) : (
+            <div className={cn(styles.button, 'button')}>
+              <span>{name}</span>
+            </div>
+          )}
           {after}
         </div>
       )}

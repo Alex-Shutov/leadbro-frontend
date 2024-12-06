@@ -18,18 +18,20 @@ const Modal = ({
   size = 'sm',
   handleClose,
   handleSubmit,
+  isSubmitClicked = false,
   children,
   cls,
   modalRef,
   closeButton,
   customButtons,
-    withPortal=true,
+  withPortal = true,
   id,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef(null);
   const innerRef = useRef(modalRef ?? null);
   const isFirstRender = useRef(true);
+  const refSubmitClicked = useRef(false);
 
   const handleCloseModal = useCallback(() => {
     // setIsVisible(false);
@@ -39,8 +41,10 @@ const Modal = ({
 
   const handleSubmitModal = useCallback(() => {
     // setIsVisible(false);
+    debugger;
     handleSubmit && handleSubmit();
     document.body.style.overflow = 'auto';
+    // setSubmitClicked(false);
   }, [handleSubmit]);
 
   // const escFunction = useCallback(
@@ -86,7 +90,8 @@ const Modal = ({
   return withPortal ? (
     createPortal(
       <ModalBase
-          id={id}
+        isSubmitted={isSubmitClicked}
+        id={id}
         handleClose={handleClose}
         handleCloseModal={handleCloseModal}
         ref={ref}
@@ -103,7 +108,8 @@ const Modal = ({
     )
   ) : (
     <ModalBase
-        id={id}
+      id={id}
+      isSubmitted={isSubmitClicked}
       handleClose={handleClose}
       handleCloseModal={handleCloseModal}
       ref={ref}
@@ -122,7 +128,8 @@ const Modal = ({
 export default Modal;
 
 const ModalBase = ({
-    id,
+  id,
+  isSubmitted,
   ref,
   size,
   innerRef,
@@ -137,7 +144,7 @@ const ModalBase = ({
 }) => {
   return (
     <motion.div
-        id={id??''}
+      id={id ?? ''}
       ref={ref}
       animate={'show'}
       initial={'hidden'}
@@ -171,6 +178,7 @@ const ModalBase = ({
           <div className={styles.left}>
             {handleSubmit && (
               <Button
+                disabled={isSubmitted}
                 isSmall={false}
                 onClick={() => handleSubmitModal()}
                 classname={styles.button}

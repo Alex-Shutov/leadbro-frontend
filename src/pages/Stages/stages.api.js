@@ -58,8 +58,9 @@ const useStageApi = () => {
   const { id: serviceId } = useParams();
 
   const getTaskStages = (stageId, page = null) => {
-    debugger
+    debugger;
     const pageFromUrl = page ?? getQueryParam('page', 1);
+    setIsLoading(true);
     resetApiProvider();
     return Promise.all([
       http.get(`/api/stages/${stageId}`),
@@ -68,19 +69,23 @@ const useStageApi = () => {
       }),
     ])
       .then(([stageResponse, tasksResponse]) => {
+        debugger;
         const stageData = stageResponse.data.data;
         const tasksData = tasksResponse.data.data;
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setStages([mappedStage]); // Сохраняем в store
-        debugger
+        stagesStore.setCurrentStage(mappedStage);
+
         stagesStore.setMetaInfoTable(tasksResponse.data?.meta); // Метаданные задач
 
         return mappedStage;
       })
-      .catch(handleHttpError);
+      .catch(handleHttpError)
+      .finally(() => setIsLoading(false));
   };
 
   const getStageById = (id, page) => {
+    debugger;
     const pageFromUrl = page ?? getQueryParam('page', 1);
     resetApiProvider();
     return Promise.all([
@@ -90,10 +95,10 @@ const useStageApi = () => {
       .then(([stageResponse, tasksResponse]) => {
         const stageData = stageResponse.data.data;
         const tasksData = tasksResponse.data.data;
-        debugger
+
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
         stagesStore.setCurrentStage(mappedStage);
-        // stagesStore.setStages(mappedStage); // Сохраняем в store
+        stagesStore.setStages([mappedStage]); // Сохраняем в store
         stagesStore.setMetaInfoTable(tasksResponse.data?.meta); // Метаданные задач
 
         return mappedStage;
@@ -176,7 +181,7 @@ const useStageApi = () => {
     return http
       .delete(`/api/stages/${id}`)
       .then(handleHttpResponse)
-        .then(()=>stagesStore.setCurrentStage(null))
+      .then(() => stagesStore.setCurrentStage(null))
       .then(() => servicesApi.getServiceById(id))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

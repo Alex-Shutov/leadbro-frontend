@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Modal from '../../../../../../shared/Modal';
 import modlaStyles from '../../../ClientsTable/CreateModal/styles.module.sass';
 import TextInput from '../../../../../../shared/TextInput';
@@ -9,9 +9,14 @@ import { genderType } from '../../../../../Settings/settings.types';
 import Radio from '../../../../../../shared/Radio';
 import RadioGenderInput from '../../../../../../components/RadioGenderInput';
 import { handleSubmit as handleSubmitSnackbar } from '../../../../../../utils/snackbar';
+import useStore from '../../../../../../hooks/useStore';
+import { observer } from 'mobx-react';
+import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
-const CreateClientsModal = ({ companyId, onClose }) => {
-  const { createClient } = useClientsApi();
+const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
+  const { clientsStore } = useStore();
+  const { createClient, updateClient } = useClientsApi();
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const [newClient, setNewClient] = useState({
     site: '',
@@ -26,82 +31,179 @@ const CreateClientsModal = ({ companyId, onClose }) => {
     middle_name: '',
     last_name: '',
   });
-  const handleChange = (name, value) => {
-    setNewClient((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+  const client = useMemo(() => {
+    return isEditMode
+      ? clientsStore.getById(companyId)?.contactPersons?.[clientId]
+      : newClient;
+  }, [
+    isEditMode,
+    clientId,
+    clientsStore.currentClient,
+    clientsStore.drafts,
+    newClient,
+  ]);
+
+  debugger;
+
+  useEffect(() => {
+    if (clientId) {
+      setIsEditMode(true); // Режим редактирования
+    } else {
+      setIsEditMode(false); // Режим создания
+    }
+  }, [clientId]);
+  const handleChange = (name, value, withId = true) => {
+    if (isEditMode) {
+      debugger;
+      clientsStore.changeById(companyId, name, value, withId);
+    } else {
+      setNewClient((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
   const handleReset = () => {
-    setNewClient({});
-    onClose();
+    if (isEditMode) {
+      clientsStore.resetDraft(companyId); // Сброс черновика в режиме редактирования
+    }
+    onClose(); // Закрытие модалки
   };
+
   const handleSubmit = async () => {
-    // createClient(companyId, newClient);
     try {
-      await createClient(companyId, newClient);
-      handleSubmitSnackbar('Контактное лицо создано');
+      if (isEditMode) {
+        await updateClient(
+          companyId,
+          clientId,
+          'Контактные данные клиента обновлены!',
+        ); // Обновляем услугу
+      } else {
+        await createClient(companyId, newClient);
+        handleSubmitSnackbar('Создано контактное лицо!');
+      }
+      clientsStore.submitDraft(companyId);
+
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
     }
   };
+
   return (
-    <Modal handleSubmit={handleSubmit} handleClose={handleReset} size={'md'}>
+    <FormValidatedModal
+      handleSubmit={handleSubmit}
+      handleClose={handleReset}
+      size={'md'}
+    >
       <div className={modlaStyles.header}>
-        <p>Создание контактного лица</p>
+        {isEditMode
+          ? 'Редактирование контактного лица'
+          : 'Создание контактного лица'}
       </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
-          onChange={({ target }) => handleChange('middle_name', target.value)}
-          name={'middle_name'}
-          value={newClient.middle_name}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode
+                ? `contactPersons.${clientId}.middle_name`
+                : 'middle_name',
+              target.value,
+            )
+          }
+          name={
+            isEditMode
+              ? `contactPersons.${clientId}.middle_name`
+              : 'middle_name'
+          }
+          value={client.middle_name}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Фамилия'}
+          // required={true}
           placeholder={'Фамилия'}
         />
         <TextInput
-          onChange={({ target }) => handleChange('name', target.value)}
-          name={'name'}
-          value={newClient.name}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.name` : 'name',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPversons.${clientId}.name` : 'name'}
+          value={client.name}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Имя'}
+          // required={true}
           placeholder={'Имя'}
         />
-      </div>
-      <div className={modlaStyles.flexDiv}></div>
-      <div className={modlaStyles.flexDiv}>
         <TextInput
-          onChange={({ target }) => handleChange('last_name', target.value)}
-          name={'last_name'}
-          value={newClient.last_name}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name',
+              target.value,
+            )
+          }
+          name={
+            isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name'
+          }
+          value={client.last_name}
           edited={true}
           className={cn(styles.input)}
           label={'Отчество'}
           placeholder={'Отчество'}
         />
-        <RadioGenderInput
-          value={newClient.gender}
-          onChange={handleChange}
-          isEditMode={false}
-        />
+      </div>
+      <div className={modlaStyles.flexDiv}></div>
+      <div className={modlaStyles.flexDiv}>
+        {/*<TextInput*/}
+        {/*  onChange={({ target }) =>*/}
+        {/*    handleChange(*/}
+        {/*      isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name',*/}
+        {/*      target.value,*/}
+        {/*    )*/}
+        {/*  }*/}
+        {/*  name={*/}
+        {/*    isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name'*/}
+        {/*  }*/}
+        {/*  value={client.last_name}*/}
+        {/*  edited={true}*/}
+        {/*  className={cn(styles.input)}*/}
+        {/*  label={'Отчество'}*/}
+        {/*  placeholder={'Отчество'}*/}
+        {/*/>*/}
+        {/*<RadioGenderInput*/}
+        {/*  value={newClient.gender}*/}
+        {/*  onChange={handleChange}*/}
+        {/*  isEditMode={false}*/}
+        {/*/>*/}
       </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
-          onChange={({ target }) => handleChange('phone', target.value)}
-          name={'phone'}
-          value={newClient.phone}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.tel` : 'phone',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPersons.${clientId}.tel` : 'phone'}
+          value={isEditMode ? client?.tel : client.phone}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Телефон'}
           placeholder={'Телефон'}
         />
         <TextInput
-          onChange={({ target }) => handleChange('email', target.value)}
-          name={'email'}
-          value={newClient.email}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.email` : 'email',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPersons.${clientId}.email` : 'email'}
+          value={client.email}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Почта'}
@@ -120,18 +222,28 @@ const CreateClientsModal = ({ companyId, onClose }) => {
       </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
-          onChange={({ target }) => handleChange('site', target.value)}
-          name={'site'}
-          value={newClient.site}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.site` : 'site',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPersons.${clientId}.site` : 'site'}
+          value={client.site}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Сайт'}
           placeholder={'Сайт'}
         />
         <TextInput
-          onChange={({ target }) => handleChange('role', target.value)}
-          name={'role'}
-          value={newClient.role}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.role` : 'role',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPersons.${clientId}.role` : 'role'}
+          value={client.role}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Должность'}
@@ -140,37 +252,79 @@ const CreateClientsModal = ({ companyId, onClose }) => {
       </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
-          onChange={({ target }) => handleChange('whatsapp', target.value)}
-          name={'whatsapp'}
-          value={newClient.whatsapp}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode
+                ? `contactPersons.${clientId}.messengers.whatsapp.value`
+                : 'whatsapp',
+              isEditMode ? target.value : { value: target.value },
+            )
+          }
+          name={
+            isEditMode
+              ? `contactPersons.${clientId}.messengers.whatsapp.value`
+              : 'whatsapp'
+          }
+          value={
+            isEditMode ? client?.messengers?.whatsapp?.value : client?.whatsapp
+          }
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
-          label={'Whatsapp'}
-          placeholder={'whatsapp'}
+          label={'Whatsapp (Телефон)'}
+          placeholder={'Телефон'}
         />
         <TextInput
-          onChange={({ target }) => handleChange('telegram', target.value)}
-          name={'telegram'}
-          value={newClient.telegram}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode
+                ? `contactPersons.${clientId}.messengers.telegram.value`
+                : 'telegram',
+              isEditMode ? target.value : { value: target.value },
+            )
+          }
+          name={
+            isEditMode
+              ? `contactPersons.${clientId}.messengers.telegram.value`
+              : 'telegram'
+          }
+          value={
+            isEditMode ? client?.messengers?.telegram?.value : client?.telegram
+          }
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
-          label={'Telegram'}
+          label={'Telegram (без @)'}
+          validate={(value) =>
+            value?.toString()?.includes('@')
+              ? 'Вводите юзернейм телеграмма без @'
+              : true
+          }
           placeholder={'telegram'}
         />
-        <TextInput
-          onChange={({ target }) => handleChange('viber', target.value)}
-          name={'viber'}
-          value={newClient.viber}
-          edited={true}
-          className={cn(styles.input, modlaStyles.grow)}
-          label={'Viber'}
-          placeholder={'viber'}
-        />
+        {/*<TextInput*/}
+        {/*  onChange={({ target }) =>*/}
+        {/*    handleChange(*/}
+        {/*      isEditMode*/}
+        {/*        ? `contactPersons.${clientId}.messengers.viber.value`*/}
+        {/*        : 'viber',*/}
+        {/*      isEditMode ? target.value : { value: target.value },*/}
+        {/*    )*/}
+        {/*  }*/}
+        {/*  name={*/}
+        {/*    isEditMode*/}
+        {/*      ? `contactPersons.${clientId}.messengers.viber.value`*/}
+        {/*      : 'viber'*/}
+        {/*  }*/}
+        {/*  value={client?.viber?.value}*/}
+        {/*  edited={true}*/}
+        {/*  className={cn(styles.input, modlaStyles.grow)}*/}
+        {/*  label={'Viber'}*/}
+        {/*  placeholder={'viber'}*/}
+        {/*/>*/}
       </div>
 
       <div className={modlaStyles.flexDiv}></div>
-    </Modal>
+    </FormValidatedModal>
   );
-};
+});
 
 export default CreateClientsModal;

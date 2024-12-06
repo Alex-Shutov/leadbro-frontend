@@ -17,6 +17,7 @@ import { mapServiceDataToBackend, mapServiceFromApi } from './services.mapper';
 import { getQueryParam } from '../../utils/window.utils';
 import { changeCurrentElementById } from '../../utils/store.utils';
 import useClientsApi from '../Clients/clients.api';
+import { sanitizeObjectForBackend } from '../../utils/create.utils';
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -115,8 +116,19 @@ const useServiceApi = () => {
       servicesStore.drafts[serviceId],
       servicesStore.changedProps,
     );
+
+    const resultData = sanitizeObjectForBackend(updateData, [
+      'name',
+      'type',
+      'responsible_id',
+      'creator_id',
+      'active',
+      'deadline',
+      'participants_ids',
+      'company_id',
+    ]);
     return http
-      .patch(`/api/services/${serviceId}`, updateData)
+      .patch(`/api/services/${serviceId}`, resultData)
       .then(handleHttpResponse)
       .then(() => getServiceById(serviceId))
       .catch(handleShowError)
@@ -142,7 +154,6 @@ const useServiceApi = () => {
           return http
             .get(`/api/companies/${serviceData.company.id}/passwords`)
             .then((passwordsRes) => {
-
               const passwordsData = passwordsRes.data.data;
               // Маппим сервис с паролями
               const mappedService = mapServiceFromApi(
@@ -160,9 +171,9 @@ const useServiceApi = () => {
         servicesStore.setCurrentService(mappedService);
         return mappedService;
       })
-      .catch((e)=>{
-        servicesStore.clearCurrentService()
-        return handleShowError(e)
+      .catch((e) => {
+        servicesStore.clearCurrentService();
+        return handleShowError(e);
       })
       .finally(() => setIsLoading(false));
   };
@@ -174,7 +185,7 @@ const useServiceApi = () => {
     return http
       .delete(`/api/services/${id}`)
       .then(handleHttpResponse)
-        .then(()=>servicesStore.setCurrentService(null))
+      .then(() => servicesStore.setCurrentService(null))
       .then(() => getServices(pageFromUrl))
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

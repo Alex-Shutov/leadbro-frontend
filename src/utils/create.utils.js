@@ -32,3 +32,12 @@ export const sanitizeObjectForBackend = (sourceObject, allowedFields) => {
     return filteredObject;
   }, {});
 };
+
+export const getSearchParamsFromLocation = (search) => {
+  if (search === '' || !search) return [];
+  const sanitazedSearch = search.slice(1);
+  return sanitazedSearch.split('&').map((el) => {
+    const values = el.split('=');
+    return [values[0], values[1]];
+  });
+};

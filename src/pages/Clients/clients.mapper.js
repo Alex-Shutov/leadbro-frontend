@@ -106,18 +106,30 @@ const mapContactPersons = (apiContactPersons) => {
   return apiContactPersons?.reduce((acc, client) => {
     acc[client.id] = {
       id: client.id,
-      role: client.role, // или другой подходящий роль, если есть
+      role: client.role,
+      last_name: client?.last_name ?? '',
+      name: client?.name ?? '',
+      middle_name: client?.middle_name ?? '',
       fio: `${client?.last_name ?? ''} ${client?.name ?? ''} ${client?.middle_name ? client.middle_name : ''}`,
       tel: client.phone ? client.phone : null,
+      site: client.site ? client.site : null,
       email: client.email ? client.email : null,
-      messengers: [
-        client.telegram
-          ? { telegram: `https://t.me/${client.telegram}` }
-          : null,
-        client.whatsapp && client.phone
-          ? { whatsapp: `https://api.whatsapp.com/send?phone=${client.phone}` }
-          : null,
-      ].filter((messenger) => messenger !== null), // Убираем null значения
+      messengers: {
+        telegram: {
+          link: `https://t.me/${client?.telegram}`,
+          value: client?.telegram,
+        },
+        whatsapp: {
+          link: `https://api.whatsapp.com/send?phone=${client?.whatsapp}`,
+          value: client?.whatsapp,
+        },
+        //
+        //     ? {telegram: `https://t.me/${client.telegram}`}
+        //     : null,
+        // client.whatsapp && client.phone
+        //     ? {whatsapp: `https://api.whatsapp.com/send?phone=${client.phone}`}
+        //     : null,
+      },
     };
 
     return acc;
@@ -299,7 +311,14 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       [`passwords.${propId}.values.password`]: 'password',
       [`contactPersons.${propId}.role`]: 'role',
       [`contactPersons.${propId}.tel`]: 'phone',
-      [`contactPersons.${propId}.email`]: 'email',
+      [`contactPersons.${propId}.name`]: 'name',
+      [`contactPersons.${propId}.last_name`]: 'last_name',
+      [`contactPersons.${propId}.middle_name`]: 'middle_name',
+      [`contactPersons.${propId}.site`]: 'site',
+      [`contactPersons.${propId}.messengers.telegram.value`]: 'telegram',
+      [`contactPersons.${propId}.messengers.whatsapp.value`]: 'whatsapp',
+      [`contactPersons.${propId}.messengers.viber.value`]: 'viber',
+      // [`contactPersons.${propId}.email`]: 'email',
       'contactData.requisites.0.BankName': 'bank_name',
       'contactData.requisites.0.INN': 'inn',
       'contactData.requisites.0.KPP': 'kpp',

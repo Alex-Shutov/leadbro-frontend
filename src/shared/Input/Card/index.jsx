@@ -25,6 +25,7 @@ const CardInput = ({ label, value, actions, type, name, ...props }) => {
   );
 
   const handleEdit = useCallback(() => {
+    props?.onEdit && props?.onEdit();
     setIsEdited((prev) => !prev);
   }, []);
 

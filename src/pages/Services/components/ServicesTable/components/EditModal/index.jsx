@@ -27,8 +27,8 @@ import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useParamSearch from '../../../../../../hooks/useParamSearch';
 import CustomButtonContainer from '../../../../../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../../../../../shared/Button/Delete';
-import {useLocation, useNavigate, useParams} from "react-router";
-import {removeLastPathSegment} from "../../../../../../utils/window.utils";
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { removeLastPathSegment } from '../../../../../../utils/window.utils';
 
 const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const serviceTypes = useServiceTypes();
@@ -36,9 +36,9 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const { appStore } = useStore();
   const appApi = useAppApi();
   const { members } = useMembers();
-  const navigate = useNavigate()
-  const location = useLocation()
-  const {id} = useParams()
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
   const statuses = useServiceStatuses();
   const pageFrom = useParamSearch('page' ?? 1);
 
@@ -91,7 +91,6 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   };
 
   const handleSubmit = async () => {
-
     try {
       if (isEditMode) {
         await api.updateService(serviceId, service); // Обновляем услугу
@@ -127,9 +126,12 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const handleDeleteService = async () => {
     try {
       await api.deleteService(serviceId, pageFrom);
-      onClose()
+      onClose();
       handleInfo('Услуга удалена');
-      id && navigate(`${removeLastPathSegment(location.pathname)}${location.search}`);
+      id &&
+        navigate(
+          `${removeLastPathSegment(location.pathname)}${location.search}`,
+        );
     } catch (e) {
       handleError('Ошибка при удалении услуги:' + e?.message);
     }
@@ -185,7 +187,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
           placeholder={'Тип услуги'}
           value={
             service?.type
-              ? serviceTypes?.find((el) => el[0] === service?.type)[0]
+              ? serviceTypes?.find((el) => el?.[0] === service?.type)?.[0]
               : ''
           }
           renderOption={(opt) => serviceTypeEnumRu[opt[0]]}
@@ -195,19 +197,19 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
           onChange={(e) =>
             handleChange(
               isEditMode ? 'creator' : 'creator',
-              e.length ? members.find((el) => el?.id === e[0]?.value) : null,
+              e.length ? members.find((el) => el?.id === el?.[0]?.value) : null,
             )
           }
           isMulti={false}
           label="Постановщик"
-          options={members.map((el) => ({
-            value: el.id,
+          options={members?.map((el) => ({
+            value: el?.id,
             label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
             service?.creator
               ? {
-                  value: service.creator?.id,
+                  value: service?.creator?.id,
                   label: `${service?.creator?.surname ?? ''} ${service?.creator?.name ?? ''} ${service?.creator?.middleName ?? ''}`,
                 }
               : null
@@ -217,13 +219,13 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
           onChange={(e) =>
             handleChange(
               isEditMode ? 'manager' : 'manager',
-              e.length ? members.find((el) => el?.id === e[0]?.value) : null,
+              e.length ? members?.find((el) => el?.id === e?.[0]?.value) : null,
             )
           }
           isMulti={false}
           label="Ответственный"
           options={members.map((el) => ({
-            value: el.id,
+            value: el?.id,
             label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
           }))}
           value={
