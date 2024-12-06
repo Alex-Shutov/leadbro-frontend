@@ -190,7 +190,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
             ...localBill,
             legalEntityId: bill?.legalEntity?.id ?? 0,
             companyId: bill?.company?.id ?? 0,
-          })
+          },stage?.id  ?? null)
           .then(
             () => service && stage && serviceApi.getServiceById(service.id),
           );

@@ -42,7 +42,7 @@ const useBillsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const createBill = (body) => {
+  const createBill = (body,stageId) => {
     const today = startOfDay(new Date());
     const monthAgo = sub(today, { months: 1 });
     const todayFormatted = formatDateForUrl(today);
@@ -67,7 +67,7 @@ const useBillsApi = () => {
     return http
       .post('/api/bills', finalData)
       .then(handleHttpResponse)
-      .then(() => getBills(pageFromUrl, from, to))
+      .then(() => stageId === null && getBills(pageFromUrl, from, to))
       .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };

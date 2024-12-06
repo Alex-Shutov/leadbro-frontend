@@ -11,30 +11,30 @@ const Act = ({ act }) => {
   };
   return (
     <div className={styles.act_main}>
-      <CardField labelCls={styles.label} label={'Акт'}>
+      {(act.unstampedAct || act.stampedAct) && <CardField labelCls={styles.label} label={'Акт'}>
         <BasisComponent className={styles.button_container} basis={275}>
-          <Button
+          {act.stampedAct && <Button
             onClick={() => downloadAct(act.stampedAct)}
             type={'secondary'}
             after={<Icon size={24} name={'download'} />}
             classname={styles.button}
             name={'Акт с печатью'}
-          />
+          />}
         </BasisComponent>
         <BasisComponent className={styles.button_container} basis={270}>
-          <Button
+          {act.unstampedAct && <Button
             onClick={() => downloadAct(act.unstampedAct)}
             type={'secondary'}
             after={<Icon size={24} name={'download'} />}
             classname={styles.button}
             name={'Акт без печати'}
-          />
+          />}
         </BasisComponent>
         <BasisComponent basis={960} className={styles.statusContainer}>
           {/*<ServiceBadge statusType={serviceStatuses.act} status={act.scanStatus}/>*/}
           {/*<ServiceBadge statusType={serviceStatuses.act} status={act.originalStatus}/>*/}
         </BasisComponent>
-      </CardField>
+      </CardField>}
     </div>
   );
 };

@@ -83,8 +83,8 @@ const mapStages = (stages) => {
         },
       },
       act: {
-        stampedAct: stage.stamped_act,
-        unstampedAct: stage.unstamped_act,
+        stampedAct: stage?.stamped_act,
+        unstampedAct: stage?.unstamped_act,
         // scanStatus: statusActTypes.notAssignedScan,
         // originalStatus: statusActTypes.notAssignedOriginal,
         // withSign: {
@@ -99,7 +99,7 @@ const mapStages = (stages) => {
         // },
       },
       taskCount: stage?.task_count,
-      bills: mapBill(stage?.bills ?? []),
+      bills: stage?.bills ?  mapBill(stage?.bills ?? []) : null,
 
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),

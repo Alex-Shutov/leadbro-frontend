@@ -21,7 +21,7 @@ const Button = ({
     <>
       {!rest.isSmallButton && (
         <div
-          onClick={() => !disabled && onClick()}
+          onClick={() => !disabled && onClick && onClick()}
           className={cn(
             styles.control,
             classname,

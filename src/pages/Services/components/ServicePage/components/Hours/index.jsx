@@ -36,7 +36,7 @@ const Hours = ({ time, actSum, el }) => {
           label={'фактическое время'}
         ></HoursView>
         <Basis basis={900} className={styles.costs}>
-          <CostView cost={actSum}></CostView>
+            {actSum!==null && <CostView cost={actSum}></CostView>}
         </Basis>
       </CardField>
       {/*<CardField*/}
