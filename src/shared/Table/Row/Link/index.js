@@ -6,7 +6,7 @@ import cn from "classnames";
 const TableLink = ({ to, name, onClick, cls }) => {
   return (
     <div onClick={onClick} className={cn(styles.link,cls)}>
-      <Link to={to}>{name}</Link>
+        {to ? <Link to={to}>{name}</Link> : <a>{name}</a> }
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Icon from '../../Icon';
 import Button from '../../Button';
 import Filters from '../../Filter';
 import { action } from 'mobx';
+import FilterManager from "../../FilterManager";
 
 const TitleButtons = ({
   doSort,
@@ -22,14 +23,16 @@ const TitleButtons = ({
       )}
       {actions.filter && (
         <div>
-          <Filters
-            classNameBody={actions.filter?.classNameBody}
-            className={actions.filter?.className}
-            classNameTitle={actions.filter?.classNameTitle}
-            title={actions.filter.title}
+          <FilterManager
+              filterConfig={actions.filter.config}
+              onFilterChange={actions.filter.onChange}
+              classNameBody={actions.filter.classNameBody}
+              className={actions.filter.className}
+              classNameTitle={actions.filter.classNameTitle}
+              title={actions.filter.title}
           >
             {actions.filter?.children ?? <></>}
-          </Filters>
+          </FilterManager>
         </div>
       )}
       {actions.sorting && (

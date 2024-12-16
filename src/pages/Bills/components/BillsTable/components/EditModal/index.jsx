@@ -49,7 +49,6 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
   const appApi = useAppApi();
   const { appStore } = useStore();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   // const {
   //   data: { clients },
   // } = useClients();

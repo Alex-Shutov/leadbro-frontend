@@ -7,7 +7,6 @@ import EditModal from './components/EditModal';
 import useStore from '../../../../hooks/useStore';
 import useBillsApi from '../../bills.api';
 import Table from '../../../../shared/Table';
-import BillsFilters from './components/BillsFilter';
 import Badge, { statusTypes } from '../../../../shared/Badge';
 import styles from './Table.module.sass';
 import TextLink from '../../../../shared/Table/TextLink';
@@ -17,6 +16,12 @@ import { formatDateToQuery } from '../../../../utils/formate.date';
 import { format, startOfDay, sub } from 'date-fns';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { handleError, handleInfo } from '../../../../utils/snackbar';
+import TaskFilter from "../../../Tasks/components/TaskFilter";
+import BillsTableFilter from "./components/BillsFilters/BillsTableFilter";
+import BillsFilter from "./components/BillsFilters/BillsFilter";
+import {FiltersProvider} from "../../../../providers/FilterProvider";
+import {createTaskFilters} from "../../../Tasks/tasks.filter.conf";
+import {createBillsFilters} from "../../bills.filter.conf";
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -83,6 +88,7 @@ const BillsTable = observer(() => {
   ];
 
   useEffect(() => {
+    debugger
     api.getBills(
       currentPage,
       from ?? formatDateToQuery(new Date()),
@@ -90,11 +96,12 @@ const BillsTable = observer(() => {
     );
   }, [from, to]);
 
-  // const handleFilter = (period) => {
-  //
-  //   // Вызываем API для фильтрации счетов по выбранному периоду
-  //   api.getBills(currentPage, from, to);
-  // };
+  const handleFilterChange = async (filters) => {
+
+
+    await api.getBills(1, from, to, filters);
+  };
+
 
   const cols = useMemo(
     () => [
@@ -172,12 +179,12 @@ const BillsTable = observer(() => {
   );
 
   return (
-    <>
+    <FiltersProvider>
       <div className={styles.table}>
         <Table
           beforeTable={() => (
             <div>
-              <BillsFilters />
+              <BillsTableFilter />
               <BillsStats />
             </div>
           )}
@@ -191,6 +198,12 @@ const BillsTable = observer(() => {
             add: {
               action: () => setEditModalOpen(true),
               title: 'Добавить счет',
+            },
+            filter: {
+              classNameBody: styles.filter_container,
+              title: 'Фильтр',
+              config: createBillsFilters(),
+              onChange: handleFilterChange
             },
           }}
           title="Счета"
@@ -227,7 +240,7 @@ const BillsTable = observer(() => {
           label="Вы уверены, что хотите удалить счет?"
         />
       )}
-    </>
+    </FiltersProvider>
   );
 });
 

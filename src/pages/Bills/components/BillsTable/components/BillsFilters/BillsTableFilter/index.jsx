@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import styles from './styles.module.sass';
 import { NavLink, useLocation } from 'react-router-dom';
-import Button from '../../../../../../shared/Button';
+import Button from '../../../../../../../shared/Button';
 import { format, sub, startOfDay } from 'date-fns';
 import { useNavigate } from 'react-router';
-import Icon from '../../../../../../shared/Icon';
-import InlineCalendar from '../../../../../../shared/Datepicker/Inline';
+import Icon from '../../../../../../../shared/Icon';
+import InlineCalendar from '../../../../../../../shared/Datepicker/Inline';
 import cn from 'classnames';
-import { formatDateForUrl } from '../../index';
+import { formatDateForUrl } from '../../../index';
 
 const BillsFilters = () => {
   const navigate = useNavigate();

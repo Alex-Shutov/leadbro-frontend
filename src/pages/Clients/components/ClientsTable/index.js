@@ -25,10 +25,15 @@ import {
   getQueryParam,
   removeLastPathSegment,
 } from '../../../../utils/window.utils';
+import {createBillsFilters} from "../../../Bills/bills.filter.conf";
+import {createClientsFilters} from "../../clients.filter.conf";
+import {FiltersProvider} from "../../../../providers/FilterProvider";
+import useAppApi from "../../../../api";
 
 const ClientsTable = observer(() => {
   const { clientsStore } = useStore();
   const api = useClientsApi();
+  const appApi = useAppApi()
   const navigate = useNavigate();
   const location = useLocation();
   const [createModalOpen, setModalOpen] = useState(false);
@@ -47,6 +52,12 @@ const ClientsTable = observer(() => {
   } = usePagingData(clientsStore, fetchClients, () =>
     clientsStore?.getClients(),
   );
+
+  const handleFilterChange = async (filters) => {
+
+
+    await api.getClients(page,filters);
+  };
 
   const [editData, setEditData] = useState(null);
   const [editModalOpen, setEditModalIpen] = useState(false);
@@ -140,7 +151,7 @@ const ClientsTable = observer(() => {
   };
 
   return (
-    <>
+    <FiltersProvider>
       <div className={styles.table}>
         <Table
           cardComponent={(data) => (
@@ -154,6 +165,11 @@ const ClientsTable = observer(() => {
                 setModalOpen(true);
               },
               title: 'Добавить клиента',
+            },
+            filter: {
+              title: 'Фильтр',
+              config: createClientsFilters(appApi),
+              onChange: handleFilterChange
             },
           }}
           title={'Клиенты'}
@@ -191,7 +207,7 @@ const ClientsTable = observer(() => {
           label="Вы уверены, что хотите удалить клиента?"
         />
       )}
-    </>
+    </FiltersProvider>
   );
 });
 

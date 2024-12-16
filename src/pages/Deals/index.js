@@ -7,14 +7,17 @@ import { LoadingProvider } from '../../providers/LoadingProvider';
 import Title from '../../shared/Title';
 import DealsTable from './components/DealsTable';
 import DealEditModal from './components/DealEditModal';
+import {FiltersProvider} from "../../providers/FilterProvider";
+import {createServicesFilters} from "../Services/services.filter.conf";
+import {createDealsFilters} from "./deals.filter.conf";
+import useAppApi from "../../api";
 
 const Deals = observer(() => {
   const api = useDealsApi();
   const navigate = useNavigate();
   const [dealData, setDealData] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
-
-  // Получаем значение фильтра из URL или используем значение по умолчанию
+  const appApi = useAppApi()
 
   const { data, isLoading, store: dealsStore } = useDealsByStatus();
 
@@ -42,12 +45,17 @@ const Deals = observer(() => {
     api.updateDealStatus(dealId, { status: newStatus });
   };
 
+  const handleFilterChange = async (filters) => {
+    await api.getDeals(1, filters); // Сбрасываем на первую страницу при изменении фильтров
+  };
+
   // Обработчик клика по карточке сделки
   const handleDealClick = (deal) => {
     navigate(`/deals/${deal.id}`);
   };
 
   return (
+      <FiltersProvider>
     <LoadingProvider isLoading={false}>
       <Title
         title={'Сделки'}
@@ -56,6 +64,11 @@ const Deals = observer(() => {
             action: handleCreateDeal,
             title: 'Создать сделку',
           },
+          filter: {
+            title: 'Фильтр',
+            config: createDealsFilters(appApi),
+            onChange: handleFilterChange
+          }
         }}
       />
       <DealsTable
@@ -72,6 +85,7 @@ const Deals = observer(() => {
         />
       )}
     </LoadingProvider>
+      </FiltersProvider>
   );
 });
 

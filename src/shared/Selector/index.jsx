@@ -163,6 +163,7 @@ const ValuesSelector = ({
       }),
     },
     classNames: {
+      input:()=>styles.selector_input,
       placeholder: () => styles.selector__container__control__placeholder,
       multiValueLabel: () => styles.selector__container__control_values__label,
       menu: () => styles.selector__container__control_menu,
