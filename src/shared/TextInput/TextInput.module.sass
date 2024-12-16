@@ -1,5 +1,30 @@
 @import ../../styles/helpers
 
+
+.field
+    &.fieldBeforeIcon
+        .input
+            padding-left: 32px // Отступ для beforeIcon
+
+.beforeIcon
+    position: absolute
+    right: 48px
+    top: 50%
+    transform: translateY(-50%)
+    display: flex
+    align-items: center
+    justify-content: center
+    pointer-events: all // Чтобы можно было кликнуть на иконку
+
+.wrap
+    position: relative
+
+    // Основная иконка справа
+    .icon
+        position: absolute
+        right: 8px
+        top: 50%
+        transform: translateY(-50%)
 .field
 
     &.fieldIcon

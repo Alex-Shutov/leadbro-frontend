@@ -15,7 +15,6 @@ const usePagingData = (store, fetchData, getDataFromStore) => {
       fetchData(pageFromUrl);
     }
   }, [pageFromUrl]);
-  debugger
   const metaInfo = store.getMetaInfoTable();
 
   const handlePageChange = useCallback(

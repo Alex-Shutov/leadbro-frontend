@@ -1,7 +1,7 @@
 // billsApi.js
 
 import useStore from '../../hooks/useStore';
-import { getPageTypeFromUrl, getQueryParam } from '../../utils/window.utils';
+import {getPageTypeFromUrl, getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
 import { mapBillDataToBackend, mapBillFromApi } from './bills.mapper';
 import {
   handleHttpError,
@@ -25,12 +25,21 @@ const useBillsApi = () => {
   const serviceApi = useServiceApi();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const getBills = (page = 1, from, to) => {
+  const getBills = (page = 1, from, to,filters={}) => {
 
     resetApiProvider();
     setIsLoading(true);
+    const sanitizedFilters = sanitizeUrlFilters(filters)
+
     return http
-      .get('/api/bills', { params: { page, from, to } })
+        .get('api/bills', {
+          params: {
+            page,
+            from,
+            to,
+            ...sanitizedFilters // Добавляем параметры фильтрации
+          }
+        })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedBills = res.body.data.map((bill) => mapBillFromApi(bill));

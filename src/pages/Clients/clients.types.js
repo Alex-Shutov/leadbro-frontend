@@ -3,14 +3,12 @@ export const statusTypes = {
   notInProgress: 'notInProgress',
   partner: 'partner',
   competitor: 'competitor',
-  unknown: 'unknown',
 };
 export const statusTypesRu = {
   inProgress: 'В работе',
   notInProgress: 'Не в работе',
   partner: 'Партнер',
   competitor: 'Конкурент',
-  unknown: 'Неизвестно',
 };
 
 export const colorStatusTypes = {

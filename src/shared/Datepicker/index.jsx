@@ -7,6 +7,7 @@ import { parse, isValid } from 'date-fns';
 import { formatDateWithOnlyDigits } from '../../utils/formate.date';
 import cn from 'classnames';
 import { useFormContext, get } from 'react-hook-form';
+import Icon from "../Icon";
 
 registerLocale('ru', ru);
 
@@ -82,6 +83,15 @@ const Calendar = ({
       setIsTouched(true);
     };
 
+    const handleClear = (e) => {
+      e.stopPropagation(); // Предотвращаем открытие календаря
+      setInputValue('');
+      handleDateChange(null);
+      if (datePickerRef.current) {
+        datePickerRef.current.setOpen(false);
+      }
+    };
+
     const handleBlur = () => {
       setIsTouched(true);
       const parsedDate = parse(inputValue, 'dd.MM.yyyy', new Date());
@@ -116,6 +126,16 @@ const Calendar = ({
             [styles.datepicker_input__placeholder]: !inputValue,
             [styles.error]: error,
           })}
+          beforeIcon={
+            value ? (
+                <Icon
+                    name="close"
+                    size="16"
+                    className={styles.clearIcon}
+                    onClick={handleClear}
+                />
+            ) : null
+          }
           classLabel={styles.datepicker_label}
           value={inputValue}
           onChange={handleInputChange}

@@ -20,6 +20,7 @@ const TextInput = forwardRef(
       classWrap,
       classNameActions,
       icon,
+      beforeIcon,
       copy,
       currency,
       tooltip,
@@ -249,6 +250,7 @@ const TextInput = forwardRef(
           { [styles.fieldIcon]: icon },
           { [styles.fieldCopy]: copy },
           { [styles.fieldCurrency]: currency },
+            { [styles.fieldBeforeIcon]: beforeIcon },
           { [styles.noMinWidth]: noMinWidth },
           className,
         )}
@@ -273,6 +275,11 @@ const TextInput = forwardRef(
           className={cn(styles.wrap, classWrap)}
         >
           {renderInput()}
+          {beforeIcon && (
+              <div className={styles.beforeIcon}>
+                {beforeIcon}
+              </div>
+          )}
           {icon && (
             <div className={styles.icon}>
               <Icon name={icon} size="24" />

@@ -50,7 +50,7 @@ export const formatHours = (date) => {
 };
 
 export const formatDateToBackend = (value) => {
-  if (!value) return;
+  if (!value) return null;
 
   return format(value, "yyyy-MM-dd'T'HH:mm:ss");
 };

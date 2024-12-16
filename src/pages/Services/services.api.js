@@ -14,7 +14,7 @@ import {
   mapClientFromApi,
 } from '../Clients/clients.mapper';
 import { mapServiceDataToBackend, mapServiceFromApi } from './services.mapper';
-import { getQueryParam } from '../../utils/window.utils';
+import {getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
 import { changeCurrentElementById } from '../../utils/store.utils';
 import useClientsApi from '../Clients/clients.api';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
@@ -33,11 +33,12 @@ const useServiceApi = () => {
   const { servicesStore } = useStore();
   const { getClientById } = useClientsApi();
   const [isLoading, setIsLoading] = useState(false);
-  const getServices = (page = 1) => {
+  const getServices = (page = 1,filters={}) => {
     resetApiProvider();
     setIsLoading(true);
+    const sanitizedFilters = sanitizeUrlFilters(filters)
     return http
-      .get('/api/services', { params: { page } })
+      .get('/api/services', { params: { page,...sanitizedFilters } })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedServices = res.body.data.map((e) => mapServiceFromApi(e));
