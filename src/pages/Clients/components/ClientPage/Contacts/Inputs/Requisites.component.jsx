@@ -10,14 +10,14 @@ import styles from "../Contacts.module.sass";
 
 const RequisitesToValues = {
   INN: 'ИНН',
-  BankName: 'Наименование банка',
+  BankName: 'Банк',
   KPP: 'КПП',
-  OGRN: 'ОГРН/ОГРНИП',
+  OGRN: 'ОГРН',
   RS: 'Р/с №',
   CORR_RS: 'Корр/с №',
   BIK: 'БИК банка',
-  LEGAL_ADDRESS: 'Почтовый адрес',
-  REAL_ADDRESS: 'Фактический адрес',
+  LEGAL_ADDRESS: 'Юр. адрес',
+  REAL_ADDRESS: 'Факт. адрес',
 };
 const RequisitesOnSave = {
   INN: 'ИНН сохранен',
@@ -27,8 +27,8 @@ const RequisitesOnSave = {
   RS: 'Расчетный счет сохранен',
   CORR_RS: 'Корреспондентский счет сохранен',
   BIK: 'БИК сохранен',
-  LEGAL_ADDRESS: 'Почтовый адрес сохранен',
-  REAL_ADDRESS: 'Фактический адрес сохранен',
+  LEGAL_ADDRESS: 'Юр. адрес сохранен',
+  REAL_ADDRESS: 'Факт. адрес сохранен',
 };
 
 const RequisitesOnClose = {
@@ -39,8 +39,8 @@ const RequisitesOnClose = {
   RS: 'Расчетный счет восстановлен',
   CORR_RS: 'Корреспондентский счет восстановлен',
   BIK: 'БИК восстановлен',
-  LEGAL_ADDRESS: 'Почтовый адрес восстановлен',
-  REAL_ADDRESS: 'Фактический адрес восстановлен',
+  LEGAL_ADDRESS: 'Юр. адрес восстановлен',
+  REAL_ADDRESS: 'Факт. адрес восстановлен',
 };
 const RequisitesComponent = ({ label, contactData, onActions, onAdd }) => {
   const length = useMemo(

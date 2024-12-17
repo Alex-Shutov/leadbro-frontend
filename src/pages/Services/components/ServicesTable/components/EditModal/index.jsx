@@ -90,7 +90,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
     try {
       if (isEditMode) {
         await api.updateService(serviceId, service); // Обновляем услугу
@@ -110,6 +110,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
   console.log(serviceTypes, 'serviceTypes');

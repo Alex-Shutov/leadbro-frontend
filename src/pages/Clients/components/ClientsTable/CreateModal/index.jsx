@@ -90,7 +90,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
   };
 
   // Обработчик сохранения
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
     try {
       if (isEditMode) {
         await updateCompany(clientId, client); // Обновляем компанию
@@ -108,6 +108,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
       handleError('Ошибка при сохранении клиента');
+      onError && onError()
     }
   };
 

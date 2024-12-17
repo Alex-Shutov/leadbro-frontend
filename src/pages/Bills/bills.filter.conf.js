@@ -1,4 +1,3 @@
-// bills.filters.conf.js
 import { billStatusTypesRu } from './bills.types';
 import {serviceTypeEnumRu} from "../Services/services.types";
 

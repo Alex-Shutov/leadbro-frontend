@@ -148,7 +148,7 @@ const ClientPersons = ({
                         .filter(([_, { value }]) => Boolean(value))
                         .map(([key, messenger], index) => {
                           console.log(messenger, 'messenger');
-                          debugger;
+
                           return (
                             <Link target="_blank" to={messenger.link}>
                               <Image

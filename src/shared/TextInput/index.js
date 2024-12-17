@@ -69,7 +69,9 @@ const TextInput = forwardRef(
             }
 
             // Затем выполняем кастомную валидацию
-            if (validate) {
+
+            if (validate && required) {
+
               const result = validate(value);
               // Если результат === true, валидация прошла успешно
               // Иначе возвращаем сообщение об ошибке

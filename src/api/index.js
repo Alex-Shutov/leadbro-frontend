@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import useClientsApi from '../pages/Clients/clients.api';
 import useDealsApi from '../pages/Deals/deals.api';
 import useTasksApi from '../pages/Tasks/tasks.api';
+import {mapCommentsFromApi} from "../pages/Clients/clients.mapper";
 
 const useAppApi = () => {
   const { appStore } = useStore();
@@ -30,7 +31,7 @@ const useAppApi = () => {
 
     // Добавляем файлы в FormData
     files.forEach((file) => {
-      formData.append('files', file.blob); // Добавляем сам файл
+      formData.append('files[]', file.blob.blob); // Добавляем сам файл
     });
     setIsLoading(true);
     setEntityForLoad('comment');
@@ -42,7 +43,8 @@ const useAppApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        return res.body.data;
+
+        return mapCommentsFromApi([res.body.data])[res.body.data.id];
       })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));
@@ -57,7 +59,7 @@ const useAppApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger
+
         appStore.setEmployees(res.body.data); // Сохраняем сотрудников в стор
         return res.body.data
       })

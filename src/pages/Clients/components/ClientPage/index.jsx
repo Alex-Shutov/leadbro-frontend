@@ -42,14 +42,14 @@ const ClientPage = observer(() => {
   const [passModalOpen, setPassModalOpen] = useState(false);
   const [personModalOpen, setPersonModalOpen] = useState(false);
   const client = clients.getById(id);
-  debugger;
+
   // useEffect(() => {
   //   return () => {
   //     clients.clearCurrentClient()
   //   }
   // }, []);
   const handleChange = (name, payload, withId = true) => {
-    debugger;
+
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {

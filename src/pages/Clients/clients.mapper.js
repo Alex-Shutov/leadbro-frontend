@@ -14,7 +14,7 @@ export const mapClientFromApi = (
   apiPasswords = [],
   apiContactPersons = [],
   apiComments = [],
-  apiServices = [],
+  apiServices = null,
   apiDeals = [],
 ) => {
   return {
@@ -151,11 +151,12 @@ const mapLegals = (legals) => {
 };
 
 const mapServices = (backendServices, apiServices) => {
-  if (apiServices === undefined) {
+
+  if (apiServices === null) {
     const { last } = backendServices;
     return {
       total: backendServices.total,
-      value: {
+      value: last ? {
         id: last.id,
         description: last.name, // Используем поле name для description
         creator: {
@@ -171,7 +172,7 @@ const mapServices = (backendServices, apiServices) => {
           image: loadAvatar(last.responsible.avatar),
         },
         deadline: last?.deadline ? new Date(last.deadline) : null, // Преобразуем строку в дату
-      },
+      } : null,
     };
   }
   if (!apiServices?.length) {

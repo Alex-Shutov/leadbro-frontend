@@ -44,7 +44,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
     newClient,
   ]);
 
-  debugger;
+
 
   useEffect(() => {
     if (clientId) {
@@ -55,7 +55,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
   }, [clientId]);
   const handleChange = (name, value, withId = true) => {
     if (isEditMode) {
-      debugger;
+
       clientsStore.changeById(companyId, name, value, withId);
     } else {
       setNewClient((prev) => ({
@@ -71,7 +71,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
     onClose(); // Закрытие модалки
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
     try {
       if (isEditMode) {
         await updateClient(
@@ -88,6 +88,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
 

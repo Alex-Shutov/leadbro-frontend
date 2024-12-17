@@ -41,7 +41,7 @@ const Modal = ({
 
   const handleSubmitModal = useCallback(() => {
     // setIsVisible(false);
-    debugger;
+
     handleSubmit && handleSubmit();
     document.body.style.overflow = 'auto';
     // setSubmitClicked(false);

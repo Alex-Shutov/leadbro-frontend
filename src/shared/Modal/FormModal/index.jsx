@@ -17,6 +17,7 @@ const FormValidatedModal = ({
   });
 
   const isSubmitClicked = useRef(false);
+  const [isSubmitClickedState,setSubmitClickedState] = useState(false)
   const {
     handleSubmit,
     formState: { isValid, errors, touchedFields },
@@ -25,28 +26,54 @@ const FormValidatedModal = ({
 
   const onSubmit = useCallback(
     async (data, e) => {
-      const isFormValid = await trigger();
 
-      if (isFormValid) {
-        isSubmitClicked.current = true;
+        await trigger().then((isFormValid)=>{
+            if (isFormValid) {
+                setSubmitClickedState(true)
 
-        onSubmitCallback(data);
-      } else {
-        isSubmitClicked.current = false;
+                onSubmitCallback(()=>{
+                    setSubmitClickedState(false)
+                });
+            } else {
+                setSubmitClickedState(false)
 
-        e?.preventDefault();
-      }
+                e?.preventDefault();
+            }
+        })
+        // try {
+        //
+        //     const isFormValid = await trigger();
+        //
+        //     if (isFormValid) {
+        //         isSubmitClicked.current = true;
+        //
+        //         onSubmitCallback(data);
+        //     } else {
+        //         isSubmitClicked.current = false;
+        //
+        //         e?.preventDefault();
+        //     }
+        // }
+        // catch (e){
+        //
+        //     isSubmitClicked.current = false
+        //     throw e
+        // }
     },
     [onSubmitCallback, trigger],
   );
+
+    const handleSubmitWithTryCatch = () => {
+        return handleSubmit(onSubmit);
+    };
 
   return (
     <FormProvider {...methods}>
       <Modal
         {...props}
         handleClose={handleClose}
-        handleSubmit={handleSubmit(onSubmit)}
-        isSubmitClicked={isSubmitClicked.current}
+        handleSubmit={handleSubmitWithTryCatch()}
+        isSubmitClicked={isSubmitClickedState}
       >
         <form id={uuid()} onSubmit={(e) => e.preventDefault()}>
           {children}

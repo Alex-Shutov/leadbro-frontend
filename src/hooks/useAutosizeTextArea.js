@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect } from 'react';
 import {calculateTextHeight} from "../utils/calculate";
 
 const useAutosizeTextArea = (textAreaRef, isRendered, setRendered,hovered) => {
-  debugger
+
   useEffect(() => {
     setTimeout(()=>{if (textAreaRef?.current && isRendered) {
       const textarea = textAreaRef.current;

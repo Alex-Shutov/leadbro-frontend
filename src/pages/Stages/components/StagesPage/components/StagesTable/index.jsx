@@ -44,7 +44,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   // const ref = useRef();
   const taskApi = useTasksApi();
   const fetchStages = useCallback(async (page) => {
-    debugger;
+
     await api.getTaskStages(stageId, page);
   }, []);
 
@@ -56,7 +56,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
-  debugger;
+
   // useEffect(() => {
   //   return () => {
   //     stage = null;

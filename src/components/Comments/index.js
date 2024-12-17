@@ -87,10 +87,10 @@ const Comments = ({
                 entityId ?? id,
                 { text: val.value.text, files: val.value.files },
             );
-            result?.id &&
+
+            Object.keys(result) &&
             onChange(`${prefix}comments.${result.id}`, {
-              ...val,
-              id: result.id,
+              ...result
             });
           }}
           currentUser={user}

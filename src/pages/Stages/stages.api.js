@@ -58,7 +58,7 @@ const useStageApi = () => {
   const { id: serviceId } = useParams();
 
   const getTaskStages = (stageId, page = null) => {
-    debugger;
+
     const pageFromUrl = page ?? getQueryParam('page', 1);
     setIsLoading(true);
     resetApiProvider();
@@ -69,7 +69,7 @@ const useStageApi = () => {
       }),
     ])
       .then(([stageResponse, tasksResponse]) => {
-        debugger;
+
         const stageData = stageResponse.data.data;
         const tasksData = tasksResponse.data.data;
         const mappedStage = mapStageFromApi(stageData, tasksData); // Маппинг данных
@@ -85,7 +85,7 @@ const useStageApi = () => {
   };
 
   const getStageById = (id, page) => {
-    debugger;
+
     const pageFromUrl = page ?? getQueryParam('page', 1);
     resetApiProvider();
     return Promise.all([

@@ -2,7 +2,7 @@ export const calculateTextHeight = (text, width, styles) => {
     // Создаем временный canvas
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    debugger
+
     // Применяем стили
     context.font = `${styles.fontSize}px ${styles.fontFamily}`;
 

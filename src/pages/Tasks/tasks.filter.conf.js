@@ -1,4 +1,3 @@
-// tasks.filters.conf.js
 import {taskStatusTypesRu} from "../Stages/stages.types";
 import {taskableTypes, tasksTypesRu} from "./tasks.types";
 
@@ -24,9 +23,9 @@ export const createTaskFilters = (appApi,) => ({
                 asyncSearch: async (query) => {
                     const response = await appApi.getEmployees(query);
                     const data = response;
-                    return data.map((item) => ({
+                    return response.map((item) => ({
                         value: item?.id,
-                        label: item?.name,
+                        label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`
                     }));
                 },
                 minInputLength: 2,
@@ -46,9 +45,9 @@ export const createTaskFilters = (appApi,) => ({
                 asyncSearch: async (query) => {
                     const response = await appApi.getEmployees(query);
                     const data = response;
-                    return data.map((item) => ({
+                    return response.map((item) => ({
                         value: item?.id,
-                        label: item?.name,
+                        label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`
                     }));
                 },
                 minInputLength: 2,

@@ -40,7 +40,8 @@ const Tasks = observer(({ onEditTask, onCreateTasks }) => {
     // if (filterValue === 'all') {
     //   await api.getTasks();
     // } else {
-      await api.getTasksByRole(filters);
+      await api.getTasksByRole(filters)
+          .catch(()=>console.log())
     // }
   };
 

@@ -26,11 +26,12 @@ const CreatePassModal = ({ companyId, onClose }) => {
     setNewPass({});
     onClose();
   };
-  const handleSubmit = () => {
+  const handleSubmit = (onError=null) => {
     try {
       createPassword(companyId, newPass).then(() => onClose());
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
   return (

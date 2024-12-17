@@ -46,7 +46,7 @@ const useUser = () => {
   const fetchUserRights = async () => {
     try {
       const response = await getUserRights();
-      debugger
+
       userStore.setRights(mapPermissions(response.body));
     } catch (error) {
       console.error('Error fetching user profile:', error);
