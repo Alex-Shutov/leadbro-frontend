@@ -24,6 +24,7 @@ import CustomButtonContainer from '../../../../../../shared/Button/CustomButtonC
 import DeleteButton from '../../../../../../shared/Button/Delete';
 import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useQueryParam from '../../../../../../hooks/useQueryParam';
+import {mapEmployeesFromApi, mapSettingsDataToBackend} from "../../../../settings.mapper";
 
 const EditModal = observer(({ employeId, onClose }) => {
   const { store: employeStore } = useEmployes();
@@ -37,8 +38,8 @@ const EditModal = observer(({ employeId, onClose }) => {
     birthday: '',
     position: {},
     name: '',
-    middle_name: '',
-    last_name: '',
+    middleName: '',
+    lastName: '',
     email: '',
     phone: '',
     gender: genderType.male,
@@ -79,15 +80,18 @@ const EditModal = observer(({ employeId, onClose }) => {
       }));
     }
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
+    debugger
     try {
       if (isEditMode) {
         await api.updateEmploye(employeId, employe); // Обновляем услугу
+        employeStore.submitDraft(employeId);
       } else {
-        await api.createEmploye({
-          ...localEmploye,
-          ['birthday']: formatDateToBackend(localEmploye.birthday),
-        }); // Создаем новую услугу
+        // await api.createEmploye({
+        //   ...localEmploye,
+        //   ['birthday']: formatDateToBackend(localEmploye.birthday),
+        // }); // Создаем новую услугу
+        await api.createEmploye(mapSettingsDataToBackend(localEmploye,Object.keys(localEmploye)))
       }
       handleSubmitSnackbar(
         isEditMode
@@ -96,7 +100,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       );
       onClose(); // Закрываем модалку
     } catch (error) {
-      console.error('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
 
@@ -115,10 +119,11 @@ const EditModal = observer(({ employeId, onClose }) => {
     onClose(); // Закрытие модалки
   };
 
-  const handleDeleteEmployee = async (employeeId) => {
+  const handleDeleteEmployee = async () => {
+    debugger
     try {
-      await api.deleteEmployee(employeeId, page);
-      handleInfo('Клиент удален');
+      await api.deleteEmployee(employeId, page);
+      handleInfo('Сотрудник уволен');
     } catch (error) {
       console.error('Ошибка при удалении:', error);
       handleError('Ошибка при удалении:', error);
@@ -131,7 +136,7 @@ const EditModal = observer(({ employeId, onClose }) => {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteEmployee}
-        label="Вы уверены, что хотите удалить задачу?"
+        label="Вы уверены, что хотите уволить сотрудника?"
       />
       <FormValidatedModal
         customButtons={
@@ -165,6 +170,7 @@ const EditModal = observer(({ employeId, onClose }) => {
             }
           />
           <Dropdown
+              name={'position'}
             setValue={(e) =>
               handleChange(isEditMode ? 'position' : 'position', e)
             }
@@ -182,10 +188,10 @@ const EditModal = observer(({ employeId, onClose }) => {
             required={true}
             placeholder={'Фамилия'}
             onChange={({ target }) =>
-              handleChange(isEditMode ? 'lastName' : 'last_name', target.value)
+              handleChange(isEditMode ? 'lastName' : 'lastName', target.value)
             }
-            name={isEditMode ? 'lastName' : 'last_name'}
-            value={isEditMode ? employe.lastName : employe.last_name}
+            name={isEditMode ? 'lastName' : 'lastName'}
+            value={isEditMode ? employe.lastName : employe.lastName}
             edited={true}
             className={styles.input}
             label={'Фамилия'}
@@ -209,12 +215,12 @@ const EditModal = observer(({ employeId, onClose }) => {
             placeholder={'Отчество'}
             onChange={({ target }) =>
               handleChange(
-                isEditMode ? 'middleName' : 'middle_name',
+                isEditMode ? 'middleName' : 'middleName',
                 target.value,
               )
             }
-            name={isEditMode ? 'middleName' : 'middle_name'}
-            value={isEditMode ? employe.middleName : employe.middle_name}
+            name={isEditMode ? 'middleName' : 'middleName'}
+            value={isEditMode ? employe.middleName : employe.middleName}
             edited={true}
             className={styles.input}
             label={'Отчество'}
@@ -270,10 +276,10 @@ const EditModal = observer(({ employeId, onClose }) => {
             label={'Телефон'}
           />
         </div>
-        {!isEditMode && (
+        { !employeId && (
           <div className={styles.flex}>
             <TextInput
-              required={true}
+              required={!isEditMode && true}
               placeholder={'Новый пароль'}
               onChange={(e) => {
                 console.log('target', e);
@@ -282,7 +288,7 @@ const EditModal = observer(({ employeId, onClose }) => {
                   e.target.value,
                 );
               }}
-              name={isEditMode ? 'password' : 'password'}
+              name={'password'}
               value={isEditMode ? employe.password : employe.password}
               edited={true}
               className={cn(
@@ -293,6 +299,7 @@ const EditModal = observer(({ employeId, onClose }) => {
               validate={validatePassword}
             />
             <TextInput
+                required={!isEditMode && true}
               placeholder={'Повторите пароль'}
               onChange={({ target }) => {
                 handleChange(
@@ -300,7 +307,7 @@ const EditModal = observer(({ employeId, onClose }) => {
                   target.value,
                 );
               }}
-              name={isEditMode ? 'confirmPassword' : 'confirmPassword'}
+              name={'confirmPassword'}
               value={
                 isEditMode ? employe.confirmPassword : employe.confirmPassword
               }

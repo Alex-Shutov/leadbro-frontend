@@ -33,9 +33,9 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
             type="secondary"
             name="Нет"
             onClick={(e) => {
-              e.preventDefault();
+              e?.preventDefault();
 
-              e.stopPropagation();
+              e?.stopPropagation();
               onClose();
             }}
             classname={styles.cancelButton}

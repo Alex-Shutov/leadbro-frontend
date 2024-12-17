@@ -96,7 +96,7 @@ const ServicePage = observer(() => {
                   <Act act={el.act} />
                   {/*<Agreement/>*/}
                   {/*<AdditionalAgreement/>*/}
-                  {el?.bills && <Bills
+                  {el?.bills && Boolean(el?.bills?.length) && <Bills
                     company={{ ...service.client, name: service.client.title }}
                     service={{ id: service?.id, name: service?.title }}
                     stage={{ id: el.id, name: el.title }}

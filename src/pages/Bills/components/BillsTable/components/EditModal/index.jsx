@@ -177,7 +177,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
     if (isDeleteModalOpen) return;
 
     try {
@@ -203,6 +203,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
       handleError('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
 

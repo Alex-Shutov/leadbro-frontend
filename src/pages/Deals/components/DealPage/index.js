@@ -50,6 +50,7 @@ const DealPage = observer(() => {
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
       deals.resetDraft(Number(id), path);
+
     }
   };
 

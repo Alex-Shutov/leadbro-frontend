@@ -43,6 +43,7 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
   };
 
   const handleFileUpload = (uploadedFiles) => {
+
     const processedFiles = Array.from(uploadedFiles).map((file) => ({
       id: new Date().toISOString(), // Временный ID для UI
       name: file.name.split('.')[0],

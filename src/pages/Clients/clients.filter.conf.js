@@ -31,12 +31,12 @@ export const createClientsFilters = (appApi) => ({
             props: {
                 isAsync: true,
                 asyncSearch: async (query) => {
-                    debugger
+
 
                     const response = await appApi.getEmployees(query);
                     return response.map((item) => ({
                         value: item?.id,
-                        label: `${item?.surname??''} ${item?.name??''} ${item?.middleName??""}`
+                        label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`
                     }));
                 },
                 minInputLength: 2,

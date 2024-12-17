@@ -8,15 +8,17 @@ const FileUpload = ({ onFileUpload }) => {
     [fileInputRef.current],
   );
   const handleFileUpload = ({ target }) => {
-    const uploadedFiles = Array.from(target.files).map((file) => {
-      const fileExtension = file.name.split('.').pop();
-      return {
-        id: new Date(),
-        name: file.name.replace(`.${fileExtension}`, ''),
-        extension: `.${fileExtension}`,
-      };
-    });
-    onFileUpload(uploadedFiles);
+
+    // const uploadedFiles = Array.from(target.files).map((file) => {
+    //   const fileExtension = file.name.split('.').pop();
+      // return {
+      //   id: new Date(),
+      //   name: file.name.replace(`.${fileExtension}`, ''),
+      //   extension: `.${fileExtension}`,
+      //   blob:file
+      // };
+    // });
+    onFileUpload(target.files);
     // files..?forEach((file) => postFile(file, file.name));
   };
 

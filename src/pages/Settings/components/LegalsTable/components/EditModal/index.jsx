@@ -77,7 +77,7 @@ const EditModal = observer(({ legalId, onClose }) => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (onError=null) => {
     try {
       if (isEditMode) {
         await api.updateLegal(legalId, legal);
@@ -94,6 +94,7 @@ const EditModal = observer(({ legalId, onClose }) => {
       onClose();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
+      onError && onError()
     }
   };
 

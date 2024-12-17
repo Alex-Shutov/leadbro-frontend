@@ -7,7 +7,7 @@ const Copy = ({ inputRef, actions, label, setClose, props }) => {
     <div
       onClick={() => {
         // console.log(inputRef.current,'curr')
-        debugger;
+
         setClose && setClose();
         actions.copy(inputRef.current.value);
       }}

@@ -1,4 +1,3 @@
-// services.filters.conf.js
 const servicesStatusTypesRu = {
     1:'В работе',
     0:'Завершено'
@@ -10,15 +9,13 @@ export const createServicesFilters = (appApi) => ({
             name: 'status',
             label: 'Статус',
             props: {
-                isMulti: false,
+                isMulti: true,
                 options: Object.entries(servicesStatusTypesRu).map(([value, label]) => ({
                     value,
                     label
                 }))
             },
-            toUrlValue: value => {
-                return value.length ? value[0]?.value : '';
-            }
+            toUrlValue: values => values ? values.map(v => v.value).join(',') : ''
         },
         {
             type: 'input',
@@ -28,9 +25,10 @@ export const createServicesFilters = (appApi) => ({
                 isAsync: true,
                 asyncSearch: async (query) => {
                     const response = await appApi.getEmployees(query);
+                    debugger
                     return response.map((item) => ({
                         value: item?.id,
-                        label: `${item?.surname??''} ${item?.name??''} ${item?.middleName??""}`
+                        label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`
                     }));
                 },
                 minInputLength: 2,

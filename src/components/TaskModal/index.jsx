@@ -156,7 +156,7 @@ const TaskEditModal = observer(
     );
 
     const handleChange = (name, value, withId = true) => {
-      debugger;
+
       if (name.includes('responsibles') && value.length) {
         value = value[0];
       }

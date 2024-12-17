@@ -63,6 +63,7 @@ const useEmployesApi = () => {
     setIsLoading(true);
     const pageFromUrl = getQueryParam('page', 1);
     resetApiProvider();
+
     return http
       .post('/api/employees', body)
       .then(handleHttpResponse)

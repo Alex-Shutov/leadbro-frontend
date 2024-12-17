@@ -82,7 +82,7 @@ const DealEditModal = observer(
       }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (onError = null) => {
       if (isDeleteModalOpen) return;
       try {
         if (isEditMode) {
@@ -99,6 +99,7 @@ const DealEditModal = observer(
         handleClose();
       } catch (error) {
         console.error('Ошибка при сохранении:', error);
+        onError && onError()
       }
     };
     console.log(deal, 'deal123');

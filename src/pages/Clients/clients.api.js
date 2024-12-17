@@ -51,7 +51,7 @@ const useClientsApi = () => {
     resetApiProvider();
     setIsLoading(true);
     const sanitazedFilters = sanitizeUrlFilters(filters)
-    debugger
+
     return http
       .get('/api/companies', { params: { page: page,...sanitazedFilters } })
       .then(handleHttpResponse)
@@ -67,7 +67,7 @@ const useClientsApi = () => {
   const createCompany = (body) => {
     resetApiProvider();
     setIsLoading(true);
-    debugger;
+
     const pageFromUrl = getQueryParam('page', 1);
     const updateData = mapClientDataToBackend(body, Object.keys(body));
     return http
@@ -249,7 +249,7 @@ const useClientsApi = () => {
       clientsStore.changedProps,
       clientId,
     );
-    debugger;
+
     setIsLoading(true);
     return http
       .patch(`/api/clients/${clientId}`, updateData)

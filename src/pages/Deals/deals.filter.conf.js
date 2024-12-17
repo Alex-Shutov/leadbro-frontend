@@ -15,7 +15,7 @@ export const createDealsFilters = (appApi) => ({
                     const response = await appApi.getEmployees(query);
                     return response.map((item) => ({
                         value: item?.id,
-                        label: `${item?.surname??""} ${item?.name??''} ${item?.middleName??''}`
+                        label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`
                     }));
                 },
                 minInputLength: 2,
@@ -103,7 +103,7 @@ export const createDealsFilters = (appApi) => ({
                 isMulti: false,
                 placeholder: 'Поиск клиента'
             },
-            toUrlValue: value => value?.value || ''
+            toUrlValue: values => values ? values.map(v => v.value).join(',') : ''
         }
     ]
 });

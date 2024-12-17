@@ -18,13 +18,13 @@ const ServicesCell = ({ services }) => {
   const visibleServices = showAll ? [services?.value] : [services?.value];
 
   return (
-    <NoContentCell value={services}>
+    <NoContentCell value={services.value}>
       <div className={styles.servicesCell}>
         {/* Отображаем видимые услуги */}
         {visibleServices.map((service, index) => (
           <div key={index} className={styles.services}>
             <div className={styles.name}>
-              <Link className={styles.link} to={`/services/${index + 1}`}>
+              <Link className={styles.link} to={`/services/${service?.id}`}>
                 {service?.description}
               </Link>
               <HiddenCount
