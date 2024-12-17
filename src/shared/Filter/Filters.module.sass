@@ -12,6 +12,7 @@
             opacity: 1
 
 .body
+
     position: absolute
     top: 68px
     overflow-y: auto
@@ -25,7 +26,6 @@
     background: $n1
     visibility: hidden
     opacity: 0
-    transition: all .3s
     +m
         position: fixed
         top: 0
@@ -36,6 +36,10 @@
         overflow: auto 
     +dark
         background: $n7
+    @include custom-scrollbar(408px,0px)
+    &:hover
+        padding-right: 19px
+
 
 .top
     display: flex
