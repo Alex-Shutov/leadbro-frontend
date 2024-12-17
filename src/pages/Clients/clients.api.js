@@ -16,7 +16,7 @@ import {
   mapCommentDataToBackend,
 } from './clients.mapper';
 import useQueryParam from '../../hooks/useQueryParam';
-import { getQueryParam } from '../../utils/window.utils';
+import {getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
 import { enqueueSnackbar } from 'notistack';
 import { handleSubmit } from '../../utils/snackbar';
 
@@ -47,11 +47,13 @@ const useClientsApi = () => {
   const { clientsStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const getClients = (page = 1) => {
+  const getClients = (page = 1,filters={}) => {
     resetApiProvider();
     setIsLoading(true);
+    const sanitazedFilters = sanitizeUrlFilters(filters)
+    debugger
     return http
-      .get('/api/companies', { params: { page: page } })
+      .get('/api/companies', { params: { page: page,...sanitazedFilters } })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedClients = res.body.data.map((e) => mapClientFromApi(e));
@@ -65,9 +67,9 @@ const useClientsApi = () => {
   const createCompany = (body) => {
     resetApiProvider();
     setIsLoading(true);
-    debugger
+    debugger;
     const pageFromUrl = getQueryParam('page', 1);
-    const updateData = mapClientDataToBackend(body,Object.keys(body))
+    const updateData = mapClientDataToBackend(body, Object.keys(body));
     return http
       .post('/api/companies', updateData)
       .then(handleHttpResponse)
@@ -247,11 +249,12 @@ const useClientsApi = () => {
       clientsStore.changedProps,
       clientId,
     );
+    debugger;
     setIsLoading(true);
     return http
       .patch(`/api/clients/${clientId}`, updateData)
       .then(handleHttpResponse)
-      .then(() => getClientById(companyId))
+      .then(() => getClientById(companyId, true))
       .then(() => handleSubmit(submitText ?? 'Данные клиента сохранены'))
 
       .catch(handleShowError)

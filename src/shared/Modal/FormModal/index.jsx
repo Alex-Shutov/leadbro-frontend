@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import Modal from '../index';
 import uuid from 'draft-js/lib/uuid';
@@ -16,6 +16,7 @@ const FormValidatedModal = ({
     reValidateMode: 'onChange',
   });
 
+  const isSubmitClicked = useRef(false);
   const {
     handleSubmit,
     formState: { isValid, errors, touchedFields },
@@ -27,8 +28,12 @@ const FormValidatedModal = ({
       const isFormValid = await trigger();
 
       if (isFormValid) {
+        isSubmitClicked.current = true;
+
         onSubmitCallback(data);
       } else {
+        isSubmitClicked.current = false;
+
         e?.preventDefault();
       }
     },
@@ -41,6 +46,7 @@ const FormValidatedModal = ({
         {...props}
         handleClose={handleClose}
         handleSubmit={handleSubmit(onSubmit)}
+        isSubmitClicked={isSubmitClicked.current}
       >
         <form id={uuid()} onSubmit={(e) => e.preventDefault()}>
           {children}

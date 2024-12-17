@@ -57,7 +57,9 @@ const useAppApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        appStore.setEmployees(res.data); // Сохраняем сотрудников в стор
+        debugger
+        appStore.setEmployees(res.body.data); // Сохраняем сотрудников в стор
+        return res.body.data
       })
       .catch(handleHttpError)
       .finally(() => setIsLoading(false));

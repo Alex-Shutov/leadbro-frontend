@@ -12,41 +12,41 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, label }) => {
   if (!isOpen) return null;
 
   return (
-      <Modal
-          id={'confirmModal'}
-        modalRef={confirmRef}
-        size="sm"
-        handleClose={onClose}
-        customButtons={
-          <div className={styles.confirmationButtons}>
-            <Button
-              type="danger"
-              name="Да"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onConfirm();
-              }}
-              classname={styles.confirmButton}
-            />
-            <Button
-              type="secondary"
-              name="Нет"
-              onClick={(e) => {
-                e.preventDefault();
+    <Modal
+      id={'confirmModal'}
+      modalRef={confirmRef}
+      size="sm"
+      handleClose={onClose}
+      customButtons={
+        <div className={styles.confirmationButtons}>
+          <Button
+            type="danger"
+            name="Да"
+            onClick={(e) => {
+              e?.preventDefault();
+              e?.stopPropagation();
+              onConfirm();
+            }}
+            classname={styles.confirmButton}
+          />
+          <Button
+            type="secondary"
+            name="Нет"
+            onClick={(e) => {
+              e.preventDefault();
 
-                e.stopPropagation();
-                onClose();
-              }}
-              classname={styles.cancelButton}
-            />
-          </div>
-        }
-      >
-        <div className={styles.confirmationContent}>
-          <h3>{label}</h3>
+              e.stopPropagation();
+              onClose();
+            }}
+            classname={styles.cancelButton}
+          />
         </div>
-      </Modal>
+      }
+    >
+      <div className={styles.confirmationContent}>
+        <h3>{label}</h3>
+      </div>
+    </Modal>
   );
 };
 

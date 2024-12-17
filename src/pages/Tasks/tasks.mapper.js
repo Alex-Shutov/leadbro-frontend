@@ -28,7 +28,7 @@ export const mapTaskFromApi = (task, commentsData = null) => {
     type: task?.type,
     taskLinked: task?.linked_task,
     description: task?.description ?? ' ',
-    deadline: new Date(task?.deadline),
+    deadline: task?.deadline ? new Date(task?.deadline) : null,
     deadlineTime: formatDuration(task?.planned_time), // Например, '5 ч'
     actualTime: formatDuration(task?.actual_time), // Например, '2 дн'
     isNewForUser: task?.show_at_client_cabinet === 1,

@@ -13,6 +13,7 @@ import TableMenu from '../../components/TableMenu';
 import { useLocation, useNavigate } from 'react-router';
 import { NextButton, PreviousButton } from '../PaginationButton';
 import TableSwithcer from '../../pages/Settings/components/TableSwithcer';
+import { LoadingProvider } from '../../providers/LoadingProvider';
 
 const Table = observer(
   ({
@@ -32,19 +33,18 @@ const Table = observer(
     const [activeMenuRowIndex, setActiveMenuRowIndex] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-
     // Получение номера страницы из query параметра
-      console.log(paging,'paging')
+    //   console.log(paging,'paging')
     const tableInstance = useTable(
       {
         columns,
         data,
         initialState: {
           pageIndex: paging?.current ? Number(paging?.current) : undefined,
-            columnWidths: columns.map((col) => ({
-                width: col.width ? `${col.width}` : 'auto',
-                minWidth: col.minWidth || 'unset'
-            }))
+          columnWidths: columns.map((col) => ({
+            width: col.width ? `${col.width}` : 'auto',
+            minWidth: col.minWidth || 'unset',
+          })),
         },
         manualPagination: !!paging, // Управляем пагинацией вручную
         pageCount: paging ? Math.floor(paging.all / paging.offset) : undefined,
@@ -82,36 +82,36 @@ const Table = observer(
     //     });
     //   }
     // }, [location.pathname, pageIndex, paging]);
-      const getVisiblePages = (currentPage, totalPages) => {
-          const delta = 3;
-          const range = [];
-          const rangeWithDots = [];
-          let l;
+    const getVisiblePages = (currentPage, totalPages) => {
+      const delta = 3;
+      const range = [];
+      const rangeWithDots = [];
+      let l;
 
-          for (let i = 1; i <= totalPages; i++) {
-              if (
-                  i === 1 ||
-                  i === totalPages ||
-                  i >= currentPage - delta && i <= currentPage + delta
-              ) {
-                  range.push(i);
-              }
+      for (let i = 1; i <= totalPages; i++) {
+        if (
+          i === 1 ||
+          i === totalPages ||
+          (i >= currentPage - delta && i <= currentPage + delta)
+        ) {
+          range.push(i);
+        }
+      }
+
+      for (let i of range) {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+            rangeWithDots.push('...');
           }
+        }
+        rangeWithDots.push(i);
+        l = i;
+      }
 
-          for (let i of range) {
-              if (l) {
-                  if (i - l === 2) {
-                      rangeWithDots.push(l + 1);
-                  } else if (i - l !== 1) {
-                      rangeWithDots.push('...');
-                  }
-              }
-              rangeWithDots.push(i);
-              l = i;
-          }
-
-          return rangeWithDots;
-      };
+      return rangeWithDots;
+    };
 
     const headerSortingRef = useRef(null);
     const titleJsx = (
@@ -257,8 +257,8 @@ const Table = observer(
                                 column.getSortByToggleProps(),
                               )}
                               style={{
-                                  width: column.width || 'auto',
-                                  minWidth: column.minWidth || 'unset'
+                                width: column.width || 'auto',
+                                minWidth: column.minWidth || 'unset',
                               }}
                             >
                               <div
@@ -302,110 +302,126 @@ const Table = observer(
                       ))}
                   </thead>
                   <tbody {...getTableBodyProps()}>
-                    {rest.disableHeader
-                      ? headerGroups.map((group) =>
-                          group.headers
-                            .filter((col) => col.columns && !col.parent)
-                            .map((col) => {
-                              const colJsx = col.render('Header');
-                              return (
-                                <div
-                                  className={styles.disable_header}
-                                  key={col.id}
-                                >
-                                  {Object.keys(colJsx.props).length ? (
-                                    <tr>
-                                      <td>{colJsx}</td>
-                                    </tr>
-                                  ) : (
-                                    <></>
-                                  )}
-                                  {rowsOrPage
-                                    .filter(
-                                      (el) =>
-                                        el.id === col.originalId.split('_')[1],
-                                    )
-                                    .map((row) => {
-                                      prepareRow(row);
-                                      return (
-                                        <React.Fragment
-                                          key={row.id}
-                                          {...row.getRowProps()}
-                                        >
-                                          <tr>
-                                            {row.cells
-                                              .filter(
-                                                (cell) =>
-                                                  cell.column.parent.id ===
-                                                  col.originalId,
-                                              )
-                                              .map((cell) => (
-                                                <td
-                                                  key={cell.column.id}
-                                                  {...cell.getCellProps()}
-                                                >
-                                                  {cell.render('Cell')}
-                                                </td>
-                                              ))}
-                                          </tr>
-                                        </React.Fragment>
-                                      );
-                                    })}
-                                </div>
-                              );
-                            }),
-                        )
-                      : rowsOrPage.map((row, index) => renderRow(row, index))}
+                    <LoadingProvider
+                      cls={styles.table_loader}
+                      isLoading={
+                        rest.hasOwnProperty('isLoading')
+                          ? rest?.isLoading
+                          : false
+                      }
+                    >
+                      {rest.disableHeader
+                        ? headerGroups.map((group) =>
+                            group.headers
+                              .filter((col) => col.columns && !col.parent)
+                              .map((col) => {
+                                const colJsx = col.render('Header');
+                                return (
+                                  <div
+                                    className={styles.disable_header}
+                                    key={col.id}
+                                  >
+                                    {Object.keys(colJsx.props).length ? (
+                                      <tr>
+                                        <td>{colJsx}</td>
+                                      </tr>
+                                    ) : (
+                                      <></>
+                                    )}
+                                    {rowsOrPage
+                                      .filter(
+                                        (el) =>
+                                          el.id ===
+                                          col.originalId.split('_')[1],
+                                      )
+                                      .map((row) => {
+                                        prepareRow(row);
+                                        return (
+                                          <React.Fragment
+                                            key={row.id}
+                                            {...row.getRowProps()}
+                                          >
+                                            <tr>
+                                              {row.cells
+                                                .filter(
+                                                  (cell) =>
+                                                    cell.column.parent.id ===
+                                                    col.originalId,
+                                                )
+                                                .map((cell) => (
+                                                  <td
+                                                    key={cell.column.id}
+                                                    {...cell.getCellProps()}
+                                                  >
+                                                    {cell.render('Cell')}
+                                                  </td>
+                                                ))}
+                                            </tr>
+                                          </React.Fragment>
+                                        );
+                                      })}
+                                  </div>
+                                );
+                              }),
+                          )
+                        : rowsOrPage.map((row, index) => renderRow(row, index))}
+                    </LoadingProvider>
                   </tbody>
                 </table>
               </div>
             </Card>
-              {paging && (
-                  <Card className={styles.pagingCard}>
-                      {paging && (
-                          <div className={styles.pagination}>
-                              <PreviousButton
-                                  disabled={Number(paging.current) === 1}
-                                  onClick={() => paging.onPageChange(Number(paging.current) - 1)}
-                              />
-                              <div className={cn(styles.divider_line, styles.left)} />
-                              {allPages && (
-                                  <div className={styles.pagesCount}>
-                                      {getVisiblePages(Number(paging.current), allPages).map((pageNum, index) => (
-                                          <React.Fragment key={index}>
-                                              {pageNum === '...' ? (
-                                                  <div className={styles.dots}>...</div>
-                                              ) : (
-                                                  <div
-                                                      className={
-                                                          Number(paging.current) === pageNum
-                                                              ? cn(styles.page, styles.active)
-                                                              : styles.page
-                                                      }
-                                                      onClick={() => {
-                                                          if (typeof pageNum === 'number') {
-                                                              paging.onPageChange(pageNum);
-                                                          }
-                                                      }}
-                                                  >
-                                                      {pageNum}
-                                                  </div>
-                                              )}
-                                          </React.Fragment>
-                                      ))}
-                                  </div>
+            {paging && (
+              <Card className={styles.pagingCard}>
+                {paging && (
+                  <div className={styles.pagination}>
+                    <PreviousButton
+                      disabled={Number(paging.current) === 1}
+                      onClick={() =>
+                        paging.onPageChange(Number(paging.current) - 1)
+                      }
+                    />
+                    <div className={cn(styles.divider_line, styles.left)} />
+                    {allPages && (
+                      <div className={styles.pagesCount}>
+                        {getVisiblePages(Number(paging.current), allPages).map(
+                          (pageNum, index) => (
+                            <React.Fragment key={index}>
+                              {pageNum === '...' ? (
+                                <div className={styles.dots}>...</div>
+                              ) : (
+                                <div
+                                  className={
+                                    Number(paging.current) === pageNum
+                                      ? cn(styles.page, styles.active)
+                                      : styles.page
+                                  }
+                                  onClick={() => {
+                                    if (typeof pageNum === 'number') {
+                                      paging.onPageChange(pageNum);
+                                    }
+                                  }}
+                                >
+                                  {pageNum}
+                                </div>
                               )}
-                              <div className={cn(styles.divider_line, styles.right)} />
-                              <NextButton
-                                  disabled={Number(paging.current) === allPages}
-                                  onClick={() => paging.onPageChange(Number(paging.current) + 1)}
-                              />
-                          </div>
-                      )}
-                  </Card>
-              )}
+                            </React.Fragment>
+                          ),
+                        )}
+                      </div>
+                    )}
+                    <div className={cn(styles.divider_line, styles.right)} />
+                    <NextButton
+                      disabled={Number(paging.current) === allPages}
+                      onClick={() =>
+                        paging.onPageChange(Number(paging.current) + 1)
+                      }
+                    />
+                  </div>
+                )}
+              </Card>
+            )}
             {rest?.after}
-              {rest?.lastColumn}
+            {rest?.lastColumn}
           </div>
 
           {cardComponent && (

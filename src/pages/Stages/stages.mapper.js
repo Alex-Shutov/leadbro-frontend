@@ -11,7 +11,7 @@ export const mapStageFromApi = (stageData, tasksData) => {
     id: stageData?.id,
     number: stageData?.number,
     title: stageData?.name,
-    bills: stageData?.bills ?? [],
+    bills: stageData?.bills ?? null,
     startTime: stageData?.start ? new Date(stageData?.start) : null,
     deadline: stageData?.deadline ? new Date(stageData?.deadline) : null,
     stagePlannedTime:

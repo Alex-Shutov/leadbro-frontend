@@ -13,6 +13,9 @@ import TaskEditModal from '../../components/TaskModal';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import withTaskModalHandler from '../../components/TaskModal/HocHandler';
+import {createTaskFilters} from "./tasks.filter.conf";
+import {FiltersProvider} from "../../providers/FilterProvider";
+import useAppApi from "../../api";
 
 const filters = [
   { label: 'Все', value: 'all' },
@@ -24,7 +27,7 @@ const filters = [
 
 const Tasks = observer(({ onEditTask, onCreateTasks }) => {
   const api = useTasksApi();
-
+  const appApi = useAppApi()
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Получаем значение фильтра из URL или используем значение по умолчанию
@@ -32,14 +35,13 @@ const Tasks = observer(({ onEditTask, onCreateTasks }) => {
   const [statusFilter, setStatusFilter] = useState(initialFilter);
   const { data, isLoading, store: tasksStore } = useTasksByStatus(statusFilter);
 
-  const handleRadioChange = async (filterValue) => {
-    setStatusFilter(filterValue);
-    setSearchParams({ filter: filterValue });
-    if (filterValue === 'all') {
-      await api.getTasks();
-    } else {
-      await api.getTasksByRole(filterValue);
-    }
+  const handleFilterChange = async (filters) => {
+    const filterValue = filters?.filter;
+    // if (filterValue === 'all') {
+    //   await api.getTasks();
+    // } else {
+      await api.getTasksByRole(filters);
+    // }
   };
 
   const getCountStatusTask = (type) => {
@@ -62,6 +64,7 @@ const Tasks = observer(({ onEditTask, onCreateTasks }) => {
   }, [data]);
 
   return (
+      <FiltersProvider>
     <LoadingProvider isLoading={api.isLoading}>
       <Title
         title={'Мои задачи'}
@@ -71,16 +74,10 @@ const Tasks = observer(({ onEditTask, onCreateTasks }) => {
             title: 'Создать задачу',
           },
           filter: {
-            classNameBody: styles.filter_container,
+            // classNameBody: styles.filter_container,
             title: 'Фильтр',
-            children: (
-              <TaskFilter
-                filters={filters}
-                selectedFilter={statusFilter}
-                onChange={handleRadioChange}
-                taskCounts={taskCounts}
-              />
-            ),
+            config: createTaskFilters(appApi),
+            onChange: handleFilterChange
           },
         }}
       />
@@ -91,6 +88,7 @@ const Tasks = observer(({ onEditTask, onCreateTasks }) => {
         handleChange={handleChange}
       />
     </LoadingProvider>
+      </FiltersProvider>
   );
 });
 

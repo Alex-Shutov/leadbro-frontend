@@ -9,7 +9,7 @@ import {
 } from '../../shared/http';
 import { useCallback, useState } from 'react';
 import { mapDealDataToBackend, mapDealFromApi } from './deals.mapper';
-import { getPageTypeFromUrl, getQueryParam } from '../../utils/window.utils';
+import {getPageTypeFromUrl, getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
 import './deals.mock';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
 
@@ -17,11 +17,12 @@ const useDealsApi = () => {
   const { dealsStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const getDeals = (page = 1, filter = null) => {
+  const getDeals = (page = 1, filters = {}) => {
     resetApiProvider();
     setIsLoading(true);
+    const sanitizedFilters = sanitizeUrlFilters(filters)
     return http
-      .get('/api/deals', { params: { page, filter } })
+      .get('/api/deals', { params: { page, ...sanitizedFilters } })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedDeals = res.body.data.map((deal) => mapDealFromApi(deal));

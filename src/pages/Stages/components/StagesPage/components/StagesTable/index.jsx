@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { observer } from 'mobx-react';
 import useStageApi from '../../../../stages.api';
 import ManagerCell from '../../../../../../components/ManagerCell';
@@ -17,19 +23,19 @@ import useOutsideClick from '../../../../../../hooks/useOutsideClick';
 import useStore from '../../../../../../hooks/useStore';
 import usePagingData from '../../../../../../hooks/usePagingData';
 import EditStage from '../../../../../../components/EditStage';
-import {useNavigate, useParams} from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import TaskEditModal from '../../../../../../components/TaskModal';
 import useTasksApi from '../../../../../Tasks/tasks.api';
 import DescriptionInfo from '../DescriptionInfo';
+import ConfirmationModal from '../../../../../../components/ConfirmationModal';
+import { handleError, handleInfo } from '../../../../../../utils/snackbar';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
-import ConfirmationModal from "../../../../../../components/ConfirmationModal";
-import {handleError, handleInfo} from "../../../../../../utils/snackbar";
 
 const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   const { stagesStore } = useStore();
   const { tasksStore } = useStore();
   const { stageId } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const api = useStageApi();
   const [taskData, setTaskData] = useState(null);
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
@@ -37,12 +43,12 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const ref = useRef();
   const taskApi = useTasksApi();
-  const fetchStages = useCallback((page) => {
-    debugger
-    api.getTaskStages(stageId, page);
+  const fetchStages = useCallback(async (page) => {
+    debugger;
+    await api.getTaskStages(stageId, page);
   }, []);
 
-  const {
+  let {
     currentPage,
     totalPages,
     totalItems,
@@ -50,6 +56,15 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
     itemsPerPage,
     handlePageChange,
   } = usePagingData(stagesStore, fetchStages, () => stagesStore?.getStages());
+  debugger;
+  // useEffect(() => {
+  //   return () => {
+  //     stage = null;
+  //     stagesStore.clearCurrentStage();
+  //     paginatedData = null;
+  //   };
+  // }, []);
+  console.log(paginatedData, 'paginatedData');
   const handleEditTask = (data) => {
     setTaskData(data);
     setEditTaskModalOpen(true);
@@ -63,11 +78,11 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
     setTaskData(null);
     setEditTaskModalOpen(false);
   };
-  const handleDelete = async(id) => {
+  const handleDelete = async (id) => {
     try {
-      await taskApi.deleteTask(id).then(()=>api.getStageById(stage?.id));
-      navigate('.')
-      handleCloseTaskModal()
+      await taskApi.deleteTask(id).then(() => api.getStageById(stage?.id));
+      navigate('.');
+      handleCloseTaskModal();
       handleInfo('Услуга удалена');
     } catch (error) {
       console.error('Ошибка при удалении:', error);
@@ -175,10 +190,11 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
     );
     return totalHours + ' ч';
   }, [paginatedData[0]]);
-  debugger
+
   return (
     <div className={styles.table}>
       <Table
+        isLoading={api.isLoading}
         paging={{
           current: currentPage,
           all: totalItems,
@@ -223,16 +239,16 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
         />
       )}
       {taskToDelete !== null && (
-          <ConfirmationModal
-              isOpen={taskToDelete !== null}
-              onClose={() => setTaskToDelete(null)}
-              onConfirm={() => {
-                handleDelete(taskToDelete).then(() => {
-                  setTaskToDelete(null);
-                });
-              }}
-              label="Вы уверены, что хотите удалить этап?"
-          />
+        <ConfirmationModal
+          isOpen={taskToDelete !== null}
+          onClose={() => setTaskToDelete(null)}
+          onConfirm={() => {
+            handleDelete(taskToDelete).then(() => {
+              setTaskToDelete(null);
+            });
+          }}
+          label="Вы уверены, что хотите удалить этап?"
+        />
       )}
       {editStageModalOpen && (
         <EditStage

@@ -19,7 +19,7 @@ import ConfirmationModal from '../ConfirmationModal';
 import useParamSearch from '../../hooks/useParamSearch';
 import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../shared/Button/Delete';
-import Icon from "../../shared/Icon";
+import Icon from '../../shared/Icon';
 
 const draftSet = new Set();
 
@@ -62,10 +62,10 @@ const TaskEditModal = observer(
             id: stage.id,
             title: stage.title,
             store: stagesStore,
-            afterDelete:()=>{
-              return stageApi.getStageById(stage.id)
+            afterDelete: () => {
+              return stageApi.getStageById(stage.id);
             },
-            afterCreate:()=>stageApi.getStageById(stage?.id)
+            afterCreate: () => stageApi.getStageById(stage?.id),
           };
         case 'deal':
           return {
@@ -74,11 +74,10 @@ const TaskEditModal = observer(
             title: deal.title,
             store: dealsStore,
             // afterDelete:()=>dealApi.getDealById(deal?.id)
-            afterDelete:()=>{
-             return dealApi.getDealById(deal?.id)
-
+            afterDelete: () => {
+              return dealApi.getDealById(deal?.id);
             },
-            afterCreate:()=>dealApi.getDealById(deal?.id)
+            afterCreate: () => dealApi.getDealById(deal?.id),
           };
         default:
           return {
@@ -86,18 +85,17 @@ const TaskEditModal = observer(
             id: null,
             title: null,
             store: taskStore,
-            afterDelete:()=>{
-              taskStore.setCurrentTask(null)
-              const newTasks = taskStore.tasks.filter(el=>el.id!==taskData?.id)
-              taskStore.setTasks(newTasks)
+            afterDelete: () => {
+              taskStore.setCurrentTask(null);
+              const newTasks = taskStore.tasks.filter(
+                (el) => el.id !== taskData?.id,
+              );
+              taskStore.setTasks(newTasks);
             },
-            afterCreate:()=>{
-
-            }
+            afterCreate: () => {},
           };
       }
     }, [mode, stage, deal, stagesStore, dealsStore, taskStore]);
-
 
     // Начальное состояние для новой задачи
     const initialTaskState = {
@@ -137,6 +135,7 @@ const TaskEditModal = observer(
         return Object.values(
           contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
+        // return data;
       }
       return taskStore.getById(data.id);
     }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts]);
@@ -157,7 +156,7 @@ const TaskEditModal = observer(
     );
 
     const handleChange = (name, value, withId = true) => {
-
+      debugger;
       if (name.includes('responsibles') && value.length) {
         value = value[0];
       }
@@ -199,12 +198,15 @@ const TaskEditModal = observer(
       try {
         if (isEditMode)
           if (mode !== 'task') {
-            await taskApi.updateTask(
-              taskData.id,
-              null,
-              contextData.store.drafts[contextData.id],
-              contextData.store.changedProps,
-            );
+            await taskApi
+              .updateTask(
+                taskData.id,
+                null,
+                contextData.store.drafts[contextData.id],
+                contextData.store.changedProps,
+              )
+              .then(() => contextData.afterCreate());
+            contextData.store.submitDraft(contextData.id);
           } else
             await taskApi.updateTask(
               taskData.id,
@@ -223,9 +225,9 @@ const TaskEditModal = observer(
                 }
               : taskData;
 
-          await taskApi.createTask(
-            mapStageDataToBackend(payload, Object.keys(payload)),
-          ).then(()=>contextData.afterCreate());
+          await taskApi
+            .createTask(mapStageDataToBackend(payload, Object.keys(payload)))
+            .then(() => contextData.afterCreate());
           draftSet.clear();
         }
 
@@ -314,12 +316,12 @@ const TaskEditModal = observer(
 
     const handleDeleteTask = async () => {
       try {
-        await taskApi.deleteTask(taskData?.id, pageFrom).then(()=>{
-          contextData.afterDelete()
-        })
+        await taskApi.deleteTask(taskData?.id, pageFrom).then(() => {
+          contextData.afterDelete();
+        });
         handleInfo('Задача удалена');
-        debugger
-        handleClose()
+
+        handleClose();
         navigate(location.pathname);
       } catch (e) {
         handleInfo('Ошибка при удалении задача:', e);
@@ -327,8 +329,10 @@ const TaskEditModal = observer(
     };
 
     const handleCopyTask = () => {
-      navigator.clipboard.writeText(`${window.location.origin}/tasks?taskId=${taskData?.id}`).then((r) => handleInfo('Ссылка на задачу скопирована!'));
-    }
+      navigator.clipboard
+        .writeText(`${window.location.origin}/tasks?taskId=${taskData?.id}`)
+        .then((r) => handleInfo('Ссылка на задачу скопирована!'));
+    };
 
     return (
       taskData && (
@@ -356,8 +360,15 @@ const TaskEditModal = observer(
           >
             <div className={styles.name}>
               <div>
-              {isEditMode ? `Задача#${taskData?.id}` : 'Создание задачи'}
-              {isEditMode && <Icon size={20} onClick={()=>handleCopyTask()} className={styles.copy} name={'copy'}/>}
+                {isEditMode ? `Задача#${taskData?.id}` : 'Создание задачи'}
+                {isEditMode && (
+                  <Icon
+                    size={20}
+                    onClick={() => handleCopyTask()}
+                    className={styles.copy}
+                    name={'copy'}
+                  />
+                )}
               </div>
               {
                 <span

@@ -14,20 +14,47 @@ export const adapter = http.defaults.adapter;
 export const mockHttp = new MockAdapter(http);
 
 http.interceptors.request.use(
-  async (request) => {
-    if (request.url.toLowerCase().includes('/auth')) {
-      return request;
+    async (request) => {
+        if (request.url.toLowerCase().includes('/auth')) {
+            return request;
+        }
+
+        if (request.method === 'GET' || request.method === 'get') {
+            request.headers['Cache-Control'] = 'no-cache';
+
+            if (request.params) {
+                const newParams = {};
+
+                Object.entries(request.params).forEach(([key, value]) => {
+                    if (
+                        value === null ||
+                        value === undefined ||
+                        value === '' ||
+                        (Array.isArray(value) && value.length === 0)
+                    ) {
+                        return;
+                    }
+
+                    if (typeof value === 'string' && value.includes(',')) {
+                        const arrayValues = value.split(',').filter(v => v.trim());
+                        if (arrayValues.length > 0) {
+                            newParams[`${key}[]`] = arrayValues;
+                        }
+                    } else {
+                        newParams[key] = value;
+                    }
+                });
+
+                request.params = newParams;
+            }
+        }
+
+        request.headers.Authorization = `Bearer ${await getToken()}`;
+        return request;
+    },
+    function (error) {
+        return Promise.reject(error);
     }
-    if (request.method === 'GET' || request.method === 'get') {
-      request.headers['Cache-Control'] = 'no-cache';
-    }
-    request.headers.Authorization = `Bearer ${await getToken()}`;
-    return request;
-  },
-  function (error) {
-    // Do something with request error
-    return Promise.reject(error);
-  },
 );
 
 http.interceptors.response.use(

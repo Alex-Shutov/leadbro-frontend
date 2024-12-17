@@ -102,8 +102,8 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
           phone: localClient.tel,
           name: localClient.title,
         }); // Создаём новую компанию
+        handleSubmitSnackbar('Клиент успешно создан');
       }
-      handleSubmitSnackbar('Клиент успешно создан');
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);

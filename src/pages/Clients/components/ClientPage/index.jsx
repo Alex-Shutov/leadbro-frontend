@@ -36,19 +36,20 @@ import useParamSearch from '../../../../hooks/useParamSearch';
 
 const ClientPage = observer(() => {
   let { id } = useParams();
-  const { data: client, store: clients,isLoading } = useClients(+id);
+  const { store: clients, isLoading } = useClients(+id);
   const api = useClientsApi();
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [passModalOpen, setPassModalOpen] = useState(false);
   const [personModalOpen, setPersonModalOpen] = useState(false);
-
+  const client = clients.getById(id);
+  debugger;
   // useEffect(() => {
   //   return () => {
   //     clients.clearCurrentClient()
   //   }
   // }, []);
   const handleChange = (name, payload, withId = true) => {
-    debugger
+    debugger;
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {
@@ -108,7 +109,7 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
-      <LoadingProvider isLoading={isLoading||api.isLoading}>
+      <LoadingProvider isLoading={isLoading || api.isLoading}>
         <Title title={client?.title} />
         <div className={styles.dropdown}>
           <CardDropdown
@@ -169,6 +170,7 @@ const ClientPage = observer(() => {
                   description={client?.description}
                 />
                 <ClientPersons
+                  companyId={client?.id}
                   onAdd={() => setPersonModalOpen(true)}
                   onChange={handleChange}
                   onReset={handleReset}

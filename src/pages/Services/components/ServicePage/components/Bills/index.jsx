@@ -43,7 +43,7 @@ const Bills = observer(({ bills, service, company, stage }) => {
         width: '30%',
         id: 'billWithSign',
         Cell: ({ row }) => {
-          return (
+          return row?.original.stampedBill &&  (
             <Button
               onClick={() => downloadBill(row?.original.stampedBill)}
               type={'secondary'}
@@ -60,7 +60,7 @@ const Bills = observer(({ bills, service, company, stage }) => {
 
         id: 'billWithoutSign',
         Cell: ({ row }) => {
-          return (
+          return row?.original.unstampedBill &&  (
             <Button
               onClick={() => downloadBill(row?.original.unstampedBill)}
               type={'secondary'}

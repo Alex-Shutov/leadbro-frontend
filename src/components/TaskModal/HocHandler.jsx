@@ -1,9 +1,12 @@
 import TaskEditModal from './index';
 import { observer } from 'mobx-react';
-import { useSearchParams } from 'react-router-dom';
-import { useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { useCallback, useEffect, useState } from 'react';
 import { handleError } from '../../utils/snackbar';
+import { useSearchParams } from 'react-router-dom';
+import { getSearchParamsFromLocation } from '../../utils/create.utils';
+import useQueryParam from '../../hooks/useQueryParam';
+import { getQueryParam } from '../../utils/window.utils';
 
 const withTaskModalHandler = (WrappedComponent) => {
   return observer(
@@ -20,8 +23,35 @@ const withTaskModalHandler = (WrappedComponent) => {
     }) => {
       const [searchParams, setSearchParams] = useSearchParams();
       const navigate = useNavigate();
+      const location = useLocation();
       const [taskData, setTaskData] = useState(null);
       const [isModalOpen, setIsModalOpen] = useState(false);
+      // const
+
+      const updateSearchParams = useCallback(
+        (updates) => {
+          const newSearchParams = new URLSearchParams(searchParams);
+          const currentPage = getQueryParam('page', 1);
+          // Preserve the current page
+          // if (currentPage && currentPage !== '1') {
+          //   newSearchParams.set('page', currentPage);
+          // }
+
+          stage && newSearchParams.set('page', currentPage);
+
+          // Apply updates
+          Object.entries(updates).forEach(([key, value]) => {
+            if (value === null) {
+              newSearchParams.delete(key);
+            } else {
+              newSearchParams.set(key, value);
+            }
+          });
+
+          setSearchParams(newSearchParams, { replace: true });
+        },
+        [searchParams, setSearchParams],
+      );
 
       // Загрузка данных задачи
       const loadTaskData = async (taskId) => {
@@ -29,16 +59,16 @@ const withTaskModalHandler = (WrappedComponent) => {
           console.log('Loading task:', taskId); // Для отладки
           const task = await taskApi.getTaskById(taskId);
 
-          // Проверки принадлежности
-          if (deal && task.deal?.id !== deal.id) {
-            handleError('Задача не принадлежит текущей сделке');
-            return null;
-          }
+          // // Проверки принадлежности
+          // if (deal && task.deal?.id !== deal.id) {
+          //   handleError('Задача не принадлежит текущей сделке');
+          //   return null;
+          // }
 
-          if (stage && task.stage?.id !== stage.id) {
-            handleError('Задача не принадлежит текущему этапу');
-            return null;
-          }
+          // if (stage && task.stage?.id !== stage.id) {
+          //   handleError('Задача не принадлежит текущему этапу');
+          //   return null;
+          // }
 
           return task;
         } catch (error) {
@@ -72,29 +102,27 @@ const withTaskModalHandler = (WrappedComponent) => {
         }
 
         const taskId = task.id;
+
         const loadedTask = await loadTaskData(taskId);
 
         if (loadedTask) {
           setTaskData(loadedTask);
           setIsModalOpen(true);
-          // Добавляем id в URL только при успешной загрузке
-          searchParams.set('taskId', taskId.toString());
-          setSearchParams(searchParams);
+          updateSearchParams({ taskId: taskId.toString() });
         }
       };
 
       const handleCloseModal = () => {
         setTaskData(null);
         setIsModalOpen(false);
-        searchParams.delete('taskId');
-        setSearchParams(searchParams);
+        updateSearchParams({ taskId: null });
       };
 
       const handleCreateTask = () => {
         setTaskData(null);
         setIsModalOpen(true);
       };
-
+      console.log(isModalOpen, 'isModalOpen', taskData, taskStore);
       return (
         <>
           <WrappedComponent

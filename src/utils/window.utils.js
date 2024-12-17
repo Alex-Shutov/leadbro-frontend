@@ -1,4 +1,5 @@
 import { taskableTypes } from '../pages/Tasks/tasks.types';
+import {camelToSnakeCase} from "./mapper";
 
 export const getQueryParam = (param, defaultValue = null) => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -45,4 +46,49 @@ export const removeLastPathSegment = (pathname) => {
   const segments = pathname.split('/').filter(Boolean);
   segments.pop();
   return segments.length ? `/${segments.join('/')}` : '/';
+};
+
+export const sanitizeUrlFilters = (filters) => {
+  const sanitizedFilters = {};
+
+  Object.entries(filters).forEach(([key, value]) => {
+    // Проверяем на null, undefined, пустую строку и пустой массив
+    if (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0)
+    ) {
+      return;
+    }
+
+    const snakeKey = camelToSnakeCase(key);
+
+    if (Array.isArray(value)) {
+      if (value[0]?.hasOwnProperty('value')) {
+        const arrayValue = value.map(item => item.value).join(',');
+        // Добавляем только если есть значение после join
+        if (arrayValue) {
+          sanitizedFilters[snakeKey] = arrayValue;
+        }
+      } else {
+        const arrayValue = value.join(',');
+        if (arrayValue) {
+          sanitizedFilters[snakeKey] = arrayValue;
+        }
+      }
+    } else if (value?.hasOwnProperty('value')) {
+      // Добавляем только если value не пустой
+      if (value.value) {
+        sanitizedFilters[snakeKey] = value.value;
+      }
+    } else {
+      // Добавляем только непустые значения
+      if (value) {
+        sanitizedFilters[snakeKey] = value;
+      }
+    }
+  });
+
+  return sanitizedFilters;
 };

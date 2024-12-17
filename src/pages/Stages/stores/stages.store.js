@@ -23,8 +23,7 @@ export class StagesStore {
   }
 
   getStages() {
-    const stagesArray =
-      this.stages.length === 0 ? [this.currentStage] : this.stages;
+    const stagesArray = this.stages;
     return stagesArray.map((stage) => {
       const draft = this.drafts[stage.id];
       return draft ? { ...stage, ...draft } : stage;

@@ -73,26 +73,68 @@ const useTasksApi = () => {
       .catch(handleShowError);
   }, []);
 
-  const getTasksByRole = useCallback((role) => {
+  const getTasksByRole = useCallback(async () => {
     resetApiProvider();
-    const roleMapping = {
-      creator: 'i_am_creator',
-      performer: 'i_am_performer',
-      responsible: 'i_am_responsible',
-      auditor: 'i_am_auditor',
-    };
     setIsLoading(true);
-    return http
-      .get(`api/tasks/mine/${roleMapping[role]}`)
-      .then(handleHttpResponse)
-      .then((res) => {
-        const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
-        tasksStore.setTasks(mappedTasks);
-        return mappedTasks;
-      })
-      .then(() => setIsLoading(false))
+    debugger
+    // Получаем все параметры из URL
+    const searchParams = new URLSearchParams(window.location.search);
 
-      .catch(handleShowError);
+    // Получаем значения фильтров из URL
+    const filterRole = searchParams.get('filter');
+    const status = searchParams.get('status');
+    const types = searchParams.get('types');
+    const performerId = searchParams.get('performer');
+    const creatorId = searchParams.get('creator');
+    const taskableType = searchParams.get('taskable_type');
+    debugger
+    // Если есть фильтр по роли, используем специальный endpoint
+    if (filterRole && filterRole !== 'all') {
+      const roleMapping = {
+        creator: 'i_am_creator',
+        performer: 'i_am_performer',
+        responsible: 'i_am_responsible',
+        auditor: 'i_am_auditor',
+      };
+
+      return http
+          .get(`api/tasks/mine/${roleMapping[filterRole]}`, {
+            params: {
+              status,
+              type: types,
+              performer_id: performerId,
+              creator_id: creatorId,
+              taskable_type: taskableType
+            }
+          })
+          .then(handleHttpResponse)
+          .then((res) => {
+            const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
+            tasksStore.setTasks(mappedTasks);
+            return mappedTasks;
+          })
+          .finally(() => setIsLoading(false));
+    }
+
+    // Иначе используем общий endpoint с параметрами
+    return http
+        .get('api/tasks/mine', {
+          params: {
+            status,
+            type: types,
+            performer_id: performerId,
+            creator_id: creatorId,
+            taskable_type: taskableType
+          }
+        })
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
+          tasksStore.setTasks(mappedTasks);
+          return mappedTasks;
+        })
+        .catch(handleShowError)
+        .finally(() => setIsLoading(false));
   }, []);
 
   const createTask = useCallback((updateData) => {
@@ -116,7 +158,7 @@ const useTasksApi = () => {
       drafts = stagesStore.drafts[stageId],
       props = stagesStore.changedProps,
     ) => {
-
+      debugger
       updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
 
       resetApiProvider();

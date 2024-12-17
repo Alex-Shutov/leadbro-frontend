@@ -20,6 +20,7 @@ const TextInput = forwardRef(
       classWrap,
       classNameActions,
       icon,
+      beforeIcon,
       copy,
       currency,
       tooltip,
@@ -32,7 +33,7 @@ const TextInput = forwardRef(
       name,
       required,
       key,
-        disabled,
+      disabled,
       ...props
     },
     ref,
@@ -172,7 +173,6 @@ const TextInput = forwardRef(
 
     // Общий обработчик изменений
     const handleChange = (e) => {
-
       const newValue = e.target.value;
 
       if (isInForm) {
@@ -200,7 +200,8 @@ const TextInput = forwardRef(
       //   else if (ref) ref.current = e;
       // },
       className: cn(classInput, styles.input, { [styles.errorInput]: error }),
-      readOnly: props.hasOwnProperty('edited') && !props?.edited || disabled || false,
+      readOnly:
+        (props.hasOwnProperty('edited') && !props?.edited) || disabled || false,
       ...props,
     };
 
@@ -208,12 +209,11 @@ const TextInput = forwardRef(
       if (props.type === 'textarea') {
         return (
           <TextArea
-              {...commonProps}
-
+            {...commonProps}
             onChange={handleInputChange}
             defaultValue={value}
             className={cn(commonProps.className, styles.textarea)}
-              ref={inputRef}
+            ref={inputRef}
           />
         );
       }
@@ -238,6 +238,7 @@ const TextInput = forwardRef(
             props.type === 'money' ? formatValue(String(value) || '') : value
           }
           onChange={handleInputChange}
+          ref={inputRef}
         />
       );
     };
@@ -249,6 +250,7 @@ const TextInput = forwardRef(
           { [styles.fieldIcon]: icon },
           { [styles.fieldCopy]: copy },
           { [styles.fieldCurrency]: currency },
+            { [styles.fieldBeforeIcon]: beforeIcon },
           { [styles.noMinWidth]: noMinWidth },
           className,
         )}
@@ -273,6 +275,11 @@ const TextInput = forwardRef(
           className={cn(styles.wrap, classWrap)}
         >
           {renderInput()}
+          {beforeIcon && (
+              <div className={styles.beforeIcon}>
+                {beforeIcon}
+              </div>
+          )}
           {icon && (
             <div className={styles.icon}>
               <Icon name={icon} size="24" />

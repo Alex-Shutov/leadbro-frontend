@@ -65,8 +65,6 @@ const mapParticipants = (participants) => {
 // Маппинг этапов
 // Маппинг этапов
 const mapStages = (stages) => {
-
-
   // Если это массив этапов (пришел из /api/services/{service_id}/stages)
   if (Array.isArray(stages)) {
     return stages.map((stage) => ({
@@ -85,8 +83,8 @@ const mapStages = (stages) => {
         },
       },
       act: {
-        stampedAct: stage.stamped_act,
-        unstampedAct: stage.unstamped_act,
+        stampedAct: stage?.stamped_act,
+        unstampedAct: stage?.unstamped_act,
         // scanStatus: statusActTypes.notAssignedScan,
         // originalStatus: statusActTypes.notAssignedOriginal,
         // withSign: {
@@ -101,7 +99,7 @@ const mapStages = (stages) => {
         // },
       },
       taskCount: stage?.task_count,
-      bills: mapBill(stage?.bills ?? []),
+      bills: stage?.bills ?  mapBill(stage?.bills ?? []) : null,
 
       payedDate: new Date(2024, 12, 12),
       startDate: new Date(stage.start),
@@ -207,6 +205,8 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
     switch (key) {
       case 'responsible_id':
         return value?.id ? Number(value.id) : null;
+      case 'creator_id':
+        return value?.id ? Number(value.id) : null;
       case 'participants_ids':
         return value?.map((el) => el?.id ?? null) ?? [];
       case 'active':
@@ -231,6 +231,7 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
       title: 'name',
       contractNumber: 'contract_number',
       'type.title': 'type',
+      creator: 'creator_id',
       // Добавляем дополнительные ключи по мере необходимости
     };
 

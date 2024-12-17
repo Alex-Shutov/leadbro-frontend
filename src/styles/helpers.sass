@@ -217,12 +217,13 @@ $shades4: rgba(#111315, .5)
 a
     color: $n7
 
-@mixin custom-scrollbar
+@mixin custom-scrollbar($main-width:100%,$mac-offset:-5px, $windows-offset:12px)
     //scrollbar-width: thin
     //scrollbar-color: rgba(0, 0, 0, 0.3) transparent
 
     &::-webkit-scrollbar
         width: 5px
+        margin-left: -5px
 
     &::-webkit-scrollbar-track
         background: transparent !important
@@ -251,10 +252,10 @@ a
     @media (-webkit-min-device-pixel-ratio: 0)
         &:not(:hover)
             scrollbar-color: transparent transparent
-            width: calc(100% + 12px)
+            width: calc($main-width + $windows-offset)
 
     // Для macOS
     @media (-webkit-min-device-pixel-ratio: 2)
         &:not(:hover)
             scrollbar-color: transparent transparent
-            width: calc(100% - 5px)
+            width: calc($main-width + $mac-offset)

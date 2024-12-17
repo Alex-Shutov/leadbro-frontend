@@ -16,16 +16,24 @@ import styles from './Table.module.sass';
 import useStore from '../../../../hooks/useStore';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { handleError, handleInfo } from '../../../../utils/snackbar';
+import {createServicesFilters} from "../../services.filter.conf";
+import useAppApi from "../../../../api";
+import {FiltersProvider} from "../../../../providers/FilterProvider";
 
 const ServicesTable = observer(() => {
   const { servicesStore } = useStore();
   const api = useServiceApi();
+  const appApi = useAppApi()
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentService, setCurrentService] = useState(null);
   const [serviceToDelete, setServiceToDelete] = useState(null);
   const fetchServices = useCallback((page) => {
     api.getServices(page);
   }, []);
+
+  const handleFilterChange = async (filters) => {
+    await api.getServices(1, filters); // Сбрасываем на первую страницу при изменении фильтров
+  };
 
   const {
     currentPage,
@@ -157,7 +165,7 @@ const ServicesTable = observer(() => {
   );
 
   return (
-    <>
+    <FiltersProvider>
       <div className={styles.table}>
         <Table
           cardComponent={(data) => (
@@ -170,6 +178,11 @@ const ServicesTable = observer(() => {
               action: () => setEditModalOpen(true),
               title: 'Добавить услугу',
             },
+            filter: {
+              title: 'Фильтр',
+              config: createServicesFilters(appApi),
+              onChange: handleFilterChange
+            }
           }}
           title="Услуги"
           data={paginatedData}
@@ -204,7 +217,7 @@ const ServicesTable = observer(() => {
           label="Вы уверены, что хотите удалить клиента?"
         />
       )}
-    </>
+    </FiltersProvider>
   );
 });
 
