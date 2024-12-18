@@ -175,11 +175,11 @@ const EditModal = observer(({ employeId, onClose }) => {
               handleChange(isEditMode ? 'position' : 'position', e)
             }
             classNameContainer={styles.input}
-            renderValue={(val) => positions?.find((el) => el.id === val)?.name}
+            renderValue={(val) => positions?.find((el) => el?.id === val)?.name}
             label={'Должность'}
             placeholder={'Должность'}
-            value={employe.position.id}
-            renderOption={(opt) => opt.name}
+            value={employe?.position?.id}
+            renderOption={(opt) => opt?.name}
             options={positions}
           />
         </div>

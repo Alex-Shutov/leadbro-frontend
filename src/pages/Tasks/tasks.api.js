@@ -87,7 +87,6 @@ const useTasksApi = () => {
     const performerId = searchParams.get('performer');
     const creatorId = searchParams.get('creator');
     const taskableType = searchParams.get('taskable_type');
-    debugger
     if ((!filterRole || filterRole==='all') && !status && !types && !performerId && !creatorId && !taskableType){
       return http
           .get(`api/tasks/mine`, {
