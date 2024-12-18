@@ -87,7 +87,19 @@ const useTasksApi = () => {
     const performerId = searchParams.get('performer');
     const creatorId = searchParams.get('creator');
     const taskableType = searchParams.get('taskable_type');
-
+    debugger
+    if ((!filterRole || filterRole==='all') && !status && !types && !performerId && !creatorId && !taskableType){
+      return http
+          .get(`api/tasks/mine`, {
+          })
+          .then(handleHttpResponse)
+          .then((res) => {
+            const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
+            tasksStore.setTasks(mappedTasks);
+            return mappedTasks;
+          })
+          .finally(() => setIsLoading(false));
+    }
     // Если есть фильтр по роли, используем специальный endpoint
     if (filterRole && filterRole !== 'all') {
       const roleMapping = {
