@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import usePagingData from '../../../../hooks/usePagingData';
 import TableLink from '../../../../shared/Table/Row/Link';
 import EditModal from './components/EditModal';
@@ -33,7 +33,8 @@ const BillsTable = observer(() => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentBill, setCurrentBill] = useState(null);
   const [billToDelete, setBillToDelete] = useState(null);
-
+  const periodCalendarRef = useRef()
+  const periodSelectorRef = useRef()
   const today = startOfDay(new Date());
   const monthAgo = sub(today, { months: 1 });
   const todayFormatted = formatDateForUrl(today);
@@ -184,7 +185,7 @@ const BillsTable = observer(() => {
         <Table
           beforeTable={() => (
             <div>
-              <BillsTableFilter />
+              {/*<BillsTableFilter />*/}
               <BillsStats />
             </div>
           )}
@@ -202,7 +203,7 @@ const BillsTable = observer(() => {
             filter: {
               classNameBody: styles.filter_container,
               title: 'Фильтр',
-              config: createBillsFilters(),
+              config: createBillsFilters({periodSelectorRef,periodCalendarRef}),
               onChange: handleFilterChange
             },
           }}

@@ -16,7 +16,6 @@ import DeadLineTimeCell from '../../../../../Stages/components/StagesPage/compon
 import { formatDate } from '../../../../../../utils/formate.date';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
 const DealTasks = ({ deal, onEditTask, onCreateTasks }) => {
-
   const cols = useMemo(
     () => [
       {
@@ -94,7 +93,17 @@ const DealTasks = ({ deal, onEditTask, onCreateTasks }) => {
     console.log(`Удалить услугу с ID: ${id}`);
   };
 
-  const data = useMemo(() => Object.values(deal?.tasks ?? []), [deal?.tasks]);
+    const data = useMemo(() => {
+        if (!deal?.tasks) return [];
+
+        // Преобразуем задачи в массив и сортируем по sortOrder
+        return Object.entries(deal.tasks)
+            .map(([id, task], index) => ({
+                ...task,
+                order: task.order ?? index // используем существующий sortOrder или создаем новый
+            }))
+            .sort((a, b) => a.order - b.order);
+    }, [deal?.tasks]);
 
   const getActions = (data) => [
     { label: 'Редактировать', onClick: () => onEditTask(data) },

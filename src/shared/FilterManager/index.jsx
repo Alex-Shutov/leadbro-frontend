@@ -31,16 +31,24 @@ const FilterManager = ({
         const values = {};
         filterConfig.filters.forEach(filter => {
             const paramValue = searchParams.get(filter.name);
+            debugger
+
             if (paramValue) {
                 // Пробуем получить значение из контекста
                 const savedValue = getFilterValue(filter.name);
                 if (savedValue) {
                     values[filter.name] = savedValue;
-                } else {
+
+                }
+                    else {
                     // Если в контексте нет - используем значение из URL как id
                     // и ждем, когда компонент обновит значение при загрузке данных
-                    values[filter.name] = paramValue;
+                    values[filter.name] = filter.decodeUrlValue ?
+                        filter.decodeUrlValue(paramValue) :
+                        paramValue;
                 }
+            }else if (filter.props?.defaultValue) {
+                values[filter.name] = filter.props?.defaultValue
             }
         });
         return values;
@@ -70,7 +78,7 @@ const FilterManager = ({
         const urlValue = filter.toUrlValue ?
             filter.toUrlValue(value) :
             value; // Если нет toUrlValue, используем значение как есть
-
+        const paramToDelete = filter.onChange && filter.onChange(updatedParams)
         if (urlValue) {
             updatedParams.set(name, urlValue);
         } else {
@@ -81,7 +89,8 @@ const FilterManager = ({
         // Обновляем общее состояние фильтров
         const newValues = {
             ...filterValues,
-            [name]: value
+            [name]: value,
+            [paramToDelete]:null
         };
         setFilterValues(newValues);
         setFilters(newValues);
