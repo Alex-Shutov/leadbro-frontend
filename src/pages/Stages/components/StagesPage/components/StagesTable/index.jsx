@@ -47,7 +47,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
 
     await api.getTaskStages(stageId, page);
   }, []);
-
+  debugger
   let {
     currentPage,
     totalPages,
@@ -181,15 +181,26 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
     ];
   }, []);
 
+  const tableData = useMemo(() => {
+    if (!paginatedData[0]?.tasks) return [];
+    return Object.values(paginatedData[0].tasks)
+        .sort((a, b) => a.order - b.order);
+  }, [paginatedData[0]?.tasks]);
+
   const sumActualTime = useMemo(() => {
     if (!stage) return '';
-    const totalHours = Object.values(stage?.tasks)?.reduce(
-      (sum, task) =>
-        task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
-      0,
+    const sortedTasks = Object.values(stage?.tasks)
+        .sort((a, b) => a.order - b.order);
+
+    const totalHours = sortedTasks.reduce(
+        (sum, task) =>
+            task.actualTime ? sum + (convertToHours(task.actualTime) || 0) : sum,
+        0,
     );
     return totalHours + ' ч';
   }, [paginatedData[0]]);
+
+
 
   return (
     <div className={styles.table}>
@@ -223,7 +234,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
             action: () => setEditStageModalOpen(true),
           },
         }}
-        data={Object.values(paginatedData[0]?.tasks)}
+        data={tableData}
         title={`${stage.title}`}
         columns={cols}
       />

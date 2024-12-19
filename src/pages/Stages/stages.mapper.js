@@ -50,13 +50,15 @@ export const mapStageFromApi = (stageData, tasksData) => {
 };
 
 const mapTasksFromApi = (tasksData) => {
-  return tasksData.reduce((acc, task) => {
+  return tasksData.reduce((acc, task, index) => {
     const mappedTask = mapTaskFromApi(task);
-    acc[mappedTask.id] = mappedTask;
+    acc[mappedTask.id] = {
+      ...mappedTask,
+      order: index
+    };
     return acc;
   }, {});
 };
-
 const mapTaskFromApi = (task) => {
   const taskableType = task.related_entity?.type;
   const taskableId = task.related_entity?.id;

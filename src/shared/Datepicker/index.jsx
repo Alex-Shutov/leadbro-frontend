@@ -18,8 +18,9 @@ const Calendar = ({
   placeholder = null,
   name,
   required,
+                    period=false,
   ...props
-}) => {
+},ref) => {
   const datePickerRef = useRef();
   const [isTouched, setIsTouched] = useState(false);
 
@@ -67,16 +68,30 @@ const Calendar = ({
     }
   }, [isSubmitted]);
 
+
+
   const CustomInput = forwardRef(({ onClick }, ref) => {
+
+    const formatPeriodValue = (dates) => {
+      if (!dates || !Array.isArray(dates)) return '';
+      const [start, end] = dates;
+      if (!start && !end) return '';
+      return `${start ? formatDateWithOnlyDigits(start) : ''} - ${end ? formatDateWithOnlyDigits(end) : ''}`;
+    };
     const [inputValue, setInputValue] = useState(
-      value ? formatDateWithOnlyDigits(value) : '',
+        period
+            ? formatPeriodValue(value)
+            : (value ? formatDateWithOnlyDigits(value) : '')
     );
 
     useEffect(() => {
-      if (value) {
+      if (period) {
+        setInputValue(formatPeriodValue(value));
+      } else if (value) {
         setInputValue(formatDateWithOnlyDigits(value));
       }
-    }, [value]);
+    }, [value, period]);
+
 
     const handleInputChange = (e) => {
       setInputValue(e.target.value);
@@ -94,16 +109,72 @@ const Calendar = ({
 
     const handleBlur = () => {
       setIsTouched(true);
-      const parsedDate = parse(inputValue, 'dd.MM.yyyy', new Date());
-      if (isValid(parsedDate)) {
-        handleDateChange(parsedDate);
+      if (period) {
+        // Проверяем, есть ли вообще значение для парсинга
+        if (!inputValue || !inputValue.includes('-')) {
+          setInputValue(formatPeriodValue(value));
+          if (isInForm) {
+            setFormValue(name, value, {
+              shouldValidate: true,
+              shouldTouch: true,
+            });
+          }
+          return;
+        }
+
+        // Парсинг периода дат
+        const [startStr, endStr] = inputValue.split('-').map(d => d.trim());
+
+        // Проверяем наличие обеих дат
+        if (!startStr || !endStr) {
+          setInputValue(formatPeriodValue(value));
+          if (isInForm) {
+            setFormValue(name, value, {
+              shouldValidate: true,
+              shouldTouch: true,
+            });
+          }
+          return;
+        }
+
+        const startDate = parse(startStr, 'dd.MM.yyyy', new Date());
+        const endDate = parse(endStr, 'dd.MM.yyyy', new Date());
+
+        if (isValid(startDate) && isValid(endDate)) {
+          handleDateChange([startDate, endDate]);
+        } else {
+          setInputValue(formatPeriodValue(value));
+          if (isInForm) {
+            setFormValue(name, value, {
+              shouldValidate: true,
+              shouldTouch: true,
+            });
+          }
+        }
       } else {
-        setInputValue(value ? formatDateWithOnlyDigits(value) : '');
-        if (isInForm) {
-          setFormValue(name, value, {
-            shouldValidate: true,
-            shouldTouch: true,
-          });
+        // Проверяем наличие значения для одиночной даты
+        if (!inputValue) {
+          setInputValue(value ? formatDateWithOnlyDigits(value) : '');
+          if (isInForm) {
+            setFormValue(name, value, {
+              shouldValidate: true,
+              shouldTouch: true,
+            });
+          }
+          return;
+        }
+
+        const parsedDate = parse(inputValue, 'dd.MM.yyyy', new Date());
+        if (isValid(parsedDate)) {
+          handleDateChange(parsedDate);
+        } else {
+          setInputValue(value ? formatDateWithOnlyDigits(value) : '');
+          if (isInForm) {
+            setFormValue(name, value, {
+              shouldValidate: true,
+              shouldTouch: true,
+            });
+          }
         }
       }
     };
@@ -120,6 +191,7 @@ const Calendar = ({
       <>
         <TextInput
           placeholder={placeholder ?? label ?? ''}
+
           icon={'calendar'}
           classWrap={styles.datepicker_wrapper}
           classInput={cn(styles.datepicker_input, {
@@ -136,6 +208,7 @@ const Calendar = ({
                 />
             ) : null
           }
+          onWheel={()=>null}
           classLabel={styles.datepicker_label}
           value={inputValue}
           onChange={handleInputChange}
@@ -175,7 +248,10 @@ const Calendar = ({
     <div className={cn({ [styles.hasError]: error })}>
       <DatePicker
         ref={datePickerRef}
-        selected={value}
+        selected={period ? value?.[0] : value}
+        startDate={period ? value?.[0] : null}
+        endDate={period ? value?.[1] : null}
+        selectsRange={period}
         dateFormat="dd.MM.yyyy"
         onChange={handleDateChange}
         customInput={<CustomInput />}

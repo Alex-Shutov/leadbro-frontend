@@ -19,6 +19,8 @@ import { formatDateForUrl } from './components/BillsTable';
 import useStageApi from '../Stages/stages.api';
 import useServiceApi from '../Services/services.api';
 import { useParams } from 'react-router';
+import {periodEnum} from "./bills.filter.conf";
+import {formatDateToQuery} from "../../utils/formate.date";
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
@@ -26,17 +28,35 @@ const useBillsApi = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to,filters={}) => {
-
+    debugger
     resetApiProvider();
     setIsLoading(true);
     const sanitizedFilters = sanitizeUrlFilters(filters)
+    const params = { page };
+
+    if (getQueryParam('date_range')) {
+
+      const rangeParams = new URLSearchParams(getQueryParam('date_range'));
+      params.from = rangeParams.get('from')
+      params.to = rangeParams.get('to')
+      delete sanitizedFilters.date_range;
+      delete sanitizedFilters.period;
+    }
+    else if (sanitizedFilters.period) {
+      params.period = sanitizedFilters.period;
+      delete sanitizedFilters.period;
+      delete sanitizedFilters.date_range;
+    }
+    else if (from && to) {
+      params.period = periodEnum.month
+      delete sanitizedFilters.date_range;
+
+    }
 
     return http
         .get('api/bills', {
           params: {
-            page,
-            from,
-            to,
+           ...params,
             ...sanitizedFilters // Добавляем параметры фильтрации
           }
         })

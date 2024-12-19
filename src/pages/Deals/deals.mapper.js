@@ -68,9 +68,12 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
 };
 
 const mapTasksFromApi = (tasksData) => {
-  return tasksData?.reduce((acc, task) => {
+  return tasksData?.reduce((acc, task,index) => {
     const mappedTask = mapTaskFromApi(task);
-    acc[mappedTask.id] = mappedTask;
+      acc[mappedTask.id] = {
+          ...mappedTask,
+          order: index
+      };
     return acc;
   }, {});
 };
