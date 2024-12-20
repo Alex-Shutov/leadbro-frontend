@@ -23,6 +23,7 @@ import {FiltersProvider} from "../../../../providers/FilterProvider";
 import {createTaskFilters} from "../../../Tasks/tasks.filter.conf";
 import {createBillsFilters} from "../../bills.filter.conf";
 import {LoadingProvider} from "../../../../providers/LoadingProvider";
+import {getQueryParam} from "../../../../utils/window.utils";
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -99,7 +100,7 @@ const BillsTable = observer(() => {
   }, [from, to]);
 
   const handleFilterChange = async (filters) => {
-
+    if (filters.date_range && !getQueryParam('date_range')) return
 
     await api.getBills(1, from, to, filters).then(()=>handlePageChange(1));
   };
