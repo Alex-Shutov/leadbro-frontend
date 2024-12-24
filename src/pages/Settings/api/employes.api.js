@@ -12,11 +12,12 @@ import {
   mapSettingsDataToBackend,
 } from '../settings.mapper';
 import { useState } from 'react';
+import useUser from '../../../hooks/useUser';
 
 const useEmployesApi = () => {
   const { employesStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
-
+  const { user, fetchRights } = useUser();
   const getEmployes = (page = 1) => {
     resetApiProvider();
     setIsLoading(true);
@@ -84,6 +85,11 @@ const useEmployesApi = () => {
       .patch(`/api/employees/${employeId}`, updateData)
       .then(handleHttpResponse)
       .then(() => getEmployeById(employeId))
+      .then(() => {
+        if (user.id === employeId && updateData?.permissions) {
+          return fetchRights();
+        }
+      })
       .then(() => setIsLoading(false))
 
       .catch(handleShowError);
@@ -91,13 +97,10 @@ const useEmployesApi = () => {
 
   const getEmployeById = (employeId) => {
     resetApiProvider();
-    return Promise.all([
-      http.get(`/api/employees/${employeId}`),
-      http.get(`/api/employees/${employeId}/stages`),
-    ])
+    return Promise.all([http.get(`/api/employees/${employeId}`)])
       .then(([employeRes, stagesRes]) => {
         const employeData = employeRes.data.data; // Данные сервиса
-        const stagesData = stagesRes.data.data; // Массив этапов
+        // const stagesData = stagesRes.data.data; // Массив этапов
 
         const mappedEmploye = mapEmployeesFromApi(employeData);
 

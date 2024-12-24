@@ -145,3 +145,61 @@
 .errorInput
   input
     border-color: #ff5454 !important // Красная рамка при ошибке
+
+
+.permissionsContainer
+  margin-top: 20px
+  border-top: 1px solid #E8ECEF
+  padding-top: 20px
+
+.permissionsTitle
+  font-weight: 600
+  font-size: 16px
+  margin-bottom: 16px
+
+.permissionsList
+  max-height: 300px
+  overflow-y: auto
+  padding-right: 16px
+
+  &::-webkit-scrollbar
+    width: 4px
+
+  &::-webkit-scrollbar-track
+    background: #F8F9FA
+    border-radius: 2px
+
+  &::-webkit-scrollbar-thumb
+    background: #E8ECEF
+    border-radius: 2px
+
+    &:hover
+      background: #D1D5DB
+
+.permissionGroup
+  margin-bottom: 16px
+
+  &:last-child
+    margin-bottom: 0
+
+.permissionGroupTitle
+  font-weight: 500
+  font-size: 14px
+  color: #6F767E
+  padding: 8px 0
+  margin-bottom: 8px
+
+.permissionItem
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 12px 0
+  border-bottom: 1px solid #E8ECEF
+
+  &:last-child
+    border-bottom: none
+
+.permissionLabel
+  font-size: 14px
+  color: #333
+  margin-right: 16px
