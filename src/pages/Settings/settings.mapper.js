@@ -18,6 +18,7 @@ export const mapEmployeesFromApi = (employee) => {
     phone: employee?.phone || null,
     gender: employee?.gender,
     status: employersTypeEnum.works,
+    permissions: employee?.permissions || [],
   };
 };
 
