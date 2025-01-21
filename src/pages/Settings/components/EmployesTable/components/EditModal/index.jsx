@@ -24,7 +24,12 @@ import CustomButtonContainer from '../../../../../../shared/Button/CustomButtonC
 import DeleteButton from '../../../../../../shared/Button/Delete';
 import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import useQueryParam from '../../../../../../hooks/useQueryParam';
-import {mapEmployeesFromApi, mapSettingsDataToBackend} from "../../../../settings.mapper";
+import {
+  mapEmployeesFromApi,
+  mapSettingsDataToBackend,
+} from '../../../../settings.mapper';
+import Switch from '../../../../../../shared/Switch';
+import { PermissionGroups } from '../../../../../../shared/permissions';
 
 const EditModal = observer(({ employeId, onClose }) => {
   const { store: employeStore } = useEmployes();
@@ -45,6 +50,7 @@ const EditModal = observer(({ employeId, onClose }) => {
     gender: genderType.male,
     password: '',
     confirmPassword: '',
+    permissions: [],
   });
 
   const [errors, setErrors] = useState({
@@ -80,8 +86,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       }));
     }
   };
-  const handleSubmit = async (onError=null) => {
-    debugger
+  const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
         await api.updateEmploye(employeId, employe); // Обновляем услугу
@@ -91,7 +96,9 @@ const EditModal = observer(({ employeId, onClose }) => {
         //   ...localEmploye,
         //   ['birthday']: formatDateToBackend(localEmploye.birthday),
         // }); // Создаем новую услугу
-        await api.createEmploye(mapSettingsDataToBackend(localEmploye,Object.keys(localEmploye)))
+        await api.createEmploye(
+          mapSettingsDataToBackend(localEmploye, Object.keys(localEmploye)),
+        );
       }
       handleSubmitSnackbar(
         isEditMode
@@ -100,7 +107,7 @@ const EditModal = observer(({ employeId, onClose }) => {
       );
       onClose(); // Закрываем модалку
     } catch (error) {
-      onError && onError()
+      onError && onError();
     }
   };
 
@@ -120,7 +127,7 @@ const EditModal = observer(({ employeId, onClose }) => {
   };
 
   const handleDeleteEmployee = async () => {
-    debugger
+    debugger;
     try {
       await api.deleteEmployee(employeId, page);
       handleInfo('Сотрудник уволен');
@@ -170,7 +177,7 @@ const EditModal = observer(({ employeId, onClose }) => {
             }
           />
           <Dropdown
-              name={'position'}
+            name={'position'}
             setValue={(e) =>
               handleChange(isEditMode ? 'position' : 'position', e)
             }
@@ -276,7 +283,7 @@ const EditModal = observer(({ employeId, onClose }) => {
             label={'Телефон'}
           />
         </div>
-        { !employeId && (
+        {!employeId && (
           <div className={styles.flex}>
             <TextInput
               required={!isEditMode && true}
@@ -299,7 +306,7 @@ const EditModal = observer(({ employeId, onClose }) => {
               validate={validatePassword}
             />
             <TextInput
-                required={!isEditMode && true}
+              required={!isEditMode && true}
               placeholder={'Повторите пароль'}
               onChange={({ target }) => {
                 handleChange(
@@ -321,94 +328,125 @@ const EditModal = observer(({ employeId, onClose }) => {
             />
           </div>
         )}
-
-        {/*<ValuesSelector*/}
-        {/*    onChange={(e) =>*/}
-        {/*        handleChange(*/}
-        {/*            isEditMode ? 'manager' : 'manager',*/}
-        {/*            e.length ? members.find((el) => el?.id === e[0]?.value) : null,*/}
-        {/*        )*/}
-        {/*    }*/}
-        {/*    isMulti={false}*/}
-        {/*    label="Ответственный"*/}
-        {/*    options={members.map((el) => ({*/}
-        {/*        value: el.id,*/}
-        {/*        label: `${el.surname} ${el.name} ${el.middleName}`,*/}
-        {/*    }))}*/}
-        {/*    value={*/}
-        {/*        service.manager*/}
-        {/*            ? {*/}
-        {/*                value: service.manager?.id,*/}
-        {/*                label: `${service.manager.surname} ${service.manager.name} ${service.manager.middleName}`,*/}
-        {/*            }*/}
-        {/*            : null*/}
-        {/*    }*/}
-        {/*/>*/}
-        {/*<ValuesSelector*/}
-        {/*    onChange={(e) =>*/}
-        {/*        handleChange(*/}
-        {/*            isEditMode ? 'command' : 'command',*/}
-        {/*            e.length*/}
-        {/*                ? members.filter((member) =>*/}
-        {/*                    e.some((option) => option.value === member.id),*/}
-        {/*                )*/}
-        {/*                : []*/}
-        {/*        )*/}
-        {/*    }*/}
-        {/*    isMulti={true}*/}
-        {/*    label="Участники"*/}
-        {/*    options={members.map((el) => ({*/}
-        {/*        value: el.id,*/}
-        {/*        label: `${el.surname} ${el.name} ${el.middleName}`,*/}
-        {/*    }))}*/}
-        {/*    value={*/}
-        {/*        service.command*/}
-        {/*            ? service.command.map((el) => ({*/}
-        {/*                value: el.id,*/}
-        {/*                label: `${el.surname} ${el.name} ${el.middleName}`,*/}
-        {/*            }))*/}
-        {/*            : []*/}
-        {/*    }*/}
-        {/*/>*/}
-        {/*<div className={styles.flex}>*/}
-        {/*    <Dropdown*/}
-        {/*        setValue={(e) => handleChange(isEditMode ? 'status' : 'status', e[0])}*/}
-        {/*        classNameContainer={styles.input}*/}
-        {/*        label={'Статус'}*/}
-        {/*        value={statusTypesRu[service.status] || ''}*/}
-        {/*        renderOption={(opt) => opt[1]}*/}
-        {/*        options={statuses}*/}
-        {/*    />*/}
-        {/*    <Calendar*/}
-        {/*        label={'Дедлайн'}*/}
-        {/*        value={service?.deadline}*/}
-        {/*        onChange={(date) => handleChange(isEditMode ? 'deadline' : 'deadline', date)}*/}
-        {/*    />*/}
-        {/*</div>*/}
-        {/*<ValuesSelector*/}
-        {/*    placeholder={'Клиент'}*/}
-        {/*    onChange={(e) =>*/}
-        {/*        handleChange(*/}
-        {/*            isEditMode ? 'client' : 'client',*/}
-        {/*            e.length ? clients.find((el) => el.id === e[0]?.value) : null,*/}
-        {/*        )*/}
-        {/*    }*/}
-        {/*    isMulti={false}*/}
-        {/*    label={*/}
-        {/*        <div className={styles.client_label}>*/}
-        {/*            Клиент<TextLink>Создать клиента</TextLink>*/}
-        {/*        </div>*/}
-        {/*    }*/}
-        {/*    options={clients.map((el) => ({ value: el.id, label: el.title }))}*/}
-        {/*    value={*/}
-        {/*        service.client*/}
-        {/*            ? { value: service.client.id, label: service.client.title }*/}
-        {/*            : null*/}
-        {/*    }*/}
-        {/*/>*/}
+        <PermissionsSection
+          permissions={employe.permissions}
+          onChange={handleChange}
+          isEditMode={isEditMode}
+        />
       </FormValidatedModal>
     </>
   );
 });
+
+const PermissionsSection = ({ permissions = [], onChange, isEditMode }) => {
+  const permissionGroups = {
+    admin: {
+      title: 'Администрирование',
+      permissions: {
+        'super admin': 'Супер администратор',
+      },
+    },
+    deals: {
+      title: 'Сделки',
+      permissions: {
+        'access deals': 'Доступ к сделкам',
+        'access all deals': 'Доступ ко всем сделкам',
+        'create deals': 'Создание сделок',
+        'edit deals': 'Редактирование сделок',
+        'delete deals': 'Удаление сделок',
+      },
+    },
+    companies: {
+      title: 'Компании',
+      permissions: {
+        'access companies': 'Доступ к компаниям',
+        'access all companies': 'Доступ ко всем компаниям',
+        'create companies': 'Создание компаний',
+        'edit companies': 'Редактирование компаний',
+        'delete companies': 'Удаление компаний',
+      },
+    },
+    clients: {
+      title: 'Клиенты',
+      permissions: {
+        'view clients': 'Просмотр клиентов',
+        'create clients': 'Создание клиентов',
+        'edit clients': 'Редактирование клиентов',
+        'delete clients': 'Удаление клиентов',
+      },
+    },
+    services: {
+      title: 'Услуги',
+      permissions: {
+        'access services': 'Доступ к услугам',
+        'access all services': 'Доступ ко всем услугам',
+        'create services': 'Создание услуг',
+        'edit services': 'Редактирование услуг',
+        'delete services': 'Удаление услуг',
+      },
+    },
+    tasks: {
+      title: 'Задачи',
+      permissions: {
+        'view all tasks': 'Просмотр всех задач',
+      },
+    },
+    bills: {
+      title: 'Счета',
+      permissions: {
+        'access bills': 'Доступ к счетам',
+        'access all bills': 'Доступ ко всем счетам',
+        'create bills': 'Создание счетов',
+        'edit bills': 'Редактирование счетов',
+        'delete bills': 'Удаление счетов',
+      },
+    },
+    other: {
+      title: 'Другое',
+      permissions: {
+        'access employees': 'Доступ к сотрудникам',
+        'access legal entities': 'Доступ к юр. лицам',
+      },
+    },
+  };
+
+  const handlePermissionChange = (permissionName, checked) => {
+    let newPermissions = [...permissions];
+
+    if (checked) {
+      newPermissions.push(permissionName);
+    } else {
+      newPermissions = newPermissions.filter((p) => p !== permissionName);
+    }
+
+    onChange(isEditMode ? 'permissions' : 'permissions', newPermissions);
+  };
+
+  return (
+    <div className={styles.permissionsContainer}>
+      <div className={styles.permissionsTitle}>Права сотрудника</div>
+      <div className={styles.permissionsList}>
+        {Object.entries(permissionGroups).map(([groupKey, group]) => (
+          <div key={groupKey} className={styles.permissionGroup}>
+            <div className={styles.permissionGroupTitle}>{group.title}</div>
+            {Object.entries(group.permissions).map(
+              ([permissionKey, translation]) => (
+                <div key={permissionKey} className={styles.permissionItem}>
+                  <div className={styles.permissionLabel}>{translation}</div>
+                  <Switch
+                    value={permissions.includes(permissionKey)}
+                    onChange={(name, value) =>
+                      handlePermissionChange(permissionKey, value)
+                    }
+                  />
+                </div>
+              ),
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default EditModal;

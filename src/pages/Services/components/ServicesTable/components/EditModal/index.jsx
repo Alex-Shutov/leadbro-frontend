@@ -51,6 +51,7 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [localService, setLocalService] = useState({
     title: '',
+    contractNumber: '',
     type: null,
     manager: null,
     command: null,
@@ -343,6 +344,17 @@ const EditModal = observer(({ serviceId, onClose, ...props }) => {
                 }
               : null
           }
+        />
+        <TextInput
+            placeholder={'Номер договора'}
+            onChange={({ target }) =>
+                handleChange(isEditMode ? 'contractNumber' : 'contractNumber', target.value)
+            }
+            name={isEditMode ? 'contract_number' : 'contract_number'}
+            value={service?.contractNumber || ''}
+            edited={true}
+            className={styles.input}
+            label={'Номер договора'}
         />
       </FormValidatedModal>
     </>

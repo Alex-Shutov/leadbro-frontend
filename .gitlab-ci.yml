@@ -1,0 +1,45 @@
+stages:
+  - pull
+  - stop_superset
+  - build
+  - start_superset
+
+pull_code:
+  stage: pull
+  tags:
+    - crm
+  only:
+    - main
+  script:
+    - cd /home/web/crm-frontend/prod
+    - sudo -H -u web git pull
+
+stop_superset:
+  stage: stop_superset
+  tags:
+    - crm
+  only:
+    - main
+  script:
+    - cd /home/web/superset
+    - /usr/bin/docker compose -f docker-compose-non-dev.yml down
+
+build:
+  stage: build
+  tags:
+    - crm
+  only:
+    - main
+  script:
+    - cd /home/web/crm-frontend/prod
+    - /usr/bin/docker compose -f docker-compose.prod.yml up --build -d
+
+start_superset:
+    stage: start_superset
+    tags:
+      - crm
+    only:
+      - main
+    script:
+      - cd /home/web/superset
+      - /usr/bin/docker compose -f docker-compose-non-dev.yml up -d

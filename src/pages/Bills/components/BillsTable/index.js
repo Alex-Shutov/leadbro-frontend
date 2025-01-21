@@ -22,6 +22,8 @@ import BillsFilter from "./components/BillsFilters/BillsFilter";
 import {FiltersProvider} from "../../../../providers/FilterProvider";
 import {createTaskFilters} from "../../../Tasks/tasks.filter.conf";
 import {createBillsFilters} from "../../bills.filter.conf";
+import {LoadingProvider} from "../../../../providers/LoadingProvider";
+import {getQueryParam} from "../../../../utils/window.utils";
 
 export const formatDateForUrl = (date) => {
   return format(date, 'yyyy-MM-dd');
@@ -98,9 +100,9 @@ const BillsTable = observer(() => {
   }, [from, to]);
 
   const handleFilterChange = async (filters) => {
+    if (filters.date_range && !getQueryParam('date_range')) return
 
-
-    await api.getBills(1, from, to, filters);
+    await api.getBills(1, from, to, filters).then(()=>handlePageChange(1));
   };
 
 
@@ -181,6 +183,7 @@ const BillsTable = observer(() => {
 
   return (
     <FiltersProvider>
+      <LoadingProvider isLoading={api.isLoading}>
       <div className={styles.table}>
         <Table
           beforeTable={() => (
@@ -241,6 +244,7 @@ const BillsTable = observer(() => {
           label="Вы уверены, что хотите удалить счет?"
         />
       )}
+      </LoadingProvider>
     </FiltersProvider>
   );
 });
