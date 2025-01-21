@@ -15,7 +15,7 @@ export const mapServiceFromApi = (
     id: apiService?.id,
     title: apiService?.name, // Название услуги
     deadline: apiService?.deadline,
-    contractNumber: apiService?.contract_number || '4444', // Номер договора
+    contractNumber: apiService?.contract_number, // Номер договора
     client: apiService?.company
       ? {
           id: apiService?.company.id,

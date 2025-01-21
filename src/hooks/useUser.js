@@ -71,6 +71,7 @@ const useUser = () => {
     user,
     isLoading,
     refetch: fetchUser,
+    fetchRights: fetchUserRights,
   };
 };
 

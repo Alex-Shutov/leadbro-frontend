@@ -31,7 +31,7 @@ const FilterManager = ({
         const values = {};
         filterConfig.filters.forEach(filter => {
             const paramValue = searchParams.get(filter.name);
-            debugger
+            // debugger
 
             if (paramValue) {
                 // Пробуем получить значение из контекста

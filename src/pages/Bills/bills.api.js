@@ -27,11 +27,17 @@ const useBillsApi = () => {
   const serviceApi = useServiceApi();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const getBills = (page = 1, from, to,filters={}) => {
+  const getBills = (page = 1, from, to,filters=null) => {
     debugger
     resetApiProvider();
     setIsLoading(true);
-    const sanitizedFilters = sanitizeUrlFilters(filters)
+    const sanitizedFilters = sanitizeUrlFilters(filters ?? {
+      status:getQueryParam('status'),
+      service_type:getQueryParam('service_type'),
+      date_range:getQueryParam('date_range'),
+      period:getQueryParam('period')
+    })
+
     const params = { page };
 
     if (getQueryParam('date_range')) {
@@ -47,9 +53,10 @@ const useBillsApi = () => {
       delete sanitizedFilters.period;
       delete sanitizedFilters.date_range;
     }
-    else if (from && to) {
-      params.period = periodEnum.month
+    else  {
+      params.period = getQueryParam('period',periodEnum.month)
       delete sanitizedFilters.date_range;
+      delete sanitizedFilters.period;
 
     }
 
