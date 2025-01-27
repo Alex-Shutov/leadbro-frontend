@@ -21,6 +21,7 @@ const Modal = ({
   isSubmitClicked = false,
   children,
   cls,
+    appCls,
   modalRef,
   closeButton,
   customButtons,
@@ -81,7 +82,7 @@ const Modal = ({
     };
   }, []);
 
-  useOutsideClick(innerRef, handleCloseModal);
+  useOutsideClick(innerRef, handleCloseModal,id);
 
   if (!isVisible) {
     return null;
@@ -92,6 +93,7 @@ const Modal = ({
       <ModalBase
         isSubmitted={isSubmitClicked}
         id={id}
+
         handleClose={handleClose}
         handleCloseModal={handleCloseModal}
         ref={ref}
@@ -103,6 +105,7 @@ const Modal = ({
         size={size}
         children={children}
         cls={cls}
+        appCls={appCls}
       />,
       document.body,
     )
@@ -121,6 +124,7 @@ const Modal = ({
       size={size}
       children={children}
       cls={cls}
+      appCls={appCls}
     />
   );
 };
@@ -141,6 +145,7 @@ const ModalBase = ({
   handleClose,
   customButtons,
   cls,
+    appCls
 }) => {
   return (
     <motion.div
@@ -149,7 +154,7 @@ const ModalBase = ({
       animate={'show'}
       initial={'hidden'}
       exit={'hidden'}
-      className={cn(styles.appModal)}
+      className={cn(styles.appModal,appCls)}
       style={
         size === 'sm'
           ? undefined

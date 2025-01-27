@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 
 // Custom hook to detect clicks outside a specified element
-const useOutsideClick = (ref, handler) => {
+const useOutsideClick = (ref, handler,innerModalId) => {
     useEffect(() => {
         // Listener function to handle click events
         const listener = (event) => {
             const confirmModal = document.getElementById('confirmModal');
             // If the ref is not set or the click is inside the element, do nothing
             if (!ref.current || ref.current.contains(event.target) || (confirmModal && confirmModal.contains(event.target))) {
+                return;
+            }
+            const targetModal = document.getElementById(innerModalId);
+            if (!ref.current || ref.current.contains(event.target) || (targetModal && targetModal.contains(event.target))) {
                 return;
             }
             // Call the handler if the click is outside the element
@@ -21,7 +25,7 @@ const useOutsideClick = (ref, handler) => {
         return () => {
             document.removeEventListener('mousedown', listener);
         };
-    }, [ref, handler]); // Dependency array ensures effect runs when `ref` or `handler` changes
+    }, [ref, handler,innerModalId]); // Dependency array ensures effect runs when `ref` or `handler` changes
 };
 
 export default useOutsideClick;

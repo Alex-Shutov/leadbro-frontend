@@ -3,7 +3,7 @@ import { isId } from '../../../utils/is.type';
 import {
   changeDraft,
   removeDraft,
-  resetDraft,
+  resetDraft, TimeTrackingStoreMixin,
   updateDraftObject,
   updateObjectRecursively,
 } from '../../../utils/store.utils';
@@ -129,4 +129,17 @@ export class StagesStore {
   clearChangesSet() {
     this.changedProps = new Set();
   }
+
+  updateTimeTracking(taskId, timeTrackingId, updatedValue) {
+    TimeTrackingStoreMixin.updateTimeTracking.call(this, taskId, timeTrackingId, updatedValue, 'tasks.');
+  }
+
+  addTimeTracking(taskId, value) {
+    TimeTrackingStoreMixin.addTimeTracking.call(this, taskId, value, 'tasks.');
+  }
+
+  deleteTimeTracking(taskId, timeTrackingId) {
+    TimeTrackingStoreMixin.deleteTimeTracking.call(this, taskId, timeTrackingId, 'tasks.');
+  }
+
 }

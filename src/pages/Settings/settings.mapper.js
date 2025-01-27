@@ -11,7 +11,7 @@ export const mapEmployeesFromApi = (employee) => {
     name: employee.name,
     middleName: employee?.middle_name,
     lastName: employee?.last_name,
-    avatar: employee?.avatar ? loadAvatar(employee?.avatar) : null, // Обработка аватара через loadAvatar
+    avatar: employee?.avatar ? loadAvatar(employee?.avatar) : loadAvatar(), // Обработка аватара через loadAvatar
     birthday: employee?.birthday ? new Date(employee?.birthday) : null, // Преобразование дня рождения в Date
     position: employee?.position ? mapPosition(employee?.position) : null, // Маппинг позиции
     email: employee?.email,
@@ -19,15 +19,10 @@ export const mapEmployeesFromApi = (employee) => {
     gender: employee?.gender,
     status: employersTypeEnum.works,
     permissions: employee?.permissions || [],
+    hourlyRate: employee?.hourly_rate ?? null,
   };
 };
 
-// Маппинг позиции сотрудника
-const mapEmployee = (employee) => {
-  return {
-    id: employee.id,
-  };
-};
 const mapPosition = (position) => {
   return {
     id: position.id,
@@ -106,6 +101,7 @@ export const mapSettingsDataToBackend = (drafts, changedFieldsSet, propId) => {
       signScan: 'sign_scan',
       stampScan: 'stamp_scan',
       createdAt: 'created_at',
+      hourlyRate:'hourly_rate'
     };
 
     return keyMapping[key] || key;

@@ -25,6 +25,7 @@ const Index = ({
     deadline,
     deadlineTime,
     actualTime,
+      cost,
   },
   isEditMode,
   types,
@@ -159,7 +160,7 @@ const Index = ({
         className={styles.input}
       />
       <TextInput
-
+          disabled={true}
         type={'number'}
         label={'Фактическое время, ч'}
         name={'actualTime'}
@@ -167,6 +168,15 @@ const Index = ({
         value={convertToHours(actualTime)}
         className={styles.input}
       />
+        <TextInput
+            disabled={true}
+
+            label={'Стоимость задачи'}
+            name={'actualTime'}
+            // onChange={({ target }) => handleChange(target.name, target.value)}
+            value={cost}
+            className={styles.input}
+        />
 
       <ValuesSelector
         onChange={(e) =>

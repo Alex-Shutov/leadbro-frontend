@@ -25,7 +25,6 @@ import {
   getQueryParam,
   removeLastPathSegment,
 } from '../../../../utils/window.utils';
-import {createBillsFilters} from "../../../Bills/bills.filter.conf";
 import {createClientsFilters} from "../../clients.filter.conf";
 import {FiltersProvider} from "../../../../providers/FilterProvider";
 import useAppApi from "../../../../api";

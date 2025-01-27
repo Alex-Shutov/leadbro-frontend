@@ -253,3 +253,54 @@ export const mapServiceDataToBackend = (drafts, changedFieldsSet, propId) => {
     )};
 };
 
+export const TimeTrackingStoreMixin = {
+  updateTimeTracking(taskId, timeTrackingId, updatedValue, prefix = '') {
+    // Определяем путь в зависимости от типа стора
+    const pathPrefix = prefix ? `${prefix}timeTrackings` : 'timeTrackings';
+
+    const task = this.getById(taskId);
+    if (!task) return;
+
+    const valueAfterUpdate = {
+      ...task.timeTrackings,
+      [timeTrackingId]: {
+        ...task.timeTrackings[timeTrackingId],
+        timeSpent: {
+          minutes: updatedValue.minutes,
+          hours: updatedValue.hours,
+          allTimeInMinutes: updatedValue.allTimeInMinutes,
+        }
+      }
+    };
+
+    this.changeById(taskId, pathPrefix, valueAfterUpdate, true);
+  },
+
+  addTimeTracking(taskId, value, prefix = '') {
+    const pathPrefix = prefix ? `${prefix}timeTrackings` : 'timeTrackings';
+    const task = this.getById(taskId);
+    if (!task) return;
+
+    const valueKey = Object.keys(value)[0];
+    const valueAfterAdd = {
+      ...(task.timeTrackings || {}),
+      [valueKey]: value[valueKey]
+    };
+
+    this.changeById(taskId, pathPrefix, valueAfterAdd, true);
+    this.submitDraft(taskId);
+  },
+
+  deleteTimeTracking(taskId, timeTrackingId, prefix = '') {
+    const pathPrefix = prefix ? `${prefix}timeTrackings` : 'timeTrackings';
+    const task = this.getById(taskId);
+    if (!task?.timeTrackings) return;
+
+    const updatedTimeTrackings = { ...task.timeTrackings };
+    delete updatedTimeTrackings[timeTrackingId];
+
+    this.changeById(taskId, pathPrefix, updatedTimeTrackings, true);
+    this.submitDraft(taskId);
+  }
+};
+

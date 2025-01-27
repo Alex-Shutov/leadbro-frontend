@@ -25,7 +25,6 @@ export const createServicesFilters = (appApi) => ({
                 isAsync: true,
                 asyncSearch: async (query) => {
                     const response = await appApi.getEmployees(query);
-                    debugger
                     return response.map((item) => ({
                         value: item?.id,
                         label: `${item?.last_name??''} ${item?.name??''} ${item?.middle_name??""}`

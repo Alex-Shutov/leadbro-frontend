@@ -41,6 +41,7 @@ const Deals = observer(() => {
 
   // Обработчик изменения статуса сделки
   const handleChange = (dealId, newStatus) => {
+    dealsStore.clearCurrentDeal()
     dealsStore.changeById(dealId, 'status', newStatus, true);
     api.updateDealStatus(dealId, { status: newStatus });
   };

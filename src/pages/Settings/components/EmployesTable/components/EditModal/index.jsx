@@ -48,26 +48,33 @@ const EditModal = observer(({ employeId, onClose }) => {
     email: '',
     phone: '',
     gender: genderType.male,
+    hourlyRate:0,
     password: '',
     confirmPassword: '',
     permissions: [],
   });
-
+  console.log(employeId,'employeId')
   const [errors, setErrors] = useState({
     passwordError: null,
     confirmPasswordError: null,
   });
 
+  // const employe = useMemo(() => {
+  //   return isEditMode ? employeStore.getById(employeId) : localEmploye;
+  // }, [
+  //   isEditMode,
+  //   employeId,
+  //   employeStore.services,
+  //   employeStore.drafts,
+  //   localEmploye,
+  // ]);
   const employe = useMemo(() => {
-    return isEditMode ? employeStore.getById(employeId) : localEmploye;
-  }, [
-    isEditMode,
-    employeId,
-    employeStore.services,
-    employeStore.drafts,
-    localEmploye,
-  ]);
-
+    if (isEditMode) {
+      const currentEmploye = employeStore.getById(employeId);
+      return currentEmploye || localEmploye;
+    }
+    return localEmploye;
+  }, [isEditMode, employeId, employeStore,employeStore.drafts,employeStore.services,, localEmploye]);
   useEffect(() => {
     if (employeId) {
       setIsEditMode(true); // Режим редактирования
@@ -102,8 +109,8 @@ const EditModal = observer(({ employeId, onClose }) => {
       }
       handleSubmitSnackbar(
         isEditMode
-          ? 'Услуга успешно отредактирована'
-          : 'Услуга успешно создана',
+          ? 'Сотрудник успешно отредактирован'
+          : 'Сотрудник успешно создан',
       );
       onClose(); // Закрываем модалку
     } catch (error) {
@@ -119,9 +126,10 @@ const EditModal = observer(({ employeId, onClose }) => {
     return value === employe.password ? true : 'Пароли должны совпадать';
   };
 
-  const handleReset = () => {
+  const handleReset = (path) => {
     if (isEditMode) {
       employeStore.resetDraft(employeId); // Сброс черновика в режиме редактирования
+      employeStore.clearCurrentEmploye(); // Сброс черновика в режиме редактирования
     }
     onClose(); // Закрытие модалки
   };
@@ -282,6 +290,22 @@ const EditModal = observer(({ employeId, onClose }) => {
             className={styles.input}
             label={'Телефон'}
           />
+
+        </div>
+        <div className={styles.flex}>
+          <TextInput
+              placeholder={'Ставка в час'}
+              onChange={({ target }) =>
+                  handleChange(isEditMode ? 'hourlyRate' : 'hourlyRate', target.value)
+              }
+              name={isEditMode ? 'hourlyRate' : 'hourlyRate'}
+              value={isEditMode ? employe.hourlyRate : employe.hourlyRate}
+              edited={true}
+              type={'number'}
+              className={styles.input}
+              label={'Ставка в час'}
+          />
+          <div/>
         </div>
         {!employeId && (
           <div className={styles.flex}>

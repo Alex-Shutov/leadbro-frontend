@@ -28,7 +28,6 @@ const useBillsApi = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const getBills = (page = 1, from, to,filters=null) => {
-    debugger
     resetApiProvider();
     setIsLoading(true);
     const sanitizedFilters = sanitizeUrlFilters(filters ?? {

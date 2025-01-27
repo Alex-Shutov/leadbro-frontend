@@ -8,6 +8,7 @@ import Calendar from "../Datepicker";
 import Dropdown from "../Dropdown/Default";
 import Filters from "../Filter";
 import {useFilters} from "../../providers/FilterProvider";
+import Button from "../Button";
 
 const FILTER_COMPONENTS = {
     radio: Radio,
@@ -27,11 +28,11 @@ const FilterManager = ({
                        }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const { setFilters, setFilterValue, getFilterValue } = useFilters();
+    const [pendingFilterValues, setPendingFilterValues] = useState({});
     const getInitialValues = useCallback(() => {
         const values = {};
         filterConfig.filters.forEach(filter => {
             const paramValue = searchParams.get(filter.name);
-            debugger
 
             if (paramValue) {
                 // Пробуем получить значение из контекста
@@ -94,7 +95,42 @@ const FilterManager = ({
         };
         setFilterValues(newValues);
         setFilters(newValues);
-        onFilterChange(newValues);
+    };
+
+
+
+
+    const handleApplyFilters = () => {
+        const newValues = {...filterValues, ...pendingFilterValues};
+
+        setFilterValues(newValues);
+        setFilters(newValues);
+
+        // Set submit flag and trigger onChange
+        onFilterChange({...newValues, isSubmit: 1});
+
+        // Clear pending changes
+        setPendingFilterValues({});
+    };
+
+
+    const handleResetFilters = () => {
+        setSearchParams(new URLSearchParams());
+
+        // Reset filter values to empty state
+        const resetValues = {};
+        filterConfig.filters.forEach(filter => {
+            if (filter.props?.defaultValue) {
+                resetValues[filter.name] = filter.props.defaultValue;
+            }
+        });
+
+        setFilterValues(resetValues);
+        setFilters(resetValues);
+
+        onFilterChange({...resetValues, isSubmit: 0});
+
+        setPendingFilterValues({});
     };
 
 
@@ -133,6 +169,21 @@ const FilterManager = ({
     const filtersContent = (
         <div className={styles.filtersContent}>
             {filterConfig.filters.map(renderFilter)}
+            <div className={styles.filterActions}>
+                <Button
+                    name={"Применить"}
+                    onClick={handleApplyFilters}
+                    className={styles.applyButton}
+                />
+
+                <Button
+                    type={'secondary'}
+                    name={"Сбросить"}
+                    onClick={handleResetFilters}
+                    className={styles.resetButton}
+                />
+
+            </div>
         </div>
     );
 

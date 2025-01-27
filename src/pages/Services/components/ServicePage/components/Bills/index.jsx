@@ -116,6 +116,7 @@ const Bills = observer(({ bills, service, company, stage }) => {
   return (
     <div className={styles.table_container}>
       <Table
+          withHeaderWhenEmpty={false}
         smallTable={true}
         cardComponent={(data, onPagination) => (
           <AdaptiveCard data={data} onPagination={onPagination} />

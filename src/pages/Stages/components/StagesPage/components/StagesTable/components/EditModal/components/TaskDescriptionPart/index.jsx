@@ -19,6 +19,7 @@ import {
   colorStatusTaskTypes,
   colorStatusTaskTypesForTaskList,
 } from '../../../../../../../../stages.types';
+import Loader from "../../../../../../../../../../shared/Loader";
 const Index = ({
   data: {
     comments,
@@ -36,6 +37,7 @@ const Index = ({
   handleSave,
   handleDecline,
   className,
+    isLoading
 }) => {
   return (
     <div className={cn(styles.border_container, className)}>
@@ -103,7 +105,7 @@ const Index = ({
       {/*  renderOption={(opt) => opt.title}*/}
       {/*  options={templateTypes}*/}
       {/*/>*/}
-      {description && (
+      { isLoading ? <Loader className={styles.loader}/> : description && (
         <TextInput
           onChange={({ target }) => {
             handleChange(target.name, target.value === '' ? ' ' : target.value);

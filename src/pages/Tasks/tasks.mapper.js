@@ -2,6 +2,7 @@ import { taskStatusTypes } from '../Stages/stages.types';
 import { loadAvatar } from '../../utils/create.utils';
 import { taskableTypes } from './tasks.types';
 import { mapCommentsFromApi } from '../Clients/clients.mapper';
+import {mapTimeTrackingsFromApi} from "../TimeTracking/timeTracking.mapper";
 
 export const mapTaskFromApi = (task, commentsData = null) => {
   const taskableType = task?.related_entity?.type;
@@ -35,12 +36,29 @@ export const mapTaskFromApi = (task, commentsData = null) => {
     responsibles: mapAssigned([task?.responsible]),
     executors: mapAssigned([task?.performer]),
     auditors: mapAssigned(task?.auditors),
-    assigned: mapAssigned([task?.responsible, task?.performer]), // Ответственные и исполнители
+    assigned: mapAssigned([task?.responsible, task?.performer]),
+    timeTrackings: mapTimeTrackingsFromApi(task?.time_trackings || []),
+    cost: task?.cost || null,
     comments: commentsData
       ? mapCommentsFromApi(commentsData)
       : mapComments(task?.comments || []) ?? [], // Комментарии к задаче
   };
 };
+
+// const mapTimeTrackings = (timeTrackings) => {
+//   return timeTrackings.map((tracking) => ({
+//     id: tracking.id,
+//     minutes: tracking.minutes,
+//     employee: {
+//       id: tracking.employee.id,
+//       name: tracking.employee.name,
+//       middleName: tracking.employee.middle_name,
+//       lastName: tracking.employee.last_name,
+//       avatar: tracking.employee.avatar ? loadAvatar(tracking.employee.avatar) : null,
+//       position: tracking.employee.position?.name || null,
+//     },
+//     cost: tracking.cost || 0
+//   }))};
 
 // Маппинг статуса задачи
 const mapTaskStatus = (status) => {

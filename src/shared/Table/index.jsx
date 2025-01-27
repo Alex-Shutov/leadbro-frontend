@@ -26,6 +26,7 @@ const Table = observer(
     editComponent,
     actions, // Добавлено для передачи действий
     paging, // Добавлено для пагинации
+      withHeaderWhenEmpty=true,
     ...rest
   }) => {
     const [editingRowIndex, setEditingRowIndex] = useState(null);
@@ -241,7 +242,7 @@ const Table = observer(
                   [styles.pagingTable]: !!paging,
                 })}
               >
-                <table {...getTableProps()}>
+                  {Boolean((Array.isArray(data) && data.length) || withHeaderWhenEmpty) && <table {...getTableProps()}>
                   <thead>
                     {!rest.disableHeader &&
                       headerGroups.map((headerGroup) => (
@@ -367,7 +368,7 @@ const Table = observer(
                         : rowsOrPage.map((row, index) => renderRow(row, index))}
                     </LoadingProvider>
                   </tbody>
-                </table>
+                </table>}
               </div>
             </Card>
             {paging && (

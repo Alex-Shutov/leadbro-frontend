@@ -185,9 +185,7 @@ const DealEditModal = observer(
                 return handleChange('source', e[0]);
               }}
               value={
-                deal?.source
-                  ? sourceTypes?.find((el) => el[0] === deal?.source)[0]
-                  : ''
+                deal?.source ?? ''
               }
               edited={true}
               renderValue={(value) => sourceTypeRu[value]}

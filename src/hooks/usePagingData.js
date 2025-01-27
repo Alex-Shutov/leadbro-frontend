@@ -20,7 +20,6 @@ const usePagingData = (store, fetchData, getDataFromStore) => {
   const handlePageChange = useCallback(
     (page) => {
       const searchParams = new URLSearchParams(window.location.search);
-      debugger
       // Устанавливаем новый параметр page
       searchParams.set('page', page);
 
