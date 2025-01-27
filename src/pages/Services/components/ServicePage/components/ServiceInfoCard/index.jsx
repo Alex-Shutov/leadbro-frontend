@@ -70,6 +70,13 @@ const Index = ({ service, passwords }) => {
             to={`/clients/${service.client.id}`}
           />
         )}
+
+          {Boolean(service.contractNumber) && (
+              <LabeledParagraph
+                  label={'Номер договора'}
+                  text={service.contractNumber}
+              />
+          )}
       </Card>
       {passwords && Object.keys(passwords).length > 0 && (
         <PasswordsDisplay passwordsData={passwords} />

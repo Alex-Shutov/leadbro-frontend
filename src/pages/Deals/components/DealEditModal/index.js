@@ -290,7 +290,6 @@ const DealEditModal = observer(
             }
           />
           <ValuesSelector
-            required={true}
             name={'company'}
             minInputLength={4}
             readonly={props?.currentClient ?? false}

@@ -127,6 +127,7 @@ const useServiceApi = () => {
       'deadline',
       'participants_ids',
       'company_id',
+      'contract_number'
     ]);
     return http
       .patch(`/api/services/${serviceId}`, resultData)

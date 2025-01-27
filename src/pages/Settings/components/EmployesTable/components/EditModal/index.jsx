@@ -53,21 +53,12 @@ const EditModal = observer(({ employeId, onClose }) => {
     confirmPassword: '',
     permissions: [],
   });
-  console.log(employeId,'employeId')
+
   const [errors, setErrors] = useState({
     passwordError: null,
     confirmPasswordError: null,
   });
 
-  // const employe = useMemo(() => {
-  //   return isEditMode ? employeStore.getById(employeId) : localEmploye;
-  // }, [
-  //   isEditMode,
-  //   employeId,
-  //   employeStore.services,
-  //   employeStore.drafts,
-  //   localEmploye,
-  // ]);
   const employe = useMemo(() => {
     if (isEditMode) {
       const currentEmploye = employeStore.getById(employeId);
