@@ -102,7 +102,7 @@ const BillsTable = observer(() => {
   const handleFilterChange = async (filters) => {
     if (filters.date_range && !getQueryParam('date_range')) return
 
-    await api.getBills(1, from, to, filters);
+    await api.getBills(1, from, to, filters).then(()=>handlePageChange(1));
   };
 
 
@@ -183,6 +183,7 @@ const BillsTable = observer(() => {
 
   return (
     <FiltersProvider>
+      <LoadingProvider isLoading={api.isLoading}>
       <div className={styles.table}>
         <Table
           beforeTable={() => (
@@ -243,6 +244,7 @@ const BillsTable = observer(() => {
           label="Вы уверены, что хотите удалить счет?"
         />
       )}
+      </LoadingProvider>
     </FiltersProvider>
   );
 });
