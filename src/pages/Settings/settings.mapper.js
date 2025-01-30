@@ -70,13 +70,14 @@ export const mapSettingsDataToBackend = (drafts, changedFieldsSet, propId) => {
         return value.id;
       case 'birthday':
         return formatDateToBackend(value);
-      case 'isMainLegalEntity':
+      case 'is_main_legal_entity':
         return value ? 1 : 0;
       case 'signScan':
       case 'stampScan':
         return value?.file || value; // Предполагаем, что может прийти объект с file или сразу файл
       case 'createdAt':
         return formatDateToBackend(value);
+
       default:
         return value; // По умолчанию оставить как есть
     }
@@ -101,7 +102,7 @@ export const mapSettingsDataToBackend = (drafts, changedFieldsSet, propId) => {
       signScan: 'sign_scan',
       stampScan: 'stamp_scan',
       createdAt: 'created_at',
-      hourlyRate:'hourly_rate'
+      hourlyRate: 'hourly_rate',
     };
 
     return keyMapping[key] || key;

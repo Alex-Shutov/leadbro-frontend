@@ -44,8 +44,6 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
     newClient,
   ]);
 
-
-
   useEffect(() => {
     if (clientId) {
       setIsEditMode(true); // Режим редактирования
@@ -55,7 +53,6 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
   }, [clientId]);
   const handleChange = (name, value, withId = true) => {
     if (isEditMode) {
-
       clientsStore.changeById(companyId, name, value, withId);
     } else {
       setNewClient((prev) => ({
@@ -71,7 +68,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
     onClose(); // Закрытие модалки
   };
 
-  const handleSubmit = async (onError=null) => {
+  const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
         await updateClient(
@@ -88,7 +85,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
       onClose(); // Закрываем модалку
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
-      onError && onError()
+      onError && onError();
     }
   };
 
@@ -107,18 +104,14 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
         <TextInput
           onChange={({ target }) =>
             handleChange(
-              isEditMode
-                ? `contactPersons.${clientId}.middle_name`
-                : 'middle_name',
+              isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name',
               target.value,
             )
           }
           name={
-            isEditMode
-              ? `contactPersons.${clientId}.middle_name`
-              : 'middle_name'
+            isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name'
           }
-          value={client.middle_name}
+          value={client.last_name}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Фамилия'}
@@ -143,14 +136,18 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
         <TextInput
           onChange={({ target }) =>
             handleChange(
-              isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name',
+              isEditMode
+                ? `contactPersons.${clientId}.middle_name`
+                : 'middle_name',
               target.value,
             )
           }
           name={
-            isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name'
+            isEditMode
+              ? `contactPersons.${clientId}.middle_name`
+              : 'middle_name'
           }
-          value={client.last_name}
+          value={client.middle_name}
           edited={true}
           className={cn(styles.input)}
           label={'Отчество'}

@@ -44,7 +44,7 @@ const useAppNavigation = () => {
       url: '/settings',
     },
     {
-      title: 'Времязатраты',
+      title: 'Трекер',
       action: () => {},
       url: '/timetrackings',
     },

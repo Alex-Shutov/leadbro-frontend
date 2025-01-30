@@ -9,7 +9,6 @@ import TextLink from '../../shared/Table/TextLink';
 
 const ManagerCell = ({ manager, ...rest }) => {
   const imageSrc = manager?.image ?? manager?.avatar;
-
   const renderName = () => {
     if (manager?.fio) {
       return manager.fio;

@@ -48,7 +48,7 @@ const EditModal = observer(({ employeId, onClose }) => {
     email: '',
     phone: '',
     gender: genderType.male,
-    hourlyRate:0,
+    hourlyRate: 0,
     password: '',
     confirmPassword: '',
     permissions: [],
@@ -65,7 +65,15 @@ const EditModal = observer(({ employeId, onClose }) => {
       return currentEmploye || localEmploye;
     }
     return localEmploye;
-  }, [isEditMode, employeId, employeStore,employeStore.drafts,employeStore.services,, localEmploye]);
+  }, [
+    isEditMode,
+    employeId,
+    employeStore,
+    employeStore.drafts,
+    employeStore.services,
+    ,
+    localEmploye,
+  ]);
   useEffect(() => {
     if (employeId) {
       setIsEditMode(true); // Режим редактирования
@@ -281,22 +289,24 @@ const EditModal = observer(({ employeId, onClose }) => {
             className={styles.input}
             label={'Телефон'}
           />
-
         </div>
         <div className={styles.flex}>
           <TextInput
-              placeholder={'Ставка в час'}
-              onChange={({ target }) =>
-                  handleChange(isEditMode ? 'hourlyRate' : 'hourlyRate', target.value)
-              }
-              name={isEditMode ? 'hourlyRate' : 'hourlyRate'}
-              value={isEditMode ? employe.hourlyRate : employe.hourlyRate}
-              edited={true}
-              type={'number'}
-              className={styles.input}
-              label={'Ставка в час'}
+            placeholder={'Ставка в час'}
+            onChange={({ target }) =>
+              handleChange(
+                isEditMode ? 'hourlyRate' : 'hourlyRate',
+                target.value,
+              )
+            }
+            name={isEditMode ? 'hourlyRate' : 'hourlyRate'}
+            value={isEditMode ? employe.hourlyRate : employe.hourlyRate}
+            edited={true}
+            type={'number'}
+            className={styles.input}
+            label={'Ставка в час'}
           />
-          <div/>
+          <div />
         </div>
         {!employeId && (
           <div className={styles.flex}>
@@ -421,6 +431,8 @@ const PermissionsSection = ({ permissions = [], onChange, isEditMode }) => {
       permissions: {
         'access employees': 'Доступ к сотрудникам',
         'access legal entities': 'Доступ к юр. лицам',
+        'edit time trackings': 'Редактирование трекера',
+        'view all time spendings': 'Доступ ко всем затратам',
       },
     },
   };

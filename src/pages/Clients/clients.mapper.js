@@ -7,7 +7,8 @@ import {
   MapFio,
 } from '../../utils/store.utils';
 import { handleError } from '../../utils/snackbar';
-import { mapDealFromApi } from '../Deals/deals.mapper'; // Если требуется для аватара
+import { mapDealFromApi } from '../Deals/deals.mapper';
+import { convertUTCToLocal } from '../../utils/formate.date';
 
 export const mapClientFromApi = (
   apiClient,
@@ -120,7 +121,7 @@ const mapContactPersons = (apiContactPersons) => {
           value: client?.telegram,
         },
         whatsapp: {
-          link: `https://api.whatsapp.com/send?phone=${client?.whatsapp}`,
+          link: `https://wa.me/${client?.whatsapp}`.replace('+', ''),
           value: client?.whatsapp,
         },
         //
@@ -151,28 +152,29 @@ const mapLegals = (legals) => {
 };
 
 const mapServices = (backendServices, apiServices) => {
-
   if (apiServices === null) {
     const { last } = backendServices;
     return {
       total: backendServices.total,
-      value: last ? {
-        id: last.id,
-        description: last.name, // Используем поле name для description
-        creator: {
-          name: last.creator.name, // Отсутствует creator в API, поэтому используем responsible
-          surname: last.creator.last_name,
-          role: last.creator.position.name,
-          image: loadAvatar(last.creator.avatar),
-        },
-        responsible: {
-          name: last.responsible.name,
-          surname: last.responsible.last_name,
-          role: last.responsible.position.name,
-          image: loadAvatar(last.responsible.avatar),
-        },
-        deadline: last?.deadline ? new Date(last.deadline) : null, // Преобразуем строку в дату
-      } : null,
+      value: last
+        ? {
+            id: last.id,
+            description: last.name, // Используем поле name для description
+            creator: {
+              name: last.creator.name, // Отсутствует creator в API, поэтому используем responsible
+              surname: last.creator.last_name,
+              role: last.creator.position.name,
+              image: loadAvatar(last.creator.avatar),
+            },
+            responsible: {
+              name: last.responsible.name,
+              surname: last.responsible.last_name,
+              role: last.responsible.position.name,
+              image: loadAvatar(last.responsible.avatar),
+            },
+            deadline: last?.deadline ? new Date(last.deadline) : null, // Преобразуем строку в дату
+          }
+        : null,
     };
   }
   if (!apiServices?.length) {
@@ -216,7 +218,7 @@ export const mapCommentsFromApi = (apiComments) => {
   return apiComments?.reduce((acc, comment) => {
     acc[comment.id] = {
       id: comment.id,
-      date: new Date(comment.created_at),
+      date: convertUTCToLocal(comment.created_at),
       sender: {
         id: comment.commentator.id,
         image: comment.commentator.avatar
