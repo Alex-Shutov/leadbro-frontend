@@ -45,7 +45,7 @@ build_prod:
     - main
   script:
     - cd /home/web/crm-frontend/prod
-    - /usr/bin/docker compose -f docker-compose.prod.yml up --build -d
+    - /usr/bin/docker compose -f docker-compose.stage.yml up --build -d
 
 build_stage:
   stage: build_stage
