@@ -54,6 +54,7 @@ export class EmployesStore {
         this.employes = this.employes.map(c => (c.id === id ? updatedClient : c));
         delete this.drafts[id];
         this.clearChangesSet();
+        this.clearCurrentEmploye()
     }
 
     createDraft(id) {
@@ -107,6 +108,9 @@ export class EmployesStore {
 
     setCurrentEmploye(employe) {
         this.currentEmploye = employe;
+    }
+    clearCurrentEmploye() {
+        this.currentEmploye = null;
     }
 
     addChangesProps(name) {

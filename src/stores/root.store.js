@@ -11,6 +11,7 @@ import { LegalsStore } from '../pages/Settings/stores/legals.store';
 import { AppStore } from './app.store';
 import { BillsStore } from '../pages/Bills/stores/bills.store';
 import {DealsStore} from "../pages/Deals/stores";
+import {TimeTrackingStore} from "../pages/TimeTracking/stores/timeTracking.store";
 export class RootStore {
   constructor() {
     this.appStore = new AppStore(this);
@@ -27,5 +28,6 @@ export class RootStore {
     this.legalsStore = new LegalsStore(this);
     this.billsStore = new BillsStore(this);
     this.dealsStore = new DealsStore(this);
+    this.timeTrackingStore = new TimeTrackingStore(this);
   }
 }

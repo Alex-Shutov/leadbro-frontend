@@ -7,96 +7,130 @@ import CommentsFilters from './CommentsFilters';
 import useAppApi from '../../api';
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router';
+import TimeTrackingList from '../TimeTracking';
+import TimeTrackingInput from '../../pages/TimeTracking/components/TimeTrackingInput';
+import useQueryParam from '../../hooks/useQueryParam';
+import useStore from '../../hooks/useStore';
+import useTimeTrackingApi from '../../pages/TimeTracking/timeTracking.api';
+import { observer } from 'mobx-react';
+import { handleError, handleSubmit } from '../../utils/snackbar';
+import useCommentsFilters from './common.filters.hook';
+import TimeTrackingSection from '../TimeTracking/Section';
 
-const Comments = ({
-  comments,
-  onChange,
-  prefix = '',
-  entityId,
-  belongsTo = null,
-  onDelete,
-}) => {
-  const commentsLength = useMemo(
-    () => Object.keys(comments ?? {}).length,
-    [comments],
-  );
-  const { id } = useParams();
+const Comments = observer(
+  ({
+    comments,
+    onChange,
+    prefix = '',
+    entityId,
+    belongsTo = null,
+    onDelete,
+    timeTrackings,
+    mode,
+    contextStore,
+    ...rest
+  }) => {
+    const commentsLength = useMemo(
+      () => Object.keys(comments ?? {}).length,
+      [comments],
+    );
+    const timeTrackingLength = useMemo(
+      () => (timeTrackings ? Object.keys(timeTrackings).length : null),
+      [timeTrackings],
+    );
+    const { id } = useParams();
+    const taskId = useQueryParam('taskId');
+    const { user } = useUser();
+    const { tasksStore } = useStore();
+    const url = useLocation();
+    const appApi = useAppApi();
+    const timeTrackingApi = useTimeTrackingApi();
 
-  const { user } = useUser();
-  const [isFilterFiles, setFilterFiles] = useState(false);
-  const [isFilterComments, setCommentFiles] = useState(false);
-  const url = useLocation();
-  const appApi = useAppApi();
-
-  function countComments() {
-    return Object.keys(comments ?? {}).length;
-  }
-
-  function getCurrentEntityType() {
-    const path = url.pathname;
-    if (path.includes('clients')) {
-      return 'companies';
-    } else if (path.includes('deals')) {
-      return 'deals';
-    } else if (path.includes('tasks') || path.includes('stages')) {
-      return 'tasks';
+    function countComments() {
+      return Object.keys(comments ?? {}).length;
     }
-  }
 
-  function countFiles() {
-    return Object.values(comments ?? {}).reduce((totalFiles, comment) => {
-      return (
-        totalFiles + (comment.value?.files ? comment.value.files.length : 0)
-      );
-    }, 0);
-  }
+    function getCurrentEntityType() {
+      const path = url.pathname;
+      if (path.includes('clients')) {
+        return 'companies';
+      } else if (path.includes('deals')) {
+        return 'deals';
+      } else if (path.includes('tasks') || path.includes('stages')) {
+        return 'tasks';
+      }
+    }
 
-  function handleFilterAll() {
-    setFilterFiles(false);
-    setCommentFiles(false);
-  }
-  function handleFilterByComments() {
-    setFilterFiles(false);
-    setCommentFiles(true);
-  }
-  function handleFilterByFiles() {
-    setFilterFiles(true);
-    setCommentFiles(false);
-  }
-  return (
-    <Card>
+    function countFiles() {
+      return Object.values(comments ?? {}).reduce((totalFiles, comment) => {
+        return (
+          totalFiles + (comment.value?.files ? comment.value.files.length : 0)
+        );
+      }, 0);
+    }
 
-      <CommentsFilters
-        filterComments={handleFilterByComments}
-        filterFiles={handleFilterByFiles}
-        filterAll={handleFilterAll}
-        filesLength={countFiles()}
-        commentsLength={countComments()}
-      />
-      <CommentsList
-        onDelete={onDelete}
-        filterFiles={isFilterFiles}
-        filterComments={isFilterComments}
-        comments={comments}
-      />
-      <CommentsInput
-          commentsLength={commentsLength}
-          onSendMessage={async (val) => {
-            const result = await appApi.sendComment(
-                belongsTo ?? getCurrentEntityType(),
-                entityId ?? id,
-                { text: val.value.text, files: val.value.files },
-            );
+    const handleSendComment = async (val) => {
+      try {
+        debugger;
+        const result = await appApi.sendComment(
+          belongsTo ?? getCurrentEntityType(),
+          entityId ?? id,
+          { text: val.value?.text, files: val.value.files },
+        );
 
-            Object.keys(result) &&
-            onChange(`${prefix}comments.${result.id}`, {
-              ...result
-            });
-          }}
-          currentUser={user}
-      />
-    </Card>
-  );
-};
+        if (Object.keys(result)) {
+          onChange(`${prefix}comments.${result.id}`, result);
+        }
+      } catch (error) {
+        handleError(error?.message, error);
+      }
+    };
+
+    const { filters, handlers } = useCommentsFilters();
+    return (
+      <Card>
+        <CommentsFilters
+          timeTrackingsLength={timeTrackingLength}
+          filterComments={handlers.handleFilterByComments}
+          filterFiles={handlers.handleFilterByFiles}
+          filterAll={handlers.handleFilterAll}
+          openTimeTracking={handlers.handleFilterByTimeTracking}
+          filesLength={countFiles()}
+          commentsLength={countComments()}
+        />
+        {filters.isFilterTimeTracking ? (
+          <>
+            <TimeTrackingSection
+              timeTrackings={timeTrackings}
+              timeTrackingLength={timeTrackingLength}
+              taskId={taskId}
+              entityId={entityId}
+              tasksStore={tasksStore}
+              timeTrackingApi={timeTrackingApi}
+              mode={mode}
+              contextStore={contextStore}
+              prefix={prefix}
+            />
+          </>
+        ) : (
+          <>
+            <CommentsList
+              isLoadingUpper={rest.isLoading ?? false}
+              onDelete={onDelete}
+              filterFiles={filters.isFilterFiles}
+              filterComments={filters.isFilterComments}
+              comments={comments}
+            />
+            <CommentsInput
+              commentsLength={commentsLength}
+              onSendMessage={handleSendComment}
+              currentUser={user}
+            />
+          </>
+        )}
+      </Card>
+    );
+  },
+);
 
 export default Comments;

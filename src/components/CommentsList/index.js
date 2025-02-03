@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useMemo, useRef} from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import Comment from './Comment';
 import {
   formatDateOnlyHours,
@@ -13,6 +13,10 @@ import useAppApi from '../../api';
 import cn from 'classnames';
 import useUser from '../../hooks/useUser';
 import { getPageTypeFromUrl } from '../../utils/window.utils';
+import useScrollAfterDelete from '../../hooks/useScrollAfterDelete';
+import useGroupByDate from '../../hooks/useGroupByDate';
+import Loader from '../../shared/Loader';
+import useTasksApi from '../../pages/Tasks/tasks.api';
 
 const CommentsList = ({
   comments = {},
@@ -23,79 +27,18 @@ const CommentsList = ({
   onDelete,
 }) => {
   const { user } = useUser();
-  const prevCommentsLength = useRef(Object.keys(comments).length);
   const { deleteComments, isLoading } = useAppApi();
-  const ref = useRef(null)
-  const isRendered = useRef(false)
-  const isDeleting = useRef(false);
-  // Преобразуем объект комментариев в массив и сортируем по дате
 
-
-  const sortedComments = useMemo(() => {
-    return (
-      Object.entries(comments)
-        // Преобразуем строковые даты в объекты Date для корректной сортировки
-        .map(([id, comment]) => ({
-          id,
-          ...comment,
-          date: new Date(comment.date),
-        }))
-        // Сортируем по убыванию (новые сверху)
-        .sort((a, b) => a.date - b.date)
-        // Фильтруем комментарии согласно условиям
-        .filter((comment) => {
-          if (filterComments && !comment.value?.files?.length) {
-            return false;
-          }
-          if (filterFiles && !comment.value?.text) {
-            return false;
-          }
-          return true;
-        })
-    );
-  }, [comments, filterComments, filterFiles]);
-
-  // Группируем комментарии по дате (без учета времени)
-  const groupedComments = useMemo(() => {
-    const groups = {};
-
-    sortedComments.forEach((comment) => {
-      const dateKey = formatDateWithDateAndYear(comment.date);
-      if (!groups[dateKey]) {
-        groups[dateKey] = [];
-      }
-      groups[dateKey].push(comment);
-    });
-
-    return groups;
-  }, [sortedComments]);
-
-  useLayoutEffect(() => {
-    const currentCommentsLength = Object.keys(comments).length;
-
-    if (currentCommentsLength > prevCommentsLength.current && !isDeleting.current) {
-      ref.current?.scrollTo({
-        top: ref.current.scrollHeight,
-        behavior: 'smooth'
-      });
+  const filterFunc = (comment) => {
+    if (filterComments && !comment.value?.files?.length) {
+      return false;
     }
-    isDeleting.current = false;
-    prevCommentsLength.current = currentCommentsLength;
-  }, [comments]);
+    return !(filterFiles && !comment.value?.text);
+  };
+  const { groupedByDate: groupedComments, isLoading: groupedLoading } =
+    useGroupByDate(comments, filterFunc);
 
-  useLayoutEffect(() => {
-    if(!isRendered.current && ref.current){
-      isRendered.current = true
-      ref.current?.scrollTo({
-        bottom: ref.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }, [ref.current]);
-
-  if (!Object.keys(comments).length) {
-    return <div className={cn(styles.empty, cls)}>Нет комментариев</div>;
-  }
+  const { ref, isDeleting, isRendered } = useScrollAfterDelete(comments);
 
   const handleDeleteComment = (commentId) => {
     isDeleting.current = true;
@@ -110,10 +53,13 @@ const CommentsList = ({
     },
   ];
 
+  if (!Object.keys(comments).length && !isLoading) {
+    return <div className={cn(styles.empty, cls)}>Нет комментариев</div>;
+  }
 
   return (
     <div ref={ref} className={cn(cls, styles.commentList)}>
-      <LoadingProvider isLoading={isLoading || isLoadingUpper}>
+      <LoadingProvider isLoading={isLoading || groupedLoading}>
         {Object.entries(groupedComments).map(([date, dateComments]) => (
           <div key={date} className={styles.dateGroup}>
             <h3 className={styles.dateHeader}>{date}</h3>
@@ -122,10 +68,10 @@ const CommentsList = ({
                 <Comment
                   filterComments={filterComments}
                   filterFiles={filterFiles}
-                  hours={formatDateOnlyHours(comment.date)}
+                  hours={formatDateOnlyHours(comment?.date)}
                   sender={comment.sender}
-                  text={comment.value.text}
-                  files={comment.value.files}
+                  text={comment.value?.text ?? ' '}
+                  files={comment.value?.files ?? []}
                   comment={comment}
                   actions={getActions}
                 />

@@ -1,7 +1,11 @@
 // billsApi.js
 
 import useStore from '../../hooks/useStore';
-import {getPageTypeFromUrl, getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
+import {
+  getPageTypeFromUrl,
+  getQueryParam,
+  sanitizeUrlFilters,
+} from '../../utils/window.utils';
 import { mapBillDataToBackend, mapBillFromApi } from './bills.mapper';
 import {
   handleHttpError,
@@ -19,54 +23,52 @@ import { formatDateForUrl } from './components/BillsTable';
 import useStageApi from '../Stages/stages.api';
 import useServiceApi from '../Services/services.api';
 import { useParams } from 'react-router';
-import {periodEnum} from "./bills.filter.conf";
-import {formatDateToQuery} from "../../utils/formate.date";
+import { periodEnum } from './bills.filter.conf';
+import { formatDateToQuery } from '../../utils/formate.date';
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
   const serviceApi = useServiceApi();
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const getBills = (page = 1, from, to,filters=null) => {
-    debugger
+  const getBills = (page = 1, from, to, filters = null) => {
+    debugger;
     resetApiProvider();
     setIsLoading(true);
-    const sanitizedFilters = sanitizeUrlFilters(filters ?? {
-      status:getQueryParam('status'),
-      service_type:getQueryParam('service_type'),
-      date_range:getQueryParam('date_range'),
-      period:getQueryParam('period')
-    })
+    const sanitizedFilters = sanitizeUrlFilters(
+      filters ?? {
+        status: getQueryParam('status'),
+        service_type: getQueryParam('service_type'),
+        date_range: getQueryParam('date_range'),
+        period: getQueryParam('period'),
+      },
+    );
 
     const params = { page };
 
     if (getQueryParam('date_range')) {
-
       const rangeParams = new URLSearchParams(getQueryParam('date_range'));
-      params.from = rangeParams.get('from')
-      params.to = rangeParams.get('to')
+      params.from = rangeParams.get('from');
+      params.to = rangeParams.get('to');
       delete sanitizedFilters.date_range;
       delete sanitizedFilters.period;
-    }
-    else if (sanitizedFilters.period) {
+    } else if (sanitizedFilters.period) {
       params.period = sanitizedFilters.period;
       delete sanitizedFilters.period;
       delete sanitizedFilters.date_range;
-    }
-    else  {
-      params.period = getQueryParam('period',periodEnum.month)
+    } else {
+      params.period = getQueryParam('period', periodEnum.month);
       delete sanitizedFilters.date_range;
       delete sanitizedFilters.period;
-
     }
 
     return http
-        .get('api/bills', {
-          params: {
-           ...params,
-            ...sanitizedFilters // Добавляем параметры фильтрации
-          }
-        })
+      .get('api/bills', {
+        params: {
+          ...params,
+          ...sanitizedFilters, // Добавляем параметры фильтрации
+        },
+      })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedBills = res.body.data.map((bill) => mapBillFromApi(bill));
@@ -78,7 +80,7 @@ const useBillsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const createBill = (body,stageId) => {
+  const createBill = (body, stageId) => {
     const today = startOfDay(new Date());
     const monthAgo = sub(today, { months: 1 });
     const todayFormatted = formatDateForUrl(today);

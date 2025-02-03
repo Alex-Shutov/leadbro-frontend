@@ -51,7 +51,9 @@ export const mapBillDataToBackend = (drafts, changedFieldsSet) => {
         return formatDateToBackend(value);
       case 'bill_items':
         return value.map((el) => ({
-          ...el,
+          name: el.name,
+          price: el.price,
+          quantity: el.quantity,
           measurement_unit: el.measurementUnit,
         }));
       default:

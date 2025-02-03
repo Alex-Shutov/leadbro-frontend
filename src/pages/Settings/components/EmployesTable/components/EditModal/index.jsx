@@ -48,6 +48,7 @@ const EditModal = observer(({ employeId, onClose }) => {
     email: '',
     phone: '',
     gender: genderType.male,
+    hourlyRate: 0,
     password: '',
     confirmPassword: '',
     permissions: [],
@@ -59,15 +60,20 @@ const EditModal = observer(({ employeId, onClose }) => {
   });
 
   const employe = useMemo(() => {
-    return isEditMode ? employeStore.getById(employeId) : localEmploye;
+    if (isEditMode) {
+      const currentEmploye = employeStore.getById(employeId);
+      return currentEmploye || localEmploye;
+    }
+    return localEmploye;
   }, [
     isEditMode,
     employeId,
-    employeStore.services,
+    employeStore,
     employeStore.drafts,
+    employeStore.services,
+    ,
     localEmploye,
   ]);
-
   useEffect(() => {
     if (employeId) {
       setIsEditMode(true); // Режим редактирования
@@ -102,8 +108,8 @@ const EditModal = observer(({ employeId, onClose }) => {
       }
       handleSubmitSnackbar(
         isEditMode
-          ? 'Услуга успешно отредактирована'
-          : 'Услуга успешно создана',
+          ? 'Сотрудник успешно отредактирован'
+          : 'Сотрудник успешно создан',
       );
       onClose(); // Закрываем модалку
     } catch (error) {
@@ -119,9 +125,10 @@ const EditModal = observer(({ employeId, onClose }) => {
     return value === employe.password ? true : 'Пароли должны совпадать';
   };
 
-  const handleReset = () => {
+  const handleReset = (path) => {
     if (isEditMode) {
       employeStore.resetDraft(employeId); // Сброс черновика в режиме редактирования
+      employeStore.clearCurrentEmploye(); // Сброс черновика в режиме редактирования
     }
     onClose(); // Закрытие модалки
   };
@@ -283,6 +290,24 @@ const EditModal = observer(({ employeId, onClose }) => {
             label={'Телефон'}
           />
         </div>
+        <div className={styles.flex}>
+          <TextInput
+            placeholder={'Ставка в час'}
+            onChange={({ target }) =>
+              handleChange(
+                isEditMode ? 'hourlyRate' : 'hourlyRate',
+                target.value,
+              )
+            }
+            name={isEditMode ? 'hourlyRate' : 'hourlyRate'}
+            value={isEditMode ? employe.hourlyRate : employe.hourlyRate}
+            edited={true}
+            type={'number'}
+            className={styles.input}
+            label={'Ставка в час'}
+          />
+          <div />
+        </div>
         {!employeId && (
           <div className={styles.flex}>
             <TextInput
@@ -406,6 +431,8 @@ const PermissionsSection = ({ permissions = [], onChange, isEditMode }) => {
       permissions: {
         'access employees': 'Доступ к сотрудникам',
         'access legal entities': 'Доступ к юр. лицам',
+        'edit time trackings': 'Редактирование трекера',
+        'view all time spendings': 'Доступ ко всем затратам',
       },
     },
   };

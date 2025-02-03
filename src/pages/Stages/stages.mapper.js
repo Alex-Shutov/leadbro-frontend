@@ -5,6 +5,7 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { format } from 'date-fns';
 import { taskableTypes } from '../Tasks/tasks.types';
 import { formatDateToBackend } from '../../utils/formate.date';
+import {mapTimeTrackingsFromApi} from "../TimeTracking/timeTracking.mapper";
 
 export const mapStageFromApi = (stageData, tasksData) => {
   return {
@@ -95,6 +96,7 @@ const mapTaskFromApi = (task) => {
     type: task?.type,
     auditors: task.auditors ? task.auditors.map(mapManager) : [],
     executors: task.performer ? [task.performer].map(mapManager) : [],
+    timeTrackings: mapTimeTrackingsFromApi(task?.time_trackings || []),
     responsibles: task.responsible ? mapManager(task.responsible) : [],
     deadline: task.deadline ? new Date(task.deadline) : null,
     deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не указано',

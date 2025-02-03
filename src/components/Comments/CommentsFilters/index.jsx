@@ -3,7 +3,7 @@ import styles from './Filters.module.sass'
 import Icon from "../../../shared/Icon";
 import cn from "classnames";
 
-const Index = ({commentsLength,filesLength,filterFiles,filterComments,filterAll}) => {
+const Index = ({commentsLength,filesLength,filterFiles,filterComments,filterAll,openTimeTracking,timeTrackingsLength}) => {
     const [activeButton,setActiveButton ] = useState('all')
     const handleChangeActiveButton = (value) => {
         setActiveButton(value)
@@ -34,6 +34,16 @@ const Index = ({commentsLength,filesLength,filterFiles,filterComments,filterAll}
                 <Icon fillRule={'evenodd'}  viewBox={'0 0 24 24'} size={24} name={'file-outline'} />
                 <span className={cn(styles.label,styles.files)}>Файлы <span className={styles.count}>{filesLength}</span></span>
             </div>
+            { timeTrackingsLength == null ? <React.Fragment/> : <div
+                onClick={() => {
+                    handleChangeActiveButton('time-tracking');
+                    openTimeTracking()
+                }}
+                className={cn(styles.tab, { [styles.active]: activeButton === 'time-tracking' })}
+            >
+                <Icon viewBox={'0 0 18 18'}  size={24} name={'dollar'} />
+                <span className={styles.label}>Тайм-трекинг <span className={styles.count}>{timeTrackingsLength}</span></span>
+            </div>}
         </div>
     );
 };

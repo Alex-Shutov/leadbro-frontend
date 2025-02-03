@@ -18,6 +18,7 @@
     "body-scroll-lock": "^4.0.0-beta.0",
     "classnames": "^2.5.1",
     "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0",
     "dompurify": "^3.2.0",
     "draft-js": "^0.11.7",
     "editorjs-break-line": "^1.0.10",
@@ -64,7 +65,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "docker-prod-up": "docker-compose -f docker-compose.prod.yml up --build"
+    "docker-prod-up": "docker-compose -f docker-compose.stage.yml up --build"
   },
   "eslintConfig": {
     "extends": [

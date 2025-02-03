@@ -57,8 +57,7 @@ http.interceptors.request.use(
     }
 );
 
-http.interceptors.response.use(
-    (response) => response,
+http.interceptors.response.use((response) => response,
     (error) => {
       if (error.response?.status === 403) {
         // Сохраняем текущий URL для возврата

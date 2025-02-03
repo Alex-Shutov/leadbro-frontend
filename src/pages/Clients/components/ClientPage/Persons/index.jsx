@@ -74,7 +74,7 @@ const ClientPersons = ({
                   placeholder={'ФИО...'}
                   classInput={styles.fioInput}
                   type={'text'}
-                  value={`${values?.last_name ?? ''} ${values?.name ?? ''} ${values?.middle_name ? values.middle_name : ''}`}
+                  value={`${values?.middle_name ? values.middle_name : ''} ${values?.name ?? ''} ${values?.last_name ?? ''}`}
                   actions={{
                     ...defaultActions(
                       `contactPersons.${values.id}.fio`,

@@ -76,7 +76,7 @@ const useTasksApi = () => {
   const getTasksByRole = useCallback(async () => {
     resetApiProvider();
     setIsLoading(true);
-
+    debugger;
     // Получаем все параметры из URL
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -87,17 +87,23 @@ const useTasksApi = () => {
     const performerId = searchParams.get('performer');
     const creatorId = searchParams.get('creator');
     const taskableType = searchParams.get('taskable_type');
-    if ((!filterRole || filterRole==='all') && !status && !types && !performerId && !creatorId && !taskableType){
+    if (
+      (!filterRole || filterRole === 'all') &&
+      !status &&
+      !types &&
+      !performerId &&
+      !creatorId &&
+      !taskableType
+    ) {
       return http
-          .get(`api/tasks/mine`, {
-          })
-          .then(handleHttpResponse)
-          .then((res) => {
-            const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
-            tasksStore.setTasks(mappedTasks);
-            return mappedTasks;
-          })
-          .finally(() => setIsLoading(false));
+        .get(`api/tasks/mine`, {})
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
+          tasksStore.setTasks(mappedTasks);
+          return mappedTasks;
+        })
+        .finally(() => setIsLoading(false));
     }
     // Если есть фильтр по роли, используем специальный endpoint
     if (filterRole && filterRole !== 'all') {
@@ -109,36 +115,35 @@ const useTasksApi = () => {
       };
 
       return http
-          .get(`api/tasks/mine/${roleMapping[filterRole]}`, {
-          })
-          .then(handleHttpResponse)
-          .then((res) => {
-            const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
-            tasksStore.setTasks(mappedTasks);
-            return mappedTasks;
-          })
-          .finally(() => setIsLoading(false));
-    }
-
-    // Иначе используем общий endpoint с параметрами
-    return http
-        .get('api/tasks', {
-          params: {
-            status,
-            type: types,
-            performer_id: performerId,
-            creator_id: creatorId,
-            taskable_type: taskableType
-          }
-        })
+        .get(`api/tasks/mine/${roleMapping[filterRole]}`, {})
         .then(handleHttpResponse)
         .then((res) => {
           const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
           tasksStore.setTasks(mappedTasks);
           return mappedTasks;
         })
-        .catch(handleShowError)
         .finally(() => setIsLoading(false));
+    }
+
+    // Иначе используем общий endpoint с параметрами
+    return http
+      .get('api/tasks', {
+        params: {
+          status,
+          type: types,
+          performer_id: performerId,
+          creator_id: creatorId,
+          taskable_type: taskableType,
+        },
+      })
+      .then(handleHttpResponse)
+      .then((res) => {
+        const mappedTasks = res.body.data.map((e) => mapTaskFromApi(e));
+        tasksStore.setTasks(mappedTasks);
+        return mappedTasks;
+      })
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   }, []);
 
   const createTask = useCallback((updateData) => {
@@ -147,7 +152,6 @@ const useTasksApi = () => {
       .post('/api/tasks', { ...updateData, stage_id: stageId })
       .then(handleHttpResponse)
       .then((res) => {
-
         const newTask = mapTaskFromApi(res.body.data);
         tasksStore.setTasks([...tasksStore.tasks, newTask]);
       })
@@ -162,7 +166,6 @@ const useTasksApi = () => {
       drafts = stagesStore.drafts[stageId],
       props = stagesStore.changedProps,
     ) => {
-
       updateData = updateData ?? mapStageDataToBackend(drafts, props, id);
 
       resetApiProvider();

@@ -2,7 +2,7 @@ import { makeAutoObservable, action, observable } from 'mobx';
 import {
     changeDraft,
     removeDraft,
-    resetDraft,
+    resetDraft, TimeTrackingStoreMixin,
     updateDraftObject,
     updateObjectRecursively,
 } from '../../../utils/store.utils';
@@ -98,6 +98,9 @@ export class DealsStore {
     setCurrentDeal(deal) {
         this.currentDeal = deal;
     }
+    clearCurrentDeal() {
+        this.currentDeal=null
+    }
 
     addChangesProps(name) {
         this.changedProps.add(name);
@@ -105,5 +108,17 @@ export class DealsStore {
 
     clearChangesSet() {
         this.changedProps = new Set();
+    }
+
+    updateTimeTracking(taskId, timeTrackingId, updatedValue) {
+        TimeTrackingStoreMixin.updateTimeTracking.call(this, taskId, timeTrackingId, updatedValue, 'tasks.');
+    }
+
+    addTimeTracking(taskId, value) {
+        TimeTrackingStoreMixin.addTimeTracking.call(this, taskId, value, 'tasks.');
+    }
+
+    deleteTimeTracking(taskId, timeTrackingId) {
+        TimeTrackingStoreMixin.deleteTimeTracking.call(this, taskId, timeTrackingId, 'tasks.');
     }
 }

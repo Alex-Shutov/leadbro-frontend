@@ -13,6 +13,7 @@ import Calendar from '../../../../../../../../../../shared/Datepicker';
 import ValuesSelector from '../../../../../../../../../../shared/Selector';
 import useMembers from '../../../../../../../../../Members/hooks/useMembers';
 import { tasksTypesRu } from '../../../../../../../../../Tasks/tasks.types';
+import LabeledParagraph from '../../../../../../../../../../shared/LabeledParagraph';
 
 const Index = ({
   data: {
@@ -25,6 +26,7 @@ const Index = ({
     deadline,
     deadlineTime,
     actualTime,
+    cost,
   },
   isEditMode,
   types,
@@ -158,14 +160,33 @@ const Index = ({
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
-      <TextInput
-
-        type={'number'}
+      {/*<TextInput*/}
+      {/*  disabled={true}*/}
+      {/*  type={'number'}*/}
+      {/*  label={'Фактическое время, ч'}*/}
+      {/*  name={'actualTime'}*/}
+      {/*  onChange={({ target }) => handleChange(target.name, target.value)}*/}
+      {/*  value={convertToHours(actualTime)}*/}
+      {/*  className={styles.input}*/}
+      {/*/>*/}
+      <LabeledParagraph
+        labelClass={styles.label}
         label={'Фактическое время, ч'}
-        name={'actualTime'}
-        onChange={({ target }) => handleChange(target.name, target.value)}
-        value={convertToHours(actualTime)}
-        className={styles.input}
+        text={convertToHours(actualTime) || 'Не указано'}
+      />
+      {/*<TextInput*/}
+      {/*    disabled={true}*/}
+
+      {/*    label={'Стоимость задачи'}*/}
+      {/*    name={'actualTime'}*/}
+      {/*    // onChange={({ target }) => handleChange(target.name, target.value)}*/}
+      {/*    value={cost}*/}
+      {/*    className={styles.input}*/}
+      {/*/>*/}
+      <LabeledParagraph
+        labelClass={styles.label}
+        label={'Стоимость задачи'}
+        text={cost ?? 'Не указано'}
       />
 
       <ValuesSelector

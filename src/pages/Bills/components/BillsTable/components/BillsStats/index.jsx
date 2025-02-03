@@ -1,6 +1,7 @@
 import useStore from '../../../../../../hooks/useStore';
 import BillStatsWidget from '../../../../../../shared/Widget';
 import styles from './styles.module.sass';
+import StatsWidget from "../../../../../../shared/Widget";
 const BillStats = () => {
   const { billsStore } = useStore();
   if (!billsStore.stats) return <></>;
@@ -8,13 +9,13 @@ const BillStats = () => {
 
   return (
     <div className={styles.container}>
-      <BillStatsWidget
+      <StatsWidget
         title="Всего счетов на сумму"
         sum={total}
         showChart={false}
         icon={'/coins.svg'}
       />
-      <BillStatsWidget
+      <StatsWidget
         type={'accept'}
         title="Оплачено счетов на сумму"
         sum={paid.sum}
@@ -22,7 +23,7 @@ const BillStats = () => {
         showChart={true}
         icon={'/credit-check.png'}
       />
-      <BillStatsWidget
+      <StatsWidget
         type={'reject'}
         title="Просрочено оплата на сумму"
         sum={expired.sum}

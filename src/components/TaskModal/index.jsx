@@ -20,12 +20,14 @@ import useParamSearch from '../../hooks/useParamSearch';
 import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../shared/Button/Delete';
 import Icon from '../../shared/Icon';
+import Loader from "../../shared/Loader";
 
 const draftSet = new Set();
 
 const TaskEditModal = observer(
   ({
     // Базовые пропсы
+      id,
     data,
     handleClose,
     // Пропсы для режима работы со стейджами
@@ -39,20 +41,21 @@ const TaskEditModal = observer(
     // Пропсы для режима работы с тасками
     taskStore,
     taskApi,
+      isLoading
   }) => {
-    const [isEditMode, _] = useState(Boolean(data));
+    const isEditMode = Boolean(data);
     const { hasPermission } = usePermissions();
     const navigate = useNavigate();
     const location = useLocation();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const pageFrom = useParamSearch('page' ?? 1);
-
+    console.log(data,isLoading,'test','task')
     const mode = useMemo(() => {
       if (stage) return 'stage';
       if (deal) return 'deal';
       return 'task';
     }, [stage, deal]);
-
+    debugger
     // Получаем контекстные данные в зависимости от режима
     const contextData = useMemo(() => {
       switch (mode) {
@@ -130,18 +133,22 @@ const TaskEditModal = observer(
 
     // Получаем актуальные данные задачи в зависимости от режима
     const taskData = useMemo(() => {
-      if (!isEditMode) return localTask;
+      if (!isEditMode && !id) return localTask;
+
       if (mode !== 'task') {
-        return Object.values(
-          contextData.store.getById(contextData.id)?.tasks,
+
+        const taskFromContext = Object.values(
+            contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
-        // return data;
+        if (taskFromContext) {
+          const newTaskWithTimeTracking = {...taskFromContext,timeTrackings: taskStore.currentTask.timeTrackings};
+          return newTaskWithTimeTracking
+        }
       }
-      return taskStore.getById(data.id);
-    }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts]);
-
+      return taskStore.getById(data?.id??Number(id));
+    }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts,taskStore.currentTask,id]);
     const [comments, setComments] = useState(taskData?.comments ?? {});
-
+    debugger
     const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     const canNavigate = useMemo(
@@ -333,7 +340,13 @@ const TaskEditModal = observer(
         .writeText(`${window.location.origin}/tasks?taskId=${taskData?.id}`)
         .then((r) => handleInfo('Ссылка на задачу скопирована!'));
     };
-
+    //
+    // if (isLoading){
+    //   return <FormValidatedModal
+    //       size={mode !== 'task' ? 'lg' : 'md_up'}>
+    //     <Loader/>
+    //   </FormValidatedModal>
+    // }
     return (
       taskData && (
         <>
@@ -383,6 +396,7 @@ const TaskEditModal = observer(
             </div>
             <div className={styles.gridContainer}>
               <TaskDescriptionPart
+                  isLoading={isLoading}
                 selectedStatus={taskData.taskStatus}
                 prefix={
                   isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
@@ -395,7 +409,10 @@ const TaskEditModal = observer(
               />
               {isEditMode && (
                 <div className={styles.comments}>
-                  <Comments
+                  {isLoading ? <Loader /> : <Comments
+                      mode={mode}
+                      contextStore={contextData.store}
+                      timeTrackings={taskData?.timeTrackings}
                     onDelete={(commentId) =>
                       taskApi
                         .getTaskById(data?.id)
@@ -410,7 +427,8 @@ const TaskEditModal = observer(
                         : ''
                     }
                     onChange={handleAddComment}
-                  />
+                      isLoading={isLoading}
+                  />}
                 </div>
               )}
               <TaskTypePart

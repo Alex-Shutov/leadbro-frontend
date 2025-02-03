@@ -1,55 +1,83 @@
-// TotalBillsWidget.js
 import React from 'react';
 import styles from './styles.module.sass';
 import {
-  CircularProgressbar,
-  buildStyles,
-  CircularProgressbarWithChildren,
+    CircularProgressbarWithChildren,
+    buildStyles,
 } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import cn from 'classnames';
 
-const BillStatsWidget = ({
-  title,
-  sum,
-  percent,
-  showChart,
-  color,
-  icon,
-  type,
-}) => {
-  return (
-    <div className={styles.widget}>
-      <div className={styles.icon}>
-        {showChart ? (
-          <CircularProgressbarWithChildren
-            value={percent}
-            // text={`${percent}%`}
-            strokeWidth={2}
-            styles={buildStyles({
-              textColor: '#ffffff',
-              pathTransitionDuration: 0.5,
-              pathColor: type === 'accept' ? '#83BF6E' : '#C31212',
-              trailColor: '#EFEFEF',
-            })}
-          >
-            <img className={styles.icon_inner} src={icon} />
-          </CircularProgressbarWithChildren>
-        ) : (
-          <img className={styles.icon_inner} src={icon} alt={title} />
-        )}
-      </div>
-      <div className={styles.content}>
-        <div className={cn(styles.title)}>{title}</div>
-        <div className={cn(styles.value)}>
-          {sum.toLocaleString()} ₽
-          {!!percent && (
-            <span className={cn(styles.percent, styles[type])}>{percent}%</span>
-          )}
+const StatsWidget = ({
+                         title,
+                         sum,
+                         percent,
+                         showChart,
+                         color,
+                         icon,
+                         type,
+                         value
+                     }) => {
+    const renderIcon = () => {
+        if (typeof icon === 'string') {
+            return <img className={styles.icon_inner} src={icon} alt={title} />;
+        }
+        return <div className={styles.icon_inner}>{icon}</div>;
+    };
+
+    const renderValue = () => {
+        const elements = [];
+
+        if (sum) {
+            elements.push(
+                <span key="sum">{sum.toLocaleString()} ₽</span>
+            );
+        }
+
+        if (value) {
+            elements.push(
+                <span key="value">{value}</span>
+            );
+        }
+
+        if (percent) {
+            elements.push(
+                <span key="percent" className={cn(styles.percent, styles[type])}>
+          {percent}%
+        </span>
+            );
+        }
+
+        return elements;
+    };
+
+    return (
+        <div className={styles.widget}>
+            <div className={styles.icon}>
+                {showChart ? (
+                    <CircularProgressbarWithChildren
+                        value={percent}
+                        strokeWidth={2}
+                        styles={buildStyles({
+                            textColor: '#ffffff',
+                            pathTransitionDuration: 0.5,
+                            pathColor: type === 'accept' ? '#83BF6E' : '#C31212',
+                            trailColor: '#EFEFEF',
+                        })}
+                    >
+                        {renderIcon()}
+                    </CircularProgressbarWithChildren>
+                ) : (
+                    renderIcon()
+                )}
+            </div>
+            <div className={styles.content}>
+                <div className={cn(styles.title)}>{title}</div>
+                <div className={cn(styles.value)}>
+                    {renderValue()}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default BillStatsWidget;
+export default StatsWidget;

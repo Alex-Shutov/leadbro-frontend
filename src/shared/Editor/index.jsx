@@ -14,6 +14,7 @@ const Editor = createReactEditorJS();
 const Index = forwardRef(
   ({ onChange, initialHTML, name, placeholder }, ref) => {
     const editorCore = useRef(null);
+
     initialHTML = /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML)
       ? initialHTML
       : `<p>${initialHTML}</p>`;
@@ -98,33 +99,33 @@ const Index = forwardRef(
         console.error('Ошибка сохранения данных редактора:', error);
       }
     };
-    const memo = useMemo(
-      () => (
+    // const memo = useMemo(
+    //   () => (
+    //     <Editor
+    //       ref={ref ?? null}
+    //       placeholder={placeholder}
+    //       onInitialize={handleInitialize}
+    //       tools={EDITOR_JS_TOOLS}
+    //       defaultValue={{
+    //         blocks: htmlToBlocks(initialHTML),
+    //       }}
+    //       onChange={handleEditorChange}
+    //     />
+    //   ),
+    //   [initialHTML],
+    // );
+    return useMemo(() => (
         <Editor
-          ref={ref ?? null}
-          placeholder={placeholder}
-          onInitialize={handleInitialize}
-          tools={EDITOR_JS_TOOLS}
-          defaultValue={{
-            blocks: htmlToBlocks(initialHTML),
-          }}
-          onChange={handleEditorChange}
+            ref={ref ?? null}
+            placeholder={placeholder}
+            onInitialize={handleInitialize}
+            tools={EDITOR_JS_TOOLS}
+            defaultValue={{
+                blocks: htmlToBlocks(initialHTML),
+            }}
+            onChange={handleEditorChange}
         />
-      ),
-      [initialHTML],
-    );
-    return (
-      <Editor
-        ref={ref ?? null}
-        placeholder={placeholder}
-        onInitialize={handleInitialize}
-        tools={EDITOR_JS_TOOLS}
-        defaultValue={{
-          blocks: htmlToBlocks(initialHTML),
-        }}
-        onChange={handleEditorChange}
-      />
-    );
+    ), [initialHTML, placeholder, ref, handleInitialize, handleEditorChange]);
   },
 );
 

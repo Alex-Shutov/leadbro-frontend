@@ -82,7 +82,7 @@ export const sourceType = {
   identification: 'identification',
   social_networks: 'social_networks',
   events: 'events',
-  other: 'other',
+  other_client: 'other_client',
 };
 
 export const sourceTypeRu = {
@@ -97,5 +97,5 @@ export const sourceTypeRu = {
   identification: 'Идентификации',
   social_networks: 'Чаты и соц.сети',
   events: 'Мероприятия',
-  other: 'Другое',
+  other_client: 'Другой клиент',
 };

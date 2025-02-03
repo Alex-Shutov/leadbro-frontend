@@ -24,6 +24,7 @@ const withTaskModalHandler = (WrappedComponent) => {
       const [searchParams, setSearchParams] = useSearchParams();
       const navigate = useNavigate();
       const location = useLocation();
+      const [isLoading,setIsLoading] = useState(false);
       const [taskData, setTaskData] = useState(null);
       const [isModalOpen, setIsModalOpen] = useState(false);
       // const
@@ -55,68 +56,82 @@ const withTaskModalHandler = (WrappedComponent) => {
 
       // Загрузка данных задачи
       const loadTaskData = async (taskId) => {
-        try {
-          console.log('Loading task:', taskId); // Для отладки
-          const task = await taskApi.getTaskById(taskId);
-
-          // // Проверки принадлежности
-          // if (deal && task.deal?.id !== deal.id) {
-          //   handleError('Задача не принадлежит текущей сделке');
-          //   return null;
-          // }
-
-          // if (stage && task.stage?.id !== stage.id) {
-          //   handleError('Задача не принадлежит текущему этапу');
-          //   return null;
-          // }
-
-          return task;
-        } catch (error) {
-          console.error('Error loading task:', error);
-          handleError('Ошибка при загрузке задачи');
-          return null;
-        }
+          try {
+              setIsLoading(true);
+              const task = await taskApi.getTaskById(taskId);
+              setTaskData(task);
+          } catch (error) {
+              console.error('Error loading task:', error);
+              handleError('Ошибка при загрузке задачи');
+          } finally {
+              setIsLoading(false);
+          }
       };
 
       // Обработка taskId из URL при монтировании
       useEffect(() => {
-        const handleTaskFromUrl = async () => {
           const taskId = searchParams.get('taskId');
-          if (!taskId) return;
-
-          const task = await loadTaskData(taskId);
-          if (task) {
-            setTaskData(task);
-            setIsModalOpen(true);
+          if (taskId) {
+              setIsModalOpen(true);
+              loadTaskData(taskId);
           }
-        };
+        // const handleTaskFromUrl = async () => {
+        //   const taskId = searchParams.get('taskId');
+        //   if (!taskId) return;
+        //
+        //   const task = await loadTaskData(taskId);
+        //   if (task) {
+        //     setTaskData(task);
+        //     setIsModalOpen(true);
+        //   }
+        // };
+        //
+        // handleTaskFromUrl();
 
-        handleTaskFromUrl();
       }, [searchParams.get('taskId')]);
 
-      const handleEditTask = async (task) => {
-        if (!task) {
-          setTaskData(null);
-          setIsModalOpen(true);
-          return;
-        }
+        const handleEditTask = (task) => {
+            if (!task) {
+                setTaskData(null);
+                setIsModalOpen(true);
+                return;
+            }
 
-        const taskId = task.id;
-
-        const loadedTask = await loadTaskData(taskId);
-
-        if (loadedTask) {
-          setTaskData(loadedTask);
-          setIsModalOpen(true);
-          updateSearchParams({ taskId: taskId.toString() });
-        }
-      };
-
-      const handleCloseModal = () => {
-        setTaskData(null);
-        setIsModalOpen(false);
-        updateSearchParams({ taskId: null });
-      };
+            setIsModalOpen(true);
+            updateSearchParams({ taskId: task.id.toString() });
+            loadTaskData(task.id);
+        };
+      // const handleEditTask = async (task) => {
+      //   if (!task) {
+      //     setTaskData(null);
+      //     setIsModalOpen(true);
+      //     return;
+      //   }
+      //
+      //
+      //
+      //   const taskId = task.id;
+      //
+      //   const loadedTask = await loadTaskData(taskId);
+      //
+      //   if (loadedTask) {
+      //     setTaskData(loadedTask);
+      //     setIsModalOpen(true);
+      //     updateSearchParams({ taskId: taskId.toString() });
+      //   }
+      // };
+      //
+      // const handleCloseModal = () => {
+      //   setTaskData(null);
+      //   setIsModalOpen(false);
+      //   updateSearchParams({ taskId: null });
+      // };
+        const handleCloseModal = () => {
+            setTaskData(null);
+            setIsLoading(false);
+            setIsModalOpen(false);
+            updateSearchParams({ taskId: null });
+        };
 
       const handleCreateTask = () => {
         setTaskData(null);
@@ -134,6 +149,8 @@ const withTaskModalHandler = (WrappedComponent) => {
           />
           {isModalOpen && (
             <TaskEditModal
+                id={searchParams.get('taskId')}
+                isLoading={isLoading}
               data={taskData}
               handleClose={handleCloseModal}
               stage={stage}
