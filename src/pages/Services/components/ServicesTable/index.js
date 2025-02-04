@@ -16,14 +16,14 @@ import styles from './Table.module.sass';
 import useStore from '../../../../hooks/useStore';
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import { handleError, handleInfo } from '../../../../utils/snackbar';
-import {createServicesFilters} from "../../services.filter.conf";
-import useAppApi from "../../../../api";
-import {FiltersProvider} from "../../../../providers/FilterProvider";
+import { createServicesFilters } from '../../services.filter.conf';
+import useAppApi from '../../../../api';
+import { FiltersProvider } from '../../../../providers/FilterProvider';
 
 const ServicesTable = observer(() => {
   const { servicesStore } = useStore();
   const api = useServiceApi();
-  const appApi = useAppApi()
+  const appApi = useAppApi();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentService, setCurrentService] = useState(null);
   const [serviceToDelete, setServiceToDelete] = useState(null);
@@ -62,7 +62,7 @@ const ServicesTable = observer(() => {
   };
 
   const getActions = (data) => [
-    { label: 'Скачать', onClick: () => console.log('Скачать') },
+    // { label: 'Скачать', onClick: () => console.log('Скачать') },
     { label: 'Редактировать', onClick: () => handleEdit(data) },
     {
       label: 'Удалить',
@@ -181,8 +181,8 @@ const ServicesTable = observer(() => {
             filter: {
               title: 'Фильтр',
               config: createServicesFilters(appApi),
-              onChange: handleFilterChange
-            }
+              onChange: handleFilterChange,
+            },
           }}
           title="Услуги"
           data={paginatedData}
