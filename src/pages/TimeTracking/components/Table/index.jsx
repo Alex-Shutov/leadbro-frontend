@@ -27,6 +27,7 @@ import EditModal from '../../../Settings/components/EmployesTable/components/Edi
 import ConfirmationModal from '../../../../components/ConfirmationModal';
 import useEmployesApi from '../../../Settings/api/employes.api';
 import useAppApi from '../../../../api';
+import { getQueryParam } from '../../../../utils/window.utils';
 
 const TimeTrackingsTable = observer(() => {
   const { timeTrackingStore } = useStore();
@@ -48,6 +49,7 @@ const TimeTrackingsTable = observer(() => {
 
   const fetchTimeSpending = useCallback(
     (page) => {
+      debugger;
       api.getTimeTrackings(page, from, to);
     },
     [from, to],
@@ -84,8 +86,10 @@ const TimeTrackingsTable = observer(() => {
 
   const handleFilterChange = async (filters) => {
     try {
-      await api.getTimeTrackings(1, from, to, filters);
-      handlePageChange(1);
+      if (filters.date_range && !getQueryParam('date_range')) return;
+      await api
+        .getTimeTrackings(currentPage ?? 1, from, to, filters)
+        .then(() => handlePageChange(1));
     } catch (error) {
       handleError('Ошибка при применении фильтров:', error);
     }
@@ -176,7 +180,7 @@ const TimeTrackingsTable = observer(() => {
             headerActions={{
               sorting: true,
               settings: true,
-              filter: hasAllTimeSpendingsAccess && {
+              filter: {
                 classNameBody: styles.filter_container,
                 title: 'Фильтр',
                 config: createTimeSpendingFilters({
