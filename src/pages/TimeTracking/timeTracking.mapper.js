@@ -8,9 +8,10 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 export const mapTimeTrackingsFromApi = (apiResponse) => {
   if (!apiResponse) return {};
 
-  return apiResponse.reduce((acc, entry) => {
+  return apiResponse.reduce((acc, entry,index) => {
     acc[entry.id] = {
       id: entry.id,
+      order:index,
       date: new Date(convertUTCToLocal(entry.created_at)),
       timeSpent: {
         minutes: entry.minutes - Math.floor(entry.minutes / 60) * 60,
@@ -21,7 +22,7 @@ export const mapTimeTrackingsFromApi = (apiResponse) => {
       employee: mapEmployeesFromApi(entry.employee),
     };
     return acc;
-  }, {});
+  }, {})
 };
 
 export const mapTimeTrackingDataToBackend = (
