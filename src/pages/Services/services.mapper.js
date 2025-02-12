@@ -49,7 +49,7 @@ const mapManager = (manager) => {
 };
 
 // Маппинг команды участников
-const mapParticipants = (participants) => {
+export const mapParticipants = (participants) => {
   return participants.map((participant) => ({
     id: participant.id,
     name: participant.name,

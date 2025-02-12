@@ -20,7 +20,9 @@ const useDealsApi = () => {
   const getDeals = (page = 1, filters = {}) => {
     resetApiProvider();
     setIsLoading(true);
+
     const sanitizedFilters = sanitizeUrlFilters(filters)
+    debugger
     return http
       .get('/api/deals', { params: { page, ...sanitizedFilters } })
       .then(handleHttpResponse)

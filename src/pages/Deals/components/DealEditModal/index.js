@@ -271,22 +271,24 @@ const DealEditModal = observer(
             onChange={(e) =>
               handleChange(
                 'auditor',
-                e.length ? members.find((el) => el.id === e[0]?.value) : null,
+                e.length ? members.filter((member) =>
+                    e.some((option) => option.value === member.id),
+                ) : [],
               )
             }
-            isMulti={false}
+            isMulti={true}
             label="Аудитор"
             options={members.map((el) => ({
               value: el.id,
               label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
             }))}
             value={
-              deal.auditor
-                ? {
-                    value: deal.auditor.id,
-                    label: `${deal?.auditor?.surname ?? deal?.auditor?.lastName ?? ''} ${deal?.auditor?.name ?? ''} ${deal?.auditor?.middleName ?? ''}`,
-                  }
-                : null
+              deal.auditor ?
+                  deal.auditor.map((el) => ({
+                    value: el.id,
+                    label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`
+              }))
+                : []
             }
           />
           <ValuesSelector

@@ -35,16 +35,26 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
           role: apiDeal?.responsible.position.name,
         }
       : null,
-    auditor: apiDeal?.auditor
-      ? {
-          id: apiDeal?.auditor.id,
-          name: apiDeal?.auditor.name,
-          middleName: apiDeal?.auditor.middle_name,
-          lastName: apiDeal?.auditor.last_name,
-          image: loadAvatar(apiDeal?.auditor.avatar),
-          role: apiDeal?.auditor.position.name,
-        }
-      : null,
+      auditor: apiDeal?.auditor
+          ? Array.isArray(apiDeal.auditor)
+              ? apiDeal.auditor.map(auditor => ({
+                  id: auditor.id,
+                  name: auditor.name,
+                  middleName: auditor.middle_name,
+                  lastName: auditor.last_name,
+                  image: loadAvatar(auditor.avatar),
+                  role: auditor.position.name,
+              }))
+              : [{
+                  id: apiDeal?.auditor.id,
+                  name: apiDeal?.auditor.name,
+                  middleName: apiDeal?.auditor.middle_name,
+                  lastName: apiDeal?.auditor.last_name,
+                  image: loadAvatar(apiDeal?.auditor.avatar),
+                  role: apiDeal?.auditor.position.name,
+              },
+              ]
+          : [],
     manager: apiDeal?.manager
       ? {
           id: apiDeal?.manager.id,
@@ -82,12 +92,13 @@ export const mapDealDataToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value) => {
     switch (key) {
       case 'responsible_id':
-      case 'auditor_id':
       case 'manager_id':
       case 'company_id':
         return value ? Number(value.id) : null;
       case 'price':
         return Number(value);
+      case 'auditor_id':
+          return value.map((el) => el.id);
       default:
         return value;
     }

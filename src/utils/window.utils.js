@@ -1,5 +1,6 @@
 import { taskableTypes } from '../pages/Tasks/tasks.types';
 import {camelToSnakeCase} from "./mapper";
+import {formatDateToQuery} from "./formate.date";
 
 export const getQueryParam = (param, defaultValue = null) => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -50,9 +51,8 @@ export const removeLastPathSegment = (pathname) => {
 
 export const sanitizeUrlFilters = (filters) => {
   const sanitizedFilters = {};
-
+  const dateFields = ['created_at'];
   Object.entries(filters).forEach(([key, value]) => {
-    // Проверяем на null, undefined, пустую строку и пустой массив
     if (
         value === null ||
         value === undefined ||
@@ -63,11 +63,13 @@ export const sanitizeUrlFilters = (filters) => {
     }
 
     const snakeKey = camelToSnakeCase(key);
-
+    if (dateFields.includes(snakeKey) ) {
+      sanitizedFilters[snakeKey] = formatDateToQuery(value);
+      return;
+    }
     if (Array.isArray(value)) {
       if (value[0]?.hasOwnProperty('value')) {
         const arrayValue = value.map(item => item.value).join(',');
-        // Добавляем только если есть значение после join
         if (arrayValue) {
           sanitizedFilters[snakeKey] = arrayValue;
         }
@@ -78,12 +80,10 @@ export const sanitizeUrlFilters = (filters) => {
         }
       }
     } else if (value?.hasOwnProperty('value')) {
-      // Добавляем только если value не пустой
       if (value.value) {
         sanitizedFilters[snakeKey] = value.value;
       }
     } else {
-      // Добавляем только непустые значения
       if (value) {
         sanitizedFilters[snakeKey] = value;
       }

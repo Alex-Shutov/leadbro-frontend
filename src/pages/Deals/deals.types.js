@@ -82,7 +82,6 @@ export const sourceType = {
   identification: 'identification',
   social_networks: 'social_networks',
   events: 'events',
-  other_client: 'other_client',
 };
 
 export const sourceTypeRu = {
@@ -91,11 +90,10 @@ export const sourceTypeRu = {
   target: 'Таргетированная реклама',
   cold_call: 'Холодный звонок',
   incoming_call: 'Входящий звонок',
-  other_client: 'Другой клиент',
   word_of_mouth: 'Сарафанное радио',
   partners: 'Партнеры',
   identification: 'Идентификации',
   social_networks: 'Чаты и соц.сети',
   events: 'Мероприятия',
-  other_client: 'Другой клиент',
+  other_client: 'Текущий клиент',
 };

@@ -16,7 +16,7 @@ import { useSelectorEmployeePositions } from '../../../../../../hooks/useSelecto
 import TextInput from '../../../../../../shared/TextInput';
 import Radio from '../../../../../../shared/Radio';
 import { genderType, genderTypeRu } from '../../../../settings.types';
-import cn from 'classnames';
+import cn from 'classnames' ;
 import { formatDateToBackend } from '../../../../../../utils/formate.date';
 import RadioGenderInput from '../../../../../../components/RadioGenderInput';
 import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
