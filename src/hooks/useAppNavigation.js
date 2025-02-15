@@ -49,6 +49,11 @@ const useAppNavigation = () => {
       url: '/timetrackings',
     },
     {
+      title: 'Wiki',
+      action: () => {},
+      url: 'https://wiki.lead-bro.ru',
+    },
+    {
       button: true,
       icon: (
         <img

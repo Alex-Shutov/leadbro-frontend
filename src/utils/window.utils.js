@@ -1,6 +1,7 @@
 import { taskableTypes } from '../pages/Tasks/tasks.types';
 import {camelToSnakeCase} from "./mapper";
 import {formatDateToQuery} from "./formate.date";
+import {handleError, handleSubmit} from "./snackbar";
 
 export const getQueryParam = (param, defaultValue = null) => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -92,3 +93,10 @@ export const sanitizeUrlFilters = (filters) => {
 
   return sanitizedFilters;
 };
+
+export const handleCopyTaskLink = (id) =>{
+  const source = window.location.origin
+  navigator.clipboard.writeText(`${source}/tasks?taskId=${id}`)
+      .then(()=>handleSubmit('Ссылка скопирована'))
+      .catch(()=>handleError('Произошла ошибка'))
+}

@@ -37,11 +37,11 @@ const Sidebar = ({ className, onClose, sideVisible, sideSetVisible }) => {
           {navigation.map((x, index) =>
             x.url ? (
               <NavLink
+                  target={"_blank"}
                 className={styles.item}
                 activeClassName={styles.active}
                 to={x.url}
                 key={index}
-                exact
                 onClick={onClose}
               >
                 {x?.icon}
