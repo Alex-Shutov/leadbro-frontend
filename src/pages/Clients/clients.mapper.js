@@ -103,7 +103,7 @@ export const mapPasswords = (apiPasswords) => {
   }, {});
 };
 
-const mapContactPersons = (apiContactPersons) => {
+export const mapContactPersons = (apiContactPersons) => {
   return apiContactPersons?.reduce((acc, client) => {
     acc[client.id] = {
       id: client.id,
@@ -313,6 +313,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       [`passwords.${propId}.values.login`]: 'login',
       [`passwords.${propId}.values.password`]: 'password',
       [`contactPersons.${propId}.role`]: 'role',
+      [`contactPersons.${propId}.email`]: 'email',
       [`contactPersons.${propId}.tel`]: 'phone',
       [`contactPersons.${propId}.name`]: 'name',
       [`contactPersons.${propId}.last_name`]: 'last_name',

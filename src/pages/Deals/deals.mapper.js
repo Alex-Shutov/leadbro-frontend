@@ -2,9 +2,9 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { loadAvatar } from '../../utils/create.utils';
 import { mapTaskFromApi } from '../Tasks/tasks.mapper';
 import { createMockTasks } from './deals.mock';
-import { mapCommentsFromApi } from '../Clients/clients.mapper';
+import {mapCommentsFromApi, mapContactPersons} from '../Clients/clients.mapper';
 
-export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
+export const mapDealFromApi = (apiDeal, tasksDeal, comments = [],contacts=[]) => {
   return {
     id: apiDeal?.id,
     createdAt: new Date(apiDeal?.created_at),
@@ -13,6 +13,7 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
     note: apiDeal?.note ?? '',
     source: apiDeal?.source,
     serviceType: apiDeal?.service_type,
+      contactPersons: mapContactPersons(contacts),
     price: apiDeal?.price,
     status: apiDeal?.status,
     creator: apiDeal?.creator

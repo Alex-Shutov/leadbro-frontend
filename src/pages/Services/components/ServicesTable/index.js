@@ -154,6 +154,7 @@ const ServicesTable = observer(() => {
           const maxCellLength = Math.floor(800 / 18);
           return (
             <StagesCell
+                serviceId={row.original.id}
               stages={row.original.stages}
               maxCellLength={maxCellLength}
             />

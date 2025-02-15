@@ -4,7 +4,6 @@ import {formatInTimeZone, fromZonedTime, toZonedTime} from 'date-fns-tz';
 
 export const formatDate = (date) => {
   console.log(date, 'date');
-  debugger
 
   if (!date || !isValidDate(date)) return 'Не указано';
   let formatDate = format(date, 'cccccc, dd LLL, HH:mm', { locale: ru });

@@ -4,14 +4,18 @@ import Cookies from 'js-cookie';
 import MockAdapter from 'axios-mock-adapter';
 import { handleError } from '../utils/snackbar';
 import * as Sentry from "@sentry/react";
+import axiosRetry from "axios-retry";
 
 
 export let http = axios.create({
   baseURL: API_URL,
 });
+
 export const adapter = http.defaults.adapter;
 
 export const mockHttp = new MockAdapter(http);
+
+// axiosRetry(http, { retries: 3 });
 
 http.interceptors.request.use(
     async (request) => {
@@ -70,7 +74,7 @@ http.interceptors.response.use((response) => response,
     }
 );
 const setToken = async (accessToken) => {
-  Cookies.set('accessToken', accessToken);
+  Cookies.set('accessToken', accessToken,{ expires: 365 });
 };
 export const getToken = async () => {
   return Cookies.get('accessToken') || '';

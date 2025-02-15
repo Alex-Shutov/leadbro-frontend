@@ -3,8 +3,9 @@ import styles from './stages.module.sass';
 import { Link } from 'react-router-dom';
 import HiddenCount from '../../../../../../components/HiddenCount';
 import { truncateString } from '../../../../../../utils/format.string';
+import TextLink from "../../../../../../shared/Table/TextLink";
 
-const StagesCell = ({ stages, maxCellLength = -1 }) => {
+const StagesCell = ({ stages, maxCellLength = -1,serviceId }) => {
 
   const [showAll, setShowAll] = useState(false);
   const stageList = Array.isArray(stages)
@@ -20,15 +21,15 @@ const StagesCell = ({ stages, maxCellLength = -1 }) => {
       {stageList.map((stage, index) => (
         <div className={styles.stage} key={index}>
           <div className={styles.name}>
-            <Link>{stage?.title}</Link>
+            <TextLink to={`/services/${serviceId}/stages/${stage.id}`}>{stage?.title}</TextLink>
           </div>
         </div>
       ))}
-      <HiddenCount
-        cls={styles.moreCount}
-        hiddenCount={hiddenCount}
-        show={hiddenCount > 0 && !showAll}
-      />
+      {/*<HiddenCount*/}
+      {/*  cls={styles.moreCount}*/}
+      {/*  hiddenCount={hiddenCount}*/}
+      {/*  show={hiddenCount > 0 && !showAll}*/}
+      {/*/>*/}
     </div>
   );
 };
