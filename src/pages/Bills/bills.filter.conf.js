@@ -74,6 +74,7 @@ export const createBillsFilters = ({
       {
         type: 'date',
         name: 'date_range',
+        groupId: 'date_range',
         label: 'Промежуток (от/до)',
         props: {
           period: true,
@@ -112,6 +113,7 @@ export const createBillsFilters = ({
       {
         type: 'select',
         name: 'period',
+        groupId: 'period',
         label: 'Период (за)',
         props: {
           defaultValue: getQueryParam('date_range')
@@ -130,7 +132,11 @@ export const createBillsFilters = ({
           function mapValues(values) {
             return values.map((v) => v.value).join(',');
           }
-          return values ? mapValues(values) : '';
+          return values
+            ? Array.isArray(values)
+              ? mapValues(values)
+              : values?.value
+            : '';
         },
         onChange: (params) => {
           // При изменении календаря очищаем период из URL и провайдера

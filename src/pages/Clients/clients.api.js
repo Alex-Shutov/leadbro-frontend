@@ -242,11 +242,12 @@ const useClientsApi = () => {
   };
 
   // Обновление клиента компании
-  const updateClient = (companyId, clientId, submitText) => {
+  const updateClient = (store,entityId, clientId, submitText) => {
     resetApiProvider();
+    const isClient = window.location.href.includes('clients');
     const updateData = mapClientDataToBackend(
-      clientsStore.drafts[companyId],
-      clientsStore.changedProps,
+      store.drafts[entityId],
+        store.changedProps,
       clientId,
     );
 
@@ -254,7 +255,7 @@ const useClientsApi = () => {
     return http
       .patch(`/api/clients/${clientId}`, updateData)
       .then(handleHttpResponse)
-      .then(() => getClientById(companyId, true))
+      .then(() => isClient && getClientById(entityId, true))
       .then(() => handleSubmit(submitText ?? 'Данные клиента сохранены'))
 
       .catch(handleShowError)

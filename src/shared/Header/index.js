@@ -87,7 +87,16 @@ const HeadersList = ({ navigation }) => {
   const handleClick = (x, index) => {
     setActiveIndex(index);
     x.action();
-    x?.url && navigate(x.url);
+    if (x?.url) {
+      if (x.url.startsWith('http://') || x.url.startsWith('https://')) {
+        // Открываем внешнюю ссылку в новом окне
+        window.open(x.url, '_blank');
+      } else {
+        // Открываем внутреннюю ссылку в новом окне
+        const newWindow = window.open('', '_blank');
+        newWindow.location.href = x.url;
+      }
+    }
   };
 
   const isActive = (url) => {

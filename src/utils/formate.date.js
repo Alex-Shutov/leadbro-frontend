@@ -4,7 +4,6 @@ import {formatInTimeZone, fromZonedTime, toZonedTime} from 'date-fns-tz';
 
 export const formatDate = (date) => {
   console.log(date, 'date');
-  debugger
 
   if (!date || !isValidDate(date)) return 'Не указано';
   let formatDate = format(date, 'cccccc, dd LLL, HH:mm', { locale: ru });
@@ -44,7 +43,6 @@ export const formatDateOnlyHours = (date) => {
 
 export const formatDateWithOnlyDigits = (date) => {
   if (!date || !isValidDate(date)) return 'Не указано';
-  debugger
 
   let formatDate = format(date, 'dd.MM.yyyy', { locale: ru });
   formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
@@ -53,21 +51,18 @@ export const formatDateWithOnlyDigits = (date) => {
 
 export const formatHours = (date) => {
   if (!date || !isValidDate(date)) return;
-  debugger
 
   return format(date, 'HH:mm');
 };
 
 export const formatDateToBackend = (value) => {
   if (!value || !isValidDate(value)) return null;
-  debugger
 
   return format(value, "yyyy-MM-dd'T'HH:mm:ss");
 };
 
 export const formatDateToQuery = (value) => {
   if (!value || !isValidDate(value)) return;
-  debugger
 
   return format(value, 'yyyy-MM-dd');
 };

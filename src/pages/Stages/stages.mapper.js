@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { taskableTypes } from '../Tasks/tasks.types';
 import { formatDateToBackend } from '../../utils/formate.date';
 import {mapTimeTrackingsFromApi} from "../TimeTracking/timeTracking.mapper";
+import {mapTaskFromApi} from "../Tasks/tasks.mapper";
 
 export const mapStageFromApi = (stageData, tasksData) => {
   return {
@@ -52,7 +53,7 @@ export const mapStageFromApi = (stageData, tasksData) => {
 
 const mapTasksFromApi = (tasksData) => {
   return tasksData.reduce((acc, task, index) => {
-    const mappedTask = mapTaskFromApi(task);
+    const mappedTask = mapTaskFromApi(task,task?.comments??null);
     acc[mappedTask.id] = {
       ...mappedTask,
       order: index
@@ -60,50 +61,50 @@ const mapTasksFromApi = (tasksData) => {
     return acc;
   }, {});
 };
-const mapTaskFromApi = (task) => {
-  const taskableType = task.related_entity?.type;
-  const taskableId = task.related_entity?.id;
-  return {
-    id: task.id,
-    title: task.name,
-    taskStatus: mapTaskStatus(task.status),
-    service: {
-      id: task.service?.id || 0,
-      title: task.service?.title || 'Название услуги 1',
-    },
-    stage:
-      taskableType === taskableTypes.stage
-        ? {
-            id: taskableId,
-            title: task.related_entity?.name || 'Этап не задан',
-          }
-        : null,
-    deal:
-      taskableType === taskableTypes.deal
-        ? {
-            id: taskableId,
-            title: task.related_entity?.name || 'Сделка не задана',
-          }
-        : null,
-    template: {
-      id: task.template?.id || 0,
-      title: task.template?.title || 'Название шаблона 1',
-    },
-    description: task?.description || ' ',
-    showInLK: task.show_at_client_cabinet === 1,
-    comments: task.comments ? mapComments(task.comments) : {},
-    taskLinked: task?.linked_task,
-    type: task?.type,
-    auditors: task.auditors ? task.auditors.map(mapManager) : [],
-    executors: task.performer ? [task.performer].map(mapManager) : [],
-    timeTrackings: mapTimeTrackingsFromApi(task?.time_trackings || []),
-    responsibles: task.responsible ? mapManager(task.responsible) : [],
-    deadline: task.deadline ? new Date(task.deadline) : null,
-    deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не указано',
-    actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не указано',
-    isNewForUser: task.isNewForUser || false,
-  };
-};
+// const mapTaskFromApi = (task) => {
+//   const taskableType = task.related_entity?.type;
+//   const taskableId = task.related_entity?.id;
+//   return {
+//     id: task.id,
+//     title: task.name,
+//     taskStatus: mapTaskStatus(task.status),
+//     service: {
+//       id: task.service?.id || 0,
+//       title: task.service?.title || 'Название услуги 1',
+//     },
+//     stage:
+//       taskableType === taskableTypes.stage
+//         ? {
+//             id: taskableId,
+//             title: task.related_entity?.name || 'Этап не задан',
+//           }
+//         : null,
+//     deal:
+//       taskableType === taskableTypes.deal
+//         ? {
+//             id: taskableId,
+//             title: task.related_entity?.name || 'Сделка не задана',
+//           }
+//         : null,
+//     template: {
+//       id: task.template?.id || 0,
+//       title: task.template?.title || 'Название шаблона 1',
+//     },
+//     description: task?.description || ' ',
+//     showInLK: task.show_at_client_cabinet === 1,
+//     comments: task.comments ? mapComments(task.comments) : {},
+//     taskLinked: task?.linked_task,
+//     type: task?.type,
+//     auditors: task.auditors ? task.auditors.map(mapManager) : [],
+//     executors: task.performer ? [task.performer].map(mapManager) : [],
+//     timeTrackings: mapTimeTrackingsFromApi(task?.time_trackings || []),
+//     responsibles: task.responsible ? mapManager(task.responsible) : [],
+//     deadline: task.deadline ? new Date(task.deadline) : null,
+//     deadlineTime: task.planned_time ? `${task.planned_time} ч` : 'Не указано',
+//     actualTime: task.actual_time ? `${task.actual_time} ч` : 'Не указано',
+//     isNewForUser: task.isNewForUser || false,
+//   };
+// };
 
 const mapParticipant = (participant) => {
   return {

@@ -25,6 +25,7 @@ import useServiceApi from '../Services/services.api';
 import { useParams } from 'react-router';
 import { periodEnum } from './bills.filter.conf';
 import { formatDateToQuery } from '../../utils/formate.date';
+import { sanitizeDateAndPeriodFilters } from '../../utils/filter.utils';
 
 const useBillsApi = () => {
   const { billsStore } = useStore();
@@ -35,7 +36,7 @@ const useBillsApi = () => {
     debugger;
     resetApiProvider();
     setIsLoading(true);
-    const sanitizedFilters = sanitizeUrlFilters(
+    let sanitizedFilters = sanitizeUrlFilters(
       filters ?? {
         status: getQueryParam('status'),
         service_type: getQueryParam('service_type'),
@@ -44,29 +45,18 @@ const useBillsApi = () => {
       },
     );
 
-    const params = { page };
+    let params = { page };
 
-    if (getQueryParam('date_range')) {
-      const rangeParams = new URLSearchParams(getQueryParam('date_range'));
-      params.from = rangeParams.get('from');
-      params.to = rangeParams.get('to');
-      delete sanitizedFilters.date_range;
-      delete sanitizedFilters.period;
-    } else if (sanitizedFilters.period) {
-      params.period = sanitizedFilters.period;
-      delete sanitizedFilters.period;
-      delete sanitizedFilters.date_range;
-    } else {
-      params.period = getQueryParam('period', periodEnum.month);
-      delete sanitizedFilters.date_range;
-      delete sanitizedFilters.period;
-    }
+    const [paramsData, sanitizeFiltersData] = sanitizeDateAndPeriodFilters(
+      params,
+      sanitizedFilters,
+    );
 
     return http
       .get('api/bills', {
         params: {
-          ...params,
-          ...sanitizedFilters, // Добавляем параметры фильтрации
+          ...paramsData,
+          ...sanitizeFiltersData, // Добавляем параметры фильтрации
         },
       })
       .then(handleHttpResponse)

@@ -51,6 +51,7 @@ export class ClientsStore {
         address: {},
         tel: {},
         email: {},
+        comment:{},
         site: {},
         requisites: {},
       },

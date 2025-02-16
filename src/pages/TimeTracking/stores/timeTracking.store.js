@@ -26,7 +26,7 @@ export class TimeTrackingStore {
     }
 
     getTimeTrackingsArray() {
-        return Object.values(this.getTimeTrackings());
+        return Object.values(this.getTimeTrackings()).sort((a,b)=>a.order-b.order);
     }
 
     getById(id, isReset = false) {

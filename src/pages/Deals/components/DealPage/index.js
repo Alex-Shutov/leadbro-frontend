@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useMemo, useState} from 'react';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,15 +24,26 @@ import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar
 import useStore from '../../../../hooks/useStore';
 import useTasksApi from '../../../Tasks/tasks.api';
 import DealNote from './components/DealNote';
+import ClientPersons from "../../../Clients/components/ClientPage/Persons";
+import useClientsApi from "../../../Clients/clients.api";
+import CreateClientsModal from "../../../Clients/components/ClientPage/Persons/Modals/CreateClientsModal";
 
 const DealPage = observer(() => {
   const { id } = useParams();
-  const { data: deal, store: deals } = useDeals(+id);
+  const { store: deals } = useDeals(+id);
   const api = useDealsApi();
+
+  const clientsApi = useClientsApi();
   const { dealsStore } = useStore();
   const { tasksStore } = useStore();
   const taskApi = useTasksApi();
+  // const deal = useMemo(()=>dealsStore.getById(id),
+  //     [id,dealsStore.deals,dealsStore.drafts]
+  // )
+  //
+  const deal = deals.getById(+id);
   const [dropDownClicked, setDropDownClicked] = useState(true);
+  const [personModalValue, setPersonModalValue] = useState(null);
 
   const handleChange = (name, payload, withId = true) => {
     deals.changeById(deal?.id ?? +id, name, payload, withId);
@@ -57,6 +68,18 @@ const DealPage = observer(() => {
   const handleChangeStatus = (name, value) => {
     handleChange(name, value);
     handleSubmit(name, 'Статус успешно изменен!');
+  };
+
+  const handleSubmitPersons = async (clientId, submitText, path) => {
+    try {
+      debugger
+        clientsApi.updateClient(deals,Number(id), clientId, submitText)
+           .then(()=> api.getDealById(deal.id))
+      // dealsStore.submitDraft();
+    } catch (error) {
+      console.error('Ошибка при сохранении:', error);
+      dealsStore.resetDraft(Number(id), path);
+    }
   };
 
   return (
@@ -125,6 +148,17 @@ const DealPage = observer(() => {
                   onAdd={() => null}
                   data={deal}
                 />
+                <ClientPersons
+                    setClientModalData={(val)=>{
+                      setPersonModalValue(val)}
+                    }
+                    companyId={deal?.company?.id}
+                    onAdd={() => setPersonModalValue(true)}
+                    onChange={handleChange}
+                    onReset={handleReset}
+                    onSubmit={handleSubmitPersons}
+                    persons={deal?.contactPersons}
+                />
                 <DealInfo
                   price={deal?.price}
                   serviceType={serviceTypeEnumRu[deal?.serviceType]}
@@ -141,6 +175,17 @@ const DealPage = observer(() => {
           </AnimatePresence>
         </div>
       </LoadingProvider>
+      {personModalValue!==null && deal && (
+          <CreateClientsModal
+              onSubmit={()=> api.getDealById(deal.id)}
+        onClose={() => setPersonModalValue(null)}
+        companyId={deal?.company?.id}
+        entityId={deal?.id}
+        clientId={personModalValue}
+        store={deals} // Передаем стор сделок
+        api={clientsApi} // Передаем API клиентов
+        />
+      )}
     </motion.div>
   );
 });

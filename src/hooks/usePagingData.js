@@ -7,19 +7,18 @@ const usePagingData = (store, fetchData, getDataFromStore) => {
   const navigate = useNavigate();
   const location = useLocation();
   const pageFromUrl = useQueryParam('page', 1);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const metaInfo = store.getMetaInfoTable();
 
   useEffect(() => {
-    {
-      setCurrentPage(pageFromUrl);
-      fetchData(pageFromUrl);
-    }
+    setCurrentPage(pageFromUrl);
+    fetchData(pageFromUrl);
   }, [pageFromUrl]);
-  const metaInfo = store.getMetaInfoTable();
 
   const handlePageChange = useCallback(
     (page) => {
-      const searchParams = new URLSearchParams(window.location.search);debugger
+      const searchParams = new URLSearchParams(window.location.search);
+      debugger;
       // Устанавливаем новый параметр page
       searchParams.set('page', page);
 

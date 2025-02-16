@@ -55,7 +55,7 @@ const DealEditModal = observer(
       price: '',
       status: dealStatusTypes.new_lead,
 
-      auditor: null,
+      auditor: [],
       manager: null,
       company: props?.currentClient ?? null,
     });
@@ -84,6 +84,7 @@ const DealEditModal = observer(
 
     const handleSubmit = async (onError = null) => {
       if (isDeleteModalOpen) return;
+      debugger
       try {
         if (isEditMode) {
 
@@ -204,7 +205,7 @@ const DealEditModal = observer(
               placeholder={'Тип услуги'}
               value={
                 deal?.serviceType
-                  ? serviceTypes?.find((el) => el[0] === deal?.serviceType)[0]
+                  ? serviceTypes?.find((el) => el[0] === deal?.serviceType)?.[0]
                   : ''
               }
               renderOption={(opt) => serviceTypeEnumRu[opt[0]]}
@@ -246,6 +247,8 @@ const DealEditModal = observer(
             }
           />
           <ValuesSelector
+              required={false}
+
             onChange={(e) => {
               handleChange(
                 'responsible',
@@ -271,22 +274,24 @@ const DealEditModal = observer(
             onChange={(e) =>
               handleChange(
                 'auditor',
-                e.length ? members.find((el) => el.id === e[0]?.value) : null,
+                e.length ? members.filter((member) =>
+                    e.some((option) => option.value === member.id),
+                ) : [],
               )
             }
-            isMulti={false}
+            isMulti={true}
             label="Аудитор"
             options={members.map((el) => ({
               value: el.id,
               label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
             }))}
             value={
-              deal.auditor
-                ? {
-                    value: deal.auditor.id,
-                    label: `${deal?.auditor?.surname ?? deal?.auditor?.lastName ?? ''} ${deal?.auditor?.name ?? ''} ${deal?.auditor?.middleName ?? ''}`,
-                  }
-                : null
+              deal.auditor ?
+                  deal.auditor.map((el) => ({
+                    value: el.id,
+                    label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`
+              }))
+                : []
             }
           />
           <ValuesSelector

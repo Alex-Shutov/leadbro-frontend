@@ -312,7 +312,7 @@ const TaskEditModal = observer(
 
       if (taskData.stage?.id) {
         if (hasPermission(Permissions.ACCESS_SERVICES)) {
-          // navigate(`/services/${taskData.}/stages`);
+          navigate(taskData.stage?.link);
         }
       } else if (taskData.deal?.id) {
         if (hasPermission(Permissions.ACCESS_DEALS)) {

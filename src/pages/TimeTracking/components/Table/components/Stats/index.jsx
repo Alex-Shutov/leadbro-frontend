@@ -24,7 +24,6 @@ const TimeSpendingStats = ({ totalTime, totalCost }) => {
         showChart={false}
         icon={'/coins.svg'}
       />
-      />
     </div>
   );
 };

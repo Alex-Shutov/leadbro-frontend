@@ -40,7 +40,7 @@ const ClientPage = observer(() => {
   const api = useClientsApi();
   const [dropDownClicked, setDropDownCLicked] = useState(true);
   const [passModalOpen, setPassModalOpen] = useState(false);
-  const [personModalOpen, setPersonModalOpen] = useState(false);
+  const [personModalValue, setPersonModalValue] = useState(null);
   const client = clients.getById(id);
 
   // useEffect(() => {
@@ -77,7 +77,7 @@ const ClientPage = observer(() => {
 
   const handleSubmitPersons = async (clientId, submitText, path) => {
     try {
-      await api.updateClient(Number(id), clientId, submitText);
+      await api.updateClient(clients,Number(id), clientId, submitText);
       clients.submitDraft();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
@@ -170,8 +170,9 @@ const ClientPage = observer(() => {
                   description={client?.description}
                 />
                 <ClientPersons
+                    setClientModalData={(val)=>setPersonModalValue(val)}
                   companyId={client?.id}
-                  onAdd={() => setPersonModalOpen(true)}
+                  onAdd={() => setPersonModalValue(true)}
                   onChange={handleChange}
                   onReset={handleReset}
                   onSubmit={handleSubmitPersons}
@@ -216,9 +217,13 @@ const ClientPage = observer(() => {
           />
         )}
       </LoadingProvider>
-      {personModalOpen && client && (
+      {personModalValue!==null && client && (
         <CreateClientsModal
-          onClose={() => setPersonModalOpen(false)}
+            store={clients}
+            api={api}
+            entityId={client?.id}
+            clientId={personModalValue??null}
+          onClose={() => setPersonModalValue(null)}
           companyId={client?.id}
         />
       )}

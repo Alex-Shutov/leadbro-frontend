@@ -20,7 +20,9 @@ const useDealsApi = () => {
   const getDeals = (page = 1, filters = {}) => {
     resetApiProvider();
     setIsLoading(true);
+
     const sanitizedFilters = sanitizeUrlFilters(filters)
+    debugger
     return http
       .get('/api/deals', { params: { page, ...sanitizedFilters } })
       .then(handleHttpResponse)
@@ -85,8 +87,10 @@ const useDealsApi = () => {
     needToReload && setIsLoading(true);
 
     const dealPromise = http
-      .get(`/api/deals/${dealId}`)
-      .then(handleHttpResponse);
+        .get(`/api/deals/${dealId}`)
+        .then(handleHttpResponse)
+
+
 
     const tasksPromise = http
       .get(`/api/deals/${dealId}/tasks`)
@@ -96,17 +100,37 @@ const useDealsApi = () => {
       .get(`/api/deals/${dealId}/comments`)
       .then(handleHttpResponse);
 
+    const contactPersonsPromise = (id) => {
+      return http
+          .get(`/api/companies/${id}/clients`)
+          .then(handleHttpResponse)
+          // .catch(error => { // The first request fails
+          //   return error !== undefined
+          // });
+    }
+
+
     return Promise.all([dealPromise, tasksPromise, commentsPromise])
+        // .then( ([dealResp,taskResp,commentResp])=>{
+        //   debugger
+        //
+        //   // const contactResp =  contactPersonsPromise(companyId)
+        //   return contactPersonsPromise(companyId).then((contactResp)=> [dealResp, taskResp,commentResp,contactResp]);
+        // })
       .then(([{ body: deal }, { body: tasks }, { body: comments }]) => {
-        const mapperDeals = mapDealFromApi(
-          deal.data,
-          tasks.data,
-          comments.data,
-        );
-        dealsStore.setCurrentDeal(mapperDeals);
-        return mapperDeals;
+        setTimeout(async ()=> {
+          const contactResp = await contactPersonsPromise(deal.data.company.id)
+          const mapperDeals = mapDealFromApi(
+              deal.data,
+              tasks.data,
+              comments.data,
+              contactResp.body.data
+          );
+          dealsStore.setCurrentDeal(mapperDeals);
+          return mapperDeals;
+        },0)
       })
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => {
         resetApiProvider(); // Возвращаем провайдер в исходное состояние
         setIsLoading(false);

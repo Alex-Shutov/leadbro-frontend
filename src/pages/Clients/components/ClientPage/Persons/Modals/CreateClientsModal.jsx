@@ -13,14 +13,20 @@ import useStore from '../../../../../../hooks/useStore';
 import { observer } from 'mobx-react';
 import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
-const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
-  const { clientsStore } = useStore();
-  const { createClient, updateClient } = useClientsApi();
+const CreateClientsModal = ({
+                                      entityId,
+                                       companyId,
+                                       onClose,
+                                       clientId,
+                                       store,
+                                       api,
+                                      onSubmit,
+                                     }) => {
   const [isEditMode, setIsEditMode] = useState(false);
-
   const [newClient, setNewClient] = useState({
     site: '',
     role: '',
+    comment:'',
     whatsapp: '',
     telegram: '',
     viber: '',
@@ -31,21 +37,14 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
     middle_name: '',
     last_name: '',
   });
-
   const client = useMemo(() => {
     return isEditMode
-      ? clientsStore.getById(companyId)?.contactPersons?.[clientId]
-      : newClient;
-  }, [
-    isEditMode,
-    clientId,
-    clientsStore.currentClient,
-    clientsStore.drafts,
-    newClient,
-  ]);
+        ? store.getById(entityId)?.contactPersons?.[clientId]
+        : newClient;
+  }, [isEditMode, clientId, store.currentClient, store.drafts, newClient]);
 
   useEffect(() => {
-    if (clientId) {
+    if (Number.isInteger(clientId)) {
       setIsEditMode(true); // Режим редактирования
     } else {
       setIsEditMode(false); // Режим создания
@@ -53,7 +52,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
   }, [clientId]);
   const handleChange = (name, value, withId = true) => {
     if (isEditMode) {
-      clientsStore.changeById(companyId, name, value, withId);
+      store.changeById(entityId, name, value, withId);
     } else {
       setNewClient((prev) => ({
         ...prev,
@@ -63,24 +62,25 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
   };
   const handleReset = () => {
     if (isEditMode) {
-      clientsStore.resetDraft(companyId); // Сброс черновика в режиме редактирования
+      store.resetDraft(entityId); // Сброс черновика в режиме редактирования
     }
     onClose(); // Закрытие модалки
   };
-
   const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
-        await updateClient(
-          companyId,
-          clientId,
-          'Контактные данные клиента обновлены!',
-        ); // Обновляем услугу
+        debugger
+        await api.updateClient(
+            store,
+            entityId,
+            clientId,
+            'Контактные данные клиента обновлены!',
+        ).then(onSubmit)
       } else {
-        await createClient(companyId, newClient);
+        await api.createClient(companyId, newClient).then(onSubmit);
         handleSubmitSnackbar('Создано контактное лицо!');
       }
-      clientsStore.submitDraft(companyId);
+      store.submitDraft(entityId);
 
       onClose(); // Закрываем модалку
     } catch (error) {
@@ -111,7 +111,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
           name={
             isEditMode ? `contactPersons.${clientId}.last_name` : 'last_name'
           }
-          value={client.last_name}
+          value={client?.last_name}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Фамилия'}
@@ -126,7 +126,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
             )
           }
           name={isEditMode ? `contactPversons.${clientId}.name` : 'name'}
-          value={client.name}
+          value={client?.name}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Имя'}
@@ -147,7 +147,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
               ? `contactPersons.${clientId}.middle_name`
               : 'middle_name'
           }
-          value={client.middle_name}
+          value={client?.middle_name}
           edited={true}
           className={cn(styles.input)}
           label={'Отчество'}
@@ -187,7 +187,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
             )
           }
           name={isEditMode ? `contactPersons.${clientId}.tel` : 'phone'}
-          value={isEditMode ? client?.tel : client.phone}
+          value={isEditMode ? client?.tel : client?.phone}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Телефон'}
@@ -201,7 +201,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
             )
           }
           name={isEditMode ? `contactPersons.${clientId}.email` : 'email'}
-          value={client.email}
+          value={client?.email}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Почта'}
@@ -218,6 +218,22 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
         {/*  placeholder={'email'}*/}
         {/*/>*/}
       </div>
+      <div>
+        <TextInput
+            onChange={({ target }) =>
+                handleChange(
+                    isEditMode ? `contactPersons.${clientId}.comment` : 'comment',
+                    target.value,
+                )
+            }
+            name={isEditMode ? `contactPersons.${clientId}.comment` : 'comment'}
+            value={isEditMode ? client?.comment : client?.comment}
+            edited={true}
+            className={cn(styles.input, modlaStyles.grow)}
+            label={'Комментарий к телефону'}
+            placeholder={'Комментарий...'}
+        />
+      </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
           onChange={({ target }) =>
@@ -227,7 +243,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
             )
           }
           name={isEditMode ? `contactPersons.${clientId}.site` : 'site'}
-          value={client.site}
+          value={client?.site}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Сайт'}
@@ -241,7 +257,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
             )
           }
           name={isEditMode ? `contactPersons.${clientId}.role` : 'role'}
-          value={client.role}
+          value={client?.role}
           edited={true}
           className={cn(styles.input, modlaStyles.grow)}
           label={'Должность'}
@@ -298,6 +314,7 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
           }
           placeholder={'telegram'}
         />
+
         {/*<TextInput*/}
         {/*  onChange={({ target }) =>*/}
         {/*    handleChange(*/}
@@ -323,6 +340,6 @@ const CreateClientsModal = observer(({ companyId, onClose, clientId }) => {
       <div className={modlaStyles.flexDiv}></div>
     </FormValidatedModal>
   );
-});
+};
 
 export default CreateClientsModal;

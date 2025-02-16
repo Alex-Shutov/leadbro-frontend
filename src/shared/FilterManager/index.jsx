@@ -33,7 +33,7 @@ const FilterManager = ({
     const values = {};
     filterConfig.filters.forEach((filter) => {
       const paramValue = searchParams.get(filter.name);
-
+      debugger;
       if (paramValue) {
         // Пробуем получить значение из контекста
         const savedValue = getFilterValue(filter.name);
@@ -89,9 +89,9 @@ const FilterManager = ({
   const handleFilterChange = (name, value) => {
     const filter = filterConfig.filters.find((f) => f.name === name);
     const isMulti = filter.props?.isMulti;
-
-    setFilterValue(name, value);
-
+    // debugger;
+    // setFilterValue(name, value);
+    //
     const updatedParams = new URLSearchParams(searchParams);
     const urlValue = filter.toUrlValue ? filter.toUrlValue(value) : value;
     const paramToDelete = filter.onChange && filter.onChange(updatedParams);
@@ -100,27 +100,71 @@ const FilterManager = ({
     } else {
       updatedParams.delete(name);
     }
-    setSearchParams(updatedParams);
+    // // setSearchParams(updatedParams);
+    //
+    // let newValues = {
+    //   ...filterValues,
+    //   [name]: value,
+    //   [paramToDelete]: null,
+    // };
+    // newValues = clearConflictingGroupFilters(filter, newValues, updatedParams);
+    // setSearchParams(updatedParams);
+    // setFilterValues(newValues);
+    // setFilters(newValues);
+    setFilterValue(name, value);
 
     let newValues = {
       ...filterValues,
       [name]: value,
-      [paramToDelete]: null,
     };
+    debugger;
     newValues = clearConflictingGroupFilters(filter, newValues, updatedParams);
-    setSearchParams(updatedParams);
+
+    // Обновляем состояние фильтров, но URL не изменяется
     setFilterValues(newValues);
     setFilters(newValues);
   };
 
   const handleApplyFilters = () => {
+    // const newValues = { ...filterValues, ...pendingFilterValues };
+    //
+    // setFilterValues(newValues);
+    // setFilters(newValues);
+    //
+    // onFilterChange({ ...newValues, isSubmit: 1 });
+    //
+    // setPendingFilterValues({});
     const newValues = { ...filterValues, ...pendingFilterValues };
 
     setFilterValues(newValues);
     setFilters(newValues);
 
+    // Теперь вызываем изменение URL
+    const updatedParams = new URLSearchParams(searchParams);
+    debugger;
+    // Проходим по фильтрам и обновляем или удаляем параметры URL
+    filterConfig.filters.forEach((filter) => {
+      if (newValues.hasOwnProperty(filter.name)) {
+        const value = newValues[filter.name];
+
+        const urlValue =
+          filter.toUrlValue && value ? filter.toUrlValue(value) : value;
+
+        if (urlValue) {
+          updatedParams.set(filter.name, urlValue);
+        } else {
+          updatedParams.delete(filter.name);
+        }
+      }
+    });
+
+    // Обновляем URL с новыми значениями фильтров
+    setSearchParams(updatedParams);
+
+    // Вызываем onFilterChange, передавая итоговые значения фильтров
     onFilterChange({ ...newValues, isSubmit: 1 });
 
+    // Сбрасываем отложенные значения фильтров
     setPendingFilterValues({});
   };
 

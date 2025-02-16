@@ -30,6 +30,7 @@ import DescriptionInfo from '../DescriptionInfo';
 import ConfirmationModal from '../../../../../../components/ConfirmationModal';
 import { handleError, handleInfo } from '../../../../../../utils/snackbar';
 import withTaskModalHandler from '../../../../../../components/TaskModal/HocHandler';
+import {handleCopyTaskLink} from "../../../../../../utils/window.utils";
 
 const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
   const { stagesStore } = useStore();
@@ -97,6 +98,14 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
       onClick: () => setTaskToDelete(data.id),
       disabled: data.id === 0,
     },
+    {
+      // link:{
+      //   action: (id) => handleCopyTaskLink(id),
+      //   title: 'Ссылка на задачу',
+      // }
+      label: 'Ссылка на задачу',
+      onClick: () => handleCopyTaskLink(data.id),
+    }
   ];
 
   const cols = React.useMemo(() => {
@@ -233,6 +242,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
           edit: {
             action: () => setEditStageModalOpen(true),
           },
+
         }}
         data={tableData}
         title={`${stage.title}`}

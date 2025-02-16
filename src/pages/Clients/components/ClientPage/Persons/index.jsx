@@ -16,6 +16,8 @@ import { Link } from 'react-router-dom';
 import { createBaseMessengerLinksByName } from '../../../../../utils/create.utils';
 import useMappedObj from '../../../../../hooks/useMappedObj';
 import CreateClientsModal from './Modals/CreateClientsModal';
+import useClientsApi from "../../../clients.api";
+import useStore from "../../../../../hooks/useStore";
 
 const ClientPersons = ({
   persons,
@@ -23,11 +25,12 @@ const ClientPersons = ({
   onSubmit,
   onReset,
   onAdd,
-  companyId,
+                         setClientModalData
 }) => {
   const mappedPersons = useMappedObj(persons);
-  const [isEditClientModalData, setClientModalData] = useState(null);
-
+  // const [isEditClientModalData, setClientModalData] = useState(null);
+  // const api = useClientsApi()
+  // const {clientsStore} = useStore()
   const defaultActions = (
     path,
     success,
@@ -74,7 +77,7 @@ const ClientPersons = ({
                   placeholder={'ФИО...'}
                   classInput={styles.fioInput}
                   type={'text'}
-                  value={`${values?.middle_name ? values.middle_name : ''} ${values?.name ?? ''} ${values?.last_name ?? ''}`}
+                  value={`${values?.last_name ?? ''} ${values?.name ?? ''} ${values?.middle_name ? values.middle_name : ''} `}
                   actions={{
                     ...defaultActions(
                       `contactPersons.${values.id}.fio`,
@@ -113,6 +116,19 @@ const ClientPersons = ({
                     'Телефон восстановлен',
                     values.id,
                   )}
+                />
+                <CardInput
+                    placeholder={'Комментарий к телефону...'}
+                    label={'Комментарий...'}
+                    name={`contactPersons.${values.id}.comment`}
+                    type={'comment'}
+                    value={values.comment}
+                    actions={defaultActions(
+                        `contactPersons.${values.id}.comment`,
+                        'Комментарий сохранен',
+                        'Комментарий восстановлен',
+                        values.id,
+                    )}
                 />
                 <CardInput
                   placeholder={'Почта...'}
@@ -168,13 +184,15 @@ const ClientPersons = ({
           );
         })}
       </Card>
-      {isEditClientModalData !== null && (
-        <CreateClientsModal
-          onClose={() => setClientModalData(null)}
-          clientId={isEditClientModalData}
-          companyId={companyId}
-        />
-      )}
+      {/*{isEditClientModalData !== null && (*/}
+      {/*  <CreateClientsModal*/}
+      {/*      store={clientsStore}*/}
+      {/*      api={api}*/}
+      {/*    onClose={() => setClientModalData(null)}*/}
+      {/*    clientId={isEditClientModalData}*/}
+      {/*    companyId={companyId}*/}
+      {/*  />*/}
+      {/*)}*/}
     </>
   );
 };

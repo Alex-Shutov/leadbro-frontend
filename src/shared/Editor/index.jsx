@@ -9,12 +9,12 @@ import { createReactEditorJS } from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './config';
 import './editor.sass';
 
-const Editor = createReactEditorJS();
+const Editor = createReactEditorJS({holder:'editorjs'});
 
 const Index = forwardRef(
   ({ onChange, initialHTML, name, placeholder }, ref) => {
     const editorCore = useRef(null);
-
+    debugger
     initialHTML = /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML)
       ? initialHTML
       : `<p>${initialHTML}</p>`;
@@ -116,6 +116,7 @@ const Index = forwardRef(
     // );
     return useMemo(() => (
         <Editor
+
             ref={ref ?? null}
             placeholder={placeholder}
             onInitialize={handleInitialize}

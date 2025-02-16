@@ -75,6 +75,9 @@ export const mapClientFromApi = (
       tel: {
         0: apiClient?.phone,
       },
+      // comment: {
+      //   0: apiClient?.comment,
+      // },
       email: {
         0: apiClient?.email,
       },
@@ -103,7 +106,7 @@ export const mapPasswords = (apiPasswords) => {
   }, {});
 };
 
-const mapContactPersons = (apiContactPersons) => {
+export const mapContactPersons = (apiContactPersons) => {
   return apiContactPersons?.reduce((acc, client) => {
     acc[client.id] = {
       id: client.id,
@@ -113,6 +116,7 @@ const mapContactPersons = (apiContactPersons) => {
       middle_name: client?.middle_name ?? '',
       fio: `${client?.last_name ?? ''} ${client?.name ?? ''} ${client?.middle_name ? client.middle_name : ''}`,
       tel: client.phone ? client.phone : null,
+      comment: client.phone_comment ? client.phone_comment : null,
       site: client.site ? client.site : null,
       email: client.email ? client.email : null,
       messengers: {
@@ -313,7 +317,9 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       [`passwords.${propId}.values.login`]: 'login',
       [`passwords.${propId}.values.password`]: 'password',
       [`contactPersons.${propId}.role`]: 'role',
+      [`contactPersons.${propId}.email`]: 'email',
       [`contactPersons.${propId}.tel`]: 'phone',
+      [`contactPersons.${propId}.comment`]: 'phone_comment',
       [`contactPersons.${propId}.name`]: 'name',
       [`contactPersons.${propId}.last_name`]: 'last_name',
       [`contactPersons.${propId}.middle_name`]: 'middle_name',

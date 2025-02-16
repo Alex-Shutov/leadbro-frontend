@@ -28,6 +28,7 @@
     +x
         width: 300px
         padding: 16px
+        z-index: 14
     +d
         z-index: 14
         width: 96px
@@ -38,7 +39,7 @@
     +dark
         background: $n7
     &.active
-        +d
+        +x
             transform: translate(0px)
             //transform: translateX(0%)
             //transition: transform .3s
@@ -161,7 +162,7 @@
 
 .close
     display: none
-    +m
+    +x
         display: block
         position: absolute
         top: 16px

@@ -12,6 +12,8 @@ import initSentry from "./sentry";
 
 initSentry()
 
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Sentry.ErrorBoundary fallback={<div>Произошла ошибка. Попробуйте обновить страницу.</div>}>
@@ -24,6 +26,8 @@ root.render(
             </StoreProvider>
     </Sentry.ErrorBoundary>
 );
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -2,9 +2,9 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { loadAvatar } from '../../utils/create.utils';
 import { mapTaskFromApi } from '../Tasks/tasks.mapper';
 import { createMockTasks } from './deals.mock';
-import { mapCommentsFromApi } from '../Clients/clients.mapper';
+import {mapCommentsFromApi, mapContactPersons} from '../Clients/clients.mapper';
 
-export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
+export const mapDealFromApi = (apiDeal, tasksDeal, comments = [],contacts=[]) => {
   return {
     id: apiDeal?.id,
     createdAt: new Date(apiDeal?.created_at),
@@ -13,6 +13,7 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
     note: apiDeal?.note ?? '',
     source: apiDeal?.source,
     serviceType: apiDeal?.service_type,
+      contactPersons: mapContactPersons(contacts),
     price: apiDeal?.price,
     status: apiDeal?.status,
     creator: apiDeal?.creator
@@ -35,16 +36,26 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = []) => {
           role: apiDeal?.responsible.position.name,
         }
       : null,
-    auditor: apiDeal?.auditor
-      ? {
-          id: apiDeal?.auditor.id,
-          name: apiDeal?.auditor.name,
-          middleName: apiDeal?.auditor.middle_name,
-          lastName: apiDeal?.auditor.last_name,
-          image: loadAvatar(apiDeal?.auditor.avatar),
-          role: apiDeal?.auditor.position.name,
-        }
-      : null,
+      auditor: apiDeal?.auditor
+          ? Array.isArray(apiDeal.auditor)
+              ? apiDeal.auditor.map(auditor => ({
+                  id: auditor.id,
+                  name: auditor.name,
+                  middleName: auditor.middle_name,
+                  lastName: auditor.last_name,
+                  image: loadAvatar(auditor.avatar),
+                  role: auditor.position.name,
+              }))
+              : [{
+                  id: apiDeal?.auditor.id,
+                  name: apiDeal?.auditor.name,
+                  middleName: apiDeal?.auditor.middle_name,
+                  lastName: apiDeal?.auditor.last_name,
+                  image: loadAvatar(apiDeal?.auditor.avatar),
+                  role: apiDeal?.auditor.position.name,
+              },
+              ]
+          : [],
     manager: apiDeal?.manager
       ? {
           id: apiDeal?.manager.id,
@@ -82,12 +93,13 @@ export const mapDealDataToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value) => {
     switch (key) {
       case 'responsible_id':
-      case 'auditor_id':
       case 'manager_id':
       case 'company_id':
         return value ? Number(value.id) : null;
       case 'price':
         return Number(value);
+      case 'auditor_id':
+          return value.map((el) => el.id);
       default:
         return value;
     }
