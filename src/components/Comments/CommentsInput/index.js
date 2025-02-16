@@ -11,14 +11,12 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
   const [text, setText] = useState(' ');
   const [files, setFiles] = useState([]);
   const editorRef = useRef(null);
-
   const handleTextChange = (event) => {
     setText(event.target.value);
   };
 
   const handleSendMessage = () => {
     if (text.trim() || files.length > 0) {
-      debugger;
       const newMessage = {
         id: commentsLength,
         date: new Date(),

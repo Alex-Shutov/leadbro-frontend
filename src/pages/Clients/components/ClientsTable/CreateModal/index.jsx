@@ -41,6 +41,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     address: '',
     status: 'partner',
     tel: '',
+    comment: '',
     email: '',
     site: '',
     requisites: '',

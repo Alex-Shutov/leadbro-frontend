@@ -15,6 +15,7 @@ export const mapTaskFromApi = (task, commentsData = null) => {
     stage:
       taskableType === taskableTypes.stage
         ? {
+            link:task?.related_entity?.link || '',
             id: taskableId,
             title: task?.related_entity?.name || 'Этап не задан',
           }
@@ -26,6 +27,10 @@ export const mapTaskFromApi = (task, commentsData = null) => {
             title: task?.related_entity?.name || 'Сделка не задана',
           }
         : null,
+    template: {
+      id: task.template?.id || 0,
+      title: task.template?.title || 'Название шаблона 1',
+    },
     type: task?.type,
     taskLinked: task?.linked_task,
     description: task?.description ?? ' ',

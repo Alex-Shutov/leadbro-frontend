@@ -327,7 +327,7 @@ const EditModal = observer(({ billId, onClose, company, service, stage }) => {
           edited={true}
           placeholder={'Введите комментарий'}
           className={cn(taskStyles.input, taskStyles.textarea)}
-          label={'Основание платежа'}
+          label={'Назначение платежа'}
         />
 
         {/*<ValuesSelector*/}

@@ -118,6 +118,19 @@ const ClientPersons = ({
                   )}
                 />
                 <CardInput
+                    placeholder={'Комментарий к телефону...'}
+                    label={'Комментарий...'}
+                    name={`contactPersons.${values.id}.comment`}
+                    type={'comment'}
+                    value={values.comment}
+                    actions={defaultActions(
+                        `contactPersons.${values.id}.comment`,
+                        'Комментарий сохранен',
+                        'Комментарий восстановлен',
+                        values.id,
+                    )}
+                />
+                <CardInput
                   placeholder={'Почта...'}
                   label={'Почта'}
                   name={`contactPersons.${values.id}.email`}

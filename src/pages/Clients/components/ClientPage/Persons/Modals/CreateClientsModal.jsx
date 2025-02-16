@@ -26,6 +26,7 @@ const CreateClientsModal = ({
   const [newClient, setNewClient] = useState({
     site: '',
     role: '',
+    comment:'',
     whatsapp: '',
     telegram: '',
     viber: '',
@@ -217,6 +218,22 @@ const CreateClientsModal = ({
         {/*  placeholder={'email'}*/}
         {/*/>*/}
       </div>
+      <div>
+        <TextInput
+            onChange={({ target }) =>
+                handleChange(
+                    isEditMode ? `contactPersons.${clientId}.comment` : 'comment',
+                    target.value,
+                )
+            }
+            name={isEditMode ? `contactPersons.${clientId}.comment` : 'comment'}
+            value={isEditMode ? client?.comment : client?.comment}
+            edited={true}
+            className={cn(styles.input, modlaStyles.grow)}
+            label={'Комментарий к телефону'}
+            placeholder={'Комментарий...'}
+        />
+      </div>
       <div className={modlaStyles.flexDiv}>
         <TextInput
           onChange={({ target }) =>
@@ -297,6 +314,7 @@ const CreateClientsModal = ({
           }
           placeholder={'telegram'}
         />
+
         {/*<TextInput*/}
         {/*  onChange={({ target }) =>*/}
         {/*    handleChange(*/}
