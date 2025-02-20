@@ -10,8 +10,9 @@ import { EmployesStore } from '../pages/Settings/stores/employers.store';
 import { LegalsStore } from '../pages/Settings/stores/legals.store';
 import { AppStore } from './app.store';
 import { BillsStore } from '../pages/Bills/stores/bills.store';
-import {DealsStore} from "../pages/Deals/stores";
-import {TimeTrackingStore} from "../pages/TimeTracking/stores/timeTracking.store";
+import { DealsStore } from '../pages/Deals/stores';
+import { TimeTrackingStore } from '../pages/TimeTracking/stores/timeTracking.store';
+import { CalendarStore } from '../pages/Calendar/calendar.store';
 export class RootStore {
   constructor() {
     this.appStore = new AppStore(this);
@@ -29,5 +30,6 @@ export class RootStore {
     this.billsStore = new BillsStore(this);
     this.dealsStore = new DealsStore(this);
     this.timeTrackingStore = new TimeTrackingStore(this);
+    this.calendarStore = new CalendarStore(this);
   }
 }

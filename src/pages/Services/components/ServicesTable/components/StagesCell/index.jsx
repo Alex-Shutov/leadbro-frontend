@@ -20,10 +20,11 @@ const StagesCell = ({ stages, maxCellLength = -1, serviceId }) => {
       {stageList.map((stage, index) => (
         <div className={styles.stage} key={index}>
           <div className={styles.name}>
-            stage &&{' '}
-            <TextLink to={`/services/${serviceId}/stages/${stage?.id}`}>
-              {stage?.title}
-            </TextLink>
+            {stage && (
+              <TextLink to={`/services/${serviceId}/stages/${stage?.id}`}>
+                {stage?.title}
+              </TextLink>
+            )}
           </div>
         </div>
       ))}

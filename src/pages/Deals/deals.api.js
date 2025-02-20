@@ -9,7 +9,11 @@ import {
 } from '../../shared/http';
 import { useCallback, useState } from 'react';
 import { mapDealDataToBackend, mapDealFromApi } from './deals.mapper';
-import {getPageTypeFromUrl, getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
+import {
+  getPageTypeFromUrl,
+  getQueryParam,
+  sanitizeUrlFilters,
+} from '../../utils/window.utils';
 import './deals.mock';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
 
@@ -21,8 +25,8 @@ const useDealsApi = () => {
     resetApiProvider();
     setIsLoading(true);
 
-    const sanitizedFilters = sanitizeUrlFilters(filters)
-    debugger
+    const sanitizedFilters = sanitizeUrlFilters(filters);
+    debugger;
     return http
       .get('/api/deals', { params: { page, ...sanitizedFilters } })
       .then(handleHttpResponse)
@@ -87,10 +91,8 @@ const useDealsApi = () => {
     needToReload && setIsLoading(true);
 
     const dealPromise = http
-        .get(`/api/deals/${dealId}`)
-        .then(handleHttpResponse)
-
-
+      .get(`/api/deals/${dealId}`)
+      .then(handleHttpResponse);
 
     const tasksPromise = http
       .get(`/api/deals/${dealId}/tasks`)
@@ -101,40 +103,41 @@ const useDealsApi = () => {
       .then(handleHttpResponse);
 
     const contactPersonsPromise = (id) => {
-      return http
-          .get(`/api/companies/${id}/clients`)
-          .then(handleHttpResponse)
-          // .catch(error => { // The first request fails
-          //   return error !== undefined
-          // });
-    }
+      return http.get(`/api/companies/${id}/clients`).then(handleHttpResponse);
+      // .catch(error => { // The first request fails
+      //   return error !== undefined
+      // });
+    };
 
-
-    return Promise.all([dealPromise, tasksPromise, commentsPromise])
+    return (
+      Promise.all([dealPromise, tasksPromise, commentsPromise])
         // .then( ([dealResp,taskResp,commentResp])=>{
         //   debugger
         //
         //   // const contactResp =  contactPersonsPromise(companyId)
         //   return contactPersonsPromise(companyId).then((contactResp)=> [dealResp, taskResp,commentResp,contactResp]);
         // })
-      .then(([{ body: deal }, { body: tasks }, { body: comments }]) => {
-        setTimeout(async ()=> {
-          const contactResp = await contactPersonsPromise(deal.data.company.id)
-          const mapperDeals = mapDealFromApi(
+        .then(([{ body: deal }, { body: tasks }, { body: comments }]) => {
+          setTimeout(async () => {
+            const contactResp =
+              deal.data?.company?.id &&
+              (await contactPersonsPromise(deal.data?.company?.id));
+            const mapperDeals = mapDealFromApi(
               deal.data,
               tasks.data,
               comments.data,
-              contactResp.body.data
-          );
-          dealsStore.setCurrentDeal(mapperDeals);
-          return mapperDeals;
-        },0)
-      })
-      .catch(handleShowError)
-      .finally(() => {
-        resetApiProvider(); // Возвращаем провайдер в исходное состояние
-        setIsLoading(false);
-      });
+              contactResp ? contactResp.body.data : [],
+            );
+            dealsStore.setCurrentDeal(mapperDeals);
+            return mapperDeals;
+          }, 0);
+        })
+        .catch(handleShowError)
+        .finally(() => {
+          // resetApiProvider(); // Возвращаем провайдер в исходное состояние
+          setIsLoading(false);
+        })
+    );
   };
 
   const deleteDeal = (dealId) => {

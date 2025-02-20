@@ -1,0 +1,180 @@
+@import "src/styles/helpers"
+$color-primary: #4A5568
+$color-secondary: #718096
+$color-border: #E2E8F0
+$color-background: #F7FAFC
+
+$color-business: #ccdeff
+$color-business-border: #99bdff
+$color-call: #c6f6d5
+$color-call-border: #9ae6b4
+$color-brainstorm: #e9d8fd
+$color-brainstorm-border: #d6bcfa
+$color-meeting: #feebc8
+$color-meeting-border: #fbd38d
+$color-personal: #fefcbf
+$color-personal-border: #f6e05e
+$color-holiday: #fed7d7
+$color-holiday-border: #feb2b2
+$color-letter: #fed7e2
+$color-letter-border: #fbb6ce
+
+$header-height: 60px
+$cell-min-height: 120px
+$time-column-width: 60px
+$time-slot-height :120px
+
+.container
+  display: flex
+  flex-direction: column
+  height: 100%
+  //background: $color-background
+
+.header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 16px
+  padding-bottom: 0px
+  border-radius: 12px 12px 0 0
+  background-color: $n
+
+.viewSelector
+  display: flex
+  //background: #EAEAEA
+  border-radius: 6px
+  +body1-m
+
+  button
+    padding: 6px 8px
+    padding-bottom: 16px
+    border: none
+    background: none
+    cursor: pointer
+    &.active
+      border-bottom: 3px solid $p3
+
+    &.active, &:hover
+      background: white
+      color: $p3
+
+
+.calendar
+  flex: 1
+  display: flex
+  flex-direction: column
+
+// Month view
+.monthGrid
+  display: grid
+  grid-template-columns: repeat(7, 1fr)
+  gap: 1px
+  background: $color-border
+  flex: 1
+
+.monthCell
+  background: white
+  min-height: $cell-min-height
+  padding: 8px
+  display: flex
+  flex-direction: column
+
+  .date
+    font-size: 14px
+    color: $color-secondary
+    margin-bottom: 8px
+
+// Business items
+.businessItem
+  padding: 4px 8px
+  border-radius: 4px
+  margin-bottom: 4px
+  border: 1px solid transparent
+  font-size: 12px
+  cursor: pointer
+
+  &.business
+    background: $color-business
+    border-color: $color-business-border
+
+  &.call
+    background: $color-call
+    border-color: $color-call-border
+
+  &.brainstorm
+    background: $color-brainstorm
+    border-color: $color-brainstorm-border
+
+  &.meeting
+    background: $color-meeting
+    border-color: $color-meeting-border
+
+  &.personal
+    background: $color-personal
+    border-color: $color-personal-border
+
+  &.holiday
+    background: $color-holiday
+    border-color: $color-holiday-border
+
+  &.letter
+    background: $color-letter
+    border-color: $color-letter-border
+
+// Day view
+.dayView
+  display: flex
+  flex: 1
+
+.timeColumn
+  width: $time-column-width
+  border-right: 1px solid $color-border
+
+  .timeSlot
+    height: $time-slot-height
+    display: flex
+    align-items: center
+    justify-content: center
+    font-size: 12px
+    color: $color-secondary
+
+.dayContent
+  flex: 1
+  position: relative
+
+  .timeGrid
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+
+    .gridLine
+      height: $time-slot-height
+      border-bottom: 1px solid $color-border
+
+.monthSelector
+  display: flex
+  align-items: center
+  align-self: baseline
+  gap: 8px
+  margin-right: 24px
+  .month
+    margin-right: 24px
+    +body1-m
+    color: $n7
+
+
+  button
+    background: none
+    border: none
+    cursor: pointer
+    padding: 4px
+    color: #666
+
+    &:hover
+      color: #333
+
+
+.pagination
+    width: 0 !important

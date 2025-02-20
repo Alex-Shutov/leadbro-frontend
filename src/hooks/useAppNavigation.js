@@ -34,6 +34,11 @@ const useAppNavigation = () => {
       url: '/tasks',
     },
     {
+      title: 'Календарь',
+      action: () => {},
+      url: '/calendar',
+    },
+    {
       title: 'Счета',
       action: () => {},
       url: '/bills',

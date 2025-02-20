@@ -1,11 +1,12 @@
 import React from 'react';
 import styles from './Pagination.module.sass';
 import Chevron from '../Dropdown/Default/Chevron';
+import cn from 'classnames';
 
-const PaginationButton = ({ direction, label, onClick, disabled }) => {
+const PaginationButton = ({ direction, label, onClick, disabled, cls }) => {
   return (
     <button
-      className={styles.paginationButton}
+      className={cn(styles.paginationButton, cls)}
       onClick={onClick}
       disabled={disabled}
     >
@@ -20,20 +21,27 @@ const PaginationButton = ({ direction, label, onClick, disabled }) => {
   );
 };
 
-export const PreviousButton = ({ onClick, disabled }) => (
+export const PreviousButton = ({
+  onClick,
+  disabled,
+  label = 'Предыдущая',
+  cls,
+}) => (
   <PaginationButton
     direction="left"
-    label="Предыдущая"
+    label={label}
     onClick={onClick}
     disabled={disabled}
+    cls={cls}
   />
 );
 
-export const NextButton = ({ onClick, disabled }) => (
+export const NextButton = ({ onClick, disabled, label = 'Следующая', cls }) => (
   <PaginationButton
     direction="right"
-    label="Следующая"
+    label={label}
     onClick={onClick}
     disabled={disabled}
+    cls={cls}
   />
 );
