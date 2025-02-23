@@ -1,0 +1,66 @@
+@import "src/styles/helpers"
+
+// Grid.module.sass
+.timeGrid
+  display: flex
+  flex-direction: column
+  flex: 1
+  //position: relative
+  //overflow-y: auto
+  min-height: 740px  // 14 hours * 60px per hour to match the full workday (9 AM - 11 PM)
+
+.hourRow
+  display: flex
+  height: 46px  // Match Photo 1’s row height
+  min-height: 46px
+  position: relative
+
+.lastRow
+  .timeCell
+    flex: 1
+    //border-right: unset
+    border-bottom: unset
+    position: relative
+
+.timeGutter
+  width: 46px
+  top: 8px
+  position: relative
+  flex-shrink: 0
+  display: flex
+  align-items: end
+  justify-content: center
+  //border-right: 1px solid #E2E8F0
+  color: #64748B
+  font-size: 12px
+
+
+
+.timeCell
+  flex: 1
+  border-right: 1px solid #E2E8F0
+  border-bottom: 1px solid #E2E8F0
+  position: relative
+
+.timeSlot
+  position: absolute
+  left: 0
+  right: 0
+  //border-bottom: 1px dashed #E2E8F0
+  pointer-events: none
+
+  &:nth-child(1)
+    top: 0
+    height: 15px  // 15 minutes = 15px (adjust if needed to match Photo 1)
+
+  &:nth-child(2)
+    top: 15px
+    height: 15px
+
+  &:nth-child(3)
+    top: 30px
+    height: 15px
+
+  &:nth-child(4)  // Add the 4th slot for 45 minutes
+    top: 45px
+    height: 15px

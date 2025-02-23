@@ -5,9 +5,10 @@ import { format, parseISO } from 'date-fns';
 import { useCalendarGrid } from '../../hooks/useCalendarGrid';
 import { useBusinessEvents } from '../../hooks/useBussinessEvent';
 import { useBusinessDrag } from '../../hooks/useBussinesDrag';
-import BusinessItem from '../Item';
+import BusinessItem from '../Item/Base';
 import styles from './View.module.sass';
 import useStore from '../../../../hooks/useStore';
+import MonthBusinessItem from "../Item/Month/MonthBusiness";
 
 const WEEKDAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 
@@ -38,7 +39,11 @@ const DayCell = ({ date, isCurrentMonth, businesses, isWeekend }) => {
       </div>
       <div className={styles.businessList}>
         {businesses.map((business) => (
-          <BusinessItem key={business.id} business={business} />
+            <MonthBusinessItem
+                key={business.id}
+                business={business}
+                showTime={true}
+            />
         ))}
       </div>
     </div>

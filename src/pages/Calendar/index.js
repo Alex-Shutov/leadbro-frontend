@@ -13,6 +13,7 @@ import useCalendarApi from './calendar.api';
 import { addMonths, format, subMonths } from 'date-fns';
 import { ru } from 'date-fns/locale/ru';
 import Selector from './components/Selector';
+import WeekView from "./components/WeekView";
 
 const CalendarContent = observer(() => {
   const api = useCalendarApi();
@@ -55,8 +56,8 @@ const CalendarContent = observer(() => {
     switch (currentView) {
       case calendarViewTypes.month:
         return <MonthView />;
-      // case calendarViewTypes.day:
-      //   return <DayView />;
+      case calendarViewTypes.week:
+        return <WeekView />;
       default:
         return <MonthView />;
     }

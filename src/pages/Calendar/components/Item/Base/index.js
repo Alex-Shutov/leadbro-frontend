@@ -1,26 +1,20 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 import { format, startOfDay } from 'date-fns';
 import { useDrag } from 'react-dnd';
-import { businessTypeStyles } from '../../calendar.types';
+import { businessTypeStyles } from '../../../calendar.types';
 import styles from './Item.module.sass';
 
-const BusinessItem = ({ business, showTime = false }) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'business',
-    item: {
-      id: business.id,
-      type: business.type,
-      startDate: startOfDay(business.startDate),
-      endDate: business.endDate,
-    },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
+const BaseBusinessItem = forwardRef(({
+                               business,
+                               isDragging,
+                               showTime,
+                               businessTypeStyles,
+                               className = ''
+                             }, ref) => {
 
   return (
     <div
-      ref={drag}
+      ref={ref}
       className={`${styles.businessItem} ${styles[businessTypeStyles[business.type]]} ${
         isDragging ? styles.dragging : ''
       }`}
@@ -35,6 +29,6 @@ const BusinessItem = ({ business, showTime = false }) => {
       <div className={styles.title}>{business.name}</div>
     </div>
   );
-};
+});
 
-export default BusinessItem;
+export default BaseBusinessItem;

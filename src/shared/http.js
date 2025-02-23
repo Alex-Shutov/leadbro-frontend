@@ -18,7 +18,6 @@ export const mockHttp = new MockAdapter(http);
 
 http.interceptors.request.use(
   async (request) => {
-    debugger;
     if (request.url.toLowerCase().includes('/auth')) {
       return request;
     }
