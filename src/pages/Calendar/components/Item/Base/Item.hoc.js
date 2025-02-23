@@ -25,12 +25,13 @@ const withBusinessItem = (WrappedComponent, dragType = 'business') => {
 
         return (
             <WrappedComponent
-                ref={drag}
                 business={business}
                 isDragging={isDragging}
                 showTime={showTime}
                 businessTypeStyles={businessTypeStyles}
                 {...props}
+                ref={drag}
+
             />
         );
     };

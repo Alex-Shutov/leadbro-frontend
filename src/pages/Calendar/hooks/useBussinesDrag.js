@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { addDays, differenceInDays, addHours } from 'date-fns';
+import {addDays, differenceInDays, addHours, startOfDay} from 'date-fns';
 import useStore from '../../../hooks/useStore';
 import useCalendarApi from '../calendar.api';
 
@@ -15,7 +15,7 @@ export const useBusinessDrag = () => {
       if (!business) return;
 
       // Вычисляем разницу в днях
-      const diffInDays = differenceInDays(targetDate, sourceDate);
+      const diffInDays = differenceInDays(startOfDay(targetDate), startOfDay(sourceDate));
 
       // Обновляем даты начала и конца
       const newStartDate = addDays(business.startDate, diffInDays);

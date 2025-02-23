@@ -45,9 +45,15 @@
 .time
   font-size: 10px
   color: #666
-  margin-bottom: 2px
+  //margin-bottom: 2px
 
 .title
+  span
+    overflow: hidden
+    text-overflow: ellipsis
+  min-width: 80px
+  justify-content: space-between
+  display: flex
+  align-items: end
   white-space: nowrap
-  overflow: hidden
-  text-overflow: ellipsis
+  flex-wrap: wrap

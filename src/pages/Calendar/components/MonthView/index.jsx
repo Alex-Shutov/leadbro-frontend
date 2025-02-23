@@ -16,7 +16,7 @@ const DayCell = ({ date, isCurrentMonth, businesses, isWeekend }) => {
   const { handleDragEnd } = useBusinessDrag();
 
   const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'business',
+    accept: 'month-business',
     drop: (item) => {
       handleDragEnd({
         businessId: item.id,

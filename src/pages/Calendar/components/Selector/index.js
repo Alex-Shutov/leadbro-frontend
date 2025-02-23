@@ -2,7 +2,18 @@ import React from 'react';
 import styles from '../../Calendar.module.sass';
 // import arrowLeft from '@public/icons/arrows/arrow_left.svg';
 
-import { format, startOfWeek, endOfWeek, isSameMonth } from 'date-fns';
+import {
+  format,
+  startOfWeek,
+  endOfWeek,
+  isSameMonth,
+  subMonths,
+  subWeeks,
+  subDays,
+  addMonths,
+  addWeeks,
+  addDays
+} from 'date-fns';
 import { ru } from 'date-fns/locale/ru';
 import { formatDateWithoutHours } from '../../../../utils/formate.date';
 import {
@@ -10,9 +21,9 @@ import {
   PreviousButton,
 } from '../../../../shared/PaginationButton';
 
-const Index = ({ handlePrev, handleNext, currentDate, type }) => {
+const Index = ({ handleUpdate, currentDate, type }) => {
   const getWeekRange = (date) => {
-    const start = startOfWeek(date, { weekStartsOn: 1 }); // Неделя начинается с понедельника
+    const start = startOfWeek(date, { weekStartsOn: 1 });
     const end = endOfWeek(date, { weekStartsOn: 1 });
 
     if (isSameMonth(start, end)) {
@@ -34,16 +45,29 @@ const Index = ({ handlePrev, handleNext, currentDate, type }) => {
         return '';
     }
   };
+
+  const handleSelectorPrevOrNext = (direction) => {
+    let prevOrNext;
+    if (type === 'month') {
+      prevOrNext = direction === 'prev' ? subMonths(currentDate,1) : addMonths(currentDate,1);
+    } else if (type === 'week') {
+      prevOrNext = direction==='prev' ? subWeeks(currentDate,1) : addWeeks(currentDate,1);
+    } else if (type === 'day') {
+      prevOrNext = direction==='prev' ?  subDays(currentDate,1) : addDays(currentDate,1);
+    }
+    handleUpdate(prevOrNext)
+  }
+
   return (
     <div className={styles.monthSelector}>
       <span className={styles.month}>{renderSelectorLabel()}</span>
       <PreviousButton
-        onClick={() => handlePrev()}
+        onClick={() => handleSelectorPrevOrNext('prev')}
         label={''}
         cls={styles.pagination}
       />
       <NextButton
-        onClick={() => handleNext()}
+        onClick={() => handleSelectorPrevOrNext('next')}
         label={''}
         cls={styles.pagination}
       />

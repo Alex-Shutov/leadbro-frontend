@@ -1,11 +1,12 @@
 import React from 'react';
-import {format} from "date-fns";
+import {format, isSameDay} from "date-fns";
 import {ru} from "date-fns/locale/ru";
 import styles from './Header.module.sass'
 import useStore from "../../../../../../hooks/useStore";
 import {useBusinessLayout} from "../../../../hooks/useBusinessLayout";
 import {useBusinessEvents} from "../../../../hooks/useBussinessEvent";
 import WeekBusinessItem from "../../../Item/Week/WeekBusiness";
+import cn from "classnames";
 
 const WeekHeader = ({weekDays,hours,timeSlots}) => {
     const { calendarStore } = useStore();
@@ -30,14 +31,14 @@ const WeekHeader = ({weekDays,hours,timeSlots}) => {
             {weekDays.map(day => {
                 const dateKey = format(day, 'yyyy-MM-dd');
                 const dayAllDayEvents = allDayEvents[dateKey] || [];
-
+                const isCurrDay = isSameDay(currentDate,day)
                 return (
                     <div key={day.toISOString()} className={styles.dayColumn}>
                         <div className={styles.dayHeader}>
-                            {format(day, 'dd', { locale: ru })}
-                            <span className={styles.dayNumber}>
-                                {format(day, 'd')}
-                            </span>
+                                {format(day, 'cccccc', { locale: ru }).toUpperCase()}
+                                <span className={cn(styles.dayNumber,{[styles.isCurrentDay]:isCurrDay})}>
+                                    {format(day, 'd')}
+                                </span>
                         </div>
                         <div className={styles.allDayEvents}>
                             {dayAllDayEvents.map(business => (

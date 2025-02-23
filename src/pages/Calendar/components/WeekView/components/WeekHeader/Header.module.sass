@@ -18,10 +18,23 @@
   padding: 0 8px  // Add horizontal padding to match Photo 1
 
 .dayHeader
+  display: flex
+  align-self: center
+  align-items: center
   padding: 8px 0
   text-align: center
+  justify-content: center
+  gap: 5px
+  +body1-m
+  color: $n7
 
   .dayNumber
-    display: block
-    font-size: 20px
-    font-weight: 500
+      padding: 0px 3px
+      display: block
+      +body1-r
+      color: $n4
+  .isCurrentDay
+    min-width: 24px
+    background-color: $p3
+    border-radius: 25px
+    color: $n

@@ -47,7 +47,7 @@ const WeekView = observer(() => {
         <div className={styles.weekView}>
             <WeekHeader weekDays={weekDays} />
             <WeekGrid ref={gridRef} weekDays={weekDays} hours={HOURS} timeSlots={TIME_SLOTS} >
-                <CurrentTimer gridHeight={gridHeight} currentTime={currentTime} weekDays={weekDays} />
+                {/*<CurrentTimer gridHeight={gridHeight} currentTime={currentTime} weekDays={weekDays} />*/}
 
             </WeekGrid>
         </div>

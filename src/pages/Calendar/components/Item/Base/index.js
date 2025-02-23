@@ -20,13 +20,15 @@ const BaseBusinessItem = forwardRef(({
       }`}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
-      {showTime && (
-        <div className={styles.time}>
-          {format(business.startDate, 'HH:mm')} -{' '}
-          {format(business.endDate, 'HH:mm')}
-        </div>
-      )}
-      <div className={styles.title}>{business.name}</div>
+
+        <div className={styles.title}><span>{business.name}</span>
+          {showTime && (
+              <div className={styles.time}>
+                  {format(business.startDate, 'HH:mm')} -{' '}
+                  {format(business.endDate, 'HH:mm')}
+              </div>
+          )}
+      </div>
     </div>
   );
 });
