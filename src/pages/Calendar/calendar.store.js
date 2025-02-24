@@ -45,6 +45,16 @@ export class CalendarStore {
     this.drafts[id] = { ...business };
   }
 
+  updateBusinessEvent(id, updates) {
+    const businessIndex = this.businesses.findIndex(b => b.id === id);
+    if (businessIndex !== -1) {
+      this.businesses[businessIndex] = {
+        ...this.businesses[businessIndex],
+        ...updates
+      };
+    }
+  }
+
   changeById(id, path, value, withId) {
     if (!this.drafts[id]) {
       this.createDraft(id);

@@ -1,0 +1,125 @@
+@import "../../../Calendar.module"
+.weekItem
+  position: absolute
+  background: white
+  border-radius: 4px
+  padding: 2px
+  transition: opacity 0.2s
+  z-index: 1
+  &.overlapTopDominant,
+  &.overlapBottomDominant
+    z-index: 1
+  .cascading
+    font-size: 14px
+  &::before,
+  &::after
+    content: ''
+    position: absolute
+    width: 8px
+    height: 100%
+    top: 0
+    background: inherit
+    //opacity: 0.7
+
+  &::before
+    left: -8px
+    display: none
+    border-radius: 4px 0 0 4px
+
+  &::after
+    right: -8px
+    display: none
+    border-radius: 0 4px 4px 0
+
+  // Scenario 1: No overlap - default state
+  // Items just follow each other, no special styling needed
+
+  // Scenario 2: Overlap from top
+  &.overlapTop
+    margin-left: 20px
+    //&::before
+    //  display: block
+    //  height: calc(100% + 8px)
+    //  top: -8px
+
+  // Scenario 3: Item inside another item
+  &.inside
+    margin: 0 12px
+    //width: calc(100% - 24px) !important
+    //&::before,
+    //&::after
+    //  display: block
+    //  height: 100%
+
+  // Scenario 4: Overlap from bottom
+  &.overlapBottom
+    margin-right: 20px
+    &::after
+      display: block
+      height: calc(100% + 8px)
+      bottom: -8px
+      top: auto
+
+  // Scenario 5: Parallel items (close start times)
+  &.parallel
+    &:nth-child(odd)
+      //margin-left: 15px
+    &:nth-child(even)
+      //margin-right: 15px
+    //width: calc(50% - 15px) !important
+
+  // Original functionality preserved
+  //&.hasOverlappingBefore
+  //  &::before
+  //    display: block
+  //
+  //&.hasOverlappingAfter
+  //  &::after
+  //    display: block
+
+
+  &.dragging,
+  &.resizing
+    z-index: 100
+
+.resizeHandleTop,
+.resizeHandleBottom
+  position: absolute
+  left: 0
+  right: 0
+  height: 8px
+  cursor: row-resize
+  z-index: 2
+
+  &:hover
+    background-color: rgba(0, 0, 0, 0.1)
+
+.resizeHandleTop
+  top: -4px
+
+.resizeHandleBottom
+  bottom: -4px
+
+.content
+  height: 100%
+  pointer-events: none
+  &.hasOverflow::after
+      content: ''
+      position: absolute
+      bottom: 0
+      left: 0
+      right: 0
+      height: 12px
+      background: linear-gradient(transparent, currentColor)
+      opacity: 0.2
+
+
+.time
+  font-size: 11px
+  color: #666
+
+.title
+  font-size: 12px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis

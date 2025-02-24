@@ -8,7 +8,7 @@ import WeekHeader from "./components/WeekHeader/WeekHeader";
 import WeekGrid from "./components/WeekGrid/WeekGrid";
 import CurrentTimer from "./components/CurrentTimer/CurrentTimer";
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 9);
-const TIME_SLOTS = [15, 30, 45];
+const TIME_SLOTS = [0,15, 30, 45];
 
 const WeekView = observer(() => {
     const { calendarStore } = useStore();

@@ -1,14 +1,17 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import { useDrag } from 'react-dnd';
 import {businessTypeStyles} from "../../../calendar.types";
 
 const withBusinessItem = (WrappedComponent, dragType = 'business') => {
-    return function ({
-                                                  business,
-                                                  showTime = false,
-                                                  customDragProps = {},
-                                                  ...props
-                                              }) {
+    return React.forwardRef(function BusinessItemWithDrag({
+                                                              business,
+                                                              showTime = false,
+                                                              customDragProps = {},
+                                                              ...props
+                                                          }, externalRef) {
+        // Создаем локальный ref для drag-n-drop
+        const dragRef = useRef(null);
+
         const [{ isDragging }, drag] = useDrag(() => ({
             type: dragType,
             item: {
@@ -23,18 +26,29 @@ const withBusinessItem = (WrappedComponent, dragType = 'business') => {
             }),
         }));
 
+        // Объединяем refs
+        useEffect(() => {
+            if (dragRef.current) {
+                drag(dragRef.current);
+                if (typeof externalRef === 'function') {
+                    externalRef(dragRef.current);
+                } else if (externalRef) {
+                    externalRef.current = dragRef.current;
+                }
+            }
+        }, [drag, externalRef]);
+
         return (
             <WrappedComponent
+                ref={dragRef}
                 business={business}
                 isDragging={isDragging}
                 showTime={showTime}
                 businessTypeStyles={businessTypeStyles}
                 {...props}
-                ref={drag}
-
             />
         );
-    };
+    });
 };
 
 export default withBusinessItem;

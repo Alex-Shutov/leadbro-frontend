@@ -4,14 +4,14 @@ const useCalculate = (layout) => {
     const calculateTimePosition = useCallback((time) => {
         const hours = time.getHours();
         const minutes = time.getMinutes();
-        const totalMinutes = (hours - 9) * 60 + minutes;
-        return (totalMinutes / (15 * 60)) * 100; // 15 часов (с 9 до 23)
+        const totalMinutes = (hours - 8) * 60 + minutes;
+        return (totalMinutes / (16 * 60)) * 100; // 15 часов (с 9 до 23)
     },[]);
     const calculateEventHeight = useCallback((business) => {
         const startMinutes = business.startDate.getHours() * 60 + business.startDate.getMinutes();
         const endMinutes = business.endDate.getHours() * 60 + business.endDate.getMinutes();
         const duration = endMinutes - startMinutes;
-        return (duration / (15 * 60)) * 100; // как процент от общей высоты сетки
+        return (duration / (16 * 60)) * 100; // как процент от общей высоты сетки
     },[]);
     const calculateEventWidth = useCallback((business) => {
         const eventLayout = layout[business.id];

@@ -1,17 +1,32 @@
 @import "src/styles/helpers"
 
-// Grid.module.sass
 .timeGrid
+  position: relative
   display: flex
   flex-direction: column
-  flex: 1
-  //position: relative
-  //overflow-y: auto
-  min-height: 740px  // 14 hours * 60px per hour to match the full workday (9 AM - 11 PM)
+  min-height: 736px // 16 hours * 46px
+
+.gridStructure 
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 1
+
+
+.eventsContainer 
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 2
+
 
 .hourRow
   display: flex
-  height: 46px  // Match Photo 1’s row height
+  height: 46px 
   min-height: 46px
   position: relative
 
@@ -41,26 +56,45 @@
   border-right: 1px solid #E2E8F0
   border-bottom: 1px solid #E2E8F0
   position: relative
+  height: 46px
 
 .timeSlot
   position: absolute
   left: 0
   right: 0
+  height: calc(100% / 4)
   border-bottom: 1px dashed #E2E8F0
-  pointer-events: none
+  transition: background-color 0.2s
+  pointer-events: all
+  z-index: 2
+  &.dropTarget
+    background-color: rgba(66, 153, 225, 0.1)
+
 
   &:nth-child(1)
     top: 0
-    height: 15px  // 15 minutes = 15px (adjust if needed to match Photo 1)
-
+    height: 11.5px
   &:nth-child(2)
-    top: 15px
-    height: 15px
-
+    top: 11.5px
+    height: 11.5px
   &:nth-child(3)
-    top: 30px
-    height: 15px
+    top: 23px
+    height: 11.5px
+  &:nth-child(4)
+    top: 34.5px
+    height: 11.5px
 
-  &:nth-child(4)  // Add the 4th slot for 45 minutes
-    top: 45px
-    height: 15px
+
+.eventsContainer
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  pointer-events: none
+  z-index: 3
+  > *
+    pointer-events: all
+
+
+
