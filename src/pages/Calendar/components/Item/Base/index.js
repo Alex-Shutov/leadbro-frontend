@@ -3,6 +3,7 @@ import { format, startOfDay } from 'date-fns';
 import { useDrag } from 'react-dnd';
 import { businessTypeStyles } from '../../../calendar.types';
 import styles from './Item.module.sass';
+import CalendarItemLabel from "../../../../../components/Calendar/ItemLabel/CalendarItemLabel";
 
 const BaseBusinessItem = forwardRef(({
                                business,
@@ -21,14 +22,7 @@ const BaseBusinessItem = forwardRef(({
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
 
-        <div className={styles.title}><span>{business.name}</span>
-          {showTime && (
-              <div className={styles.time}>
-                  {format(business.startDate, 'HH:mm')} -{' '}
-                  {format(business.endDate, 'HH:mm')}
-              </div>
-          )}
-      </div>
+        <CalendarItemLabel name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={showTime} />
     </div>
   );
 });

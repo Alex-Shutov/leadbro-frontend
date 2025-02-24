@@ -6,7 +6,7 @@ import useCalculate from "./calculate.hook";
 import WeekBusinessItem from "../../../Item/Week/WeekBusiness";
 import {useBusinessLayout} from "../../../../hooks/useBusinessLayout";
 import useStore from "../../../../../../hooks/useStore";
-import {addMinutes, differenceInMinutes, format} from "date-fns";
+import {addMinutes, areIntervalsOverlapping, differenceInMinutes, format} from "date-fns";
 import cn from "classnames";
 import {useDrop} from "react-dnd";
 import {observer} from "mobx-react";
@@ -60,36 +60,19 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
     // }, [hours]);
     const getTimeSlotFromOffset = useCallback((clientY, containerRect) => {
         const relativeY = clientY - containerRect.top;
-        const totalHeight = containerRect.height;
+        const hourHeight = containerRect.height / hours.length;
+        const slotHeight = hourHeight / 4; // 4 слота по 15 минут в часе
 
-        // Находим процент от общей высоты
-        const percentOfDay = (relativeY / totalHeight) * 100;
+        const slotIndex = Math.floor(relativeY / slotHeight);
+        const hour = 8 + Math.floor(slotIndex / 4);
+        const minutes = (slotIndex % 4) * 15;
 
-        // Общее количество минут в рабочем дне (14 часов * 60 минут)
-        const totalWorkMinutes = 14 * 60;
-
-        // Переводим проценты в минуты
-        const minutesFromStart = (percentOfDay * totalWorkMinutes) / 100;
-
-        // Находим час и минуты
-        let hour = 9 + Math.floor(minutesFromStart / 60);
-        let minutes = Math.floor(minutesFromStart % 60);
-
-        // Округляем минуты до ближайших 15
-        minutes = Math.round(minutes / 15) * 15;
-
-        // Корректируем час если минуты стали 60
-        if (minutes === 60) {
-            minutes = 0;
-            hour += 1;
-        }
-
-        // Применяем ограничения
+        // Добавляем ограничения
         return {
-            hour: Math.max(9, Math.min(23, hour)),
+            hour: Math.max(8, Math.min(23, hour)),
             minutes: Math.max(0, Math.min(45, minutes))
         };
-    }, []);
+    }, [hours]);
 
     // const TimeSlot = useCallback(({ day, hour, minute }) => {
     //     const [{ isOver }, drop] = useDrop(() => ({
@@ -181,11 +164,14 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
                             </div>
                             {weekDays.map(day => (
                                 <div
+                                    data-day={format(day, 'yyyy-MM-dd')}
                                     key={format(day, 'yyyy-MM-dd')}
                                     className={styles.timeCell}
                                 >
                                     {timeSlots.map(minute => (
                                         <TimeSlot
+                                            allItems={filteredBusinesses}
+                                            weekDays={weekDays}
                                             key={minute}
                                             day={day}
                                             hour={hour}
@@ -233,58 +219,49 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
         </div>
     );
 }));
-
-const TimeSlot = ({ day, hour, minute, calendarStore, gridRef,getTimeSlotFromOffset }) => {
+// WeekGrid.js - TimeSlot component
+const TimeSlot = ({ day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays }) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'week-business',
         drop: (item, monitor) => {
-            debugger
             if (!gridRef.current) return;
-
             const clientOffset = monitor.getClientOffset();
             if (!clientOffset) return;
 
             const gridRect = gridRef.current.getBoundingClientRect();
+            const gutterWidth = 46;
+
+            // Расчет дня
+            const gridContentWidth = gridRect.width - gutterWidth;
+            const xOffset = clientOffset.x - gridRect.left - gutterWidth;
+            if (xOffset < 0) return;
+
+            const dayIndex = Math.floor(xOffset / (gridContentWidth / weekDays.length));
+            if (dayIndex < 0 || dayIndex >= weekDays.length) return;
+
+            // Расчет времени
             const { hour: snapHour, minutes: snapMinutes } = getTimeSlotFromOffset(clientOffset.y, gridRect);
-            console.log('Snapped to:', { snapHour, snapMinutes, originalHour: hour, originalMinute: minute });
-
-
-            const newStartDate = new Date(day);
+            const newStartDate = new Date(weekDays[dayIndex]);
             newStartDate.setHours(snapHour, snapMinutes, 0, 0);
-
-            const durationMinutes = differenceInMinutes(
-                new Date(item.endDate),
-                new Date(item.startDate)
-            );
-            const newEndDate = addMinutes(newStartDate, durationMinutes);
+            debugger
+            const duration = differenceInMinutes(item.endDate, item.startDate);
+            const newEndDate = addMinutes(newStartDate, duration);
 
             calendarStore.updateBusinessEvent(item.id, {
                 startDate: newStartDate,
                 endDate: newEndDate
             });
         },
-        hover: (item, monitor) => {
-            if (!gridRef.current) return;
-
-            const clientOffset = monitor.getClientOffset();
-            if (!clientOffset) return;
-
-            const gridRect = gridRef.current.getBoundingClientRect();
-            const { hour: hoverHour, minutes: hoverMinutes } = getTimeSlotFromOffset(clientOffset.y, gridRect);
-            console.log('Hovering at:', { hoverHour, hoverMinutes });
-        },
-        collect: monitor => ({
+        collect: (monitor) => ({
             isOver: monitor.isOver(),
-            canDrop: monitor.canDrop()
-        })
-    }), [day, hour, minute, calendarStore, gridRef]);
+        }),
+    }), [gridRef, weekDays, calendarStore]);
 
     return (
         <div
             ref={drop}
-            className={cn(styles.timeSlot, {
-                [styles.dropTarget]: isOver
-            })}
+            className={cn(styles.timeSlot, { [styles.dropTarget]: isOver })}
+            style={{ zIndex: isOver ? 3 : 1 }}
         />
     );
 };

@@ -4,7 +4,7 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 export const mapBusinessFromApi = (apiBusiness) => {
   return {
     id: apiBusiness?.id,
-    name: apiBusiness?.name,
+    name: '123',
     description: apiBusiness?.description,
     type: apiBusiness?.type,
     finished: apiBusiness?.finished,

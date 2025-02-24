@@ -1,6 +1,14 @@
 import React, {forwardRef, useState, useEffect, useCallback, useRef} from 'react';
 import styles from './Item.module.sass';
-import {format, addMinutes, setHours, setMinutes, differenceInMinutes, areIntervalsOverlapping} from "date-fns";
+import {
+    format,
+    addMinutes,
+    setHours,
+    setMinutes,
+    differenceInMinutes,
+    areIntervalsOverlapping,
+    isSameDay
+} from "date-fns";
 import withBusinessItem from "../Base/Item.hoc";
 import useCalculate from "../../WeekView/components/WeekGrid/calculate.hook";
 import { useBusinessLayout } from "../../../hooks/useBusinessLayout";
@@ -8,9 +16,11 @@ import useStore from "../../../../../hooks/useStore";
 import calendarStyles from '../../../Calendar.module.sass'
 import cn from "classnames";
 import {transform} from "css-calc-transform";
+import {useDrop} from "react-dnd";
+import CalendarItemLabel from "../../../../../components/Calendar/ItemLabel/CalendarItemLabel";
 
 const BaseWeekItem = forwardRef(({
-                                    allItems,
+                                     allItems,
                                      business,
                                      isDragging,
                                      businessTypeStyles,
@@ -26,6 +36,9 @@ const BaseWeekItem = forwardRef(({
     const layout = useBusinessLayout(allItems, 'week');
     const { calculateTimePosition, calculateEventHeight } = useCalculate(layout);
     const itemLayout = layout[business.id];
+    const itemRef = useRef(null);
+    const [isItemForOneSlot,setItemForOneSlot] = useState(differenceInMinutes(business.startDate, business.endDate)>=15);
+
 
 
 
@@ -62,6 +75,70 @@ const BaseWeekItem = forwardRef(({
         return date;
     }, [business.startDate]);
 
+
+    const [{ isOver }, drop] = useDrop(() => ({
+        accept: 'week-business',
+        hover: (item, monitor) => {
+            if (item.id === business.id) return; // Не реагируем, если перетаскиваем на себя же
+
+            // Можно добавить визуальные эффекты при наведении
+        },
+        drop: (item, monitor) => {
+            if (item.id === business.id) return; // Предотвращаем дроп на себя
+            if (!itemRef.current || !ref.current) return;
+            debugger
+            const clientOffset = monitor.getClientOffset();
+            if (!clientOffset) return;
+
+            const itemRect = itemRef.current.getBoundingClientRect();
+            const containerRect = ref.current.parentElement.getBoundingClientRect();
+
+            // Определяем положение дропа относительно элемента
+            const dropY = clientOffset.y;
+            const itemTop = itemRect.top;
+            const itemBottom = itemRect.bottom;
+            const itemCenter = (itemTop + itemBottom) / 2;
+
+            // Определяем, куда перетаскиваем - выше элемента, ниже или внутрь
+            let newStartDate;
+
+            if (dropY < itemCenter) {
+                // Перетаскиваем выше текущего элемента
+
+                newStartDate = new Date(business.startDate);
+                if (newStartDate.getHours() === 8 && newStartDate.getMinutes() === 0) {
+                    newStartDate.setMinutes(newStartDate.getMinutes() + 30);
+                }
+                newStartDate.setMinutes(newStartDate.getMinutes() - 30);
+            } else {
+                // Перетаскиваем ниже текущего элемента
+                newStartDate = new Date(business.endDate);
+            }
+
+            // Сохраняем продолжительность перетаскиваемого элемента
+            const duration = differenceInMinutes(item.endDate, item.startDate);
+            const newEndDate = addMinutes(newStartDate, duration);
+
+            // Обновляем позицию элемента
+            calendarStore.updateBusinessEvent(item.id, {
+                startDate: newStartDate,
+                endDate: newEndDate
+            });
+
+            return { dropped: true };
+        },
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+            canDrop: monitor.canDrop()
+        })
+    }), [business]);
+
+    const setRefs = (node) => {
+        itemRef.current = node;
+        ref.current = node;
+        drop(node);
+    };
+
     const handleMouseDown = (e, direction) => {
         console.log('Mouse down:', direction); // Проверяем событие
         e.stopPropagation();
@@ -81,7 +158,6 @@ const BaseWeekItem = forwardRef(({
 
             const containerRect = ref.current.parentElement.getBoundingClientRect();
             const newTime = snapToTimeSlot(e.clientY, containerRect);
-
             if (resizeDirection === 'bottom') {
                 if (newTime > tempStartDate) {
                     setTempEndDate(newTime);
@@ -91,6 +167,7 @@ const BaseWeekItem = forwardRef(({
                     setTempStartDate(newTime);
                 }
             }
+                setItemForOneSlot(ref.current.clientHeight <=12)
         };
 
         const handleMouseUp = () => {
@@ -158,9 +235,9 @@ const BaseWeekItem = forwardRef(({
             ];
         }
 
-        debugger
     const isInside = allItems.some(item =>
         item.id !== business.id &&
+        isSameDay(item.startDate, business.startDate) &&
         item.startDate <= business.startDate &&
         item.endDate <= business.endDate
     );
@@ -176,11 +253,10 @@ const BaseWeekItem = forwardRef(({
             }
         ];
     }
-    debugger
     // Перекрытие сверху
     const topOverlapEvents = allItems.filter(item => {
-        debugger
             return item.id !== business.id &&
+                isSameDay(item.startDate, business.startDate) &&
             Math.abs(differenceInMinutes(item.endDate, business.startDate)) > 60 &&
             item.startDate < business.startDate
         }
@@ -207,7 +283,7 @@ const BaseWeekItem = forwardRef(({
             styles.overlapTop,
             {
                 width: `calc(${style.width} - 20px)`,
-                left: `calc(${style.left} + 20px)`,
+                // left: `calc(${style.left} + 20px)`,
                 zIndex: 3
             }
         ];
@@ -217,6 +293,7 @@ const BaseWeekItem = forwardRef(({
     const bottomOverlapEvents = allItems.filter(item =>
         item.id !== business.id &&
         item.startDate < business.endDate &&
+        isSameDay(item.startDate, business.startDate) &&
         item.endDate > business.endDate
     );
 
@@ -252,6 +329,7 @@ const BaseWeekItem = forwardRef(({
     // Каскадные события проверяем в последнюю очередь
     const cascadingEvents = allItems.filter(item =>
         item.id !== business.id &&
+        isSameDay(item.startDate, business.startDate) &&
         Math.abs(differenceInMinutes(item.startDate, business.startDate)) > 30 &&
         areIntervalsOverlapping(
             { start: business.startDate, end: business.endDate },
@@ -288,11 +366,13 @@ const BaseWeekItem = forwardRef(({
 
     return (
         <div
-            ref={ref}
+            ref={setRefs}
             className={cn(styles.weekItem,calendarStyles.businessItem, {
                 [calendarStyles[businessTypeStyles[business.type]]]: true,
                 [styles.dragging]: isDragging,
                 [styles.resizing]: isResizing,
+                [styles.oneSlotItem]: isItemForOneSlot,
+                    [styles.dropTarget]: isOver
                 //     [styles.hasOverlappingBefore]: itemLayout?.hasOverlappingBefore,
                 // [styles.hasOverlappingAfter]: itemLayout?.hasOverlappingAfter,
             },
@@ -300,15 +380,17 @@ const BaseWeekItem = forwardRef(({
             )}
             style={{
                 ...style,
-                opacity: isDragging || isResizing ? 0.5 : 1,
+                opacity: isDragging || isResizing ? 0.2 : 1,
                 top: `${calculateTimePosition(displayStartDate)}%`,
                 height: `${calculateEventHeight({
                     startDate: displayStartDate,
                     endDate: displayEndDate
                 })}%`,
-                zIndex: itemLayout?.zIndex || 1,
-                width: itemLayout?.hasOverlappingBefore ? style.width - '20px' ? itemLayout?.hasOverlappingAfter : style.width + '10px' : style.width,
-                    ...currentTypeOfOverlap[1]
+                zIndex: isOver ? 100 : (itemLayout?.zIndex || 1),
+                // width: itemLayout?.hasOverlappingBefore ? style.width - '20px' ? itemLayout?.hasOverlappingAfter : style.width + '10px' : style.width,
+                    ...currentTypeOfOverlap[1],
+                pointerEvents: isDragging ? 'none' : 'auto'
+
             }}
         >
             <div
@@ -318,12 +400,9 @@ const BaseWeekItem = forwardRef(({
             />
             <div ref={contentRef}
                  className={cn(styles.content, {
-                [styles.hasOverflow]: hasOverflow
+                // [styles.hasOverflow]: hasOverflow
             })}>
-                <div className={styles.time}>
-                    {format(displayStartDate, 'HH:mm')} - {format(displayEndDate, 'HH:mm')}
-                </div>
-                <div className={styles.title}>{business.name}</div>
+                <CalendarItemLabel name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={true} />
             </div>
             <div
                 className={styles.resizeHandleBottom}

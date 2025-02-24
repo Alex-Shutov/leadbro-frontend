@@ -5,6 +5,39 @@
   border-radius: 4px
   padding: 2px
   transition: opacity 0.2s
+  min-height: 12px
+  box-sizing: border-box
+  &.oneSlotItem
+    font-size: 8px
+    div[class*="Item_content"]
+      position: relative
+      bottom: 2px
+      div[class*="Item_time"]
+        font-size: 8px
+  &.dropTarget
+      &:before
+        content: ''
+        position: absolute
+        top: -4px
+        left: 0
+        right: 0
+        height: 4px
+        background: #4299e1
+        z-index: 100
+      &:after
+        content: ''
+        position: absolute
+        bottom: -4px
+        left: 0
+        right: 0
+        height: 4px
+        background: #4299e1
+        z-index: 100
+  &.dragging
+      opacity: 0.5
+      pointer-events: none !important
+  &:not(.dragging)
+    pointer-events: all
   z-index: 1
   &.overlapTopDominant,
   &.overlapBottomDominant
@@ -54,11 +87,11 @@
   // Scenario 4: Overlap from bottom
   &.overlapBottom
     margin-right: 20px
-    &::after
-      display: block
-      height: calc(100% + 8px)
-      bottom: -8px
-      top: auto
+    //&::after
+    //  display: block
+    //  height: calc(100% + 8px)
+    //  bottom: -8px
+    //  top: auto
 
   // Scenario 5: Parallel items (close start times)
   &.parallel

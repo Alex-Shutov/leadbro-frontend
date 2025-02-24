@@ -7,10 +7,12 @@ import {ru} from "date-fns/locale/ru";
 import WeekHeader from "./components/WeekHeader/WeekHeader";
 import WeekGrid from "./components/WeekGrid/WeekGrid";
 import CurrentTimer from "./components/CurrentTimer/CurrentTimer";
+import useCalendarApi from "../../calendar.api";
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 9);
 const TIME_SLOTS = [0,15, 30, 45];
 
 const WeekView = observer(() => {
+    const calendarApi = useCalendarApi();
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
 

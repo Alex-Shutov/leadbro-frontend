@@ -31,7 +31,7 @@ const WeekHeader = ({weekDays,hours,timeSlots}) => {
             {weekDays.map(day => {
                 const dateKey = format(day, 'yyyy-MM-dd');
                 const dayAllDayEvents = allDayEvents[dateKey] || [];
-                const isCurrDay = isSameDay(currentDate,day)
+                const isCurrDay = isSameDay(new Date(),day)
                 return (
                     <div key={day.toISOString()} className={styles.dayColumn}>
                         <div className={styles.dayHeader}>
