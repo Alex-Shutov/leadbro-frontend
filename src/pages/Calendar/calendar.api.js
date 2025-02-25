@@ -18,44 +18,34 @@ const useCalendarApi = () => {
   const { calendarStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
-  const getBusinesses = (dateFrom, dateTo) => {
-    setIsLoading(true);
-    resetApiProvider();
-    debugger;
-    const urlParams = new URLSearchParams();
-    urlParams.append(
-      'date_from',
-      formatDateToQuery(
-        new Date(format(dateFrom, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")),
-      ),
-    );
-    urlParams.append(
-      'date_to',
-      formatDateToQuery(
-        new Date(format(dateTo, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")),
-      ),
-    );
-    return (
-      http
-        .get(`/api/businesses?${urlParams.toString().replace(/['"]/g, '')}`)
-        .then(handleHttpResponse)
-        // .get('/api/businesses', {
-        //   params: {
-        //     date_from: format(dateFrom, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
-        //     date_to: format(dateTo, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
-        //   },
-        // })
-        // .then(handleHttpResponse)
-        .then((res) => {
-          const mappedBusinesses = res.body.data.map((business) =>
-            mapBusinessFromApi(business),
-          );
-          calendarStore.setBusinesses(mappedBusinesses);
-        })
-        .catch(handleHttpError)
-        .finally(() => setIsLoading(false))
-    );
-  };
+    const getBusinesses = (startDate, endDate, filters = {}) => {
+        setIsLoading(true);
+        resetApiProvider();
+        debugger
+        const searchParams = new URLSearchParams(window.location.search);
+        // Создаем объект с параметрами
+        const params = {
+            date_from: formatDateToQuery(new Date(startDate)),
+            date_to: formatDateToQuery(new Date(endDate)),
+            type:searchParams.get('type'),
+            employee_id:searchParams.get('employee_id')
+        };
+
+
+
+        return http
+            .get(`/api/businesses`,{params})
+            .then(handleHttpResponse)
+            .then((res) => {
+                const mappedBusinesses = res.body.data.map((business) =>
+                    mapBusinessFromApi(business),
+                );
+                calendarStore.setBusinesses(mappedBusinesses);
+                return mappedBusinesses;
+            })
+            .catch(handleHttpError)
+            .finally(() => setIsLoading(false));
+    };
 
   const createBusiness = (data) => {
     setIsLoading(true);

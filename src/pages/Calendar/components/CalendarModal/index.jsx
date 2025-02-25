@@ -19,6 +19,7 @@ import ValuesSelector from "../../../../shared/Selector";
 import useMembers from "../../../Members/hooks/useMembers";
 import TimeDropdown from "../../../../components/TimeDropdown";
 import Loader from "../../../../shared/Loader";
+import TextLink from "../../../../shared/Table/TextLink";
 
 const Index = observer(({
                                         businessId,
@@ -218,6 +219,8 @@ const Index = observer(({
     };
     debugger
     business.performer = Array.isArray(business.performer) ? business.performer : [business.performer];
+    // const serviceClient = service?.client ?? props?.client ?? null;
+
     return (
         <>
            <ConfirmationModal
@@ -278,7 +281,46 @@ const Index = observer(({
                 {/*    /!* Participants Dropdown *!/*/}
                 {/*    /!* TODO: Implement participants selection *!/*/}
                 {/*</div>*/}
-
+                <div className={styles.flex}>
+                    {/*<ValuesSelector*/}
+                    {/*    minInputLength={4}*/}
+                    {/*    // readonly={props?.client || isEditMode}*/}
+                    {/*    placeholder={'Клиент'}*/}
+                    {/*    name={'client'}*/}
+                    {/*    onChange={(e) => {*/}
+                    {/*        handleChange(*/}
+                    {/*            'client',*/}
+                    {/*            e.length*/}
+                    {/*                ? appStore?.companies.find((el) => el?.id === e[0]?.value)*/}
+                    {/*                : null,*/}
+                    {/*        );*/}
+                    {/*    }}*/}
+                    {/*    isMulti={false}*/}
+                    {/*    label={*/}
+                    {/*        <div className={styles.client_label}>*/}
+                    {/*            <span>Клиент</span>*/}
+                    {/*            {!props.client && <TextLink>Создать клиента</TextLink>}*/}
+                    {/*        </div>*/}
+                    {/*    }*/}
+                    {/*    isAsync*/}
+                    {/*    asyncSearch={async (query) => {*/}
+                    {/*        const response = await appApi.getCompanies(query);*/}
+                    {/*        const data = response;*/}
+                    {/*        return data.map((item) => ({*/}
+                    {/*            value: item?.id,*/}
+                    {/*            label: item?.name,*/}
+                    {/*        }));*/}
+                    {/*    }}*/}
+                    {/*    value={*/}
+                    {/*        serviceClient*/}
+                    {/*            ? {*/}
+                    {/*                value: serviceClient.id,*/}
+                    {/*                label: serviceClient?.name ?? serviceClient?.title ?? '',*/}
+                    {/*            }*/}
+                    {/*            : null*/}
+                    {/*    }*/}
+                    {/*/>*/}
+                </div>
                 <div className={cn(styles.flex, styles.addZIndex)}>
                     <Calendar
                         required={true}
@@ -343,33 +385,33 @@ const Index = observer(({
                     </div>
                 </div>
                     <div className={cn(styles.lowZIndex)}>
-                        <ValuesSelector
-                            required={true}
-                            onChange={(e) => {
-                                handleChange(
-                                    'performer',
-                                    e.length
-                                        ? members.filter((member) =>
-                                            e.some((option) => option.value === member.id),
-                                        )
-                                        : [],
-                                );
-                            }}
-                            isMulti={false}
-                            label="Ответственный"
-                            options={members.map((el) => ({
-                                value: el.id,
-                                label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
-                            }))}
-                            value={
-                                // initialResponsibles && initialResponsibles[0]
-                                business?.performer ? business?.performer.map((el) => ({
-                                        value: el?.id ?? null,
-                                        label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
-                                    }))[0]
-                                    : []
-                            }
-                        />
+                        {/*<ValuesSelector*/}
+                        {/*    required={true}*/}
+                        {/*    onChange={(e) => {*/}
+                        {/*        handleChange(*/}
+                        {/*            'performer',*/}
+                        {/*            e.length*/}
+                        {/*                ? members.filter((member) =>*/}
+                        {/*                    e.some((option) => option.value === member.id),*/}
+                        {/*                )*/}
+                        {/*                : [],*/}
+                        {/*        );*/}
+                        {/*    }}*/}
+                        {/*    isMulti={false}*/}
+                        {/*    label="Ответственный"*/}
+                        {/*    options={members.map((el) => ({*/}
+                        {/*        value: el.id,*/}
+                        {/*        label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,*/}
+                        {/*    }))}*/}
+                        {/*    value={*/}
+                        {/*        // initialResponsibles && initialResponsibles[0]*/}
+                        {/*        business?.performer ? business?.performer.map((el) => ({*/}
+                        {/*                value: el?.id ?? null,*/}
+                        {/*                label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,*/}
+                        {/*            }))[0]*/}
+                        {/*            : []*/}
+                        {/*    }*/}
+                        {/*/>*/}
                     </div>
 
                 {/* Responsible person Dropdown */}

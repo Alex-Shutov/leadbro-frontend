@@ -14,56 +14,84 @@ import {addMonths, endOfWeek, format, startOfWeek, subMonths} from 'date-fns';
 import { ru } from 'date-fns/locale/ru';
 import Selector from './components/Selector';
 import WeekView from "./components/WeekView";
-import businessEditModal from "../Deals/components/DealEditModal";
+import useAppApi from "../../api";
+import { FiltersProvider } from "../../providers/FilterProvider";
 import CalendarModal from "./components/CalendarModal";
+import {createCalendarFilters} from "./calendar.filters";
 
 const CalendarContent = observer(() => {
   const api = useCalendarApi();
   const { calendarStore } = useStore();
+  const appApi = useAppApi();
   const currentView = calendarStore.currentView;
   const currentDate = calendarStore.currentDate;
   const [businessData, setbusinessData] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState({});
 
-    useEffect(() => {
-      let startDate, endDate;
+  // Определяем диапазон дат в зависимости от текущего представления
+  const getCurrentDateRange = () => {
+    let startDate, endDate;
 
-      if (currentView === calendarViewTypes.month) {
-        startDate = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth(),
-            1,
-        ).toISOString();
-        endDate = new Date(
-            currentDate.getFullYear(),
-            currentDate.getMonth() + 1,
-            0,
-        ).toISOString();
-      } else if (currentView === calendarViewTypes.week) {
-        startDate = startOfWeek(currentDate, { weekStartsOn: 1 }).toISOString();
-        endDate = endOfWeek(currentDate, { weekStartsOn: 1 }).toISOString();
-      } else if (currentView === calendarViewTypes.day) {
-        startDate = new Date(currentDate).toISOString().split('T')[0] + 'T00:00:00Z';
-        endDate = new Date(currentDate).toISOString().split('T')[0] + 'T23:59:59Z';
-      }
+    if (currentView === calendarViewTypes.month) {
+      startDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          1,
+      );
+      endDate = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0,
+      );
+    } else if (currentView === calendarViewTypes.week) {
+      startDate = startOfWeek(currentDate, { weekStartsOn: 1 });
+      endDate = endOfWeek(currentDate, { weekStartsOn: 1 });
+    } else if (currentView === calendarViewTypes.day) {
+      startDate = new Date(currentDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(currentDate);
+      endDate.setHours(23, 59, 59, 999);
+    }
 
-    api.getBusinesses(startDate, endDate);
-  }, [calendarStore.currentDate, currentView]); // Добавляем зависимости
+    return { startDate, endDate };
+  };
+
+  // Загрузка данных с учетом текущего представления и фильтров
+  const loadData = () => {
+    const { startDate, endDate } = getCurrentDateRange();
+
+    // Комбинируем диапазон дат с текущими фильтрами
+    api.getBusinesses(
+        startDate.toISOString(),
+        endDate.toISOString(),
+        currentFilters
+    );
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [calendarStore.currentDate, currentView, currentFilters]);
 
   const handleViewChange = (view) => {
     calendarStore.setCurrentView(view);
   };
 
+  const handleFilterChange = async (filters) => {
+    // Сохраняем новые фильтры
+    setCurrentFilters(filters);
+
+    // Загрузка данных произойдет автоматически благодаря useEffect и зависимости от currentFilters
+  };
 
   const handleDateUpdate = (newDate) => {
     calendarStore.setCurrentDate(newDate);
-  }
+  };
 
   const handleOpenModal = (data) => {
-    debugger
-    setbusinessData(data)
-    setIsCreateMode(false)
-  }
+    setbusinessData(data);
+    setIsCreateMode(false);
+  };
 
   const renderView = () => {
     switch (currentView) {
@@ -72,68 +100,80 @@ const CalendarContent = observer(() => {
       case calendarViewTypes.week:
         return <WeekView onOpenModal={handleOpenModal} />;
       default:
-        return <MonthView />;
+        return <MonthView onOpenModal={handleOpenModal} />;
     }
   };
 
-
-
   const handleCreateBusiness = () => {
-    setbusinessData(null)
-    setIsCreateMode(true)
+    setbusinessData(null);
+    setIsCreateMode(true);
   };
 
   const handleCloseModal = () => {
     setbusinessData(null);
     setIsCreateMode(false);
+    // Перезагружаем данные после закрытия модалки
+    loadData();
   };
 
+  // Получаем текущий диапазон дат для инициализации фильтров
+  const { startDate, endDate } = getCurrentDateRange();
 
   return (
-    <LoadingProvider isLoading={api.isLoading}>
-      <div className={styles.container}>
-        <Title
-          title="Календарь дел"
-          actions={{
-            add: {
-              action: handleCreateBusiness,
-              title: 'Создать дело',
-            },
-          }}
-        />
-        <div className={styles.header}>
-          <div className={styles.viewSelector}>
-            {Object.entries(calendarViewTypesRu).map(([type, label]) => (
-              <button
-                key={type}
-                className={`${currentView === type ? styles.active : ''}`}
-                onClick={() => handleViewChange(type)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {/*{renderSelector()}*/}
-          <Selector handleUpdate={handleDateUpdate} currentDate={currentDate} type={currentView} />
-        </div>
+      <FiltersProvider>
+        <LoadingProvider isLoading={api.isLoading}>
+          <div className={styles.container}>
+            <Title
+                title="Календарь дел"
+                actions={{
+                  add: {
+                    action: handleCreateBusiness,
+                    title: 'Создать дело',
+                  },
+                  filter: {
+                    title: 'Фильтр',
+                    config: createCalendarFilters(appApi),
+                    onChange: handleFilterChange,
+                    initialValues: {
+                      date_from: format(startDate, 'yyyy-MM-dd'),
+                      date_to: format(endDate, 'yyyy-MM-dd')
+                    }
+                  }
+                }}
+            />
+            <div className={styles.header}>
+              <div className={styles.viewSelector}>
+                {Object.entries(calendarViewTypesRu).map(([type, label]) => (
+                    <button
+                        key={type}
+                        className={`${currentView === type ? styles.active : ''}`}
+                        onClick={() => handleViewChange(type)}
+                    >
+                      {label}
+                    </button>
+                ))}
+              </div>
+              <Selector handleUpdate={handleDateUpdate} currentDate={currentDate} type={currentView} />
+            </div>
 
-        <div className={styles.calendar}>{renderView()}</div>
-      </div>
-      {(businessData || isCreateMode) && (
-          <CalendarModal
-              businessId={businessData?.id ?? null}
-              onClose={handleCloseModal}
-          />
-      )}
-    </LoadingProvider>
+            <div className={styles.calendar}>{renderView()}</div>
+          </div>
+          {(businessData || isCreateMode) && (
+              <CalendarModal
+                  businessId={businessData?.id ?? null}
+                  onClose={handleCloseModal}
+              />
+          )}
+        </LoadingProvider>
+      </FiltersProvider>
   );
 });
 
 const Calendar = () => {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <CalendarContent />
-    </DndProvider>
+      <DndProvider backend={HTML5Backend}>
+        <CalendarContent />
+      </DndProvider>
   );
 };
 
