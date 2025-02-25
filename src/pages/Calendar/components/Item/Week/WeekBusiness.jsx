@@ -18,6 +18,8 @@ import cn from "classnames";
 import {transform} from "css-calc-transform";
 import {useDrop} from "react-dnd";
 import CalendarItemLabel from "../../../../../components/Calendar/ItemLabel/CalendarItemLabel";
+import useCalendarApi from "../../../calendar.api";
+import {id} from "date-fns/locale";
 
 const BaseWeekItem = forwardRef(({
                                      allItems,
@@ -25,9 +27,11 @@ const BaseWeekItem = forwardRef(({
                                      isDragging,
                                      businessTypeStyles,
                                      style = {},
+                                    onModalOpen,
                                  }, ref) => {
     const { calendarStore } = useStore();
     const [isResizing, setIsResizing] = useState(false);
+    const calendarApi = useCalendarApi();
     const [resizeDirection, setResizeDirection] = useState(null);
     const [tempStartDate, setTempStartDate] = useState(business.startDate);
     const [tempEndDate, setTempEndDate] = useState(business.endDate);
@@ -119,11 +123,13 @@ const BaseWeekItem = forwardRef(({
             const duration = differenceInMinutes(item.endDate, item.startDate);
             const newEndDate = addMinutes(newStartDate, duration);
 
-            // Обновляем позицию элемента
             calendarStore.updateBusinessEvent(item.id, {
                 startDate: newStartDate,
                 endDate: newEndDate
             });
+            calendarStore.changeById(item.id,'startDate', newStartDate);
+            calendarStore.changeById(item.id,'endDate', newEndDate);
+            calendarApi.updateBusiness(item.id);
 
             return { dropped: true };
         },
@@ -177,6 +183,9 @@ const BaseWeekItem = forwardRef(({
                     startDate: tempStartDate,
                     endDate: tempEndDate,
                 });
+                calendarStore.changeById(business.id,'startDate', tempStartDate);
+                calendarStore.changeById(business.id,'endDate', tempEndDate);
+                calendarApi.updateBusiness(business.id);
             }
             setIsResizing(false);
             setResizeDirection(null);
@@ -364,8 +373,17 @@ const BaseWeekItem = forwardRef(({
 
     const currentTypeOfOverlap = getOverlapClass()
 
+    const handleOpenModal = (e) => {
+            debugger
+        e.stopPropagation()
+        e.preventDefault()
+            if (!isResizing && !isDragging )
+                onModalOpen(business)
+    }
+
     return (
         <div
+
             ref={setRefs}
             className={cn(styles.weekItem,calendarStyles.businessItem, {
                 [calendarStyles[businessTypeStyles[business.type]]]: true,
@@ -399,6 +417,8 @@ const BaseWeekItem = forwardRef(({
                 onMouseDown={(e) => handleMouseDown(e, 'top')}
             />
             <div ref={contentRef}
+                 onClick={(e)=>handleOpenModal(e)}
+
                  className={cn(styles.content, {
                 // [styles.hasOverflow]: hasOverflow
             })}>

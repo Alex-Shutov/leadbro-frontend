@@ -37,7 +37,7 @@ const CommentsList = ({
   };
   const { groupedByDate: groupedComments, isLoading: groupedLoading } =
     useGroupByDate(comments, filterFunc);
-
+  debugger
   const { ref, isDeleting, isRendered } = useScrollAfterDelete(comments);
 
   const handleDeleteComment = (commentId) => {

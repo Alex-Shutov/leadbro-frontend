@@ -30,6 +30,7 @@ export const formatDateWithDateAndYear = (date) => {
 };
 
 export const formatDateOnlyHours = (date) => {
+
   if (!date || !isValidDate(date)) return;
   debugger
 

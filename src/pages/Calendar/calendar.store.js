@@ -55,7 +55,8 @@ export class CalendarStore {
     }
   }
 
-  changeById(id, path, value, withId) {
+  changeById(id, path, value, withId=true) {
+    debugger
     if (!this.drafts[id]) {
       this.createDraft(id);
     }

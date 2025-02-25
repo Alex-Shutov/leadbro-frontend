@@ -222,7 +222,7 @@ export const mapCommentsFromApi = (apiComments) => {
   return apiComments?.reduce((acc, comment) => {
     acc[comment.id] = {
       id: comment.id,
-      date: convertUTCToLocal(comment.created_at),
+      date: new Date(comment.created_at),
       sender: {
         id: comment.commentator.id,
         image: comment.commentator.avatar

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Title from '../../shared/Title';
@@ -14,12 +14,16 @@ import {addMonths, endOfWeek, format, startOfWeek, subMonths} from 'date-fns';
 import { ru } from 'date-fns/locale/ru';
 import Selector from './components/Selector';
 import WeekView from "./components/WeekView";
+import businessEditModal from "../Deals/components/DealEditModal";
+import CalendarModal from "./components/CalendarModal";
 
 const CalendarContent = observer(() => {
   const api = useCalendarApi();
   const { calendarStore } = useStore();
   const currentView = calendarStore.currentView;
   const currentDate = calendarStore.currentDate;
+  const [businessData, setbusinessData] = useState(null);
+  const [isCreateMode, setIsCreateMode] = useState(false);
 
     useEffect(() => {
       let startDate, endDate;
@@ -50,58 +54,40 @@ const CalendarContent = observer(() => {
     calendarStore.setCurrentView(view);
   };
 
-  // const handlePrevMonth = () => {
-  //   const newDate = subMonths(currentDate, 1);
-  //   calendarStore.setCurrentDate(newDate);
-  // };
-  //
-  // const handleNextMonth = () => {
-  //   const newDate = addMonths(currentDate, 1);
-  //   calendarStore.setCurrentDate(newDate);
-  // };
 
   const handleDateUpdate = (newDate) => {
     calendarStore.setCurrentDate(newDate);
   }
 
+  const handleOpenModal = (data) => {
+    debugger
+    setbusinessData(data)
+    setIsCreateMode(false)
+  }
+
   const renderView = () => {
     switch (currentView) {
       case calendarViewTypes.month:
-        return <MonthView />;
+        return <MonthView onOpenModal={handleOpenModal} />;
       case calendarViewTypes.week:
-        return <WeekView />;
+        return <WeekView onOpenModal={handleOpenModal} />;
       default:
         return <MonthView />;
     }
   };
 
-  // const renderSelector = () => {
-  //   switch (currentView) {
-  //     case calendarViewTypes.month:
-  //       return (
-  //         <Selector
-  //           type={'month'}
-  //          handleUpdate={handleDateUpdate}
-  //           currentDate={currentDate}
-  //         />
-  //       );
-  //
-  //     // case calendarViewTypes.day:
-  //     //   return <DayView />;
-  //     default:
-  //       return (
-  //         <Selector
-  //           type={'month'}
-  //           handleUpdate={handleDateUpdate}
-  //           currentDate={currentDate}
-  //         />
-  //       );
-  //   }
-  // };
+
 
   const handleCreateBusiness = () => {
-    // ToDo: Открыть модальное окно создания дела
+    setbusinessData(null)
+    setIsCreateMode(true)
   };
+
+  const handleCloseModal = () => {
+    setbusinessData(null);
+    setIsCreateMode(false);
+  };
+
 
   return (
     <LoadingProvider isLoading={api.isLoading}>
@@ -133,6 +119,12 @@ const CalendarContent = observer(() => {
 
         <div className={styles.calendar}>{renderView()}</div>
       </div>
+      {(businessData || isCreateMode) && (
+          <CalendarModal
+              businessId={businessData?.id ?? null}
+              onClose={handleCloseModal}
+          />
+      )}
     </LoadingProvider>
   );
 });

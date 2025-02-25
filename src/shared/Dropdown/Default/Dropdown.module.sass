@@ -1,6 +1,9 @@
 @import ../../../styles/helpers
-
+.disabled
+    pointer-events: none
+    cursor: not-allowed
 .label
+    min-height: 20px
     margin-bottom: 12px
     +base2
     color: $n4
@@ -46,18 +49,21 @@
                 +body1-s
                 text-align: center
                 padding: 8px 0px
-    &.small
-        .head
-            height: 40px
-            padding: 0 40px 0 16px
-            line-height: 40px
-            &:before
-                width: 40px
-                background-size: 16px auto
-        .option
-            padding: 4px 16px
 
 
+.small
+    display: flex
+    .input
+        width: 60px
+    .head
+        height: 48px
+        padding: 0 40px 0 16px
+        line-height: 46px
+        &:before
+            width: 40px
+            background-size: 16px auto
+    .option
+        padding: 4px 16px
 
 .statusDropdown
     min-width: 120px

@@ -10,10 +10,11 @@ import {addMinutes, areIntervalsOverlapping, differenceInMinutes, format} from "
 import cn from "classnames";
 import {useDrop} from "react-dnd";
 import {observer} from "mobx-react";
-const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) => {
+import useCalendarApi from "../../../../calendar.api";
+const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,children},ref) => {
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
-
+    const calendarApi = useCalendarApi();
     const businesses = calendarStore.getBusinesses();
     const layout = useBusinessLayout(businesses, 'week',currentDate);
     const businessesByDay = useBusinessEvents(businesses, currentDate, 'week');
@@ -170,6 +171,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
                                 >
                                     {timeSlots.map(minute => (
                                         <TimeSlot
+                                            api = {calendarApi}
                                             allItems={filteredBusinesses}
                                             weekDays={weekDays}
                                             key={minute}
@@ -195,6 +197,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
                     if (dayIndex === -1) return null;
                     return (
                         <WeekBusinessItem
+                            onModalOpen={onOpenModal}
                             key={business.id}
                             business={business}
                             allItems = {filteredBusinesses}
@@ -220,7 +223,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,children},ref) =
     );
 }));
 // WeekGrid.js - TimeSlot component
-const TimeSlot = ({ day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays }) => {
+const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays }) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'week-business',
         drop: (item, monitor) => {
@@ -244,13 +247,19 @@ const TimeSlot = ({ day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays
             const newStartDate = new Date(weekDays[dayIndex]);
             newStartDate.setHours(snapHour, snapMinutes, 0, 0);
             debugger
-            const duration = differenceInMinutes(item.endDate, item.startDate);
+            const currItemFromStore = calendarStore.getById(item.id)
+            const duration = differenceInMinutes(currItemFromStore.endDate, currItemFromStore.startDate);
             const newEndDate = addMinutes(newStartDate, duration);
 
+            // Обновляем позицию элемента
             calendarStore.updateBusinessEvent(item.id, {
                 startDate: newStartDate,
                 endDate: newEndDate
             });
+            calendarStore.changeById(item.id,'startDate', newStartDate);
+            calendarStore.changeById(item.id,'endDate', newEndDate);
+            api.updateBusiness(item.id);
+
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),

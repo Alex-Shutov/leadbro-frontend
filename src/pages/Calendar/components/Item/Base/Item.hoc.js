@@ -21,10 +21,12 @@ const withBusinessItem = (WrappedComponent, dragType = 'business') => {
                 endDate: business.endDate,
                 ...customDragProps
             },
-            collect: (monitor) => ({
-                isDragging: !!monitor.isDragging(),
-            }),
-        }));
+            collect: (monitor) => {
+                console.log('monitor', monitor);
+                return {
+                    isDragging: !!monitor.isDragging()
+                }}
+        }))
 
         // Объединяем refs
         useEffect(() => {

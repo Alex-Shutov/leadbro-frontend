@@ -11,7 +11,7 @@ import useCalendarApi from "../../calendar.api";
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 9);
 const TIME_SLOTS = [0,15, 30, 45];
 
-const WeekView = observer(() => {
+const WeekView = observer(({onOpenModal}) => {
     const calendarApi = useCalendarApi();
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
@@ -48,7 +48,7 @@ const WeekView = observer(() => {
     return (
         <div className={styles.weekView}>
             <WeekHeader weekDays={weekDays} />
-            <WeekGrid ref={gridRef} weekDays={weekDays} hours={HOURS} timeSlots={TIME_SLOTS} >
+            <WeekGrid onOpenModal={onOpenModal} ref={gridRef} weekDays={weekDays} hours={HOURS} timeSlots={TIME_SLOTS} >
                 {/*<CurrentTimer gridHeight={gridHeight} currentTime={currentTime} weekDays={weekDays} />*/}
 
             </WeekGrid>

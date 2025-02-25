@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { mapBusinessFromApi, mapBusinessToBackend } from './calendar.mapper';
 import {
-  handleHttpError,
-  handleHttpResponse,
-  http,
-  resetApiProvider,
+    handleHttpError,
+    handleHttpResponse, handleShowError,
+    http,
+    resetApiProvider,
 } from '../../shared/http';
 import useStore from '../../hooks/useStore';
 import {
@@ -12,6 +12,7 @@ import {
   formatDateToQuery,
 } from '../../utils/formate.date';
 import { format } from 'date-fns';
+import {mapCommentsFromApi} from "../Clients/clients.mapper";
 
 const useCalendarApi = () => {
   const { calendarStore } = useStore();
@@ -59,7 +60,7 @@ const useCalendarApi = () => {
   const createBusiness = (data) => {
     setIsLoading(true);
     return http
-      .post('/api/businesses', data)
+      .post('/api/businesses', mapBusinessToBackend(data,Object.keys(data)))
       .then(handleHttpResponse)
       .then((res) => {
         const mappedBusiness = mapBusinessFromApi(res.body.data);
@@ -68,13 +69,14 @@ const useCalendarApi = () => {
           mappedBusiness,
         ]);
       })
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
 
   const updateBusiness = (id, drafts, changedFieldsSet) => {
     setIsLoading(true);
-    const dataToSend = mapBusinessToBackend(drafts, changedFieldsSet);
+    debugger
+    const dataToSend = mapBusinessToBackend(drafts??calendarStore.drafts[id],changedFieldsSet?? calendarStore.changedProps);
 
     return http
       .patch(`/api/businesses/${id}`, dataToSend)
@@ -89,7 +91,7 @@ const useCalendarApi = () => {
         );
         calendarStore.setBusinesses(updatedBusinesses);
       })
-      .catch(handleHttpError)
+      .catch(handleShowError)
       .finally(() => setIsLoading(false));
   };
 
@@ -109,12 +111,44 @@ const useCalendarApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+    const getBusinessComments = (businessId) => {
+        setIsLoading(true);
+        return http
+            .get(`/api/businesses/${businessId}/comments`)
+            .then(handleHttpResponse)
+            .then((res) => mapCommentsFromApi(res.body.data))
+            .catch(handleHttpError)
+            .finally(() => setIsLoading(false));
+    };
+
+    const addBusinessComment = (businessId, comment) => {
+        setIsLoading(true);
+        return http
+            .post(`/api/businesses/${businessId}/comments`, { content: comment })
+            .then(handleHttpResponse)
+            .then((res) => res.body.data)
+            .catch(handleHttpError)
+            .finally(() => setIsLoading(false));
+    };
+
+    const deleteBusinessComment = (businessId, commentId) => {
+        setIsLoading(true);
+        return http
+            .delete(`/api/businesses/${businessId}/comments/${commentId}`)
+            .then(handleHttpResponse)
+            .catch(handleHttpError)
+            .finally(() => setIsLoading(false));
+    };
+
   return {
     isLoading,
     getBusinesses,
     createBusiness,
     updateBusiness,
     deleteBusiness,
+      getBusinessComments,
+      addBusinessComment,
+      deleteBusinessComment
   };
 };
 
