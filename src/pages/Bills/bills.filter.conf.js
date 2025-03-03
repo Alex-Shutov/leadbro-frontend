@@ -27,7 +27,7 @@ export const createBillsFilters = ({
   periodCalendarRef,
 }) => {
   // const handlePeriodChange = (values, { periodCalendar = false } = {}) => {
-  //     debugger
+  //
   //     if (periodCalendar) {
   //         // Если изменился календарь, сбрасываем селектор
   //         if (periodSelectorRef) {

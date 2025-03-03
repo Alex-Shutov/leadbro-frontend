@@ -10,7 +10,7 @@ export const useBusinessDrag = () => {
   const handleDragEnd = useCallback(
     ({ businessId, sourceDate, targetDate }) => {
       if (!businessId || !sourceDate || !targetDate) return;
-      debugger;
+      ;
       const business = calendarStore.getById(businessId);
       if (!business) return;
 

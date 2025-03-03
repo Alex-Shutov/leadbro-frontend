@@ -1,4 +1,4 @@
-import React, {forwardRef, useCallback, useMemo, useRef} from 'react';
+import React, {forwardRef, useCallback, useMemo, useRef, useState} from 'react';
 import styles from './Grid.module.sass';
 import {useBusinessEvents} from "../../../../hooks/useBussinessEvent";
 
@@ -11,6 +11,7 @@ import cn from "classnames";
 import {useDrop} from "react-dnd";
 import {observer} from "mobx-react";
 import useCalendarApi from "../../../../calendar.api";
+import CalendarModal from "../../../CalendarModal";
 const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,children},ref) => {
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
@@ -19,6 +20,10 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
     const layout = useBusinessLayout(businesses, 'week',currentDate);
     const businessesByDay = useBusinessEvents(businesses, currentDate, 'week');
     const {calculateTimePosition,calculateEventLeft,calculateEventHeight,calculateEventWidth} = useCalculate(layout);
+    const [hoveredDay, setHoveredDay] = useState(null);
+    const [tempHover,setTempHover] = useState(null);
+    const [businessData, setbusinessData] = useState(null);
+    const [isCreateMode, setIsCreateMode] = useState(false);
 
     // const eventsByDayAndHour = useMemo(() => {
     //     const result = {};
@@ -143,7 +148,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
     //     hover: (item, monitor) => {
     //         const clientOffset = monitor.getClientOffset();
     //         if (!clientOffset || !gridRef.current) return;
-    //         debugger
+    //
     //
     //
     //     },
@@ -151,26 +156,61 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
     //         isOver: monitor.isOver(),
     //     }),
     // }), [hours, weekDays, calendarStore, calculateDropPosition]);
+    const handleDayHover = (dayIndex) => {
+       setHoveredDay(dayIndex);
+    };
 
+    const handleCloseModal = () => {
+        setbusinessData(null);
+        setIsCreateMode(false);
+
+    };
+
+    const handleMouseEnter = (dayIndex) => {
+        // const parentTimeCell=e.target.parentNode ?? null
+        // if(parentTimeCell) {
+            handleDayHover(dayIndex);
+        // }
+    };
+
+    const handleMouseLeave = () => {
+        !tempHover && handleDayHover(null);
+    };
+
+    const handleCreateBusiness = (date,hour) => {
+        const startDate = date;
+        const startTime = format(new Date().setHours(hour - 1, 0, 0, 0), 'HH:mm');
+        const endTime = format(new Date().setHours(hour, 0, 0, 0), 'HH:mm');
+
+        setbusinessData({ startDate, startTime, endTime });
+        setIsCreateMode(true);
+    };
 
     return (
+        <>
         <div ref={gridRef} className={styles.timeGrid}>
             <div className={styles.gridStructure}>
                 {hours.map((hour, index) => {
                     const isLastHour = index === hours.length - 1;
                     return (
-                        <div key={hour} className={cn(styles.hourRow, { [styles.lastRow]: isLastHour })}>
+                        <div key={hour}
+                             className={cn(styles.hourRow, { [styles.lastRow]: isLastHour })}>
                             <div className={styles.timeGutter}>
                                 {!isLastHour ? `${hour}:00` : ''}
                             </div>
-                            {weekDays.map(day => (
+                            {weekDays.map((day,dayIndex) => (
                                 <div
+                                    onMouseEnter={(e) => tempHover && handleMouseEnter(dayIndex)}
+                                    onMouseLeave={(e)=> tempHover && handleMouseLeave(e)}
+                                    onClick={()=>handleCreateBusiness(day,hour)}
                                     data-day={format(day, 'yyyy-MM-dd')}
                                     key={format(day, 'yyyy-MM-dd')}
                                     className={styles.timeCell}
                                 >
                                     {timeSlots.map(minute => (
                                         <TimeSlot
+                                            onDrag={()=>tempHover && handleMouseEnter(dayIndex)}
+                                            onDragEnd={()=>tempHover && handleMouseLeave()}
                                             api = {calendarApi}
                                             allItems={filteredBusinesses}
                                             weekDays={weekDays}
@@ -195,12 +235,23 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
                         format(day, 'yyyy-MM-dd') === format(business.startDate, 'yyyy-MM-dd')
                     );
                     if (dayIndex === -1) return null;
+                    console.log(dayIndex===hoveredDay,'dayIndex',dayIndex,'hoveredDay',hoveredDay);
+                    const shouldShiftRight =
+                        hoveredDay &&
+                        dayIndex === hoveredDay || tempHover===dayIndex;
                     return (
                         <WeekBusinessItem
+                            dayIndex={dayIndex}
+                            shouldShiftRight={shouldShiftRight}
                             onModalOpen={onOpenModal}
                             key={business.id}
+                            onHoverStart={(index)=>setTempHover(index)}
+                            onHoverEnd={()=>tempHover!==hoveredDay && setTempHover(false)}
                             business={business}
                             allItems = {filteredBusinesses}
+                            onDrag={(index)=>{
+                                handleMouseEnter(index)}}
+                            onDragEnd={handleMouseLeave}
                             style={{
                                 top: `${calculateTimePosition(business.startDate)}%`,
                                 height: `${calculateEventHeight(business)}%`,
@@ -220,10 +271,23 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
             </div>
             {children}
         </div>
+            {(businessData || isCreateMode) && (
+                <CalendarModal
+                    data={businessData}
+                    calendarApi={calendarApi}
+                    calendarStore={calendarStore}
+                    startTime={businessData?.startTime}
+                    endTime={businessData?.endTime}
+                    startDate={businessData?.startDate}
+                    businessId={businessData?.id ?? null}
+                    onClose={handleCloseModal}
+                />
+            )}
+        </>
     );
 }));
 // WeekGrid.js - TimeSlot component
-const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays }) => {
+const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex }) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'week-business',
         drop: (item, monitor) => {
@@ -246,7 +310,7 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
             const { hour: snapHour, minutes: snapMinutes } = getTimeSlotFromOffset(clientOffset.y, gridRect);
             const newStartDate = new Date(weekDays[dayIndex]);
             newStartDate.setHours(snapHour, snapMinutes, 0, 0);
-            debugger
+
             const currItemFromStore = calendarStore.getById(item.id)
             const duration = differenceInMinutes(currItemFromStore.endDate, currItemFromStore.startDate);
             const newEndDate = addMinutes(newStartDate, duration);
@@ -260,6 +324,9 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
             calendarStore.changeById(item.id,'endDate', newEndDate);
             api.updateBusiness(item.id);
 
+            if (onDragEnd)
+                onDragEnd()
+
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
@@ -268,6 +335,7 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
 
     return (
         <div
+            onMouseEnter={()=>onDrag(dayIndex)}
             ref={drop}
             className={cn(styles.timeSlot, { [styles.dropTarget]: isOver })}
             style={{ zIndex: isOver ? 3 : 1 }}

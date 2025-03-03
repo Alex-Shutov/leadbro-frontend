@@ -33,7 +33,6 @@ const FilterManager = ({
     const values = {};
     filterConfig.filters.forEach((filter) => {
       const paramValue = searchParams.get(filter.name);
-      debugger;
       if (paramValue) {
         // Пробуем получить значение из контекста
         const savedValue = getFilterValue(filter.name);
@@ -89,7 +88,7 @@ const FilterManager = ({
   const handleFilterChange = (name, value) => {
     const filter = filterConfig.filters.find((f) => f.name === name);
     const isMulti = filter.props?.isMulti;
-    // debugger;
+    // ;
     // setFilterValue(name, value);
     //
     const updatedParams = new URLSearchParams(searchParams);
@@ -117,7 +116,7 @@ const FilterManager = ({
       ...filterValues,
       [name]: value,
     };
-    debugger;
+    ;
     newValues = clearConflictingGroupFilters(filter, newValues, updatedParams);
 
     // Обновляем состояние фильтров, но URL не изменяется
@@ -141,7 +140,7 @@ const FilterManager = ({
 
     // Теперь вызываем изменение URL
     const updatedParams = new URLSearchParams(searchParams);
-    debugger;
+    ;
     // Проходим по фильтрам и обновляем или удаляем параметры URL
     filterConfig.filters.forEach((filter) => {
       if (newValues.hasOwnProperty(filter.name)) {

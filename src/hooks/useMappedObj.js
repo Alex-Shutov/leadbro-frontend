@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 
-const useMappedObj = (object) => {
-    return useMemo(() => Array.isArray(object) ? [object.map((el,index)=>[index,el])] : Object.entries(object??{}),[object])
+const useMappedObj = (object,deps=[]) => {
+    return useMemo(() => Array.isArray(object) ? [object.map((el,index)=>[index,el])] : Object.entries(object??{}),[object,...deps])
 };
 
 export default useMappedObj;

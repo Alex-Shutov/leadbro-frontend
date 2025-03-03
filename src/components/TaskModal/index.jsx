@@ -55,7 +55,7 @@ const TaskEditModal = observer(
       if (deal) return 'deal';
       return 'task';
     }, [stage, deal]);
-    debugger
+
     // Получаем контекстные данные в зависимости от режима
     const contextData = useMemo(() => {
       switch (mode) {
@@ -148,7 +148,7 @@ const TaskEditModal = observer(
       return taskStore.getById(data?.id??Number(id));
     }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts,taskStore.currentTask,id]);
     const [comments, setComments] = useState(taskData?.comments ?? {});
-    debugger
+
     const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     const canNavigate = useMemo(

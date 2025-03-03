@@ -23,7 +23,7 @@ const EditTimeTrackModal = observer(
     const isFormValid = initialMinutes || initialHours;
 
     const validateAndUpdateHours = ({ target }) => {
-      debugger;
+      ;
       const value = target.value;
       if (value === '' || /^\d*$/.test(value)) {
         target.value = value;

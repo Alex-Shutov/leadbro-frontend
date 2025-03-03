@@ -118,7 +118,7 @@ export class TasksStore {
   // }
   //
   // updateTimeTrackInCurrentTask(timeTrackId, updatedValue) {
-  //   debugger
+  //
   //   const valueAfterUpdate = {
   //     ...this.currentTask.timeTrackings,
   //     [timeTrackId]: {

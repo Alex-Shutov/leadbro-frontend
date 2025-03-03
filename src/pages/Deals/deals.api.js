@@ -16,6 +16,8 @@ import {
 } from '../../utils/window.utils';
 import './deals.mock';
 import { sanitizeObjectForBackend } from '../../utils/create.utils';
+import {mapClientDataToBackend} from "../Clients/clients.mapper";
+import {mapBusinessFromApi, mapBusinessToBackend} from "../Calendar/calendar.mapper";
 
 const useDealsApi = () => {
   const { dealsStore } = useStore();
@@ -26,7 +28,7 @@ const useDealsApi = () => {
     setIsLoading(true);
 
     const sanitizedFilters = sanitizeUrlFilters(filters);
-    debugger;
+    ;
     return http
       .get('/api/deals', { params: { page, ...sanitizedFilters } })
       .then(handleHttpResponse)
@@ -103,30 +105,33 @@ const useDealsApi = () => {
       .then(handleHttpResponse);
 
     const contactPersonsPromise = (id) => {
-      return http.get(`/api/companies/${id}/clients`).then(handleHttpResponse);
+      return http.get(`/api/companies/${id}/clients`).then(handleHttpResponse).catch(handleHttpError);
       // .catch(error => { // The first request fails
       //   return error !== undefined
       // });
     };
 
+    const businessesPromise = http
+        .get(`/api/deals/${dealId}/businesses`)
+        .then(handleHttpResponse);
+
     return (
-      Promise.all([dealPromise, tasksPromise, commentsPromise])
-        // .then( ([dealResp,taskResp,commentResp])=>{
-        //   debugger
-        //
-        //   // const contactResp =  contactPersonsPromise(companyId)
-        //   return contactPersonsPromise(companyId).then((contactResp)=> [dealResp, taskResp,commentResp,contactResp]);
-        // })
-        .then(([{ body: deal }, { body: tasks }, { body: comments }]) => {
+      Promise.all([dealPromise, tasksPromise, commentsPromise,businessesPromise])
+
+        .then(([{ body: deal }, { body: tasks }, { body: comments },{body:businesses}]) => {
+          debugger
           setTimeout(async () => {
             const contactResp =
               deal.data?.company?.id &&
               (await contactPersonsPromise(deal.data?.company?.id));
+            debugger
+
             const mapperDeals = mapDealFromApi(
               deal.data,
               tasks.data,
               comments.data,
-              contactResp ? contactResp.body.data : [],
+              contactResp && contactResp.body ? contactResp.body.data : [],
+                businesses.data
             );
             dealsStore.setCurrentDeal(mapperDeals);
             return mapperDeals;
@@ -175,11 +180,52 @@ const useDealsApi = () => {
   //         .finally(() => setIsLoading(false));
   // }
 
+  const updateBusiness = (dealId,businessId, drafts,changedFieldsSet) => {
+    setIsLoading(true);
+
+    const dataToSend = mapDealDataToBackend({businesses:drafts},changedFieldsSet,businessId);
+
+    return http
+        .patch(`/api/businesses/${businessId}`, dataToSend)
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedBusiness = mapBusinessFromApi(res.body.data);
+          const currDeal = dealsStore.getById(dealId);
+          const updatedBusinesses = {
+            ...currDeal.businesses,
+            [businessId]: mappedBusiness
+          };
+          dealsStore.setCurrentDeal({...currDeal,businesses:updatedBusinesses});
+        })
+        .catch(handleShowError)
+        .finally(() => setIsLoading(false));
+  };
+
+  const createBusiness = (data,dealId) => {
+    setIsLoading(true);
+    return http
+        .post(`/api/deals/${dealId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedBusiness = mapBusinessFromApi(res.body.data);
+          const currDeal = dealsStore.getById(dealId);
+          const updatedBusinesses = {
+            ...currDeal.businesses,
+            [mappedBusiness.id]: mappedBusiness
+          };
+          dealsStore.setCurrentDeal({...currDeal,businesses:updatedBusinesses});
+        })
+        .catch(handleShowError)
+        .finally(() => setIsLoading(false));
+  };
+
   return {
     getDeals,
     createDeal,
     updateDeal,
     getDealById,
+    createBusiness,
+    updateBusiness,
     deleteDeal,
     updateDealStatus,
     isLoading,

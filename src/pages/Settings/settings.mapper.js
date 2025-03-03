@@ -9,6 +9,7 @@ export const mapEmployeesFromApi = (employee) => {
     id: employee.id,
     // employee:mapEmployee(employee),
     name: employee.name,
+    surname: employee.surname ?? employee.last_name,
     middleName: employee?.middle_name,
     lastName: employee?.last_name,
     avatar: employee?.avatar ? loadAvatar(employee?.avatar) : loadAvatar(), // Обработка аватара через loadAvatar
@@ -16,6 +17,7 @@ export const mapEmployeesFromApi = (employee) => {
     position: employee?.position ? mapPosition(employee?.position) : null, // Маппинг позиции
     email: employee?.email,
     phone: employee?.phone || null,
+    role: employee?.position?.name,
     gender: employee?.gender,
     status: employersTypeEnum.works,
     permissions: employee?.permissions || [],

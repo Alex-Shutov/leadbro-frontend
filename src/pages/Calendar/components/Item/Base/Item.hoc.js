@@ -14,12 +14,27 @@ const withBusinessItem = (WrappedComponent, dragType = 'business') => {
 
         const [{ isDragging }, drag] = useDrag(() => ({
             type: dragType,
-            item: {
-                id: business.id,
-                type: business.type,
-                startDate: business.startDate,
-                endDate: business.endDate,
-                ...customDragProps
+            item: () => {
+                props?.onDrag && props?.onDrag(props.dayIndex)
+                return {
+                    id: business.id,
+                    type: business.type,
+                    startDate: business.startDate,
+                    endDate: business.endDate,
+                    ...customDragProps
+                };
+            },
+            end: () => {
+
+
+                if (props.onDragEnd) {
+                    props.onDragEnd();
+                }
+            },
+            hover:()=>{
+                console.log('hover')
+
+
             },
             collect: (monitor) => {
                 console.log('monitor', monitor);

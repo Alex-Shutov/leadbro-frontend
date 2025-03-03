@@ -13,7 +13,7 @@ export const formatDate = (date) => {
 
 export const formatDateWithoutHours = (date) => {
   if (!date || !isValidDate(date)) return '';
-  debugger
+
   const stringDate = date instanceof Date ? date.toISOString() : date;
   let formatDate = format(stringDate, 'cccccc, dd LLL', { locale: ru});
   formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
@@ -21,7 +21,7 @@ export const formatDateWithoutHours = (date) => {
 };
 
 export const formatDateWithDateAndYear = (date) => {
-  debugger;
+  ;
   if (!date || !isValidDate(date)) return 'Не указано';
 
   let formatDate = format(date, 'dd MMMM, yyyy', { locale: ru });
@@ -32,7 +32,7 @@ export const formatDateWithDateAndYear = (date) => {
 export const formatDateOnlyHours = (date) => {
 
   if (!date || !isValidDate(date)) return;
-  debugger
+
 
   const stringDate = date instanceof Date ? date.toISOString() : date;
   const time = stringDate.split('T')[1].slice(0, -1);

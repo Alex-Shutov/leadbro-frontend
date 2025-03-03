@@ -12,10 +12,12 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
   const [files, setFiles] = useState([]);
   const editorRef = useRef(null);
   const handleTextChange = (event) => {
+    debugger
     setText(event.target.value);
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage =() => {
+    debugger
     if (text.trim() || files.length > 0) {
       const newMessage = {
         id: commentsLength,

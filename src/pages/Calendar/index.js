@@ -113,7 +113,7 @@ const CalendarContent = observer(() => {
     setbusinessData(null);
     setIsCreateMode(false);
     // Перезагружаем данные после закрытия модалки
-    loadData();
+    // loadData();
   };
 
   // Получаем текущий диапазон дат для инициализации фильтров
@@ -160,6 +160,9 @@ const CalendarContent = observer(() => {
           </div>
           {(businessData || isCreateMode) && (
               <CalendarModal
+                  data={businessData}
+                  calendarStore={calendarStore}
+                  calendarApi={api}
                   businessId={businessData?.id ?? null}
                   onClose={handleCloseModal}
               />

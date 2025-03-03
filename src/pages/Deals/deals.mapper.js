@@ -2,9 +2,10 @@ import { mapChangedFieldsForBackend } from '../../utils/store.utils';
 import { loadAvatar } from '../../utils/create.utils';
 import { mapTaskFromApi } from '../Tasks/tasks.mapper';
 import { createMockTasks } from './deals.mock';
-import {mapCommentsFromApi, mapContactPersons} from '../Clients/clients.mapper';
+import {mapBusinesses, mapCommentsFromApi, mapContactPersons} from '../Clients/clients.mapper';
+import {mapBusinessToBackend} from "../Calendar/calendar.mapper";
 
-export const mapDealFromApi = (apiDeal, tasksDeal, comments = [],contacts=[]) => {
+export const mapDealFromApi = (apiDeal, tasksDeal, comments = [],contacts=[],businesses=[]) => {
   return {
     id: apiDeal?.id,
     createdAt: new Date(apiDeal?.created_at),
@@ -16,6 +17,7 @@ export const mapDealFromApi = (apiDeal, tasksDeal, comments = [],contacts=[]) =>
       contactPersons: mapContactPersons(contacts),
     price: apiDeal?.price,
     status: apiDeal?.status,
+      businesses: mapBusinesses(businesses),
     creator: apiDeal?.creator
       ? {
           id: apiDeal?.creator.id,
@@ -89,6 +91,20 @@ const mapTasksFromApi = (tasksData) => {
   }, {});
 };
 
+const mapBusinessesToBackend = (business, changedFieldsSet) => {
+
+    const businessId = business.id;
+
+    const filteredChangedFields = new Set(
+        [...changedFieldsSet]
+            .filter(field => field.startsWith(`businesses.${businessId}.`)) // Оставляем только относящиеся к текущему бизнесу
+            .map(field => field.replace(`businesses.${businessId}.`, '')) // Убираем префикс
+    );
+    if (filteredChangedFields.size === 0) return {};
+
+    return mapBusinessToBackend(business, filteredChangedFields);
+};
+
 export const mapDealDataToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value) => {
     switch (key) {
@@ -117,10 +133,13 @@ export const mapDealDataToBackend = (drafts, changedFieldsSet) => {
     return keyMapping[key] || key;
   };
 
-  return mapChangedFieldsForBackend(
+  return {...mapChangedFieldsForBackend(
     drafts,
     changedFieldsSet,
     mapKeyToBackend,
     castValue,
-  );
+  ),
+      ...mapBusinessesToBackend(drafts.businesses, changedFieldsSet),
+
+  };
 };

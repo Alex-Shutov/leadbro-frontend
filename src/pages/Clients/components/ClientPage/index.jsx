@@ -140,7 +140,7 @@ const ClientPage = observer(() => {
               className={cn(styles.card, styles.card_status)}
               deals={client?.deals}
             />
-            {/*<ClientActivities activities={client?.activities} />*/}
+            <ClientActivities client={client} clientApi={api} clientStore={clients} activities={client?.businesses} />
             <Comments
               onDelete={() =>
                 api

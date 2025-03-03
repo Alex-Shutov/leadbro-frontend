@@ -8,7 +8,7 @@ import useUser from '../../../hooks/useUser';
 const Index = ({ timeTracking, actions }) => {
   const [tableMenuOpen, setTableMenuOpen] = useState(false);
   const { user } = useUser();
-  debugger;
+  ;
   const sender = timeTracking.employee;
   const employee = timeTracking.employee;
   const timeSpent = timeTracking.timeSpent;

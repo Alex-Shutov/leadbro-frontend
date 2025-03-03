@@ -1,9 +1,9 @@
 import React, {
-  useRef,
-  useEffect,
-  useCallback,
-  forwardRef,
-  useMemo,
+    useRef,
+    useEffect,
+    useCallback,
+    forwardRef,
+    useMemo, useState,
 } from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { EDITOR_JS_TOOLS } from './config';
@@ -14,7 +14,7 @@ const Editor = createReactEditorJS({holder:'editorjs'});
 const Index = forwardRef(
   ({ onChange, initialHTML, name, placeholder }, ref) => {
     const editorCore = useRef(null);
-    debugger
+    const [readyToRender,setReadyToRender] = useState(false);
     initialHTML = /<([a-z][a-z0-9]*)\b[^>]*>/i.test(initialHTML)
       ? initialHTML
       : `<p>${initialHTML}</p>`;
@@ -24,6 +24,7 @@ const Index = forwardRef(
     const handleInitialize = useCallback(
       (instance) => {
         editorCore.current = instance;
+        // ref.current = instance;
       },
       [initialHTML],
     );
@@ -70,6 +71,7 @@ const Index = forwardRef(
     };
 
     const handleEditorChange = async () => {
+        debugger
       if (!editorCore.current) return;
 
       try {
@@ -99,6 +101,10 @@ const Index = forwardRef(
         console.error('Ошибка сохранения данных редактора:', error);
       }
     };
+
+      const handleSave = React.useCallback(async () => {
+          const savedData = await editorCore.current.dangerouslyLowLevelInstance?.save();
+      }, [])
     // const memo = useMemo(
     //   () => (
     //     <Editor
@@ -114,8 +120,12 @@ const Index = forwardRef(
     //   ),
     //   [initialHTML],
     // );
+
+
+
+
     return useMemo(() => (
-        <Editor
+          <Editor
 
             ref={ref ?? null}
             placeholder={placeholder}
@@ -126,7 +136,7 @@ const Index = forwardRef(
             }}
             onChange={handleEditorChange}
         />
-    ), [initialHTML, placeholder, ref, handleInitialize, handleEditorChange]);
+    ), [initialHTML]);
   },
 );
 

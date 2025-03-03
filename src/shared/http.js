@@ -96,7 +96,7 @@ export const handleHttpError = (error) => {
       statusText: error.response?.statusText,
     },
   });
-  debugger;
+  ;
   const code = error?.code;
   console.warn({ status: 'error', message: error?.message, code });
   return { status: 'error', message: error?.message, code };

@@ -17,7 +17,7 @@ const useTimeTrackingApi = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const getTimeTrackings = (page = 1, from, to, filters = {}) => {
-    debugger;
+    ;
 
     resetApiProvider();
     setIsLoading(true);
@@ -37,7 +37,7 @@ const useTimeTrackingApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
+        ;
         const mappedTimeTrackings = mapTimeTrackingsFromApi(res.body.data);
         timeTrackingStore.setTimeTrackings(mappedTimeTrackings); // Устанавливаем клиентов в store
         timeTrackingStore.setMetaInfoTable(res.body?.meta);
@@ -57,7 +57,7 @@ const useTimeTrackingApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
+        ;
         return mapTimeTrackingsFromApi([res.body.data]);
       })
       .catch(handleHttpError)
@@ -78,7 +78,7 @@ const useTimeTrackingApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
-        debugger;
+        ;
         const mappedTimeTracking = mapTimeTrackingsFromApi([res.body.data]);
         timeTrackingStore.updateTimeTrackInCurrentTask(id, mappedTimeTracking);
         return mappedTimeTracking;

@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import styles from './index.module.sass';
 import cn from 'classnames';
-import { useParams } from 'react-router-dom';
 import {businessTypes, businessTypesRu} from "../../calendar.types";
 import FormValidatedModal from "../../../../shared/Modal/FormModal";
 import ConfirmationModal from "../../../../components/ConfirmationModal";
@@ -21,48 +20,100 @@ import TimeDropdown from "../../../../components/TimeDropdown";
 import Loader from "../../../../shared/Loader";
 import TextLink from "../../../../shared/Table/TextLink";
 
-const Index = observer(({
-                                        businessId,
-                                        onClose,
-                                    }) => {
-    const { calendarStore } = useStore();
-    const api = useCalendarApi();
+const CalendarModal = observer(({
+                                    businessId,
+                                    data,
+                                    onClose,
+                                    // Получаем различные сторы и API как пропсы
+                                    // Пропсы для режима работы с календарем
+
+                                    calendarStore,
+                                    calendarApi,
+                                    // Пропсы для режима работы с клиентами
+                                    client,
+                                    clientStore,
+                                    clientApi,
+                                    // Пропсы для режима работы со сделками
+                                    deal,
+                                    dealStore,
+                                    dealApi,
+                                    ...rest
+                                }) => {
+    debugger
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(!!businessId);
     const [comments, setComments] = useState([]);
     const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 
     const { members } = useMembers();
+    const defaultApiHook = useCalendarApi(); // Используем как fallback
 
-
-
+    // Определяем текущий режим работы компонента
+    const mode = useMemo(() => {
+        if (clientStore && client) return 'client';
+        if (dealStore && deal) return 'deal';
+        return 'calendar';
+    }, [calendarStore, clientStore, dealStore]);
 
     // Initial state for a new business item
-    const [localBusiness,setLocalBusiness] = useState({
-        title: '',
+    const [localBusiness, setLocalBusiness] = useState({
+        name: '',
         description: '',
         type: businessTypes.business,
         participants: [],
         client: null,
-        startDate: null,
-        endDate: new Date(),
-        startTime: null,
-        endTime: null,
-        responsible: null,
+        startDate: rest?.startDate ?? null,
+        endDate: rest?.endDate ?? new Date(),
+        startTime: rest?.startTime ?? null,
+        endTime: rest?.endTime ?? null,
+        performer: null,
         service: null,
         reminders: [],
     });
 
+    // Получаем контекстные данные в зависимости от режима
+    const contextData = useMemo(() => {
+        switch (mode) {
+            case 'client':
+                return {
+                    id:client.id,
+                    store: clientStore,
+                    api: clientApi,
+                };
+            case 'deal':
+                return {
+                    store: dealStore,
+                    api: dealApi,
+                    id:deal.id
+                    // afterDelete: () => dealApi.getDealById(businessId),
+                    // afterCreate: () => dealApi.getDealById(businessId),
+                };
+            default:
+                return {
+                    id:null,
+                    store: calendarStore,
+                    api: calendarApi
+                };
+        }
+    }, [mode, calendarStore, clientStore, dealStore, businessId]);
+
     // Determine the business data - either from store or initial state
     const business = useMemo(() => {
-        if (isEditMode && businessId) {
-            return calendarStore.getById(businessId)
+        if (!isEditMode && !businessId) return localBusiness
+        if (mode!=="calendar"){
+            const businessFromContext = Object.values( contextData.store.getById(contextData.id)?.businesses).find((el)=>el.id===data?.id)
+            if(businessFromContext){
+                const newTaskWithTimeTracking = {...businessFromContext,timeTrackings: data.timeTrackings};
+                return newTaskWithTimeTracking
+            }
         }
-        return localBusiness
-    }, [isEditMode, businessId, localBusiness,calendarStore.drafts]);
+
+        return calendarStore.getById(data?.id??Number(businessId));
+
+    }, [isEditMode, businessId, localBusiness, contextData?.store?.drafts]);
 
     const [selectedType, setSelectedType] = useState(isEditMode && businessId
-        ? calendarStore.getById(businessId)?.type || businessTypes.business
+        ? business?.type || businessTypes.business
         : localBusiness.type || businessTypes.business);
 
     // Effect to set edit mode
@@ -78,10 +129,10 @@ const Index = observer(({
 
     useEffect(() => {
         const loadComments = async () => {
+            debugger
             setIsCommentsLoading(true);
             try {
-                const commentsData = await api.getBusinessComments(businessId);
-                debugger
+                const commentsData = await defaultApiHook.getBusinessComments(businessId);
                 setComments(commentsData);
             } catch (error) {
                 console.error('Error loading comments:', error);
@@ -92,19 +143,19 @@ const Index = observer(({
         if (isEditMode && businessId) {
             loadComments();
         }
-    }, [isEditMode, businessId]);
+    }, [isEditMode,businessId,contextData.api]);
 
     const handleAddComment = async (text) => {
         if (!text.trim()) return;
 
         try {
-            const newComment = await api.addBusinessComment(businessId, text);
-            debugger
+            const newComment = await contextData.api.addBusinessComment(businessId, text);
             setComments((prev) => [...prev, newComment]);
         } catch (error) {
             console.error('Error adding comment:', error);
         }
     };
+
     const handleRemoveComment = (commentId) => {
         // Удаляем комментарий локально
         setComments((prev) => {
@@ -123,17 +174,15 @@ const Index = observer(({
 
     // Handle changes to business item
     const handleChange = (name, value, withId = true) => {
-        // Обработка специальных случаев для дат и времени
+        debugger
         if (name === 'startTime' && business.startDate) {
-            // Если меняем startTime и у нас есть startDate, обновим время в startDate
             const dateWithTime = new Date(business.startDate);
             const [hours, minutes] = value.split(':').map(Number);
             dateWithTime.setHours(hours, minutes, 0);
 
-            // Обновляем состояние
             if (isEditMode) {
-                calendarStore.changeById(businessId, 'startDate', dateWithTime, withId);
-                calendarStore.changeById(businessId, name, value, withId);
+                contextData.store.changeById(businessId, 'startDate', dateWithTime, withId);
+                contextData.store.changeById(businessId, name, value, withId);
             } else {
                 setLocalBusiness((prev) => ({
                     ...prev,
@@ -145,15 +194,19 @@ const Index = observer(({
         }
 
         if (name === 'endTime' && business.endDate) {
-            // Если меняем endTime и у нас есть endDate, обновим время в endDate
             const dateWithTime = new Date(business.endDate);
             const [hours, minutes] = value.split(':').map(Number);
             dateWithTime.setHours(hours, minutes, 0);
-
-            // Обновляем состояние
+            debugger
             if (isEditMode) {
-                calendarStore.changeById(businessId, 'endDate', dateWithTime, withId);
-                calendarStore.changeById(businessId, name, value, withId);
+                if(mode!=="calendar"){
+                    contextData.store.changeById(contextData.id, 'endDate', dateWithTime, withId);
+                    contextData.store.changeById(contextData.id, name, value, withId);
+                }else{
+                    calendarStore.changeById(data.id, 'endDate', dateWithTime, withId);
+                    calendarStore.changeById(data.id, name, value, withId);
+                }
+
             } else {
                 setLocalBusiness((prev) => ({
                     ...prev,
@@ -164,9 +217,13 @@ const Index = observer(({
             return;
         }
 
-        // Стандартная обработка других полей
         if (isEditMode) {
-            calendarStore.changeById(businessId, name, value, withId);
+            if(mode!=="calendar"){
+                contextData.store.changeById(contextData.id, name, value, withId);
+
+            }else{
+                calendarStore.changeById(data.id, name, value, withId);
+            }
         } else {
             setLocalBusiness((prev) => ({
                 ...prev,
@@ -176,33 +233,38 @@ const Index = observer(({
     };
 
     // Handle form submission
-    const handleSubmit = async (onError=null) => {
+    const handleSubmit = async (onError = null) => {
+        debugger
         try {
             if (isEditMode) {
-                // Update existing business item
-                await api.updateBusiness(businessId, business);
-                calendarStore.submitDraft(businessId);
+                await contextData.api.updateBusiness(contextData.id,businessId, business,contextData.store.changedProps);
+                contextData.store.submitDraft && contextData.store.submitDraft(contextData.id);
             } else {
-                // Create new business item
-                await api.createBusiness(business);
-                // TODO: Handle new business creation in store
+                await contextData.api.createBusiness(business,contextData.id);
             }
+
             handleSubmitSnackbar(
                 isEditMode
-                    ? 'Дело успешно отредактирована'
-                    : 'Дело успешно создана',
+                    ? 'Дело успешно отредактировано'
+                    : 'Дело успешно создано',
             );
+
+            // Вызываем afterCreate или afterDelete, если они определены
+            if (isEditMode && contextData.afterCreate) {
+                await contextData.afterCreate();
+            }
+
             onClose();
         } catch (error) {
             console.error('Error saving business:', error);
-            onError && onError()
+            onError && onError();
         }
     };
 
     // Handle form reset/cancel
     const handleReset = () => {
-        if (isEditMode) {
-            calendarStore.resetDraft(businessId);
+        if (isEditMode && contextData.store.resetDraft) {
+            contextData.store.resetDraft(contextData.id);
         }
         onClose();
     };
@@ -210,25 +272,31 @@ const Index = observer(({
     // Handle business deletion
     const handleDeleteBusiness = async () => {
         try {
-            await api.deleteBusiness(businessId);
-            // TODO: Handle deletion in store
+            await contextData.api.deleteBusiness(businessId);
+
+            // Вызываем afterDelete, если он определен
+            if (contextData.afterDelete) {
+                await contextData.afterDelete();
+            }
+
             onClose();
         } catch (error) {
             console.error('Error deleting business:', error);
         }
     };
-    debugger
-    business.performer = Array.isArray(business.performer) ? business.performer : [business.performer];
-    // const serviceClient = service?.client ?? props?.client ?? null;
+
+    const prefix = useMemo(()=>{
+        return mode !== "calendar" && isEditMode ? `businesses.${businessId}.`:''
+    },[deal,client,data])
 
     return (
         <>
-           <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteBusiness}
-        label="Вы уверены, что хотите удалить дело?"
-      />
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteBusiness}
+                label="Вы уверены, что хотите удалить дело?"
+            />
 
             <FormValidatedModal
                 handleClose={handleReset}
@@ -241,192 +309,120 @@ const Index = observer(({
                 size={'md_up'}
             >
                 <div className={styles.name}>
-                    {isEditMode ? 'Редактирование дела' : 'Создание дела'}
+                    {isEditMode ? `Редактирование дела` : 'Создание дела'}
                 </div>
                 <div className={styles.gridContainer}>
                     <div className={styles.border_container}>
-                <TextInput
-                    required={true}
-                    name={'name'}
-                    value={business.name}
-                    onChange={({ target }) => handleChange(target.name, target.value)}
-                    label={'Название'}
-                    className={styles.input}
-                />
+                        <TextInput
+                            required={true}
+                            name={`${prefix}name`}
+                            value={business.name}
+                            onChange={({ target }) => handleChange(target.name, target.value)}
+                            label={'Название'}
+                            className={styles.input}
+                        />
 
-                <TextInput
-                    name={'description'}
-                    value={business.description}
-                    onChange={({ target }) => handleChange(target.name, target.value)}
-                    label={'Описание'}
-                    rows={4}
-                    className={styles.input}
-                />
+                        <TextInput
+                            name={`${prefix}description`}
+                            value={business.description}
+                            onChange={({ target }) => handleChange(target.name, target.value)}
+                            label={'Описание'}
+                            rows={4}
+                            className={styles.input}
+                        />
 
-
-
-                {/*<div className={cn(styles.flex, styles.lowZIndex)}>*/}
-                {/*    <Dropdown*/}
-                {/*        required={true}*/}
-                {/*        name={'type'}*/}
-                {/*        label={'Тип дела'}*/}
-                {/*        options={Object.keys(businessTypes)}*/}
-                {/*        renderOption={(opt) => businessTypesRu[opt]}*/}
-                {/*        renderValue={(value) => businessTypesRu[value]}*/}
-                {/*        setValue={(e) => handleChange('type', e)}*/}
-                {/*        value={business.type}*/}
-                {/*        className={styles.dropdown}*/}
-                {/*    />*/}
-
-                {/*    /!* Participants Dropdown *!/*/}
-                {/*    /!* TODO: Implement participants selection *!/*/}
-                {/*</div>*/}
-                <div className={styles.flex}>
-                    {/*<ValuesSelector*/}
-                    {/*    minInputLength={4}*/}
-                    {/*    // readonly={props?.client || isEditMode}*/}
-                    {/*    placeholder={'Клиент'}*/}
-                    {/*    name={'client'}*/}
-                    {/*    onChange={(e) => {*/}
-                    {/*        handleChange(*/}
-                    {/*            'client',*/}
-                    {/*            e.length*/}
-                    {/*                ? appStore?.companies.find((el) => el?.id === e[0]?.value)*/}
-                    {/*                : null,*/}
-                    {/*        );*/}
-                    {/*    }}*/}
-                    {/*    isMulti={false}*/}
-                    {/*    label={*/}
-                    {/*        <div className={styles.client_label}>*/}
-                    {/*            <span>Клиент</span>*/}
-                    {/*            {!props.client && <TextLink>Создать клиента</TextLink>}*/}
-                    {/*        </div>*/}
-                    {/*    }*/}
-                    {/*    isAsync*/}
-                    {/*    asyncSearch={async (query) => {*/}
-                    {/*        const response = await appApi.getCompanies(query);*/}
-                    {/*        const data = response;*/}
-                    {/*        return data.map((item) => ({*/}
-                    {/*            value: item?.id,*/}
-                    {/*            label: item?.name,*/}
-                    {/*        }));*/}
-                    {/*    }}*/}
-                    {/*    value={*/}
-                    {/*        serviceClient*/}
-                    {/*            ? {*/}
-                    {/*                value: serviceClient.id,*/}
-                    {/*                label: serviceClient?.name ?? serviceClient?.title ?? '',*/}
-                    {/*            }*/}
-                    {/*            : null*/}
-                    {/*    }*/}
-                    {/*/>*/}
-                </div>
-                <div className={cn(styles.flex, styles.addZIndex)}>
-                    <Calendar
-                        required={true}
-                        name={'startDate'}
-                        label={'Дата'}
-                        value={business.startDate}
-                        onChange={(date) => {
-                            // Обновляем startDate
-                            handleChange('startDate', date);
-
-                            // Синхронно обновляем endDate сохраняя то же число
-                            if (business.endDate) {
-                                const newEndDate = new Date(date);
-                                // Сохраняем время из существующей endDate если оно есть
-                                if (business.endDate instanceof Date) {
-                                    newEndDate.setHours(
-                                        business.endDate.getHours(),
-                                        business.endDate.getMinutes(),
-                                        business.endDate.getSeconds()
-                                    );
+                        <div style={{zIndex:50}} className={cn(styles.flex,styles.addZIndex)}>
+                            <ValuesSelector
+                                name={`${prefix}performer`}
+                                required={true}
+                                onChange={(e) =>
+                                    handleChange(
+                                        `${prefix}performer`,
+                                        e.length
+                                            ? members.filter((member) =>
+                                                e.some((option) => option.value === member.id),
+                                            )[0]
+                                            : null,
+                                    )
                                 }
-                                handleChange('endDate', newEndDate);
-                            }
-                        }}
-                    />
-
-                    {/* Time input */}
-                    {/*<TextInput*/}
-                    {/*    name={'time'}*/}
-                    {/*    value={business.time}*/}
-                    {/*    onChange={({ target }) => handleChange(target.name, target.value)}*/}
-                    {/*    label={'Время'}*/}
-                    {/*    type={'time'}*/}
-                    {/*    className={styles.input}*/}
-                    {/*/>*/}
-                    <div className={styles.fake} style={{width:'10%'}}/>
-                    <div className={styles.flex}>
-                        <div className={styles.timeDropdownCont}>
-                            <span>С</span>
-                    <TimeDropdown
-                        className={styles.timeDropdown}
-                        label={' '}
-                        disabled={!business.startDate}
-                        onChange={( value) => handleChange('startTime',value)}
-                        small={true}
-                        value={business.startTime}
-                        validationRules={{allowAnyMinute: true}}
-                    />
+                                isMulti={false}
+                                placeholder={'Выберите ответственного'}
+                                label="Ответственный"
+                                options={members.map((el) => ({
+                                    value: el.id,
+                                    label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
+                                }))}
+                                value={
+                                    business?.performer?.id != null
+                                        ? {
+                                            value: business?.performer?.id,
+                                            label: `${business?.performer?.surname ?? business?.performer?.lastName ?? ''} ${business?.performer?.name ?? ''} ${business?.performer?.middleName ?? ''}`,
+                                        }
+                                        : null
+                                }
+                            />
                         </div>
-                        <div className={styles.timeDropdownCont}>
-                            <span>До</span>
-                    <TimeDropdown
-                        className={styles.timeDropdown}
-                        label={'  '}
-                        disabled={!business.startTime}
-                        onChange={( value) => handleChange('endTime',value)}
-                        small={true}
-                        value={business.endTime}
-                        validationRules={{allowAnyMinute: true}}
-                    />
+                        <div className={cn(styles.flex, styles.addZIndex)}>
+                            <Calendar
+                                required={true}
+                                name={`${prefix}startDate`}
+                                label={'Дата'}
+                                value={business.startDate}
+                                onChange={(date) => {
+                                    // Обновляем startDate
+                                    handleChange(`${prefix}startDate`, date);
+
+                                    // Синхронно обновляем endDate сохраняя то же число
+                                    if (business.endDate) {
+                                        const newEndDate = new Date(date);
+                                        // Сохраняем время из существующей endDate если оно есть
+                                        if (business.endDate instanceof Date) {
+                                            newEndDate.setHours(
+                                                business.endDate.getHours(),
+                                                business.endDate.getMinutes(),
+                                                business.endDate.getSeconds()
+                                            );
+                                        }
+                                        handleChange(`${prefix}endDate`, newEndDate);
+                                    }
+                                }}
+                            />
+                            <div className={styles.fake} style={{width:'10%'}}/>
+                            <div className={styles.flex}>
+                                <div className={styles.timeDropdownCont}>
+                                    <span>С</span>
+                                    <TimeDropdown
+                                        className={styles.timeDropdown}
+                                        label={' '}
+                                        disabled={!business.startDate}
+                                        onChange={(value) => handleChange(`${prefix}startTime`, value)}
+                                        small={true}
+                                        value={business.startTime}
+                                        validationRules={{allowAnyMinute: true}}
+                                    />
+                                </div>
+                                <div className={styles.timeDropdownCont}>
+                                    <span>До</span>
+                                    <TimeDropdown
+                                        className={styles.timeDropdown}
+                                        label={'  '}
+                                        disabled={!business.startTime}
+                                        onChange={(value) => handleChange(`${prefix}endTime`, value)}
+                                        small={true}
+                                        value={business.endTime}
+                                        validationRules={{allowAnyMinute: true}}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className={cn(styles.lowZIndex)}>
+                            {/* Дополнительные поля могут быть добавлены здесь */}
+                        </div>
+
+                        <div className={styles.reminders}>
+                            {/* Здесь можно добавить функциональность напоминаний */}
                         </div>
                     </div>
-                </div>
-                    <div className={cn(styles.lowZIndex)}>
-                        {/*<ValuesSelector*/}
-                        {/*    required={true}*/}
-                        {/*    onChange={(e) => {*/}
-                        {/*        handleChange(*/}
-                        {/*            'performer',*/}
-                        {/*            e.length*/}
-                        {/*                ? members.filter((member) =>*/}
-                        {/*                    e.some((option) => option.value === member.id),*/}
-                        {/*                )*/}
-                        {/*                : [],*/}
-                        {/*        );*/}
-                        {/*    }}*/}
-                        {/*    isMulti={false}*/}
-                        {/*    label="Ответственный"*/}
-                        {/*    options={members.map((el) => ({*/}
-                        {/*        value: el.id,*/}
-                        {/*        label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,*/}
-                        {/*    }))}*/}
-                        {/*    value={*/}
-                        {/*        // initialResponsibles && initialResponsibles[0]*/}
-                        {/*        business?.performer ? business?.performer.map((el) => ({*/}
-                        {/*                value: el?.id ?? null,*/}
-                        {/*                label: `${el?.surname ?? el?.lastName ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,*/}
-                        {/*            }))[0]*/}
-                        {/*            : []*/}
-                        {/*    }*/}
-                        {/*/>*/}
-                    </div>
-
-                {/* Responsible person Dropdown */}
-                {/* TODO: Implement responsible person selection */}
-
-                {/* Reminders section */}
-                <div className={styles.reminders}>
-                    {/* TODO: Implement reminders functionality */}
-                    {/*<div onClick={() => /!* Add reminder *!/}>*/}
-                    {/*    + Добавить напоминание*/}
-                    {/*</div>*/}
-                </div>
-                    </div>
-
-
 
                     {isEditMode && (
                         <div className={styles.comments}>
@@ -450,7 +446,7 @@ const Index = observer(({
                         selectedType={selectedType}
                         onTypeSelect={(type) => {
                             setSelectedType(type);
-                            handleChange('type', type);
+                            handleChange(`${prefix}type`, type);
                         }}
                     />
                 </div>
@@ -469,4 +465,4 @@ const DeleteButton = ({ handleDelete }) => {
     );
 };
 
-export default Index;
+export default CalendarModal;

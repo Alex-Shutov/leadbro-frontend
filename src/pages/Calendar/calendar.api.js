@@ -21,7 +21,7 @@ const useCalendarApi = () => {
     const getBusinesses = (startDate, endDate, filters = {}) => {
         setIsLoading(true);
         resetApiProvider();
-        debugger
+
         const searchParams = new URLSearchParams(window.location.search);
         // Создаем объект с параметрами
         const params = {
@@ -50,7 +50,7 @@ const useCalendarApi = () => {
   const createBusiness = (data) => {
     setIsLoading(true);
     return http
-      .post('/api/businesses', mapBusinessToBackend(data,Object.keys(data)))
+      .post('/api/businesses', {...mapBusinessToBackend(data,Object.keys(data))})
       .then(handleHttpResponse)
       .then((res) => {
         const mappedBusiness = mapBusinessFromApi(res.body.data);
@@ -65,7 +65,7 @@ const useCalendarApi = () => {
 
   const updateBusiness = (id, drafts, changedFieldsSet) => {
     setIsLoading(true);
-    debugger
+
     const dataToSend = mapBusinessToBackend(drafts??calendarStore.drafts[id],changedFieldsSet?? calendarStore.changedProps);
 
     return http
@@ -74,7 +74,7 @@ const useCalendarApi = () => {
       .then((res) => {
         const mappedBusiness = mapBusinessFromApi(res.body.data);
         calendarStore.submitDraft(id);
-        debugger;
+        ;
         const businesses = calendarStore.getBusinesses();
         const updatedBusinesses = businesses.map((business) =>
           business.id === id ? mappedBusiness : business,

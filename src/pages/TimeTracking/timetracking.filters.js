@@ -103,7 +103,7 @@ export const createTimeSpendingFilters = ({
                 placeholder: 'Исполнитель',
               },
               decodeUrlValue: (value) => {
-                debugger;
+                ;
                 const decodedValue = decodeURIComponent(value);
                 return decodedValue;
               },

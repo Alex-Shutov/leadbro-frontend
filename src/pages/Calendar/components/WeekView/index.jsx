@@ -25,6 +25,7 @@ const WeekView = observer(({onOpenModal}) => {
 
     const gridRef = useRef(null); // Ref for WeekGrid
     const [gridHeight, setGridHeight] = useState(0);
+    // const [hoveredDay, setHoveredDay] = useState(null);
 
     useEffect(() => {
         const updateGridHeight = () => {
@@ -39,6 +40,15 @@ const WeekView = observer(({onOpenModal}) => {
 
         return () => window.removeEventListener('resize', updateGridHeight);
     }, []);
+
+    // const handleDayHover = (dayIndex) => {
+    //     if (calendarStore.isDragging) {
+    //         setHoveredDay(dayIndex);
+    //     } else {
+    //         setHoveredDay(null);
+    //     }
+    // };
+
 
     useEffect(() => {
         const timer = setInterval(()=>setCurrentTime(new Date()),60*1000);

@@ -11,7 +11,7 @@ const CurrentTimer = ({currentTime,weekDays,gridHeight}) => {
 
 
     const topPos = useMemo(() => {
-        debugger
+
         if (!gridHeight) return 0; // Default to 0 if height isn’t available yet
 
         // Workday starts at 9:00 (9 AM) and ends at 23:00 (11 PM)

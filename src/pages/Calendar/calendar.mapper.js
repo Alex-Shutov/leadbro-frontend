@@ -26,15 +26,15 @@ export const mapBusinessFromApi = (apiBusiness,apiComments=[]) => {
 
 export const mapBusinessToBackend = (drafts, changedFieldsSet) => {
   const castValue = (key, value,oldKey) => {
-    debugger
+
     switch (key) {
       case 'date_from':
       case 'date_to':
         return formatDateToBackend(value).replace('T', ' ');
       case 'employee_id':
       case 'performer_id':
-        debugger
-        return Number(value[0]?.id);
+
+        return Number(value?.id);
       case 'start':
         if (oldKey === 'startTime') {
           // Если изменено startTime, нужно обновить часы в startDate

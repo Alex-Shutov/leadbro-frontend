@@ -74,7 +74,7 @@ const Comments = observer(
 
     const handleSendComment = async (val) => {
       try {
-        debugger;
+        debugger
         const result = await appApi.sendComment(
           belongsTo ?? getCurrentEntityType(),
           entityId ?? id,

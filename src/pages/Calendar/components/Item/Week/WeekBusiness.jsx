@@ -28,6 +28,11 @@ const BaseWeekItem = forwardRef(({
                                      businessTypeStyles,
                                      style = {},
                                     onModalOpen,
+    onHoverStart,
+    onHoverEnd,
+    dayIndex,
+    shouldShiftRight,
+    ...rest
                                  }, ref) => {
     const { calendarStore } = useStore();
     const [isResizing, setIsResizing] = useState(false);
@@ -42,6 +47,14 @@ const BaseWeekItem = forwardRef(({
     const itemLayout = layout[business.id];
     const itemRef = useRef(null);
     const [isItemForOneSlot,setItemForOneSlot] = useState(differenceInMinutes(business.startDate, business.endDate)>=15);
+
+    const shiftRightStyle = shouldShiftRight ? {
+        transform: 'translateX(15px)',
+        transition: 'transform 0.2s ease-out',
+    } : {
+        transform: 'translateX(0px)',
+        transition: 'transform 0.2s ease-in'
+    };
 
 
 
@@ -90,7 +103,7 @@ const BaseWeekItem = forwardRef(({
         drop: (item, monitor) => {
             if (item.id === business.id) return; // Предотвращаем дроп на себя
             if (!itemRef.current || !ref.current) return;
-            debugger
+
             const clientOffset = monitor.getClientOffset();
             if (!clientOffset) return;
 
@@ -133,10 +146,21 @@ const BaseWeekItem = forwardRef(({
 
             return { dropped: true };
         },
-        collect: (monitor) => ({
-            isOver: monitor.isOver(),
-            canDrop: monitor.canDrop()
-        })
+        collect: (monitor) => {
+            const handleCheckHoveringOnItem = () => {
+                console.log(ref.current)
+                console.log(itemRef.current)
+                return ref.current?.classList?.value.toString().includes('dropTarget')
+            }
+            if(handleCheckHoveringOnItem()){
+                onHoverStart(dayIndex)
+            }
+            else onHoverEnd()
+            return {
+                isOver: monitor.isOver(),
+                canDrop: monitor.canDrop()
+        }
+        }
     }), [business]);
 
     const setRefs = (node) => {
@@ -200,7 +224,7 @@ const BaseWeekItem = forwardRef(({
             document.removeEventListener('mouseup', handleMouseUp);
             document.body.style.cursor = '';
         };
-    }, [isResizing, resizeDirection, tempStartDate, tempEndDate, ref, snapToTimeSlot]);
+    }, [isResizing, resizeDirection, tempStartDate, tempEndDate, ref, snapToTimeSlot,shouldShiftRight]);
 
     // Обновляем временные даты при изменении бизнес-события
     useEffect(() => {
@@ -374,7 +398,7 @@ const BaseWeekItem = forwardRef(({
     const currentTypeOfOverlap = getOverlapClass()
 
     const handleOpenModal = (e) => {
-            debugger
+
         e.stopPropagation()
         e.preventDefault()
             if (!isResizing && !isDragging )
@@ -383,7 +407,10 @@ const BaseWeekItem = forwardRef(({
 
     return (
         <div
-
+            onMouseEnter={()=>{
+                console.log('hover')
+            }}
+            onMouseLeave={()=>!isResizing && rest.onDragEnd()}
             ref={setRefs}
             className={cn(styles.weekItem,calendarStyles.businessItem, {
                 [calendarStyles[businessTypeStyles[business.type]]]: true,
@@ -398,6 +425,7 @@ const BaseWeekItem = forwardRef(({
             )}
             style={{
                 ...style,
+                ...shiftRightStyle,
                 opacity: isDragging || isResizing ? 0.2 : 1,
                 top: `${calculateTimePosition(displayStartDate)}%`,
                 height: `${calculateEventHeight({
