@@ -51,7 +51,7 @@ const useTimeTrackingApi = () => {
     setIsLoading(true);
 
     return http
-      .post('/api/timetrackings', {
+      .post(`/api/tasks/${taskId}/track`, {
         task_id: Number(taskId),
         minutes: timeTracking.minutes,
       })

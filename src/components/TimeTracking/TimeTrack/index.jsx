@@ -15,17 +15,17 @@ const Index = ({ timeTracking, actions }) => {
   return (
     <div className={styles.container}>
       <div className={styles.sender}>
-        <img src={employee.avatar} alt={employee.name} />
+        <img src={employee?.avatar} alt={employee?.name} />
       </div>
       <div className={styles.details}>
         <span>
-          {employee.lastName} {employee.name} {employee.middleName}
+          {employee?.lastName} {employee?.name} {employee?.middleName}
         </span>
         <div className={styles.tracking_info}>
           <div className={styles.time}>
             <Icon name="clock" size={18} />
             <span>
-              {timeSpent.hours} ч {timeSpent.minutes} мин.
+              {timeSpent?.hours} ч {timeSpent?.minutes} мин.
             </span>
           </div>
           <div className={styles.cost}>
@@ -36,7 +36,7 @@ const Index = ({ timeTracking, actions }) => {
       </div>
       <div className={styles.rightSide}>
         <div className={styles.hours}>
-          {formatDateOnlyHours(timeTracking.date)}
+          {formatDateOnlyHours(timeTracking?.date)}
         </div>
         {user?.id === sender?.id && (
           <div className={styles.more} onClick={() => setTableMenuOpen(true)}>
