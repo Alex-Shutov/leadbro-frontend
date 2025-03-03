@@ -101,6 +101,8 @@ const TimeTrackingSection = ({
                 timeTrackingsLength={timeTrackingLength}
                 onSendTimeTracking={async (val) => {
                     try {
+                        debugger
+
                         const result = await timeTrackingApi.sendTimeTracking(val, taskId);
                         if (result) {
                             await updateStore('add', null, result);
