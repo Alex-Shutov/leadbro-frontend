@@ -93,7 +93,7 @@ const mapTasksFromApi = (tasksData) => {
 
 const mapBusinessesToBackend = (business, changedFieldsSet) => {
 
-    const businessId = business.id;
+    const businessId = business?.id;
 
     const filteredChangedFields = new Set(
         [...changedFieldsSet]
@@ -139,7 +139,7 @@ export const mapDealDataToBackend = (drafts, changedFieldsSet) => {
     mapKeyToBackend,
     castValue,
   ),
-      ...mapBusinessesToBackend(drafts.businesses, changedFieldsSet),
+      ...mapBusinessesToBackend(drafts?.businesses, changedFieldsSet),
 
   };
 };

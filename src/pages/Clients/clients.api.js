@@ -280,7 +280,7 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const updateBusiness = (clientId,businessId, drafts,changedFieldsSet) => {
+  const updateBusiness = (businessId, drafts,changedFieldsSet,clientId) => {
     setIsLoading(true);
 
     const dataToSend = mapClientDataToBackend({businesses:drafts},changedFieldsSet,businessId);
@@ -303,8 +303,9 @@ const useClientsApi = () => {
 
   const createBusiness = (data,clientId) => {
     setIsLoading(true);
+    debugger
     return http
-        .post(`/api/deals/${clientId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
+        .post(`/api/companies/${clientId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
         .then(handleHttpResponse)
         .then((res) => {
           const mappedBusiness = mapBusinessFromApi(res.body.data);

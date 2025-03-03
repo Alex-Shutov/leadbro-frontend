@@ -96,6 +96,7 @@ const CalendarModal = observer(({
                 };
         }
     }, [mode, calendarStore, clientStore, dealStore, businessId]);
+    debugger
 
     // Determine the business data - either from store or initial state
     const business = useMemo(() => {
@@ -237,7 +238,7 @@ const CalendarModal = observer(({
         debugger
         try {
             if (isEditMode) {
-                await contextData.api.updateBusiness(contextData.id,businessId, business,contextData.store.changedProps);
+                await contextData.api.updateBusiness(businessId, business,contextData.store.changedProps,contextData.id);
                 contextData.store.submitDraft && contextData.store.submitDraft(contextData.id);
             } else {
                 await contextData.api.createBusiness(business,contextData.id);
