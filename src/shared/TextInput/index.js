@@ -131,7 +131,7 @@ const TextInput = forwardRef(
       const cursorPos = e.target.selectionStart;
       const isTextArea = e.target.tagName.toLowerCase() === 'textarea';
       if(props.type === 'hours'){
-        debugger
+
         const value = e.target.value ?? e.target.defaultValue;
         if (value === '' || (/^\d*$/.test(value) && parseInt(value) <= 23)) {
           handleChange(

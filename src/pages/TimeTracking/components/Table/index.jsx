@@ -49,7 +49,7 @@ const TimeTrackingsTable = observer(() => {
 
   const fetchTimeSpending = useCallback(
     (page) => {
-      debugger;
+      ;
       api.getTimeTrackings(page, from, to);
     },
     [from, to],

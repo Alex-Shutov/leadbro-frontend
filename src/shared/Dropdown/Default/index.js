@@ -27,6 +27,7 @@ const Dropdown = ({
   isAsync = false,
   name,
   required,
+    minAsyncInput=4,
   ...props
 }) => {
   const [visible, setVisible] = useState(false);
@@ -67,7 +68,7 @@ const Dropdown = ({
     isInForm && (isTouched || isSubmitted) ? get(errors, name) : null;
 
   const shouldShowOptions = isAsync
-    ? visible && inputValue.length >= 4
+    ? visible && inputValue.length >= minAsyncInput
     : visible;
 
   const handleOpen = () => {
@@ -136,7 +137,7 @@ const Dropdown = ({
         clearTimeout(searchTimeout);
       }
 
-      if (value.length >= 4) {
+      if (value.length >= minAsyncInput) {
         setLoading(true);
         const newTimeout = setTimeout(async () => {
           try {
@@ -196,6 +197,7 @@ const Dropdown = ({
       className={cn(classNameContainer, {
         [styles.noMinWidth]: noMinWidth,
         [styles.hasError]: error,
+        [styles.disabled]:props.disabled
       })}
       onBlur={() => setIsTouched(true)}
     >
@@ -234,6 +236,7 @@ const Dropdown = ({
           { [styles.active]: visible },
           { [styles.error]: error },
         )}
+
       >
         <div
           className={cn(styles.head, classDropdownHead, {

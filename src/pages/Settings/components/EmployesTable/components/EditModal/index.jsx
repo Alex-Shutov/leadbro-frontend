@@ -134,7 +134,7 @@ const EditModal = observer(({ employeId, onClose }) => {
   };
 
   const handleDeleteEmployee = async () => {
-    debugger;
+    ;
     try {
       await api.deleteEmployee(employeId, page);
       handleInfo('Сотрудник уволен');

@@ -76,7 +76,7 @@ const useTasksApi = () => {
   const getTasksByRole = useCallback(async () => {
     resetApiProvider();
     setIsLoading(true);
-    debugger;
+    ;
     // Получаем все параметры из URL
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -124,6 +124,7 @@ const useTasksApi = () => {
         })
         .finally(() => setIsLoading(false));
     }
+
 
     // Иначе используем общий endpoint с параметрами
     return http

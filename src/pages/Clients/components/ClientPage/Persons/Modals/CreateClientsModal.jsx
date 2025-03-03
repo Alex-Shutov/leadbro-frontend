@@ -69,7 +69,7 @@ const CreateClientsModal = ({
   const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
-        debugger
+
         await api.updateClient(
             store,
             entityId,

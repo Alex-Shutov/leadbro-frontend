@@ -27,6 +27,7 @@ import DealNote from './components/DealNote';
 import ClientPersons from "../../../Clients/components/ClientPage/Persons";
 import useClientsApi from "../../../Clients/clients.api";
 import CreateClientsModal from "../../../Clients/components/ClientPage/Persons/Modals/CreateClientsModal";
+import ClientActivities from "../../../Clients/components/ClientPage/Activities";
 
 const DealPage = observer(() => {
   const { id } = useParams();
@@ -72,7 +73,7 @@ const DealPage = observer(() => {
 
   const handleSubmitPersons = async (clientId, submitText, path) => {
     try {
-      debugger
+
         clientsApi.updateClient(deals,Number(id), clientId, submitText)
            .then(()=> api.getDealById(deal.id))
       // dealsStore.submitDraft();
@@ -113,6 +114,7 @@ const DealPage = observer(() => {
               taskStore={tasksStore}
               taskApi={taskApi}
             />
+            <ClientActivities deal={deal} dealApi={api} activities={deal?.businesses} dealStore={dealsStore}  />
             <Comments
               onDelete={() =>
                 api

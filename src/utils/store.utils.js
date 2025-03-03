@@ -173,7 +173,7 @@ export const mapChangedFieldsForBackend = (
       const backendKey = mapKeyToBackend(key,drafts);
 
       // Приводим значение к нужному типу и добавляем в объект для отправки
-      body[backendKey] = castValue(backendKey, value);
+      body[backendKey] = castValue(backendKey, value,key);
     }
   });
 

@@ -48,7 +48,7 @@ const StagesTable = observer(({ stage, onEditTask, onCreateTasks }) => {
 
     await api.getTaskStages(stageId, page);
   }, []);
-  debugger
+
   let {
     currentPage,
     totalPages,

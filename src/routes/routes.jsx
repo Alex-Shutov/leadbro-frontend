@@ -16,7 +16,8 @@ import Bills from '../pages/Bills';
 import Deals from '../pages/Deals';
 import DealPage from '../pages/Deals/components/DealPage';
 import Forbidden from '../pages/Forbidden';
-import TimeTrackings from "../pages/TimeTracking";
+import TimeTrackings from '../pages/TimeTracking';
+import Calendar from '../pages/Calendar';
 
 export const paths = {
   MAIN: '/',
@@ -26,6 +27,7 @@ export const paths = {
   SERVICES_ID: '/services/:id',
   SERVICES_ID_STAGES: '/services/:id/stages/:stageId',
   TASKS: '/tasks',
+  CALENDAR: '/calendar',
   SETTINGS: '/settings',
   BILLS: '/bills',
   TIME_TRACKINGS: '/timetrackings',
@@ -84,6 +86,10 @@ const protectedRoutes = [
   {
     path: paths.TASKS,
     element: <TasksWithQuery />,
+  },
+  {
+    path: paths.CALENDAR,
+    element: <Calendar />,
   },
   {
     path: paths.SETTINGS,

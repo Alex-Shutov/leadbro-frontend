@@ -39,21 +39,6 @@ const Index = ({
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
   const { members } = useMembers();
 
-  // const mapValuesForInput = (values) => {
-  //   if (Array.isArray(values)) {
-  //     return values.map((el, index) => ({
-  //       value: el.id !== null ? el.id : index,
-  //       label: el.id !== null ? `${el.surname} ${el.name}` : el.fio,
-  //     }));
-  //   }
-  //   return [];
-  // };
-  //
-  // useEffect(() => {
-  //   // setMappedAuditors(mapValuesForInput(initialAuditors));
-  //   // setMappedExecutors(mapValuesForInput(initialExecutors));
-  //   // setMappedResponsibles(mapValuesForInput(initialResponsibles));
-  // }, [initialAuditors, initialExecutors, initialResponsibles]);
   return (
     <div className={className}>
       <TextInput
@@ -114,17 +99,6 @@ const Index = ({
             : []
         }
       />
-      {/*<ResponsibleInput*/}
-      {/*  canAdd={false}*/}
-      {/*  max={1}*/}
-      {/*  onAdd={(name) =>*/}
-      {/*    handleAdd(name, { fio: '', id: initialResponsibles.length })*/}
-      {/*  }*/}
-      {/*  onChange={(name, value) => handleChange(`${name}.fio`, value)}*/}
-      {/*  name={'responsibles'}*/}
-      {/*  label={'Ответственный'}*/}
-      {/*  values={mappedResponsibles}*/}
-      {/*/>*/}
       <ValuesSelector
         onChange={(e) =>
           handleChange(
@@ -160,15 +134,7 @@ const Index = ({
         onChange={({ target }) => handleChange(target.name, target.value)}
         className={styles.input}
       />
-      {/*<TextInput*/}
-      {/*  disabled={true}*/}
-      {/*  type={'number'}*/}
-      {/*  label={'Фактическое время, ч'}*/}
-      {/*  name={'actualTime'}*/}
-      {/*  onChange={({ target }) => handleChange(target.name, target.value)}*/}
-      {/*  value={convertToHours(actualTime)}*/}
-      {/*  className={styles.input}*/}
-      {/*/>*/}
+
       <LabeledParagraph
         labelClass={styles.label}
         label={'Фактическое время, ч'}

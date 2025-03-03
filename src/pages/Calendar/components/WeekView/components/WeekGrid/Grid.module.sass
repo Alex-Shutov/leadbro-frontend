@@ -1,0 +1,101 @@
+@import "src/styles/helpers"
+
+.timeGrid
+  position: relative
+  display: flex
+  flex-direction: column
+  min-height: 736px // 16 hours * 46px
+
+.gridStructure 
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 1
+
+
+.eventsContainer 
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 2
+
+
+.hourRow
+  display: flex
+  height: 46px 
+  min-height: 46px
+  position: relative
+
+.lastRow
+  .timeCell
+    flex: 1
+    //border-right: unset
+    border-bottom: unset
+    position: relative
+
+.timeGutter
+  width: 46px
+  top: 8px
+  position: relative
+  flex-shrink: 0
+  display: flex
+  align-items: end
+  justify-content: center
+  //border-right: 1px solid #E2E8F0
+  color: #64748B
+  font-size: 12px
+
+
+
+.timeCell
+  flex: 1
+  border-right: 1px solid #E2E8F0
+  border-bottom: 1px solid #E2E8F0
+  position: relative
+  height: 46px
+
+.timeSlot
+  position: absolute
+  left: 0
+  right: 0
+  height: calc(100% / 4)
+  //border-bottom: 1px dashed #E2E8F0
+  transition: background-color 0.2s
+  pointer-events: all
+  z-index: 1
+  &.dropTarget
+    z-index: 30
+    background-color: rgba(66, 153, 225, 0.1)
+
+
+  &:nth-child(1)
+    top: 0
+    height: 11.5px
+  &:nth-child(2)
+    top: 11.5px
+    height: 11.5px
+  &:nth-child(3)
+    top: 23px
+    height: 11.5px
+  &:nth-child(4)
+    top: 34.5px
+    height: 11.5px
+
+
+.eventsContainer
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  pointer-events: none
+  z-index: 3
+  > *
+    pointer-events: all
+
+
+

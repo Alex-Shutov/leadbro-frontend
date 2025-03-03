@@ -316,6 +316,7 @@ const Table = observer(
                             group.headers
                               .filter((col) => col.columns && !col.parent)
                               .map((col) => {
+                                  debugger
                                 const colJsx = col.render('Header');
                                 return (
                                   <div

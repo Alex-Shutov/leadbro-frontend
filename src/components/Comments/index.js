@@ -59,19 +59,22 @@ const Comments = observer(
       } else if (path.includes('tasks') || path.includes('stages')) {
         return 'tasks';
       }
+      else if (path.includes('calendar')) {
+          return 'business';
+      }
     }
 
     function countFiles() {
       return Object.values(comments ?? {}).reduce((totalFiles, comment) => {
         return (
-          totalFiles + (comment.value?.files ? comment.value.files.length : 0)
+          totalFiles + (comment?.value?.files ? comment?.value?.files?.length : 0)
         );
       }, 0);
     }
 
     const handleSendComment = async (val) => {
       try {
-        debugger;
+        debugger
         const result = await appApi.sendComment(
           belongsTo ?? getCurrentEntityType(),
           entityId ?? id,

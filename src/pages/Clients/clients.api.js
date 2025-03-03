@@ -19,6 +19,8 @@ import useQueryParam from '../../hooks/useQueryParam';
 import {getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
 import { enqueueSnackbar } from 'notistack';
 import { handleSubmit } from '../../utils/snackbar';
+import useCalendarApi from "../Calendar/calendar.api";
+import {mapBusinessFromApi, mapBusinessToBackend} from "../Calendar/calendar.mapper";
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -46,6 +48,7 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useClientsApi = () => {
   const { clientsStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
+  const businessApi = useCalendarApi()
 
   const getClients = (page = 1,filters={}) => {
     resetApiProvider();
@@ -89,6 +92,7 @@ const useClientsApi = () => {
         http.get(`/api/companies/${id}/comments`), // Запрос для получения паролей
         http.get(`/api/companies/${id}/services`), // Запрос для получения паролей
         http.get(`/api/companies/${id}/deals`), // Запрос для получения паролей
+        http.get(`/api/companies/${id}/businesses`), // Запрос для получения паролей
       ])
         // .then(handleHttpResponse)
         .then(
@@ -99,6 +103,7 @@ const useClientsApi = () => {
             commentsRes,
             servicesRes,
             dealsRes,
+              businessRes
           ]) => {
             // Деструктурируем результаты обоих запросов
 
@@ -108,6 +113,7 @@ const useClientsApi = () => {
             const commentsData = commentsRes.data.data;
             const servicesData = servicesRes.data.data;
             const dealsData = dealsRes.data.data;
+            const businessesData = businessRes.data.data;
             // Сначала маппим пароли, затем клиента, передавая пароли в маппер клиента
             const mappedClient = mapClientFromApi(
               clientData,
@@ -116,6 +122,7 @@ const useClientsApi = () => {
               commentsData,
               servicesData,
               dealsData,
+                businessesData
             );
 
             clientsStore.setCurrentClient(mappedClient); // Устанавливаем смапленного клиента в store
@@ -273,6 +280,46 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const updateBusiness = (clientId,businessId, drafts,changedFieldsSet) => {
+    setIsLoading(true);
+
+    const dataToSend = mapClientDataToBackend({businesses:drafts},changedFieldsSet,businessId);
+
+    return http
+        .patch(`/api/businesses/${businessId}`, dataToSend)
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedBusiness = mapBusinessFromApi(res.body.data);
+          const currClient = clientsStore.getById(clientId);
+          const updatedBusinesses = {
+            ...currClient.businesses,
+            [businessId]: mappedBusiness
+          };
+          clientsStore.setCurrentClient({...currClient,businesses:updatedBusinesses});
+        })
+        .catch(handleShowError)
+        .finally(() => setIsLoading(false));
+  };
+
+  const createBusiness = (data,clientId) => {
+    setIsLoading(true);
+    return http
+        .post(`/api/deals/${clientId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
+        .then(handleHttpResponse)
+        .then((res) => {
+          const mappedBusiness = mapBusinessFromApi(res.body.data);
+          const currDeal = clientsStore.getById(clientId);
+          const updatedBusinesses = {
+            ...currDeal.businesses,
+            [mappedBusiness.id]: mappedBusiness
+          };
+          clientsStore.setCurrentClient({...currDeal,businesses:updatedBusinesses});
+        })
+        .catch(handleShowError)
+        .finally(() => setIsLoading(false));
+  };
+
+
   return {
     getClients,
     createPassword,
@@ -286,6 +333,8 @@ const useClientsApi = () => {
     deleteClient,
     deletePassword,
     createComment,
+    updateBusiness,
+    createBusiness,
     isLoading,
   };
 };
