@@ -180,7 +180,7 @@ const useDealsApi = () => {
   //         .finally(() => setIsLoading(false));
   // }
 
-  const updateBusiness = (dealId,businessId, drafts,changedFieldsSet) => {
+  const updateBusiness = (businessId, drafts,changedFieldsSet,dealId) => {
     setIsLoading(true);
 
     const dataToSend = mapDealDataToBackend({businesses:drafts},changedFieldsSet,businessId);

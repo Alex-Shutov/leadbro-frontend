@@ -83,6 +83,7 @@ const DealEditModal = observer(
     };
 
     const handleSubmit = async (onError = null) => {
+        debugger
       if (isDeleteModalOpen) return;
       try {
         if (isEditMode) {
