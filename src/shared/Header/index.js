@@ -84,17 +84,18 @@ const HeadersList = ({ navigation }) => {
   const location = useLocation();
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const handleClick = (x, index) => {
+  const handleClick = (x, index,event) => {
     setActiveIndex(index);
     x.action();
     if (x?.url) {
-      if (x.url.startsWith('http://') || x.url.startsWith('https://')) {
-        // Открываем внешнюю ссылку в новом окне
+      const isExternalLink = x.url.startsWith('http://') || x.url.startsWith('https://');
+      const isCtrlOrMiddleClick = event.ctrlKey || event.metaKey  ||event.button === 1; // 1 - средняя кнопка мыши
+
+      if (isExternalLink || isCtrlOrMiddleClick) {
+        // Открываем ссылку в новой вкладке
         window.open(x.url, '_blank');
       } else {
-        // Открываем внутреннюю ссылку в новом окне
-        const newWindow = window.open('', '_blank');
-        newWindow.location.href = x.url;
+        navigate(x.url)
       }
     }
   };
@@ -116,13 +117,13 @@ const HeadersList = ({ navigation }) => {
               [styles.active]: isActive(x.url),
               [styles.buttonWithIcon]: x?.button,
             })}
-            onClick={() => handleClick(x, index)}
+            onClick={(e) => handleClick(x, index,e)}
           >
             {x.title}
           </motion.p>
           {x?.icon && (
             <span
-              onClick={() => handleClick(x, index)}
+              onClick={(e) => handleClick(x, index,e)}
               className={cn(styles.none, { [styles.icon]: x?.icon })}
             >
               {x?.icon}

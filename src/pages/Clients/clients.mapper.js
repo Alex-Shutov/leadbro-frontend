@@ -321,7 +321,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   };
 
   const mapBusinessesToBackend = (business, changedFieldsSet) => {
-
+    if (!business) return []
     const businessId = business.id;
 
     // Фильтруем и модифицируем `changedFieldsSet`, оставляя только относящиеся к этому бизнесу поля
@@ -394,6 +394,6 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       castValue,
     ),
     ...fioParams,
-    ...mapBusinessesToBackend(drafts.businesses, changedFieldsSet),
+    ...mapBusinessesToBackend(drafts?.businesses, changedFieldsSet),
   };
 };

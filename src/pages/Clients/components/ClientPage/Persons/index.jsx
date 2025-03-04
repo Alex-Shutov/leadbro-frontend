@@ -69,6 +69,7 @@ const ClientPersons = ({
           const values = el;
           return (
             <CardDropdown
+                classNameContainer={styles.contaianer_divide}
               inputComponent={() => (
                 <CardInput
                   name={`contactPersons.${values.id}.fio`}
@@ -92,7 +93,7 @@ const ClientPersons = ({
               text={<b>{values.fio}</b>}
             >
               <motion.div>
-                <CardInput
+                {values.role && <CardInput
                   placeholder={'Роль...'}
                   name={`contactPersons.${values.id}.role`}
                   type={'text'}
@@ -103,8 +104,8 @@ const ClientPersons = ({
                     'Роль восстановлена',
                     values.id,
                   )}
-                />
-                <CardInput
+                />}
+                {values.tel && <CardInput
                   placeholder={'Телефон...'}
                   label={'Телефон'}
                   name={`contactPersons.${values.id}.tel`}
@@ -116,8 +117,8 @@ const ClientPersons = ({
                     'Телефон восстановлен',
                     values.id,
                   )}
-                />
-                <CardInput
+                />}
+                {values.comment && <CardInput
                     placeholder={'Комментарий к телефону...'}
                     label={'Комментарий...'}
                     name={`contactPersons.${values.id}.comment`}
@@ -129,8 +130,8 @@ const ClientPersons = ({
                         'Комментарий восстановлен',
                         values.id,
                     )}
-                />
-                <CardInput
+                />}
+                {values.email && <CardInput
                   placeholder={'Почта...'}
                   label={'Почта'}
                   name={`contactPersons.${values.id}.email`}
@@ -142,20 +143,20 @@ const ClientPersons = ({
                     'Почта восстановлена',
                     values.id,
                   )}
-                />
-                <CardInput
-                  placeholder={'Сайт...'}
-                  label={'Сайт'}
-                  name={`contactPersons.${values.id}.site`}
-                  type={'site'}
-                  value={values.site}
-                  actions={defaultActions(
-                    `contactPersons.${values.id}.site`,
-                    'Сайт сохранен',
-                    'Сайт восстановлен',
-                    values.id,
-                  )}
-                />
+                />}
+                {/*{values.site && <CardInput*/}
+                {/*  placeholder={'Сайт...'}*/}
+                {/*  label={'Сайт'}*/}
+                {/*  name={`contactPersons.${values.id}.site`}*/}
+                {/*  type={'site'}*/}
+                {/*  value={values.site}*/}
+                {/*  actions={defaultActions(*/}
+                {/*    `contactPersons.${values.id}.site`,*/}
+                {/*    'Сайт сохранен',*/}
+                {/*    'Сайт восстановлен',*/}
+                {/*    values.id,*/}
+                {/*  )}*/}
+                {/*/>}*/}
                 {Object.values(values.messengers).some((el) => el.value) && (
                   <div className={styles.messengers_container}>
                     <p>Мессенджеры</p>

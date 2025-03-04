@@ -235,20 +235,20 @@ const CreateClientsModal = ({
         />
       </div>
       <div className={modlaStyles.flexDiv}>
-        <TextInput
-          onChange={({ target }) =>
-            handleChange(
-              isEditMode ? `contactPersons.${clientId}.site` : 'site',
-              target.value,
-            )
-          }
-          name={isEditMode ? `contactPersons.${clientId}.site` : 'site'}
-          value={client?.site}
-          edited={true}
-          className={cn(styles.input, modlaStyles.grow)}
-          label={'Сайт'}
-          placeholder={'Сайт'}
-        />
+        {/*<TextInput*/}
+        {/*  onChange={({ target }) =>*/}
+        {/*    handleChange(*/}
+        {/*      isEditMode ? `contactPersons.${clientId}.site` : 'site',*/}
+        {/*      target.value,*/}
+        {/*    )*/}
+        {/*  }*/}
+        {/*  name={isEditMode ? `contactPersons.${clientId}.site` : 'site'}*/}
+        {/*  value={client?.site}*/}
+        {/*  edited={true}*/}
+        {/*  className={cn(styles.input, modlaStyles.grow)}*/}
+        {/*  label={'Сайт'}*/}
+        {/*  placeholder={'Сайт'}*/}
+        {/*/>*/}
         <TextInput
           onChange={({ target }) =>
             handleChange(

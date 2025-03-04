@@ -159,7 +159,7 @@ const TaskEditModal = observer(
           ((taskData?.stage?.id &&
             hasPermission(Permissions.ACCESS_SERVICES)) ||
             (taskData?.deal?.id && hasPermission(Permissions.ACCESS_DEALS)))),
-      [stage, deal],
+      [stage, deal,taskData],
     );
 
     const handleChange = (name, value, withId = true) => {
@@ -347,6 +347,12 @@ const TaskEditModal = observer(
     //     <Loader/>
     //   </FormValidatedModal>
     // }
+
+    useEffect(() => {
+      return ()=>{
+        taskStore.setCurrentTask(null)
+      }
+    }, []);
     return (
       taskData && (
         <>

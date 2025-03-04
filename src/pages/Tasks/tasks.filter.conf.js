@@ -1,5 +1,6 @@
-import { taskStatusTypesRu } from '../Stages/stages.types';
+import {taskStatusTypes, taskStatusTypesRu} from '../Stages/stages.types';
 import { taskableTypes, tasksTypesRu } from './tasks.types';
+import {getQueryParam} from "../../utils/window.utils";
 
 export const createTaskFilters = (appApi) => ({
   filters: [
@@ -67,16 +68,31 @@ export const createTaskFilters = (appApi) => ({
       label: 'Статус',
       groupId: 'others',
       props: {
-        isMulti: false,
+        isMulti: true,
         options: Object.entries(taskStatusTypesRu).map(([value, label]) => ({
           value,
           label,
         })),
       },
-      toUrlValue: (value) => {
-        return value.length ? value[0]?.value : '';
-      },
+      toUrlValue: (values) =>
+          values ? values.map((v) => v.value).join(',') : '',
     },
+    // {
+    //   type: 'select',
+    //   name: 'status_no',
+    //   label: 'Статус это не',
+    //   groupId: 'others',
+    //   props: {
+    //     // defaultValue: [{label:taskStatusTypesRu.finished,value:taskStatusTypes.finished},{label:taskStatusTypesRu.paused,value:taskStatusTypes.paused}],
+    //     isMulti: true,
+    //     options: Object.entries(taskStatusTypesRu).map(([value, label]) => ({
+    //       value,
+    //       label,
+    //     })),
+    //   },
+    //   toUrlValue: (values) =>
+    //       values ? values.map((v) => v.value).join(',') : '',
+    // },
     {
       type: 'select',
       name: 'types',

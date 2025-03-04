@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { observer } from 'mobx-react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,6 +46,7 @@ const DealPage = observer(() => {
   const [dropDownClicked, setDropDownClicked] = useState(true);
   const [personModalValue, setPersonModalValue] = useState(null);
 
+
   const handleChange = (name, payload, withId = true) => {
     deals.changeById(deal?.id ?? +id, name, payload, withId);
   };
@@ -83,13 +84,21 @@ const DealPage = observer(() => {
     }
   };
 
+  useEffect(() => {
+    return ()=>{
+      console.log('unmount')
+
+      dealsStore.setCurrentDeal(null)
+    }
+  }, []);
+  console.log(dealsStore.isLoading,'isLoading');
   return (
     <motion.div
       initial={'hidden'}
       animate={'show'}
       variants={opacityTransition}
     >
-      <LoadingProvider isLoading={api.isLoading}>
+      <LoadingProvider isLoading={api.isLoading||dealsStore.isLoading}>
         <Title title={deal?.name} />
         <div className={styles.dropdown}>
           <CardDropdown
