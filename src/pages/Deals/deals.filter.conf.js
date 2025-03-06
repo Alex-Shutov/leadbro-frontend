@@ -2,6 +2,8 @@ import {dealStatusTypes, dealStatusTypesRu, sourceTypeRu} from "./deals.types";
 import {serviceTypeEnumRu} from "../Services/services.types";
 import Calendar from "../../shared/Datepicker";
 import {format} from "date-fns";
+import {getQueryParam} from "../../utils/window.utils";
+import {periodEnum, periodEnumRu} from "../Bills/bills.filter.conf";
 
 export const createDealsFilters = (appApi) => ({
     filters: [
@@ -42,6 +44,7 @@ export const createDealsFilters = (appApi) => ({
             name: 'status_no',
             label: 'Статус это не',
             props: {
+                defaultValue:  [{label:dealStatusTypesRu.refused,value:dealStatusTypes.refused},{label:dealStatusTypesRu.failed,value:dealStatusTypes.failed}],
                 isMulti: true,
                 options: Object.entries(dealStatusTypesRu).map(([value, label]) => ({
                     value,
