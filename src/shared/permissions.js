@@ -44,6 +44,7 @@ export const Permissions = {
   ACCESS_LEGAL_ENTITIES: 'accessLegalEntities',
   VIEW_ALL_TIME_SPENDINGS: 'viewAllTimeSpendings',
   EDIT_TIME_TRACKINGS: 'editTimeTrackings',
+  ACCESS_ALL_CALLS:'accessAllCalls'
 };
 
 export const PermissionGroups = {
