@@ -249,15 +249,13 @@ const TextInput = forwardRef(
 
       if (props.type === 'editor' && value) {
         return (
-            <div id={'editorjs'}>
           <Editor
             placeholder={props?.placeholder}
-            name={name ?? ''}
-            initialHTML={value}
+            name={name || ''}
+            initialHTML={value||''}
             onChange={onChange}
             ref={ref}
           />
-            </div>
         );
       }
 

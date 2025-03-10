@@ -10,9 +10,7 @@ import Tooltip from '../../../shared/Tooltip';
 const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
   const [text, setText] = useState(' ');
   const [files, setFiles] = useState([]);
-  const editorRef = useRef(null);
   const handleTextChange = (event) => {
-    debugger
     setText(event.target.value);
   };
 
@@ -34,11 +32,8 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
         },
       };
       onSendMessage(newMessage);
-      if (editorRef.current) {
-        editorRef.current.innerHTML = '';
-        editorRef.current.clear();
-      }
-      setTimeout(() => setText(''), 100);
+
+      setText('')
       setFiles([]);
     }
   };
@@ -68,12 +63,11 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
         </div>
         <div className={styles.input_field}>
           <TextInput
-            ref={editorRef}
             edited={true}
             name={'comment'}
             type="editor"
             className={styles.comment_input}
-            value={text === '' ? ' ' : text}
+            value={text}
             onChange={handleTextChange}
             placeholder="Сообщение..."
           />
