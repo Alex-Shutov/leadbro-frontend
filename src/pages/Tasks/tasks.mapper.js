@@ -3,6 +3,7 @@ import { loadAvatar } from '../../utils/create.utils';
 import { taskableTypes } from './tasks.types';
 import { mapCommentsFromApi } from '../Clients/clients.mapper';
 import {mapTimeTrackingsFromApi} from "../TimeTracking/timeTracking.mapper";
+import {mapEmployeesFromApi} from "../Settings/settings.mapper";
 
 export const mapTaskFromApi = (task, commentsData = null) => {
   const taskableType = task?.related_entity?.type;
@@ -38,6 +39,7 @@ export const mapTaskFromApi = (task, commentsData = null) => {
     deadlineTime: formatDuration(task?.planned_time), // Например, '5 ч'
     actualTime: formatDuration(task?.actual_time), // Например, '2 дн'
     isNewForUser: task?.show_at_client_cabinet === 1,
+    creator:mapEmployeesFromApi(task.creator),
     responsibles: mapAssigned([task?.responsible]),
     executors: mapAssigned([task?.performer]),
     auditors: mapAssigned(task?.auditors),
@@ -79,10 +81,10 @@ const mapTaskStatus = (status) => {
   }
 };
 
-// Маппинг ответственных и исполнителей
+
 const mapAssigned = (assigned) => {
   return assigned
-    .filter(Boolean) // Исключаем null/undefined значения
+    .filter(Boolean)
     .map((person) => ({
       id: person.id,
       image: person.avatar ? loadAvatar(person.avatar) : null,

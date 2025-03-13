@@ -36,10 +36,15 @@ const ClientStatus = ({ client, className,handleChange }) => {
           />
         {/*<Badge status={client?.status} statusType={statusTypes?.clients} />*/}
       </div>
+        <div>
+        <div className={styles.right}>
+            <ManagerCell manager={{...client?.manager,role:'Создатель'}} />
       <div className={styles.clientId}>
         <span>{client?.id}</span>
         <span>ID клиента</span>
       </div>
+        </div>
+        </div>
     </Card>
   );
 };

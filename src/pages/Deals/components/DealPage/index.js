@@ -179,7 +179,7 @@ const DealPage = observer(() => {
                   client={deal?.company}
                   creator={deal?.creator}
                   auditor={deal?.auditor}
-                  manager={deal?.manager}
+                  manager={deal?.responsible}
                 />
               </motion.div>
             )}

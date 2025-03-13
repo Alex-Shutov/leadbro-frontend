@@ -222,34 +222,35 @@ const DealEditModal = observer(
             className={styles.input}
             label={'Стоимость сделки'}
           />
+          {/*<ValuesSelector*/}
+          {/*  required={true}*/}
+          {/*  name={'manager'}*/}
+          {/*  onChange={(e) =>*/}
+          {/*    handleChange(*/}
+          {/*      'manager',*/}
+          {/*      e.length ? members.find((el) => el.id === e[0]?.value) : null,*/}
+          {/*    )*/}
+          {/*  }*/}
+          {/*  isMulti={false}*/}
+          {/*  label="Менеджер"*/}
+          {/*  options={members.map((el) => ({*/}
+          {/*    value: el.id,*/}
+          {/*    label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,*/}
+          {/*  }))}*/}
+          {/*  value={*/}
+          {/*    deal.manager*/}
+          {/*      ? {*/}
+          {/*          value: deal.manager.id,*/}
+          {/*          label: `${deal?.manager?.surname ?? deal?.manager?.lastName ?? ''} ${deal?.manager?.name ?? ''} ${deal?.manager?.middleName ?? ''}`,*/}
+          {/*        }*/}
+          {/*      : null*/}
+          {/*  }*/}
+          {/*/>*/}
           <ValuesSelector
-            required={true}
-            name={'manager'}
-            onChange={(e) =>
-              handleChange(
-                'manager',
-                e.length ? members.find((el) => el.id === e[0]?.value) : null,
-              )
-            }
-            isMulti={false}
-            label="Менеджер"
-            options={members.map((el) => ({
-              value: el.id,
-              label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
-            }))}
-            value={
-              deal.manager
-                ? {
-                    value: deal.manager.id,
-                    label: `${deal?.manager?.surname ?? deal?.manager?.lastName ?? ''} ${deal?.manager?.name ?? ''} ${deal?.manager?.middleName ?? ''}`,
-                  }
-                : null
-            }
-          />
-          <ValuesSelector
-              required={false}
+              required={true}
 
-            onChange={(e) => {
+
+              onChange={(e) => {
               handleChange(
                 'responsible',
                 e.length ? members.find((el) => el.id === e[0]?.value) : null,

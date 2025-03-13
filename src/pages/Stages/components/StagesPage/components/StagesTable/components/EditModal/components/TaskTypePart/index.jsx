@@ -20,6 +20,7 @@ const Index = ({
     auditors: initialAuditors,
     executors: initialExecutors,
     responsibles: initialResponsibles,
+      creator,
     type,
     showInLK,
     taskLinked,
@@ -38,6 +39,8 @@ const Index = ({
   const [mappedExecutors, setMappedExecutors] = useState([]);
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
   const { members } = useMembers();
+    console.log(creator,'creator')
+  const renderLabelForSelector = (source) => `${source?.surname ?? ''} ${source?.name ?? ''} ${source?.middleName ?? ''}`
 
   return (
     <div className={className}>
@@ -72,7 +75,10 @@ const Index = ({
         // value={formatDateWithOnlyDigits(deadline)}
         readonly={true}
         className={styles.input}
-      />
+      />{
+        creator && <Dropdown className={styles.input} label={'Создатель'} value={renderLabelForSelector(creator)} disabled={true}/>
+    }
+
       <ValuesSelector
         onChange={(e) => {
           handleChange(
@@ -88,13 +94,13 @@ const Index = ({
         label="Ответственный"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
+          label: renderLabelForSelector(el),
         }))}
         value={
           initialResponsibles && initialResponsibles[0]
             ? initialResponsibles.map((el) => ({
                 value: el?.id ?? null,
-                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
+                label: renderLabelForSelector(el),
               }))
             : []
         }
@@ -114,13 +120,13 @@ const Index = ({
         label="Аудиторы"
         options={members.map((el) => ({
           value: el.id,
-          label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
+          label:renderLabelForSelector(el),
         }))}
         value={
           initialAuditors
             ? initialAuditors.map((el) => ({
                 value: el.id,
-                label: `${el?.surname ?? ''} ${el?.name ?? ''} ${el?.middleName ?? ''}`,
+                label: renderLabelForSelector(el),
               }))
             : []
         }
