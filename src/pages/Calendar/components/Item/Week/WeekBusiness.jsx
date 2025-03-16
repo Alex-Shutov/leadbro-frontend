@@ -20,6 +20,7 @@ import {useDrop} from "react-dnd";
 import CalendarItemLabel from "../../../../../components/Calendar/ItemLabel/CalendarItemLabel";
 import useCalendarApi from "../../../calendar.api";
 import {id} from "date-fns/locale";
+import {getTimeMinutesDifference} from "../../../../../utils/format.time";
 
 const BaseWeekItem = forwardRef(({
                                      allItems,
@@ -46,8 +47,10 @@ const BaseWeekItem = forwardRef(({
     const { calculateTimePosition, calculateEventHeight } = useCalculate(layout);
     const itemLayout = layout[business.id];
     const itemRef = useRef(null);
-    const [isItemForOneSlot,setItemForOneSlot] = useState(Math.abs(differenceInMinutes(business.startDate, business.endDate))<=15);
-
+    debugger
+    const [isItemForOneSlot,setItemForOneSlot] = useState(Math.abs(getTimeMinutesDifference(business.startTime, business.endTime))<=15);
+    const a = differenceInMinutes(business.startTime, business.endTime)
+    const b = differenceInMinutes(business.startDate, business.endDate)
     const shiftRightStyle = shouldShiftRight ? {
         transform: 'translateX(15px)',
         transition: 'transform 0.2s ease-out',
@@ -398,7 +401,7 @@ const BaseWeekItem = forwardRef(({
     const currentTypeOfOverlap = getOverlapClass()
 
     const handleOpenModal = (e) => {
-        debugger
+
         e.stopPropagation()
         e.preventDefault()
             if (!isResizing && !isDragging )

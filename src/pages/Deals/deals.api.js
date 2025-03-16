@@ -119,12 +119,12 @@ const useDealsApi = () => {
       Promise.all([dealPromise, tasksPromise, commentsPromise,businessesPromise])
 
         .then(([{ body: deal }, { body: tasks }, { body: comments },{body:businesses}]) => {
-          debugger
+
           setTimeout(async () => {
             const contactResp =
               deal.data?.company?.id &&
               (await contactPersonsPromise(deal.data?.company?.id));
-            debugger
+
 
             const mapperDeals = mapDealFromApi(
               deal.data,

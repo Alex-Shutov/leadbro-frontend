@@ -69,15 +69,15 @@ const useCalendarApi = () => {
 
     const dataToSend = mapBusinessToBackend(drafts??calendarStore.drafts[id],changedFieldsSet?? calendarStore.changedProps);
 
-    debugger
+
     return http
       .patch(`/api/businesses/${id}`, dataToSend)
       .then(handleHttpResponse)
       .then((res) => {
-          debugger
+
         const mappedBusiness = mapBusinessFromApi(res.body.data);
         calendarStore.submitDraft(id);
-        debugger
+
         const businesses = calendarStore.getBusinesses();
         const updatedBusinesses = businesses.map((business) =>
           business.id === Number(id)? mappedBusiness : business,

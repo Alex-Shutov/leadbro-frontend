@@ -384,7 +384,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
 
     return keyMapping[key] || key;
   };
-  debugger
+
 
   return {
     ...mapChangedFieldsForBackend(

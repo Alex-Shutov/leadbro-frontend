@@ -7,11 +7,11 @@ import {ru} from "date-fns/locale/ru";
 import WeekHeader from "./components/WeekHeader/WeekHeader";
 import CurrentTimer from "./components/CurrentTimer/CurrentTimer";
 import useCalendarApi from "../../calendar.api";
-import {BusinessPageWithHoc} from "./components/WeekGrid/WeekGrid";
+import WeekGrid, {BusinessPageWithHoc} from "./components/WeekGrid/WeekGrid";
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 9);
 const TIME_SLOTS = [0,15, 30, 45];
 
-const WeekView = observer(({onOpenModal}) => {
+const WeekView = observer(({onCreateBusiness,onEditBusiness}) => {
     const calendarApi = useCalendarApi();
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
@@ -58,10 +58,10 @@ const WeekView = observer(({onOpenModal}) => {
     return (
         <div className={styles.weekView}>
             <WeekHeader weekDays={weekDays} />
-            <BusinessPageWithHoc calendarStore={calendarStore} calendarApi={calendarApi} onOpenModal={onOpenModal} ref={gridRef} weekDays={weekDays} hours={HOURS} timeSlots={TIME_SLOTS} >
+            <WeekGrid onCreateBusiness={onCreateBusiness} onEditBusiness={onEditBusiness} calendarStore={calendarStore} calendarApi={calendarApi} ref={gridRef} weekDays={weekDays} hours={HOURS} timeSlots={TIME_SLOTS} >
                 {/*<CurrentTimer gridHeight={gridHeight} currentTime={currentTime} weekDays={weekDays} />*/}
 
-            </BusinessPageWithHoc>
+            </WeekGrid>
         </div>
     );
 });

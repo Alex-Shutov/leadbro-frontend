@@ -15,7 +15,7 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
   };
 
   const handleSendMessage =() => {
-    debugger
+
     if (text.trim() || files.length > 0) {
       const newMessage = {
         id: commentsLength,

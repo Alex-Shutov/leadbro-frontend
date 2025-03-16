@@ -12,7 +12,7 @@ import MonthBusinessItem from "../Item/Month/MonthBusiness";
 
 const WEEKDAYS = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 
-const DayCell = ({ date, isCurrentMonth, businesses, isWeekend,onOpenModal }) => {
+const DayCell = ({ date, isCurrentMonth, businesses, isWeekend,onOpenModal,onCreateBusiness }) => {
   const { handleDragEnd } = useBusinessDrag();
 
   const [{ isOver }, drop] = useDrop(() => ({
@@ -31,6 +31,7 @@ const DayCell = ({ date, isCurrentMonth, businesses, isWeekend,onOpenModal }) =>
 
   return (
     <div
+        onClick={()=>onCreateBusiness(date)}
       ref={drop}
       className={`${styles.day} ${isWeekend ? styles.weekend : ''} ${!isCurrentMonth ? styles.otherMonth : ''}`}
     >
@@ -51,7 +52,8 @@ const DayCell = ({ date, isCurrentMonth, businesses, isWeekend,onOpenModal }) =>
   );
 };
 
-const MonthView = observer(({onOpenModal}) => {
+const MonthView = observer(({onEditBusiness,onCreateBusiness}) => {
+
   const { calendarStore } = useStore();
   const currentDate = calendarStore.currentDate;
   const weeks = useCalendarGrid(currentDate);
@@ -80,12 +82,13 @@ const MonthView = observer(({onOpenModal}) => {
 
               return (
                 <DayCell
+                    onCreateBusiness={onCreateBusiness}
                   key={dateKey}
                   date={date}
                   isCurrentMonth={isCurrentMonth}
                   businesses={dayBusinesses}
                   isWeekend={isWeekend}
-                  onOpenModal={onOpenModal}
+                  onOpenModal={onEditBusiness}
                 />
               );
             })}

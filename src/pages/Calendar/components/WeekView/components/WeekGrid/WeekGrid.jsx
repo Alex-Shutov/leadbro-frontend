@@ -13,19 +13,18 @@ import {observer} from "mobx-react";
 import useCalendarApi from "../../../../calendar.api";
 import CalendarModal from "../../../../../../components/CalendarModal";
 import withBusinessModalHandler from "../../../../../../components/CalendarModal/HocHandler";
-const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,onEditBusiness,children},ref) => {
+const WeekGrid = observer(forwardRef(({onCreateBusiness,hours,weekDays,timeSlots,onOpenModal,onEditBusiness,children},ref) => {
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
     const calendarApi = useCalendarApi();
     const businesses = calendarStore.getBusinesses();
     const layout = useBusinessLayout(businesses, 'week',currentDate);
-    const businessesByDay = useBusinessEvents(businesses, currentDate, 'week');
     const {calculateTimePosition,calculateEventLeft,calculateEventHeight,calculateEventWidth} = useCalculate(layout);
     const [hoveredDay, setHoveredDay] = useState(null);
     const [tempHover,setTempHover] = useState(null);
     const [businessData, setbusinessData] = useState(null);
     const [isCreateMode, setIsCreateMode] = useState(false);
-    debugger
+
     // const eventsByDayAndHour = useMemo(() => {
     //     const result = {};
     //
@@ -210,6 +209,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,onEd
                                 >
                                     {timeSlots.map(minute => (
                                         <TimeSlot
+                                            onCreateBusiness={onCreateBusiness}
                                             onDrag={()=>tempHover && handleMouseEnter(dayIndex)}
                                             onDragEnd={()=>tempHover && handleMouseLeave()}
                                             api = {calendarApi}
@@ -293,7 +293,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,onEd
 
 
 // WeekGrid.js - TimeSlot component
-const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex }) => {
+const TimeSlot = ({onCreateBusiness, api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex,hour,minute }) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'week-business',
         drop: (item, monitor) => {
@@ -341,6 +341,7 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
 
     return (
         <div
+            onClick={()=>onCreateBusiness({day,hour,minute})}
             onMouseEnter={()=>onDrag(dayIndex)}
             ref={drop}
             className={cn(styles.timeSlot, { [styles.dropTarget]: isOver })}
@@ -349,6 +350,5 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
     );
 };
 
-const BusinessPageWithHoc = withBusinessModalHandler(WeekGrid)
 
-export {WeekGrid, BusinessPageWithHoc};
+export default WeekGrid

@@ -23,6 +23,7 @@ const withBusinessModalHandler = (WrappedComponent) => {
         const [isLoading, setIsLoading] = useState(false);
         const [businessData, setBusinessData] = useState(null);
         const [isModalOpen, setIsModalOpen] = useState(false);
+        const [restParams, setRestParams] = useState({});
 
         const updateSearchParams = useCallback(
             (updates) => {
@@ -43,7 +44,7 @@ const withBusinessModalHandler = (WrappedComponent) => {
         const loadBusinessData = async (businessId) => {
             try {
                 setIsLoading(true);
-                debugger
+
                 const business = await calendarApi.getBusinessById(businessId);
                 setBusinessData(business);
             } catch (error) {
@@ -76,7 +77,7 @@ const withBusinessModalHandler = (WrappedComponent) => {
         }, [searchParams.get('businessId')]);
 
         const handleEditBusiness = (business) => {
-            debugger
+
             if (!business) {
                 setBusinessData(null);
                 setIsModalOpen(true);
@@ -93,13 +94,16 @@ const withBusinessModalHandler = (WrappedComponent) => {
             setIsLoading(false);
             setIsModalOpen(false);
             updateSearchParams({businessId: null});
+            setRestParams({});
         };
 
-        const handleCreateBusiness = () => {
+        const handleCreateBusiness = (params) => {
+
             setBusinessData(null);
             setIsModalOpen(true);
+            setRestParams(params);
         };
-        debugger
+
         return (
             <>
                 <WrappedComponent  {...props} deal={deal} client={client} onEditBusiness={handleEditBusiness}
@@ -118,6 +122,7 @@ const withBusinessModalHandler = (WrappedComponent) => {
                         clientStore={clientStore}
                         calendarStore={calendarStore}
                         calendarApi={calendarApi}
+                        {...restParams}
                     />
                 )}
             </>

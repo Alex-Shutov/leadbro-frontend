@@ -14,7 +14,7 @@ import useStore from "../../../../../hooks/useStore";
 import useCalendarApi from "../../../../Calendar/calendar.api";
 
 const ClientActivities = ({ activities = {},clientStore,clientApi,client,deal,dealApi,dealStore }) => {
-    debugger
+
     const mappedActivities = useMappedObj(activities);
 
     const [businessData, setbusinessData] = useState(null);
@@ -37,9 +37,9 @@ const ClientActivities = ({ activities = {},clientStore,clientApi,client,deal,de
 
     const columns = groupedActivities.flatMap(([date, items], groupIndex) =>
         items.map((el, index) => {
-            debugger
+
             const isFirstOfDay = index === 0;
-            debugger
+
             return {
                 Header: isFirstOfDay ? ()=> (
                     <div className={cn(styles.header, { [styles.header_first]: groupIndex === 0 })}>
@@ -76,7 +76,7 @@ const ClientActivities = ({ activities = {},clientStore,clientApi,client,deal,de
     )
 
     const handleOpenModal = (data) => {
-        debugger
+
         setbusinessData(data);
         setIsCreateMode(false);
     };
