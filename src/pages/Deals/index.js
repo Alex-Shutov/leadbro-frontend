@@ -47,6 +47,7 @@ const Deals = observer(() => {
   };
 
   const handleFilterChange = async (filters) => {
+
     await api.getDeals(1, filters); // Сбрасываем на первую страницу при изменении фильтров
   };
 

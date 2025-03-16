@@ -89,7 +89,7 @@ const ClientsTable = observer(() => {
         },
       },
       {
-        Header: 'Ответственный менеджер',
+        Header: 'Ответственный',
         id: 'manager',
         sortType: 'basic',
         accessor: 'manager.name',

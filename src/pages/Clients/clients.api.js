@@ -303,7 +303,7 @@ const useClientsApi = () => {
 
   const createBusiness = (data,clientId) => {
     setIsLoading(true);
-    debugger
+
     return http
         .post(`/api/companies/${clientId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
         .then(handleHttpResponse)

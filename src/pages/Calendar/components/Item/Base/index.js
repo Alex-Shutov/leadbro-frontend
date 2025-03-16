@@ -16,13 +16,13 @@ const BaseBusinessItem = forwardRef(({
   return (
     <div
       ref={ref}
-      className={`${styles.businessItem} ${styles[businessTypeStyles[business.type]]} ${
+      className={`${styles.businessItem} ${business?.finished && styles.isFinished} ${styles[businessTypeStyles[business.type]]} ${
         isDragging ? styles.dragging : ''
       }`}
       style={{ opacity: isDragging ? 0.5 : 1 }}
     >
 
-        <CalendarItemLabel name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={showTime} />
+        <CalendarItemLabel isFinished={business?.finished} name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={showTime} />
     </div>
   );
 });

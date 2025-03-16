@@ -231,7 +231,7 @@ export const mapCommentsFromApi = (apiComments) => {
   return apiComments?.reduce((acc, comment) => {
     acc[comment.id] = {
       id: comment.id,
-      date: new Date(comment.created_at),
+      date: new Date(convertUTCToLocal(comment.created_at)),
       sender: {
         id: comment.commentator.id,
         image: comment.commentator.avatar
@@ -321,7 +321,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   };
 
   const mapBusinessesToBackend = (business, changedFieldsSet) => {
-
+    if (!business) return []
     const businessId = business.id;
 
     // Фильтруем и модифицируем `changedFieldsSet`, оставляя только относящиеся к этому бизнесу поля
@@ -384,7 +384,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
 
     return keyMapping[key] || key;
   };
-  debugger
+
 
   return {
     ...mapChangedFieldsForBackend(
@@ -394,6 +394,6 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       castValue,
     ),
     ...fioParams,
-    ...mapBusinessesToBackend(drafts.businesses, changedFieldsSet),
+    ...mapBusinessesToBackend(drafts?.businesses, changedFieldsSet),
   };
 };

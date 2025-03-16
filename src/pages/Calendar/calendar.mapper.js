@@ -63,6 +63,7 @@ export const mapBusinessToBackend = (drafts, changedFieldsSet) => {
   const mapKeyToBackend = (key, draft) => {
     const keyMapping = {
       startDate: 'start',
+      finished: 'finished',
       endDate: 'end',
       performer: 'performer_id',
       startDateMonth: 'start',

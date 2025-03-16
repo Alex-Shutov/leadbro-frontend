@@ -20,14 +20,14 @@ import useParamSearch from '../../hooks/useParamSearch';
 import CustomButtonContainer from '../../shared/Button/CustomButtonContainer';
 import DeleteButton from '../../shared/Button/Delete';
 import Icon from '../../shared/Icon';
-import Loader from "../../shared/Loader";
+import Loader from '../../shared/Loader';
 
 const draftSet = new Set();
 
 const TaskEditModal = observer(
   ({
     // Базовые пропсы
-      id,
+    id,
     data,
     handleClose,
     // Пропсы для режима работы со стейджами
@@ -41,15 +41,15 @@ const TaskEditModal = observer(
     // Пропсы для режима работы с тасками
     taskStore,
     taskApi,
-      isLoading
+    isLoading,
   }) => {
     const isEditMode = Boolean(data);
-    const { hasPermission } = usePermissions();
+    const { hasPermission, permissions } = usePermissions();
     const navigate = useNavigate();
     const location = useLocation();
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const pageFrom = useParamSearch('page' ?? 1);
-    console.log(data,isLoading,'test','task')
+    console.log(data, isLoading, 'test', 'task');
     const mode = useMemo(() => {
       if (stage) return 'stage';
       if (deal) return 'deal';
@@ -136,17 +136,28 @@ const TaskEditModal = observer(
       if (!isEditMode && !id) return localTask;
 
       if (mode !== 'task') {
-
         const taskFromContext = Object.values(
-            contextData.store.getById(contextData.id)?.tasks,
+          contextData.store.getById(contextData.id)?.tasks,
         ).find((el) => el.id === data?.id);
         if (taskFromContext) {
-          const newTaskWithTimeTracking = {...taskFromContext,timeTrackings: taskStore.currentTask.timeTrackings};
-          return newTaskWithTimeTracking
+          const newTaskWithTimeTracking = {
+            ...taskFromContext,
+            timeTrackings: taskStore.currentTask.timeTrackings,
+          };
+          return newTaskWithTimeTracking;
         }
       }
-      return taskStore.getById(data?.id??Number(id));
-    }, [isEditMode, localTask, data, mode, contextData, taskStore?.drafts,taskStore.currentTask,id]);
+      return taskStore.getById(data?.id ?? Number(id));
+    }, [
+      isEditMode,
+      localTask,
+      data,
+      mode,
+      contextData,
+      taskStore?.drafts,
+      taskStore.currentTask,
+      id,
+    ]);
     const [comments, setComments] = useState(taskData?.comments ?? {});
 
     const [isLoadingComments, setIsLoadingComments] = useState(false);
@@ -159,11 +170,10 @@ const TaskEditModal = observer(
           ((taskData?.stage?.id &&
             hasPermission(Permissions.ACCESS_SERVICES)) ||
             (taskData?.deal?.id && hasPermission(Permissions.ACCESS_DEALS)))),
-      [stage, deal],
+      [stage, deal, taskData, permissions],
     );
 
     const handleChange = (name, value, withId = true) => {
-
       if (name.includes('responsibles') && value.length) {
         value = value[0];
       }
@@ -347,6 +357,12 @@ const TaskEditModal = observer(
     //     <Loader/>
     //   </FormValidatedModal>
     // }
+
+    useEffect(() => {
+      return () => {
+        taskStore.setCurrentTask(null);
+      };
+    }, []);
     return (
       taskData && (
         <>
@@ -396,7 +412,7 @@ const TaskEditModal = observer(
             </div>
             <div className={styles.gridContainer}>
               <TaskDescriptionPart
-                  isLoading={isLoading}
+                isLoading={isLoading}
                 selectedStatus={taskData.taskStatus}
                 prefix={
                   isEditMode && mode !== 'task' ? `tasks.${taskData.id}.` : ''
@@ -409,26 +425,30 @@ const TaskEditModal = observer(
               />
               {isEditMode && (
                 <div className={styles.comments}>
-                  {isLoading ? <Loader /> : <Comments
+                  {isLoading ? (
+                    <Loader />
+                  ) : (
+                    <Comments
                       mode={mode}
                       contextStore={contextData.store}
                       timeTrackings={taskData?.timeTrackings}
-                    onDelete={(commentId) =>
-                      taskApi
-                        .getTaskById(data?.id)
-                        .then(() => handleRemoveComment(commentId))
-                    }
-                    belongsTo={'tasks'}
-                    entityId={taskData.id}
-                    comments={comments}
-                    prefix={
-                      isEditMode && mode !== 'task'
-                        ? `tasks.${taskData.id}.`
-                        : ''
-                    }
-                    onChange={handleAddComment}
+                      onDelete={(commentId) =>
+                        taskApi
+                          .getTaskById(data?.id)
+                          .then(() => handleRemoveComment(commentId))
+                      }
+                      belongsTo={'tasks'}
+                      entityId={taskData.id}
+                      comments={comments}
+                      prefix={
+                        isEditMode && mode !== 'task'
+                          ? `tasks.${taskData.id}.`
+                          : ''
+                      }
+                      onChange={handleAddComment}
                       isLoading={isLoading}
-                  />}
+                    />
+                  )}
                 </div>
               )}
               <TaskTypePart

@@ -146,7 +146,7 @@ const ValuesSelector = ({
       IndicatorSeparator: null,
       CrossIcon: null,
       ClearIndicator: null,
-      DropdownIndicator: (props) => <Indicator {...props} />,
+      DropdownIndicator: (props) => !readonly && <Indicator {...props} />,
     },
     styles: {
       multiValue: (base) => ({

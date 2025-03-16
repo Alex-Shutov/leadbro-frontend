@@ -24,7 +24,7 @@ const DealStatus = ({ deal, className, handleChange }) => {
                 </div>
             </div>
             <div className={styles.container}>
-                <ManagerCell manager={deal?.manager}/>
+                <ManagerCell manager={deal?.responsible}/>
                 {/*<Badge status={deal?.status} statusType={colorStatsuDealTypesForPage}/>*/}
                 <StatusDropdown
                     statuses={colorStatusDealTypes}

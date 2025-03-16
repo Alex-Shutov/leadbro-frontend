@@ -13,6 +13,7 @@ export const PermissionsProvider = ({ children }) => {
   const { permissions } = useUser();
 
   const hasPermission = useCallback((permission) => {
+
     if (permissions && permissions[Permissions.SUPER_ADMIN]) {
       return true;
     }

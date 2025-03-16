@@ -21,7 +21,7 @@ const DealMembers = ({ creator, client, auditor, manager }) => {
         {auditor && auditor.map((el,index)=>{
             return index ? <MemberComponent member={el} /> : <MemberComponent member={el} label={'Аудитор'} />
         })}
-        {manager && <MemberComponent member={manager} label={'Менеджер'} />}
+        {manager && <MemberComponent member={manager} label={'Ответственный'} />}
       </Card>
     </div>
   );

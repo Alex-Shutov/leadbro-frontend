@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useCallback, useState} from 'react';
 import { mapBusinessFromApi, mapBusinessToBackend } from './calendar.mapper';
 import {
     handleHttpError,
@@ -13,6 +13,7 @@ import {
 } from '../../utils/formate.date';
 import { format } from 'date-fns';
 import {mapCommentsFromApi} from "../Clients/clients.mapper";
+import {mapTaskFromApi} from "../Tasks/tasks.mapper";
 
 const useCalendarApi = () => {
   const { calendarStore } = useStore();
@@ -68,16 +69,18 @@ const useCalendarApi = () => {
 
     const dataToSend = mapBusinessToBackend(drafts??calendarStore.drafts[id],changedFieldsSet?? calendarStore.changedProps);
 
+
     return http
       .patch(`/api/businesses/${id}`, dataToSend)
       .then(handleHttpResponse)
       .then((res) => {
+
         const mappedBusiness = mapBusinessFromApi(res.body.data);
         calendarStore.submitDraft(id);
-        ;
+
         const businesses = calendarStore.getBusinesses();
         const updatedBusinesses = businesses.map((business) =>
-          business.id === id ? mappedBusiness : business,
+          business.id === Number(id)? mappedBusiness : business,
         );
         calendarStore.setBusinesses(updatedBusinesses);
       })
@@ -101,6 +104,23 @@ const useCalendarApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+    const getBusinessById = (id) => {
+        resetApiProvider();
+
+        return Promise.all([
+            http.get(`api/businesses/${id}`),
+        ])
+            .then(([businessData]) => {
+                const mappedBusiness = mapBusinessFromApi(businessData.data.data);
+                const businesses = calendarStore.getBusinesses();
+                const updatedBusinesses = businesses.map((business) =>
+                    business.id === id ? mappedBusiness : business,
+                );
+                calendarStore.setBusinesses(updatedBusinesses);
+                return mappedBusiness;
+            })
+            .catch(handleShowError);
+    }
     const getBusinessComments = (businessId) => {
         setIsLoading(true);
         return http
@@ -133,6 +153,7 @@ const useCalendarApi = () => {
   return {
     isLoading,
     getBusinesses,
+      getBusinessById,
     createBusiness,
     updateBusiness,
     deleteBusiness,

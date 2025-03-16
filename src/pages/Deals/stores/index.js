@@ -1,4 +1,4 @@
-import { makeAutoObservable, action, observable } from 'mobx';
+import { makeAutoObservable, action, observable,reaction } from 'mobx';
 import {
     changeDraft,
     removeDraft,
@@ -14,10 +14,24 @@ export class DealsStore {
     currentDeal = null
     metaInfoTable = {};
     changedProps = new Set();
+    isLoading=false
 
     constructor(root) {
         this.root = root;
         makeAutoObservable(this);
+
+        this.disposeReaction = reaction(
+            () => this.currentDeal,
+            (currentDeal) => {
+                this.isLoading = currentDeal === null;
+            }
+        );
+    }
+
+    dispose() {
+        if (this.disposeReaction) {
+            this.disposeReaction();
+        }
     }
 
     getDeals() {
@@ -121,4 +135,6 @@ export class DealsStore {
     deleteTimeTracking(taskId, timeTrackingId) {
         TimeTrackingStoreMixin.deleteTimeTracking.call(this, taskId, timeTrackingId, 'tasks.');
     }
+
+
 }

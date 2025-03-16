@@ -25,9 +25,10 @@ const CommentsList = ({
   cls,
   isLoadingUpper,
   onDelete,
+    isLoading,
+    deleteComments
 }) => {
   const { user } = useUser();
-  const { deleteComments, isLoading } = useAppApi();
 
   const filterFunc = (comment) => {
     if (filterComments && !comment.value?.files?.length) {

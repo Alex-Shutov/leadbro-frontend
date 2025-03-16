@@ -10,9 +10,7 @@ export const EDITOR_JS_TOOLS = {
   paragraph: {
     class: Paragraph,
     inlineToolbar: true,
-    config: {
-      // defaultStyle: 'italic',
-    },
+
   },
   // breakLine: {
   //   class: BreakLine,
@@ -34,6 +32,10 @@ export const EDITOR_JS_TOOLS = {
       defaultStyle: 'unordered',
     },
   },
-  inlineCode: InlineCode,
-  marker: Marker,
+  inlineCode: {
+    class: InlineCode,
+  },
+  marker: {
+    class: Marker,
+  },
 };

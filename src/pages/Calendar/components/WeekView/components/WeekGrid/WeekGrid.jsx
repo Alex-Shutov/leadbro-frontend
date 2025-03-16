@@ -11,14 +11,14 @@ import cn from "classnames";
 import {useDrop} from "react-dnd";
 import {observer} from "mobx-react";
 import useCalendarApi from "../../../../calendar.api";
-import CalendarModal from "../../../CalendarModal";
-const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,children},ref) => {
+import CalendarModal from "../../../../../../components/CalendarModal";
+import withBusinessModalHandler from "../../../../../../components/CalendarModal/HocHandler";
+const WeekGrid = observer(forwardRef(({onCreateBusiness,hours,weekDays,timeSlots,onOpenModal,onEditBusiness,children},ref) => {
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
     const calendarApi = useCalendarApi();
     const businesses = calendarStore.getBusinesses();
     const layout = useBusinessLayout(businesses, 'week',currentDate);
-    const businessesByDay = useBusinessEvents(businesses, currentDate, 'week');
     const {calculateTimePosition,calculateEventLeft,calculateEventHeight,calculateEventWidth} = useCalculate(layout);
     const [hoveredDay, setHoveredDay] = useState(null);
     const [tempHover,setTempHover] = useState(null);
@@ -209,6 +209,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
                                 >
                                     {timeSlots.map(minute => (
                                         <TimeSlot
+                                            onCreateBusiness={onCreateBusiness}
                                             onDrag={()=>tempHover && handleMouseEnter(dayIndex)}
                                             onDragEnd={()=>tempHover && handleMouseLeave()}
                                             api = {calendarApi}
@@ -243,7 +244,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
                         <WeekBusinessItem
                             dayIndex={dayIndex}
                             shouldShiftRight={shouldShiftRight}
-                            onModalOpen={onOpenModal}
+                            onModalOpen={onEditBusiness}
                             key={business.id}
                             onHoverStart={(index)=>setTempHover(index)}
                             onHoverEnd={()=>tempHover!==hoveredDay && setTempHover(false)}
@@ -271,23 +272,28 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
             </div>
             {children}
         </div>
-            {(businessData || isCreateMode) && (
-                <CalendarModal
-                    data={businessData}
-                    calendarApi={calendarApi}
-                    calendarStore={calendarStore}
-                    startTime={businessData?.startTime}
-                    endTime={businessData?.endTime}
-                    startDate={businessData?.startDate}
-                    businessId={businessData?.id ?? null}
-                    onClose={handleCloseModal}
-                />
-            )}
+            {/*{(businessData || isCreateMode) && (*/}
+            {/*    <BusinessPageWithHoc calendarApi={calendarApi} calendarStore={calendarStore} />*/}
+            {/*    // <CalendarModal*/}
+            {/*    //     data={businessData}*/}
+            {/*    //     calendarApi={calendarApi}*/}
+            {/*    //     calendarStore={calendarStore}*/}
+            {/*    //     startTime={businessData?.startTime}*/}
+            {/*    //     endTime={businessData?.endTime}*/}
+            {/*    //     startDate={businessData?.startDate}*/}
+            {/*    //     businessId={businessData?.id ?? null}*/}
+            {/*    //     onClose={handleCloseModal}*/}
+            {/*    // />*/}
+            {/*)}*/}
         </>
     );
 }));
+
+
+
+
 // WeekGrid.js - TimeSlot component
-const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex }) => {
+const TimeSlot = ({onCreateBusiness, api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex,hour,minute }) => {
     const [{ isOver }, drop] = useDrop(() => ({
         accept: 'week-business',
         drop: (item, monitor) => {
@@ -335,6 +341,7 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
 
     return (
         <div
+            onClick={()=>onCreateBusiness({day,hour,minute})}
             onMouseEnter={()=>onDrag(dayIndex)}
             ref={drop}
             className={cn(styles.timeSlot, { [styles.dropTarget]: isOver })}
@@ -342,4 +349,6 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
         />
     );
 };
-export default WeekGrid;
+
+
+export default WeekGrid

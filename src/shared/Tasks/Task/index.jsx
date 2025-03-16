@@ -39,7 +39,7 @@ const Task = ({ task }) => {
         </div>
         <div className={styles.task_footer}>
           <Badge statusType={statusTypes.tasks} status={task.type}/>
-          <div>
+          <div className={styles.avatars}>
             {task.assigned.map((el) => (
                 <TooltipedAvatar
                     imageSrc={el.image}

@@ -16,10 +16,14 @@ import Selector from './components/Selector';
 import WeekView from "./components/WeekView";
 import useAppApi from "../../api";
 import { FiltersProvider } from "../../providers/FilterProvider";
-import CalendarModal from "./components/CalendarModal";
+import CalendarModal from "../../components/CalendarModal";
 import {createCalendarFilters} from "./calendar.filters";
+import {useLocation} from "react-router";
+import {useSearchParams} from "react-router-dom";
+import withBusinessModalHandler from "../../components/CalendarModal/HocHandler";
 
-const CalendarContent = observer(() => {
+const CalendarContent = observer(({onEditBusiness,onCreateBusiness}) => {
+
   const api = useCalendarApi();
   const { calendarStore } = useStore();
   const appApi = useAppApi();
@@ -28,6 +32,8 @@ const CalendarContent = observer(() => {
   const [businessData, setbusinessData] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [currentFilters, setCurrentFilters] = useState({});
+  const location = useLocation();
+  const [searchParams,setSearchParams] = useSearchParams();
 
   // Определяем диапазон дат в зависимости от текущего представления
   const getCurrentDateRange = () => {
@@ -74,40 +80,63 @@ const CalendarContent = observer(() => {
   }, [calendarStore.currentDate, currentView, currentFilters]);
 
   const handleViewChange = (view) => {
+
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('view', view);
+    setSearchParams(newSearchParams,{replace:true});
     calendarStore.setCurrentView(view);
   };
 
   const handleFilterChange = async (filters) => {
-    // Сохраняем новые фильтры
     setCurrentFilters(filters);
 
-    // Загрузка данных произойдет автоматически благодаря useEffect и зависимости от currentFilters
   };
 
   const handleDateUpdate = (newDate) => {
     calendarStore.setCurrentDate(newDate);
   };
 
-  const handleOpenModal = (data) => {
-    setbusinessData(data);
-    setIsCreateMode(false);
+  const handleOpenModalViaDayCell = (data) => {
+    function setTimeToDate({ day, hour, minute }) {
+
+      const newDate = new Date(day);
+
+      newDate.setHours(hour);
+      newDate.setMinutes(minute);
+
+      newDate.setSeconds(0);
+      newDate.setMilliseconds(0);
+
+      return newDate;
+    }
+    if (currentView === calendarViewTypes.month)
+      onCreateBusiness({
+        startDate:data
+      })
+    else if (currentView === calendarViewTypes.week)
+
+      onCreateBusiness({
+        startDate:data.day,
+        startTime:format(setTimeToDate(data),'HH:mm'),
+        endTime:format(setTimeToDate({...data,minute:data.minute + 5}),'HH:mm'),
+      })
   };
 
   const renderView = () => {
     switch (currentView) {
       case calendarViewTypes.month:
-        return <MonthView onOpenModal={handleOpenModal} />;
+        return <MonthView  onCreateBusiness={handleOpenModalViaDayCell} onEditBusiness={onEditBusiness} />;
       case calendarViewTypes.week:
-        return <WeekView onOpenModal={handleOpenModal} />;
+        return <WeekView onCreateBusiness={handleOpenModalViaDayCell} onEditBusiness={onEditBusiness} />;
       default:
-        return <MonthView onOpenModal={handleOpenModal} />;
+        return <MonthView  onCreateBusiness={onCreateBusiness} onEditBusiness={onEditBusiness} />;
     }
   };
 
-  const handleCreateBusiness = () => {
-    setbusinessData(null);
-    setIsCreateMode(true);
-  };
+  // const handleCreateBusiness = () => {
+  //   setbusinessData(null);
+  //   setIsCreateMode(true);
+  // };
 
   const handleCloseModal = () => {
     setbusinessData(null);
@@ -119,6 +148,12 @@ const CalendarContent = observer(() => {
   // Получаем текущий диапазон дат для инициализации фильтров
   const { startDate, endDate } = getCurrentDateRange();
 
+  useEffect(() => {
+    return ()=>{
+      searchParams.delete('view')
+    }
+  }, []);
+
   return (
       <FiltersProvider>
         <LoadingProvider isLoading={api.isLoading}>
@@ -127,7 +162,7 @@ const CalendarContent = observer(() => {
                 title="Календарь дел"
                 actions={{
                   add: {
-                    action: handleCreateBusiness,
+                    action: onCreateBusiness,
                     title: 'Создать дело',
                   },
                   filter: {
@@ -158,26 +193,25 @@ const CalendarContent = observer(() => {
 
             <div className={styles.calendar}>{renderView()}</div>
           </div>
-          {(businessData || isCreateMode) && (
-              <CalendarModal
-                  data={businessData}
-                  calendarStore={calendarStore}
-                  calendarApi={api}
-                  businessId={businessData?.id ?? null}
-                  onClose={handleCloseModal}
-              />
-          )}
         </LoadingProvider>
       </FiltersProvider>
   );
 });
 
-const Calendar = () => {
+const Calendar = ({onCreateBusiness,onEditBusiness}) => {
   return (
       <DndProvider backend={HTML5Backend}>
-        <CalendarContent />
+        <CalendarContent onCreateBusiness={onCreateBusiness} onEditBusiness={onEditBusiness} />
       </DndProvider>
   );
 };
+const CalendarWithHoc  = withBusinessModalHandler(Calendar)
 
-export default Calendar;
+const CalendarWithQuery = () => {
+  const api = useCalendarApi()
+  const {calendarStore} = useStore()
+  return <CalendarWithHoc calendarApi={api} calendarStore={calendarStore}/>
+}
+
+
+export default CalendarWithQuery;

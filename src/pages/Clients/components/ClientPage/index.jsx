@@ -33,6 +33,7 @@ import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar
 import CreateClientsModal from './Persons/Modals/CreateClientsModal';
 import Comments from '../../../../components/Comments';
 import useParamSearch from '../../../../hooks/useParamSearch';
+import ClientMembers from "./ClientMembers";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -126,6 +127,7 @@ const ClientPage = observer(() => {
               client={client}
               handleChange={handleChangeStatus}
             />
+
             <ClientService
               currentClient={client}
               className={cn(styles.card, styles.card_status)}
@@ -162,6 +164,7 @@ const ClientPage = observer(() => {
                   [styles.col_dropdowned]: dropDownClicked,
                 })}
               >
+
                 <ClientDescription
                   clientId={client?.id}
                   onChange={handleChange}
@@ -169,6 +172,7 @@ const ClientPage = observer(() => {
                   onSubmit={handleSubmit}
                   description={client?.description}
                 />
+
                 <ClientPersons
                     setClientModalData={(val)=>setPersonModalValue(val)}
                   companyId={client?.id}

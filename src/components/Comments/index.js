@@ -13,7 +13,7 @@ import useQueryParam from '../../hooks/useQueryParam';
 import useStore from '../../hooks/useStore';
 import useTimeTrackingApi from '../../pages/TimeTracking/timeTracking.api';
 import { observer } from 'mobx-react';
-import { handleError, handleSubmit } from '../../utils/snackbar';
+import {handleError, handleInfo, handleSubmit} from '../../utils/snackbar';
 import useCommentsFilters from './common.filters.hook';
 import TimeTrackingSection from '../TimeTracking/Section';
 
@@ -73,8 +73,8 @@ const Comments = observer(
     }
 
     const handleSendComment = async (val) => {
+        handleInfo('Комментарий отправляется...')
       try {
-        debugger
         const result = await appApi.sendComment(
           belongsTo ?? getCurrentEntityType(),
           entityId ?? id,
@@ -118,6 +118,8 @@ const Comments = observer(
         ) : (
           <>
             <CommentsList
+                deleteComments={appApi.deleteComments}
+                isLoading={appApi.isLoading}
               isLoadingUpper={rest.isLoading ?? false}
               onDelete={onDelete}
               filterFiles={filters.isFilterFiles}

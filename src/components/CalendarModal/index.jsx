@@ -2,23 +2,24 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import styles from './index.module.sass';
 import cn from 'classnames';
-import {businessTypes, businessTypesRu} from "../../calendar.types";
-import FormValidatedModal from "../../../../shared/Modal/FormModal";
-import ConfirmationModal from "../../../../components/ConfirmationModal";
-import TextInput from "../../../../shared/TextInput";
-import Dropdown from "../../../../shared/Dropdown/Default";
-import Comments from "../../../../components/Comments";
-import useStore from "../../../../hooks/useStore";
-import useCalendarApi from "../../calendar.api";
-import {handleSubmit as handleSubmitSnackbar} from "../../../../utils/snackbar";
-import TypeSelector from "./TypeSelector";
-import Icon from "../../../../shared/Icon";
-import Calendar from "../../../../shared/Datepicker";
-import ValuesSelector from "../../../../shared/Selector";
-import useMembers from "../../../Members/hooks/useMembers";
-import TimeDropdown from "../../../../components/TimeDropdown";
-import Loader from "../../../../shared/Loader";
-import TextLink from "../../../../shared/Table/TextLink";
+import {businessTypes, businessTypesRu} from "../../pages/Calendar/calendar.types";
+import FormValidatedModal from "../../shared/Modal/FormModal";
+import ConfirmationModal from "../ConfirmationModal";
+import TextInput from "../../shared/TextInput";
+import Dropdown from "../../shared/Dropdown/Default";
+import Comments from "../Comments";
+import useStore from "../../hooks/useStore";
+import useCalendarApi from "../../pages/Calendar/calendar.api";
+import {handleSubmit as handleSubmitSnackbar} from "../../utils/snackbar";
+import TypeSelector from "./ui/TypeSelector";
+import Icon from "../../shared/Icon";
+import Calendar from "../../shared/Datepicker";
+import ValuesSelector from "../../shared/Selector";
+import useMembers from "../../pages/Members/hooks/useMembers";
+import TimeDropdown from "../TimeDropdown";
+import Loader from "../../shared/Loader";
+import TextLink from "../../shared/Table/TextLink";
+import Switch from "../../shared/Switch";
 
 const CalendarModal = observer(({
                                     businessId,
@@ -39,7 +40,7 @@ const CalendarModal = observer(({
                                     dealApi,
                                     ...rest
                                 }) => {
-    debugger
+
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(!!businessId);
     const [comments, setComments] = useState([]);
@@ -96,7 +97,7 @@ const CalendarModal = observer(({
                 };
         }
     }, [mode, calendarStore, clientStore, dealStore, businessId]);
-    debugger
+
 
     // Determine the business data - either from store or initial state
     const business = useMemo(() => {
@@ -130,7 +131,7 @@ const CalendarModal = observer(({
 
     useEffect(() => {
         const loadComments = async () => {
-            debugger
+
             setIsCommentsLoading(true);
             try {
                 const commentsData = await defaultApiHook.getBusinessComments(businessId);
@@ -175,7 +176,7 @@ const CalendarModal = observer(({
 
     // Handle changes to business item
     const handleChange = (name, value, withId = true) => {
-        debugger
+
         if (name === 'startTime' && business.startDate) {
             const dateWithTime = new Date(business.startDate);
             const [hours, minutes] = value.split(':').map(Number);
@@ -198,7 +199,7 @@ const CalendarModal = observer(({
             const dateWithTime = new Date(business.endDate);
             const [hours, minutes] = value.split(':').map(Number);
             dateWithTime.setHours(hours, minutes, 0);
-            debugger
+
             if (isEditMode) {
                 if(mode!=="calendar"){
                     contextData.store.changeById(contextData.id, 'endDate', dateWithTime, withId);
@@ -235,7 +236,7 @@ const CalendarModal = observer(({
 
     // Handle form submission
     const handleSubmit = async (onError = null) => {
-        debugger
+
         try {
             if (isEditMode) {
                 await contextData.api.updateBusiness(businessId, business,contextData.store.changedProps,contextData.id);
@@ -317,7 +318,7 @@ const CalendarModal = observer(({
                         <TextInput
                             required={true}
                             name={`${prefix}name`}
-                            value={business.name}
+                            value={business?.name}
                             onChange={({ target }) => handleChange(target.name, target.value)}
                             label={'Название'}
                             className={styles.input}
@@ -325,7 +326,7 @@ const CalendarModal = observer(({
 
                         <TextInput
                             name={`${prefix}description`}
-                            value={business.description}
+                            value={business?.description}
                             onChange={({ target }) => handleChange(target.name, target.value)}
                             label={'Описание'}
                             rows={4}
@@ -368,7 +369,7 @@ const CalendarModal = observer(({
                                 required={true}
                                 name={`${prefix}startDate`}
                                 label={'Дата'}
-                                value={business.startDate}
+                                value={business?.startDate}
                                 onChange={(date) => {
                                     // Обновляем startDate
                                     handleChange(`${prefix}startDate`, date);
@@ -395,10 +396,10 @@ const CalendarModal = observer(({
                                     <TimeDropdown
                                         className={styles.timeDropdown}
                                         label={' '}
-                                        disabled={!business.startDate}
+                                        disabled={!business?.startDate}
                                         onChange={(value) => handleChange(`${prefix}startTime`, value)}
                                         small={true}
-                                        value={business.startTime}
+                                        value={business?.startTime}
                                         validationRules={{allowAnyMinute: true}}
                                     />
                                 </div>
@@ -407,17 +408,23 @@ const CalendarModal = observer(({
                                     <TimeDropdown
                                         className={styles.timeDropdown}
                                         label={'  '}
-                                        disabled={!business.startTime}
+                                        disabled={!business?.startTime}
                                         onChange={(value) => handleChange(`${prefix}endTime`, value)}
                                         small={true}
-                                        value={business.endTime}
+                                        value={business?.endTime}
                                         validationRules={{allowAnyMinute: true}}
                                     />
                                 </div>
                             </div>
                         </div>
                         <div className={cn(styles.lowZIndex)}>
-                            {/* Дополнительные поля могут быть добавлены здесь */}
+                            { isEditMode && <Switch
+                                className={styles.switch}
+                                name={'finished'}
+                                label={'Дело завершено ?'}
+                                value={business?.finished}
+                                onChange={(name, value) => handleChange(name, value)}
+                            />}
                         </div>
 
                         <div className={styles.reminders}>
@@ -450,6 +457,7 @@ const CalendarModal = observer(({
                             handleChange(`${prefix}type`, type);
                         }}
                     />
+
                 </div>
             </FormValidatedModal>
         </>

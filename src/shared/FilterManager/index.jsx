@@ -215,6 +215,8 @@ const FilterManager = ({
         name={name}
         value={filterValues[name]}
         onChange={(value) => handleFilterChange(name, value)}
+        placeholder={rest.label}
+        label={''}
       />
     );
   };
