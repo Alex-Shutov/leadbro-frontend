@@ -46,7 +46,7 @@ const BaseWeekItem = forwardRef(({
     const { calculateTimePosition, calculateEventHeight } = useCalculate(layout);
     const itemLayout = layout[business.id];
     const itemRef = useRef(null);
-    const [isItemForOneSlot,setItemForOneSlot] = useState(differenceInMinutes(business.startDate, business.endDate)>=15);
+    const [isItemForOneSlot,setItemForOneSlot] = useState(Math.abs(differenceInMinutes(business.startDate, business.endDate))<=15);
 
     const shiftRightStyle = shouldShiftRight ? {
         transform: 'translateX(15px)',
@@ -398,12 +398,13 @@ const BaseWeekItem = forwardRef(({
     const currentTypeOfOverlap = getOverlapClass()
 
     const handleOpenModal = (e) => {
-
+        debugger
         e.stopPropagation()
         e.preventDefault()
             if (!isResizing && !isDragging )
                 onModalOpen(business)
     }
+    console.log(Math.abs(differenceInMinutes(business.startDate, business.endDate)),'isItemForOneSlot')
 
     return (
         <div
@@ -413,6 +414,7 @@ const BaseWeekItem = forwardRef(({
             onMouseLeave={()=>!isResizing && rest.onDragEnd()}
             ref={setRefs}
             className={cn(styles.weekItem,calendarStyles.businessItem, {
+                [styles.isFinished]:business?.finished,
                 [calendarStyles[businessTypeStyles[business.type]]]: true,
                 [styles.dragging]: isDragging,
                 [styles.resizing]: isResizing,
@@ -450,7 +452,7 @@ const BaseWeekItem = forwardRef(({
                  className={cn(styles.content, {
                 // [styles.hasOverflow]: hasOverflow
             })}>
-                <CalendarItemLabel name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={true} />
+                <CalendarItemLabel isFinished={business?.finished} name={business.name} endDate={business.endDate} startDate={business.startDate} showTime={true} />
             </div>
             <div
                 className={styles.resizeHandleBottom}

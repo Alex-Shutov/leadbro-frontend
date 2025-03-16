@@ -1,11 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import { calendarViewTypes } from './calendar.types';
 import { changeDraft, removeDraft, resetDraft } from '../../utils/store.utils';
+import {getQueryParam} from "../../utils/window.utils";
 
 export class CalendarStore {
   businesses = [];
   drafts = {};
-  currentView = calendarViewTypes.month;
+  currentView = getQueryParam("view",calendarViewTypes.month);
   currentDate = new Date();
   changedProps = new Set();
 
@@ -25,6 +26,10 @@ export class CalendarStore {
     });
   }
 
+
+
+
+
   setCurrentView(view) {
     this.currentView = view;
   }
@@ -33,11 +38,14 @@ export class CalendarStore {
     this.currentDate = date;
   }
 
+
   getById(id, isReset = false) {
-    const business = this.businesses.find((x) => x.id === Number(id));
+    const business =  this.businesses.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? business : draft ? { ...business, ...draft } : business;
   }
+
+
 
   createDraft(id) {
     const business = this.getById(id);

@@ -22,8 +22,6 @@ const withTaskModalHandler = (WrappedComponent) => {
       ...props
     }) => {
       const [searchParams, setSearchParams] = useSearchParams();
-      const navigate = useNavigate();
-      const location = useLocation();
       const [isLoading,setIsLoading] = useState(false);
       const [taskData, setTaskData] = useState(null);
       const [isModalOpen, setIsModalOpen] = useState(false);

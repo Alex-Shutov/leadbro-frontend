@@ -84,6 +84,7 @@ export const removeToken = async () => {
 };
 
 export const handleHttpResponse = (response) => {
+  debugger
   return { status: 'success', body: response.data };
 };
 
@@ -103,6 +104,7 @@ export const handleHttpError = (error) => {
 };
 
 export const handleShowError = (errors, delay = 100) => {
+  debugger
   const errorsResp = errors.response?.data?.errors;
   const errorsResponse = errorsResp
     ? errorsResp

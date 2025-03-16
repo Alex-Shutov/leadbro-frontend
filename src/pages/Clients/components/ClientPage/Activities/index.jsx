@@ -9,7 +9,7 @@ import EmptyCell from "../../../../../shared/Table/EmptyCell";
 import AdaptiveCard from "./AdaptiveCard";
 import cn from "classnames";
 import useMappedObj from "../../../../../hooks/useMappedObj";
-import CalendarModal from "../../../../Calendar/components/CalendarModal";
+import CalendarModal from "../../../../../components/CalendarModal";
 import useStore from "../../../../../hooks/useStore";
 import useCalendarApi from "../../../../Calendar/calendar.api";
 

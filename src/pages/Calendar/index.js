@@ -16,8 +16,10 @@ import Selector from './components/Selector';
 import WeekView from "./components/WeekView";
 import useAppApi from "../../api";
 import { FiltersProvider } from "../../providers/FilterProvider";
-import CalendarModal from "./components/CalendarModal";
+import CalendarModal from "../../components/CalendarModal";
 import {createCalendarFilters} from "./calendar.filters";
+import {useLocation} from "react-router";
+import {useSearchParams} from "react-router-dom";
 
 const CalendarContent = observer(() => {
   const api = useCalendarApi();
@@ -28,6 +30,8 @@ const CalendarContent = observer(() => {
   const [businessData, setbusinessData] = useState(null);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [currentFilters, setCurrentFilters] = useState({});
+  const location = useLocation();
+  const [searchParams,setSearchParams] = useSearchParams();
 
   // Определяем диапазон дат в зависимости от текущего представления
   const getCurrentDateRange = () => {
@@ -74,14 +78,16 @@ const CalendarContent = observer(() => {
   }, [calendarStore.currentDate, currentView, currentFilters]);
 
   const handleViewChange = (view) => {
+    debugger
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('view', view);
+    setSearchParams(newSearchParams,{replace:true});
     calendarStore.setCurrentView(view);
   };
 
   const handleFilterChange = async (filters) => {
-    // Сохраняем новые фильтры
     setCurrentFilters(filters);
 
-    // Загрузка данных произойдет автоматически благодаря useEffect и зависимости от currentFilters
   };
 
   const handleDateUpdate = (newDate) => {
@@ -118,6 +124,12 @@ const CalendarContent = observer(() => {
 
   // Получаем текущий диапазон дат для инициализации фильтров
   const { startDate, endDate } = getCurrentDateRange();
+
+  useEffect(() => {
+    return ()=>{
+      searchParams.delete('view')
+    }
+  }, []);
 
   return (
       <FiltersProvider>

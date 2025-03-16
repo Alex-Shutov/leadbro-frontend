@@ -1,8 +1,8 @@
 import React from 'react';
 import styles from './selector.module.sass';
 import cn from 'classnames';
-import {businessTypes, businessTypesRu} from "../../calendar.types";
-import Icon from "../../../../shared/Icon";
+import {businessTypes, businessTypesRu} from "../../../pages/Calendar/calendar.types";
+import Icon from "../../../shared/Icon";
 
 // Icons for each business type (you'll need to import or create these)
 const BusinessTypeIcons = {

@@ -11,8 +11,9 @@ import cn from "classnames";
 import {useDrop} from "react-dnd";
 import {observer} from "mobx-react";
 import useCalendarApi from "../../../../calendar.api";
-import CalendarModal from "../../../CalendarModal";
-const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,children},ref) => {
+import CalendarModal from "../../../../../../components/CalendarModal";
+import withBusinessModalHandler from "../../../../../../components/CalendarModal/HocHandler";
+const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,onEditBusiness,children},ref) => {
     const { calendarStore } = useStore();
     const currentDate = calendarStore.currentDate;
     const calendarApi = useCalendarApi();
@@ -24,7 +25,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
     const [tempHover,setTempHover] = useState(null);
     const [businessData, setbusinessData] = useState(null);
     const [isCreateMode, setIsCreateMode] = useState(false);
-
+    debugger
     // const eventsByDayAndHour = useMemo(() => {
     //     const result = {};
     //
@@ -243,7 +244,7 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
                         <WeekBusinessItem
                             dayIndex={dayIndex}
                             shouldShiftRight={shouldShiftRight}
-                            onModalOpen={onOpenModal}
+                            onModalOpen={onEditBusiness}
                             key={business.id}
                             onHoverStart={(index)=>setTempHover(index)}
                             onHoverEnd={()=>tempHover!==hoveredDay && setTempHover(false)}
@@ -271,21 +272,26 @@ const WeekGrid = observer(forwardRef(({hours,weekDays,timeSlots,onOpenModal,chil
             </div>
             {children}
         </div>
-            {(businessData || isCreateMode) && (
-                <CalendarModal
-                    data={businessData}
-                    calendarApi={calendarApi}
-                    calendarStore={calendarStore}
-                    startTime={businessData?.startTime}
-                    endTime={businessData?.endTime}
-                    startDate={businessData?.startDate}
-                    businessId={businessData?.id ?? null}
-                    onClose={handleCloseModal}
-                />
-            )}
+            {/*{(businessData || isCreateMode) && (*/}
+            {/*    <BusinessPageWithHoc calendarApi={calendarApi} calendarStore={calendarStore} />*/}
+            {/*    // <CalendarModal*/}
+            {/*    //     data={businessData}*/}
+            {/*    //     calendarApi={calendarApi}*/}
+            {/*    //     calendarStore={calendarStore}*/}
+            {/*    //     startTime={businessData?.startTime}*/}
+            {/*    //     endTime={businessData?.endTime}*/}
+            {/*    //     startDate={businessData?.startDate}*/}
+            {/*    //     businessId={businessData?.id ?? null}*/}
+            {/*    //     onClose={handleCloseModal}*/}
+            {/*    // />*/}
+            {/*)}*/}
         </>
     );
 }));
+
+
+
+
 // WeekGrid.js - TimeSlot component
 const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, weekDays,onDragEnd,onDrag,dayIndex }) => {
     const [{ isOver }, drop] = useDrop(() => ({
@@ -342,4 +348,7 @@ const TimeSlot = ({ api,day, calendarStore, gridRef, getTimeSlotFromOffset, week
         />
     );
 };
-export default WeekGrid;
+
+const BusinessPageWithHoc = withBusinessModalHandler(WeekGrid)
+
+export {WeekGrid, BusinessPageWithHoc};

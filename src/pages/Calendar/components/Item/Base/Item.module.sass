@@ -9,6 +9,9 @@
   cursor: pointer
   user-select: none
   position: relative
+  &.isFinished
+    backdrop-filter: contrast(0.85)
+    -webkit-backdrop-filter: contrast(0.85)
   +caption2-m
 
 
@@ -52,6 +55,10 @@
 
 
 .title
+  &.finished span
+    text-decoration: line-through
+    text-decoration-color: #8d8e90
+    color: #8d8e90
   span
     overflow: hidden
     text-overflow: ellipsis
@@ -61,6 +68,8 @@
   align-items: end
   white-space: nowrap
   flex-wrap: wrap
+
+
 
 
 .smallTime

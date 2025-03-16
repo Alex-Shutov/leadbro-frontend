@@ -2,23 +2,24 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react';
 import styles from './index.module.sass';
 import cn from 'classnames';
-import {businessTypes, businessTypesRu} from "../../calendar.types";
-import FormValidatedModal from "../../../../shared/Modal/FormModal";
-import ConfirmationModal from "../../../../components/ConfirmationModal";
-import TextInput from "../../../../shared/TextInput";
-import Dropdown from "../../../../shared/Dropdown/Default";
-import Comments from "../../../../components/Comments";
-import useStore from "../../../../hooks/useStore";
-import useCalendarApi from "../../calendar.api";
-import {handleSubmit as handleSubmitSnackbar} from "../../../../utils/snackbar";
-import TypeSelector from "./TypeSelector";
-import Icon from "../../../../shared/Icon";
-import Calendar from "../../../../shared/Datepicker";
-import ValuesSelector from "../../../../shared/Selector";
-import useMembers from "../../../Members/hooks/useMembers";
-import TimeDropdown from "../../../../components/TimeDropdown";
-import Loader from "../../../../shared/Loader";
-import TextLink from "../../../../shared/Table/TextLink";
+import {businessTypes, businessTypesRu} from "../../pages/Calendar/calendar.types";
+import FormValidatedModal from "../../shared/Modal/FormModal";
+import ConfirmationModal from "../ConfirmationModal";
+import TextInput from "../../shared/TextInput";
+import Dropdown from "../../shared/Dropdown/Default";
+import Comments from "../Comments";
+import useStore from "../../hooks/useStore";
+import useCalendarApi from "../../pages/Calendar/calendar.api";
+import {handleSubmit as handleSubmitSnackbar} from "../../utils/snackbar";
+import TypeSelector from "./ui/TypeSelector";
+import Icon from "../../shared/Icon";
+import Calendar from "../../shared/Datepicker";
+import ValuesSelector from "../../shared/Selector";
+import useMembers from "../../pages/Members/hooks/useMembers";
+import TimeDropdown from "../TimeDropdown";
+import Loader from "../../shared/Loader";
+import TextLink from "../../shared/Table/TextLink";
+import Switch from "../../shared/Switch";
 
 const CalendarModal = observer(({
                                     businessId,
@@ -417,7 +418,13 @@ const CalendarModal = observer(({
                             </div>
                         </div>
                         <div className={cn(styles.lowZIndex)}>
-                            {/* Дополнительные поля могут быть добавлены здесь */}
+                            { isEditMode && <Switch
+                                className={styles.switch}
+                                name={'finished'}
+                                label={'Дело завершено ?'}
+                                value={business.finished}
+                                onChange={(name, value) => handleChange(name, value)}
+                            />}
                         </div>
 
                         <div className={styles.reminders}>
@@ -450,6 +457,7 @@ const CalendarModal = observer(({
                             handleChange(`${prefix}type`, type);
                         }}
                     />
+
                 </div>
             </FormValidatedModal>
         </>
