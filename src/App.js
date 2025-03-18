@@ -12,6 +12,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import useUser from './hooks/useUser';
 import { withSentryRouting } from '@sentry/react';
 import { PermissionsProvider } from './providers/PermissionProvider';
+import { useNavigation } from 'react-router';
 
 function App() {
   const { notificationsStore } = useStore();

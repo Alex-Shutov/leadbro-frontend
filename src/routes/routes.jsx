@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Clients from '../pages/Clients';
 import ClientPage from '../pages/Clients/components/ClientPage';
@@ -9,7 +9,7 @@ import { Tasks, TasksWithQuery } from '../pages/Tasks';
 import NotFound from '../pages/NotFound';
 import { AuthContext } from '../providers/AuthProvider';
 import LoginPage from '../pages/Login';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import StagesPage from '../pages/Stages/components/StagesPage';
 import Settings from '../pages/Settings';
 import Bills from '../pages/Bills';
@@ -49,10 +49,18 @@ const PrivateRoute = ({ element }) => {
   return <Page>{element}</Page>;
 };
 
+const Main = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate('/calendar?view=week');
+  }, []);
+  return <></>;
+};
+
 const protectedRoutes = [
   {
     path: paths.MAIN,
-    element: <></>,
+    element: <Main />,
   },
   {
     path: paths.DEALS,

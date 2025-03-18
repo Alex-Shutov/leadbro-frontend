@@ -1,0 +1,108 @@
+@import '../../styles/helpers'
+
+.editorContainer
+  width: 100%
+  position: relative
+
+:global
+  // Стили для Jodit в обычном и темном режиме
+  .jodit-container
+    border-radius: 12px
+    border: 2px solid $n3
+    overflow: hidden
+    width: 100% !important
+    +dark
+      border-color: $n6
+      background: $n6
+
+    &:focus-within
+      border-color: $shades1
+      +dark
+        border-color: $n5
+  .jodit-ui-button[data-ref="upload"], .jodit-drag-and-drop__file-box
+    display: none !important
+  // Принудительное отображение всех кнопок в панели инструментов
+  .jodit-toolbar-button
+    display: block !important
+    visibility: visible !important
+
+  // Особенно кнопку ссылки
+  .jodit-toolbar-button[data-name="link"]
+    display: block !important
+    visibility: visible !important
+    opacity: 1 !important
+
+  // Стили для ссылок в редакторе
+  .jodit-wysiwyg a
+    color: $p1 !important
+    text-decoration: underline !important
+    cursor: pointer !important
+
+    &:hover
+      opacity: 0.8
+      text-decoration: none !important
+
+  // Стили для диалогов
+  .jodit-dialog-box
+    z-index: 100001 !important
+
+  // Стили для панели инструментов
+  .jodit-toolbar
+    background: $n2
+    border-bottom: 1px solid $n3
+    +dark
+      background: $n6
+      border-color: $n6
+
+  .jodit-toolbar-button
+    &:hover
+      background-color: $n3
+      +dark
+        background-color: $n5
+
+  .jodit-ui-group
+    display: flex !important
+    visibility: visible !important
+
+  .jodit-toolbar__box
+    display: flex !important
+    flex-wrap: wrap !important
+    visibility: visible !important
+
+  .jodit-placeholder
+    color: $shades1
+    +dark
+      color: $shades1
+
+  .jodit-container__resizer
+    display: block !important
+    height: 10px !important // Make it a bit bigger
+    background-color: rgba(0, 0, 0, 0.1) // Make it slightly visible
+    bottom: -5px !important
+    position: absolute !important
+    width: 100% !important
+
+    &:hover
+      background-color: rgba(0, 0, 0, 0.2) // More visible on hover
+
+  // Make sure no Jodit styles are hiding the resize handle
+  .jodit .jodit-container__resizer
+    display: block !important
+    visibility: visible !important
+
+  :global(.jodit-container)
+
+
+    // Ensure the editor area has proper padding at the bottom
+    :global(.jodit-wysiwyg)
+      padding-bottom: 24px !important
+      font-weight: normal !important
+
+      p
+        font-weight: normal !important
+
+
+      b, strong
+        font-weight: bold !important
+
+

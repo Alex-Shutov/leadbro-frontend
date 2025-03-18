@@ -1,12 +1,12 @@
 import { makeAutoObservable } from 'mobx';
 import { calendarViewTypes } from './calendar.types';
 import { changeDraft, removeDraft, resetDraft } from '../../utils/store.utils';
-import {getQueryParam} from "../../utils/window.utils";
+import { getQueryParam } from '../../utils/window.utils';
 
 export class CalendarStore {
   businesses = [];
   drafts = {};
-  currentView = getQueryParam("view",calendarViewTypes.month);
+  currentView = getQueryParam('view', calendarViewTypes.week);
   currentDate = new Date();
   changedProps = new Set();
 
@@ -26,10 +26,6 @@ export class CalendarStore {
     });
   }
 
-
-
-
-
   setCurrentView(view) {
     this.currentView = view;
   }
@@ -38,14 +34,11 @@ export class CalendarStore {
     this.currentDate = date;
   }
 
-
   getById(id, isReset = false) {
-    const business =  this.businesses.find((x) => x.id === Number(id));
+    const business = this.businesses.find((x) => x.id === Number(id));
     const draft = this.drafts[id];
     return isReset ? business : draft ? { ...business, ...draft } : business;
   }
-
-
 
   createDraft(id) {
     const business = this.getById(id);
@@ -54,17 +47,16 @@ export class CalendarStore {
   }
 
   updateBusinessEvent(id, updates) {
-    const businessIndex = this.businesses.findIndex(b => b.id === id);
+    const businessIndex = this.businesses.findIndex((b) => b.id === id);
     if (businessIndex !== -1) {
       this.businesses[businessIndex] = {
         ...this.businesses[businessIndex],
-        ...updates
+        ...updates,
       };
     }
   }
 
-  changeById(id, path, value, withId=true) {
-
+  changeById(id, path, value, withId = true) {
     if (!this.drafts[id]) {
       this.createDraft(id);
     }
