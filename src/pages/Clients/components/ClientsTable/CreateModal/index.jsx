@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Modal from '../../../../../shared/Modal';
 import styles from '../../../../Services/components/ServicesTable/components/EditModal/Modal.module.sass';
 import modlaStyles from './styles.module.sass';
@@ -28,7 +28,7 @@ import { useLocation, useNavigate } from 'react-router';
 const Index = observer(({ clientId, onClose, onSubmit }) => {
   const { clientsStore } = useStore(); // Подключение к MobX Store
   const { createCompany, updateCompany, deleteCompany } = useClientsApi();
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, _] = useState(!!clientId);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { members } = useMembers();
   // Локальное состояние для создания нового клиента
@@ -61,14 +61,6 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     localClient,
     clientsStore.drafts,
   ]);
-  // При изменении clientId определяем режим работы
-  useEffect(() => {
-    if (clientId) {
-      setIsEditMode(true); // Режим редактирования
-    } else {
-      setIsEditMode(false); // Режим создания
-    }
-  }, [clientId]);
 
   const [selectedStatus, setSelectedStatus] = useState(null);
 
@@ -77,21 +69,25 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
   }, [client]);
 
   // Обработчик изменений полей
-  const handleChange = (name, value, withId = true) => {
-    if (isEditMode) {
-      // Если режим редактирования — меняем через MobX store
-      clientsStore.changeById(clientId, name, value, withId);
-    } else {
-      // Если режим создания — меняем в локальном состоянии
-      setLocalClient((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
+  const handleChange = useCallback(
+    (name, value, withId = true) => {
+      debugger;
+      if (isEditMode) {
+        // Если режим редактирования — меняем через MobX store
+        clientsStore.changeById(clientId, name, value, withId);
+      } else {
+        // Если режим создания — меняем в локальном состоянии
+        setLocalClient((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    },
+    [isEditMode],
+  );
 
   // Обработчик сохранения
-  const handleSubmit = async (onError=null) => {
+  const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
         await updateCompany(clientId, client); // Обновляем компанию
@@ -109,7 +105,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
       handleError('Ошибка при сохранении клиента');
-      onError && onError()
+      onError && onError();
     }
   };
 

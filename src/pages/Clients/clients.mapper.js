@@ -9,9 +9,12 @@ import {
 import { handleError } from '../../utils/snackbar';
 import { mapDealFromApi } from '../Deals/deals.mapper';
 import { convertUTCToLocal } from '../../utils/formate.date';
-import {mapEmployeesFromApi} from "../Settings/settings.mapper";
-import {mapBusinessFromApi, mapBusinessToBackend} from "../Calendar/calendar.mapper";
-import {format} from "date-fns";
+import { mapEmployeesFromApi } from '../Settings/settings.mapper';
+import {
+  mapBusinessFromApi,
+  mapBusinessToBackend,
+} from '../Calendar/calendar.mapper';
+import { format } from 'date-fns';
 
 export const mapClientFromApi = (
   apiClient,
@@ -20,7 +23,7 @@ export const mapClientFromApi = (
   apiComments = [],
   apiServices = null,
   apiDeals = [],
-  apiBusiness=[],
+  apiBusiness = [],
 ) => {
   return {
     id: apiClient?.id,
@@ -104,7 +107,7 @@ export const mapBusinesses = (apiBusinesses) => {
       endDate: endDate,
       startTime: format(startDate, 'HH:mm'),
       endTime: format(endDate, 'HH:mm'),
-      creator:mapEmployeesFromApi(business.creator),
+      creator: mapEmployeesFromApi(business.creator),
       performer: mapEmployeesFromApi(business.performer),
       createdAt: new Date(business.created_at),
       updatedAt: new Date(business.updated_at),
@@ -113,7 +116,6 @@ export const mapBusinesses = (apiBusinesses) => {
     return acc;
   }, {});
 };
-
 
 export const mapContactPersons = (apiContactPersons) => {
   return apiContactPersons?.reduce((acc, client) => {
@@ -291,6 +293,7 @@ export const mapCommentDataToBackend = (drafts, changedFieldsSet) => {
 
 export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   // Обработка ФИО
+  debugger;
   const fioParams = mapFio(drafts, changedFieldsSet, propId);
   const getCorrectStatus = (status) => {
     const snakeStatuses = {
@@ -321,14 +324,14 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   };
 
   const mapBusinessesToBackend = (business, changedFieldsSet) => {
-    if (!business) return []
+    if (!business) return [];
     const businessId = business.id;
 
     // Фильтруем и модифицируем `changedFieldsSet`, оставляя только относящиеся к этому бизнесу поля
     const filteredChangedFields = new Set(
-        [...changedFieldsSet]
-            .filter(field => field.startsWith(`businesses.${businessId}.`)) // Оставляем только относящиеся к текущему бизнесу
-            .map(field => field.replace(`businesses.${businessId}.`, '')) // Убираем префикс
+      [...changedFieldsSet]
+        .filter((field) => field.startsWith(`businesses.${businessId}.`)) // Оставляем только относящиеся к текущему бизнесу
+        .map((field) => field.replace(`businesses.${businessId}.`, '')), // Убираем префикс
     );
 
     // Если нет изменённых полей, возвращаем пустой объект
@@ -338,10 +341,8 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
     return mapBusinessToBackend(business, filteredChangedFields);
   };
 
-
-
-
   const mapKeyToBackend = (key, draft) => {
+    debugger;
     const keyMapping = {
       [`passwords.${propId}.name`]: 'service_name',
       [`passwords.${propId}.values.login`]: 'login',
@@ -370,6 +371,8 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
       'contactData.requisites.0.REAL_ADDRESS': 'real_address',
 
       'contactData.tel.0': 'phone',
+      'contactData.address.0': 'address',
+      'contactData.description.0': 'description',
       'contactData.site.0': 'site',
       'contactData.email.0': 'email',
       manager: 'manager_id',
@@ -384,7 +387,6 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
 
     return keyMapping[key] || key;
   };
-
 
   return {
     ...mapChangedFieldsForBackend(

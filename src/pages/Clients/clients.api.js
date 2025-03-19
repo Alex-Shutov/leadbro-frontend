@@ -16,11 +16,14 @@ import {
   mapCommentDataToBackend,
 } from './clients.mapper';
 import useQueryParam from '../../hooks/useQueryParam';
-import {getQueryParam, sanitizeUrlFilters} from '../../utils/window.utils';
+import { getQueryParam, sanitizeUrlFilters } from '../../utils/window.utils';
 import { enqueueSnackbar } from 'notistack';
 import { handleSubmit } from '../../utils/snackbar';
-import useCalendarApi from "../Calendar/calendar.api";
-import {mapBusinessFromApi, mapBusinessToBackend} from "../Calendar/calendar.mapper";
+import useCalendarApi from '../Calendar/calendar.api';
+import {
+  mapBusinessFromApi,
+  mapBusinessToBackend,
+} from '../Calendar/calendar.mapper';
 
 let blob = new Blob([], { type: 'application/pdf' });
 let fakeFile = blob;
@@ -48,15 +51,15 @@ mockHttp.onGet(`/download/file`).reply((config) => {
 const useClientsApi = () => {
   const { clientsStore } = useStore();
   const [isLoading, setIsLoading] = useState(false);
-  const businessApi = useCalendarApi()
+  const businessApi = useCalendarApi();
 
-  const getClients = (page = 1,filters={}) => {
+  const getClients = (page = 1, filters = {}) => {
     resetApiProvider();
     setIsLoading(true);
-    const sanitazedFilters = sanitizeUrlFilters(filters)
+    const sanitazedFilters = sanitizeUrlFilters(filters);
 
     return http
-      .get('/api/companies', { params: { page: page,...sanitazedFilters } })
+      .get('/api/companies', { params: { page: page, ...sanitazedFilters } })
       .then(handleHttpResponse)
       .then((res) => {
         const mappedClients = res.body.data.map((e) => mapClientFromApi(e));
@@ -103,7 +106,7 @@ const useClientsApi = () => {
             commentsRes,
             servicesRes,
             dealsRes,
-              businessRes
+            businessRes,
           ]) => {
             // Деструктурируем результаты обоих запросов
 
@@ -122,7 +125,7 @@ const useClientsApi = () => {
               commentsData,
               servicesData,
               dealsData,
-                businessesData
+              businessesData,
             );
 
             clientsStore.setCurrentClient(mappedClient); // Устанавливаем смапленного клиента в store
@@ -137,6 +140,7 @@ const useClientsApi = () => {
 
   // Обновление данных компании
   const updateCompany = (id, updateData, submitText) => {
+    debugger;
     resetApiProvider();
     setIsLoading(true);
     updateData = mapClientDataToBackend(
@@ -249,12 +253,13 @@ const useClientsApi = () => {
   };
 
   // Обновление клиента компании
-  const updateClient = (store,entityId, clientId, submitText) => {
+  const updateClient = (store, entityId, clientId, submitText) => {
+    debugger;
     resetApiProvider();
     const isClient = window.location.href.includes('clients');
     const updateData = mapClientDataToBackend(
       store.drafts[entityId],
-        store.changedProps,
+      store.changedProps,
       clientId,
     );
 
@@ -280,46 +285,57 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
-  const updateBusiness = (businessId, drafts,changedFieldsSet,clientId) => {
+  const updateBusiness = (businessId, drafts, changedFieldsSet, clientId) => {
     setIsLoading(true);
 
-    const dataToSend = mapClientDataToBackend({businesses:drafts},changedFieldsSet,businessId);
+    const dataToSend = mapClientDataToBackend(
+      { businesses: drafts },
+      changedFieldsSet,
+      businessId,
+    );
 
     return http
-        .patch(`/api/businesses/${businessId}`, dataToSend)
-        .then(handleHttpResponse)
-        .then((res) => {
-          const mappedBusiness = mapBusinessFromApi(res.body.data);
-          const currClient = clientsStore.getById(clientId);
-          const updatedBusinesses = {
-            ...currClient.businesses,
-            [businessId]: mappedBusiness
-          };
-          clientsStore.setCurrentClient({...currClient,businesses:updatedBusinesses});
-        })
-        .catch(handleShowError)
-        .finally(() => setIsLoading(false));
+      .patch(`/api/businesses/${businessId}`, dataToSend)
+      .then(handleHttpResponse)
+      .then((res) => {
+        const mappedBusiness = mapBusinessFromApi(res.body.data);
+        const currClient = clientsStore.getById(clientId);
+        const updatedBusinesses = {
+          ...currClient.businesses,
+          [businessId]: mappedBusiness,
+        };
+        clientsStore.setCurrentClient({
+          ...currClient,
+          businesses: updatedBusinesses,
+        });
+      })
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   };
 
-  const createBusiness = (data,clientId) => {
+  const createBusiness = (data, clientId) => {
     setIsLoading(true);
 
     return http
-        .post(`/api/companies/${clientId}/business`, {...mapBusinessToBackend(data,Object.keys(data))})
-        .then(handleHttpResponse)
-        .then((res) => {
-          const mappedBusiness = mapBusinessFromApi(res.body.data);
-          const currDeal = clientsStore.getById(clientId);
-          const updatedBusinesses = {
-            ...currDeal.businesses,
-            [mappedBusiness.id]: mappedBusiness
-          };
-          clientsStore.setCurrentClient({...currDeal,businesses:updatedBusinesses});
-        })
-        .catch(handleShowError)
-        .finally(() => setIsLoading(false));
+      .post(`/api/companies/${clientId}/business`, {
+        ...mapBusinessToBackend(data, Object.keys(data)),
+      })
+      .then(handleHttpResponse)
+      .then((res) => {
+        const mappedBusiness = mapBusinessFromApi(res.body.data);
+        const currDeal = clientsStore.getById(clientId);
+        const updatedBusinesses = {
+          ...currDeal.businesses,
+          [mappedBusiness.id]: mappedBusiness,
+        };
+        clientsStore.setCurrentClient({
+          ...currDeal,
+          businesses: updatedBusinesses,
+        });
+      })
+      .catch(handleShowError)
+      .finally(() => setIsLoading(false));
   };
-
 
   return {
     getClients,

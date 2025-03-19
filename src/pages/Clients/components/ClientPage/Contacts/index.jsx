@@ -36,8 +36,9 @@ const ClientsContacts = ({
       //   // setLength((prev) => ({...prev,[middleProp]:prev[middleProp]-1}))
       //   handleError('Элемент удален');
       // },
-      edit: ({ name, value }) =>{
-          onChange(name, value)},
+      edit: ({ name, value }) => {
+        onChange(name, value);
+      },
       submit: () => {
         onSubmit(path, success);
       },
@@ -96,7 +97,7 @@ const ClientsContacts = ({
       <MultiInputContacts
         onAdd={onAdd}
         contactData={contactData}
-        label={'Адрес сайта'}
+        label={'Сайт'}
         param={'site'}
         type={'email'}
         onActions={(path) =>

@@ -71,7 +71,6 @@ const TextInput = forwardRef(
             // Затем выполняем кастомную валидацию
 
             if (validate && required) {
-
               const result = validate(value);
               // Если результат === true, валидация прошла успешно
               // Иначе возвращаем сообщение об ошибке
@@ -130,31 +129,26 @@ const TextInput = forwardRef(
       const rawValue = e.target.value;
       const cursorPos = e.target.selectionStart;
       const isTextArea = e.target.tagName.toLowerCase() === 'textarea';
-      if(props.type === 'hours'){
-
+      if (props.type === 'hours') {
         const value = e.target.value ?? e.target.defaultValue;
         if (value === '' || (/^\d*$/.test(value) && parseInt(value) <= 23)) {
-          handleChange(
-              {
-                target: {
-                  ...e.target,
-                  value: value,
-                },
-              }
-          );
+          handleChange({
+            target: {
+              ...e.target,
+              value: value,
+            },
+          });
         }
       }
-      if(props.type === 'minutes'){
+      if (props.type === 'minutes') {
         const value = e.target.value ?? e.target.defaultValue;
         if (value === '' || (/^\d*$/.test(value) && parseInt(value) <= 59)) {
-          handleChange(
-              {
-                target: {
-                  ...e.target,
-                  value: value,
-                },
-              }
-          );
+          handleChange({
+            target: {
+              ...e.target,
+              value: value,
+            },
+          });
         }
       }
       // Обработка для money типа
@@ -252,9 +246,10 @@ const TextInput = forwardRef(
           <Editor
             placeholder={props?.placeholder}
             name={name || ''}
-            initialHTML={value||''}
+            initialHTML={value || ''}
             onChange={onChange}
             ref={ref}
+            {...props}
           />
         );
       }
@@ -262,7 +257,7 @@ const TextInput = forwardRef(
       return (
         <input
           onWheel={(e) => {
-            e.target.blur()
+            e.target.blur();
           }}
           {...commonProps}
           value={
@@ -281,7 +276,7 @@ const TextInput = forwardRef(
           { [styles.fieldIcon]: icon },
           { [styles.fieldCopy]: copy },
           { [styles.fieldCurrency]: currency },
-            { [styles.fieldBeforeIcon]: beforeIcon },
+          { [styles.fieldBeforeIcon]: beforeIcon },
           { [styles.noMinWidth]: noMinWidth },
           className,
         )}
@@ -306,11 +301,7 @@ const TextInput = forwardRef(
           className={cn(styles.wrap, classWrap)}
         >
           {renderInput()}
-          {beforeIcon && (
-              <div className={styles.beforeIcon}>
-                {beforeIcon}
-              </div>
-          )}
+          {beforeIcon && <div className={styles.beforeIcon}>{beforeIcon}</div>}
           {icon && (
             <div className={styles.icon}>
               <Icon name={icon} size="24" />

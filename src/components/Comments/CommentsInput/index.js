@@ -14,8 +14,7 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
     setText(event.target.value);
   };
 
-  const handleSendMessage =() => {
-
+  const handleSendMessage = () => {
     if (text.trim() || files.length > 0) {
       const newMessage = {
         id: commentsLength,
@@ -33,7 +32,7 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
       };
       onSendMessage(newMessage);
 
-      setText('')
+      setText('');
       setFiles([]);
     }
   };
@@ -63,6 +62,7 @@ const CommentsInput = ({ onSendMessage, currentUser, commentsLength }) => {
         </div>
         <div className={styles.input_field}>
           <TextInput
+            height={100}
             edited={true}
             name={'comment'}
             type="editor"

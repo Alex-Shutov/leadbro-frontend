@@ -16,6 +16,7 @@ const ClientDescription = ({
   clientId,
 }) => {
   const [isEdit, setIsEdit] = useState(false);
+  debugger;
   return (
     <Card
       classTitle={styles.title}

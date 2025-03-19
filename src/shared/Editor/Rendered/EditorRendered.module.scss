@@ -1,34 +1,37 @@
 @import "src/styles/helpers";
-.limitedHeight {
+.editorRenderer {
   position: relative;
-  overflow: hidden;
-}
+  width: 100%;
 
-.content ul {
-  list-style: disc;
-  margin-left: 20px;
-  margin-bottom: 12px;
-}
+  :global(.jodit-container) {
+    border: none !important;
+    background-color: $n1 !important;
+  }
+  :global(.jodit-workplace) {
+    background-color: $n1 !important;
+  }
+  :global(.jodit-wysiwyg){
+    background-color: $n1 !important;
+    padding-top: unset !important;
+    padding-bottom: unset !important;
+  }
 
-.content li {
-  margin-bottom: 8px;
-}
+  &.limitedHeight {
+    overflow: hidden;
+  }
 
-.gradient {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100px;
-  pointer-events: none;
-  background: linear-gradient(
-                  to bottom,
-                  rgba(255, 255, 255, 0) 0%,
-                  $n1 100%
-  );
-}
+  .content {
+    width: 100%;
 
-.content mark.cdx-marker {
-  background: #FBFF00;
-  padding: 0 4px;
+
+    .gradient {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+      pointer-events: none;
+    }
+  }
 }
