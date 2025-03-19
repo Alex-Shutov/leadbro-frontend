@@ -14,8 +14,18 @@
     background-color: $n1 !important;
     padding-top: unset !important;
     padding-bottom: unset !important;
-  }
 
+
+  }
+  :global(.jodit-selected-image){
+      outline:none !important
+}
+  :global(.jodit-selected-image){
+    outline:none !important
+  }
+  :global(.jodit-image-popup){
+    display:none !important
+  }
   &.limitedHeight {
     overflow: hidden;
   }

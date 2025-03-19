@@ -5,37 +5,66 @@ import InlineCode from '@editorjs/inline-code';
 import Marker from '@editorjs/marker';
 import BreakLine from 'editorjs-break-line';
 
-
-export const EDITOR_JS_TOOLS = {
-  paragraph: {
-    class: Paragraph,
-    inlineToolbar: true,
-
-  },
-  // breakLine: {
-  //   class: BreakLine,
-  //   inlineToolbar: true,
-  //   // shortcut: 'ENTER',
-  // },
-  header: {
-    class: Header,
-    inlineToolbar: true,
-    config: {
-      levels: [1, 2, 3], // Добавляем уровни заголовков
-      defaultLevel: 1,
+export const EditorJsTools = {
+  uploader: {
+    insertImageAsBase64URI: true,
+    imagesExtensions: ['jpg', 'png', 'jpeg'],
+    url: 'no-url-to-prevent-default-upload',
+    process: function (resp) {
+      return { files: [], error: 1, message: 'Upload disabled' };
+    },
+    processFileName: function (name) {
+      return name;
     },
   },
-  list: {
-    class: List,
-    inlineToolbar: true,
-    config: {
-      defaultStyle: 'unordered',
+  allowResizeY: true,
+  resize: true,
+  useAceEditor: false,
+  removeButtons: ['upload'],
+  showCharsCounter: false,
+  showWordsCounter: false,
+  showXPathInStatusbar: false,
+
+  language: 'ru',
+  i18n: {
+    ru: {
+      Insert: 'Вставить',
+      Cancel: 'Отмена',
+      URL: 'URL',
+      Text: 'Текст',
     },
   },
-  inlineCode: {
-    class: InlineCode,
+  buttons: [
+    'bold',
+    'italic',
+    'underline',
+    'strikethrough',
+    '|',
+    'ul',
+    'ol',
+    '|',
+    'font',
+    'brush',
+    'paragraph',
+    '|',
+    'table',
+    'link',
+    // 'image',
+    '|',
+    'undo',
+    'redo',
+  ],
+  link: {
+    processPastedLink: true,
+    noFollowCheckbox: false,
+    openInNewTabCheckbox: false,
+    modeClassName: null,
   },
-  marker: {
-    class: Marker,
+  toolbarAdaptive: false,
+  dialog: {
+    zIndex: 20000,
   },
+  enableCommandExecution: true,
+  disablePlugins: ['mobile'],
+  iframe: false,
 };
