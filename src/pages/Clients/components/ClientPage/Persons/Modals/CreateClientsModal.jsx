@@ -14,19 +14,19 @@ import { observer } from 'mobx-react';
 import FormValidatedModal from '../../../../../../shared/Modal/FormModal';
 
 const CreateClientsModal = ({
-                                      entityId,
-                                       companyId,
-                                       onClose,
-                                       clientId,
-                                       store,
-                                       api,
-                                      onSubmit,
-                                     }) => {
+  entityId,
+  companyId,
+  onClose,
+  clientId,
+  store,
+  api,
+  onSubmit,
+}) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [newClient, setNewClient] = useState({
     site: '',
     role: '',
-    comment:'',
+    comment: '',
     whatsapp: '',
     telegram: '',
     viber: '',
@@ -39,8 +39,8 @@ const CreateClientsModal = ({
   });
   const client = useMemo(() => {
     return isEditMode
-        ? store.getById(entityId)?.contactPersons?.[clientId]
-        : newClient;
+      ? store.getById(entityId)?.contactPersons?.[clientId]
+      : newClient;
   }, [isEditMode, clientId, store.currentClient, store.drafts, newClient]);
 
   useEffect(() => {
@@ -51,6 +51,7 @@ const CreateClientsModal = ({
     }
   }, [clientId]);
   const handleChange = (name, value, withId = true) => {
+    debugger;
     if (isEditMode) {
       store.changeById(entityId, name, value, withId);
     } else {
@@ -69,13 +70,14 @@ const CreateClientsModal = ({
   const handleSubmit = async (onError = null) => {
     try {
       if (isEditMode) {
-
-        await api.updateClient(
+        await api
+          .updateClient(
             store,
             entityId,
             clientId,
             'Контактные данные клиента обновлены!',
-        ).then(onSubmit)
+          )
+          .then(onSubmit);
       } else {
         await api.createClient(companyId, newClient).then(onSubmit);
         handleSubmitSnackbar('Создано контактное лицо!');
@@ -220,18 +222,18 @@ const CreateClientsModal = ({
       </div>
       <div>
         <TextInput
-            onChange={({ target }) =>
-                handleChange(
-                    isEditMode ? `contactPersons.${clientId}.comment` : 'comment',
-                    target.value,
-                )
-            }
-            name={isEditMode ? `contactPersons.${clientId}.comment` : 'comment'}
-            value={isEditMode ? client?.comment : client?.comment}
-            edited={true}
-            className={cn(styles.input, modlaStyles.grow)}
-            label={'Комментарий к телефону'}
-            placeholder={'Комментарий...'}
+          onChange={({ target }) =>
+            handleChange(
+              isEditMode ? `contactPersons.${clientId}.comment` : 'comment',
+              target.value,
+            )
+          }
+          name={isEditMode ? `contactPersons.${clientId}.comment` : 'comment'}
+          value={isEditMode ? client?.comment : client?.comment}
+          edited={true}
+          className={cn(styles.input, modlaStyles.grow)}
+          label={'Комментарий к телефону'}
+          placeholder={'Комментарий...'}
         />
       </div>
       <div className={modlaStyles.flexDiv}>
@@ -271,7 +273,7 @@ const CreateClientsModal = ({
               isEditMode
                 ? `contactPersons.${clientId}.messengers.whatsapp.value`
                 : 'whatsapp',
-              isEditMode ? target.value : { value: target.value },
+              isEditMode ? target.value : target.value,
             )
           }
           name={
@@ -293,7 +295,7 @@ const CreateClientsModal = ({
               isEditMode
                 ? `contactPersons.${clientId}.messengers.telegram.value`
                 : 'telegram',
-              isEditMode ? target.value : { value: target.value },
+              isEditMode ? target.value : target.value,
             )
           }
           name={
