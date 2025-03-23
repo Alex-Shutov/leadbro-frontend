@@ -33,7 +33,10 @@ import { handleSubmit as handleSubmitSnackbar } from '../../../../utils/snackbar
 import CreateClientsModal from './Persons/Modals/CreateClientsModal';
 import Comments from '../../../../components/Comments';
 import useParamSearch from '../../../../hooks/useParamSearch';
-import ClientMembers from "./ClientMembers";
+import ClientMembers from './ClientMembers';
+import { useCalls } from '../../../../Calls/hooks/useCalls';
+import CallButton from '../../../../Calls/components/CallButton';
+import CallModal from '../../../../Calls/components/CallModal';
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -44,13 +47,17 @@ const ClientPage = observer(() => {
   const [personModalValue, setPersonModalValue] = useState(null);
   const client = clients.getById(id);
 
+  const { isCallModalOpen, openCallModal, closeCallModal } = useCalls(
+    'company',
+    client?.id,
+  );
+
   // useEffect(() => {
   //   return () => {
   //     clients.clearCurrentClient()
   //   }
   // }, []);
   const handleChange = (name, payload, withId = true) => {
-
     clients.changeById(client?.id ?? +id, name, payload, withId);
   };
   const handleReset = (path) => {
@@ -78,7 +85,7 @@ const ClientPage = observer(() => {
 
   const handleSubmitPersons = async (clientId, submitText, path) => {
     try {
-      await api.updateClient(clients,Number(id), clientId, submitText);
+      await api.updateClient(clients, Number(id), clientId, submitText);
       clients.submitDraft();
     } catch (error) {
       console.error('Ошибка при сохранении:', error);
@@ -110,6 +117,13 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
+      <CallButton
+        isOpen={isCallModalOpen}
+        onClose={closeCallModal}
+        onClick={openCallModal}
+      />
+
+      <CallModal isOpen={isCallModalOpen} onClose={closeCallModal} />
       <LoadingProvider isLoading={isLoading || api.isLoading}>
         <Title title={client?.title} />
         <div className={styles.dropdown}>
@@ -142,7 +156,12 @@ const ClientPage = observer(() => {
               className={cn(styles.card, styles.card_status)}
               deals={client?.deals}
             />
-            <ClientActivities client={client} clientApi={api} clientStore={clients} activities={client?.businesses} />
+            <ClientActivities
+              client={client}
+              clientApi={api}
+              clientStore={clients}
+              activities={client?.businesses}
+            />
             <Comments
               onDelete={() =>
                 api
@@ -164,7 +183,6 @@ const ClientPage = observer(() => {
                   [styles.col_dropdowned]: dropDownClicked,
                 })}
               >
-
                 <ClientDescription
                   clientId={client?.id}
                   onChange={handleChange}
@@ -174,7 +192,7 @@ const ClientPage = observer(() => {
                 />
 
                 <ClientPersons
-                    setClientModalData={(val)=>setPersonModalValue(val)}
+                  setClientModalData={(val) => setPersonModalValue(val)}
                   companyId={client?.id}
                   onAdd={() => setPersonModalValue(true)}
                   onChange={handleChange}
@@ -221,12 +239,12 @@ const ClientPage = observer(() => {
           />
         )}
       </LoadingProvider>
-      {personModalValue!==null && client && (
+      {personModalValue !== null && client && (
         <CreateClientsModal
-            store={clients}
-            api={api}
-            entityId={client?.id}
-            clientId={personModalValue??null}
+          store={clients}
+          api={api}
+          entityId={client?.id}
+          clientId={personModalValue ?? null}
           onClose={() => setPersonModalValue(null)}
           companyId={client?.id}
         />

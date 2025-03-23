@@ -1,4 +1,4 @@
-import { format, parse, parseISO } from 'date-fns';
+import {format, isToday, isTomorrow, isYesterday, parse, parseISO} from 'date-fns';
 import { ru } from 'date-fns/locale/ru';
 import {formatInTimeZone, fromZonedTime, toZonedTime} from 'date-fns-tz';
 
@@ -78,3 +78,18 @@ export const convertUTCToLocal = (utcDate: string): Date => {
   const t = format(parsedUTCDate, "yyyy-MM-dd'T'HH:mm:ss", { timeZone });
   return t + '.000000Z'
 };
+
+
+export function formatDateWithToday(date) {
+  // const date = new Date(d);
+  // debugger
+  if (isToday(date)) {
+    return `Сегодня, ${format(date, 'd MMMM', { locale: ru })}`;
+  } else if (isYesterday(date)) {
+    return `Вчера, ${format(date, 'd MMMM', { locale: ru })}`;
+  } else if (isTomorrow(date)) {
+    return `Завтра, ${format(date, 'd MMMM', { locale: ru })}`;
+  } else {
+    return format(date, 'd MMMM', { locale: ru });
+  }
+}

@@ -84,6 +84,16 @@ const useClientsApi = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const getFlatClientById = (id) => {
+    resetApiProvider();
+    return http
+      .get(`/api/companies/${id}`)
+      .then((res) => {
+        return handleHttpResponse(mapClientFromApi(res.data.data));
+      })
+      .catch(handleShowError);
+  };
+
   const getClientById = (id, needToReload = true) => {
     resetApiProvider();
     needToReload && setIsLoading(true);
@@ -352,6 +362,7 @@ const useClientsApi = () => {
     createComment,
     updateBusiness,
     createBusiness,
+    getFlatClientById,
     isLoading,
   };
 };

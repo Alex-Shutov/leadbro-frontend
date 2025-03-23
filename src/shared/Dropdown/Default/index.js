@@ -27,7 +27,7 @@ const Dropdown = ({
   isAsync = false,
   name,
   required,
-    minAsyncInput=4,
+  minAsyncInput = 4,
   ...props
 }) => {
   const [visible, setVisible] = useState(false);
@@ -105,12 +105,13 @@ const Dropdown = ({
 
   // Effect для async value
   useEffect(() => {
-    if (isAsync && value) {
+    if (isAsync) {
       setInputValue(renderValue ? renderValue(value) : value);
     }
   }, [value, isAsync, renderValue]);
 
   const handleClick = (selectedValue) => {
+    debugger;
     setValue(selectedValue);
     setVisible(false);
     setIsTouched(true);
@@ -197,7 +198,7 @@ const Dropdown = ({
       className={cn(classNameContainer, {
         [styles.noMinWidth]: noMinWidth,
         [styles.hasError]: error,
-        [styles.disabled]:props.disabled
+        [styles.disabled]: props.disabled,
       })}
       onBlur={() => setIsTouched(true)}
     >
@@ -236,7 +237,6 @@ const Dropdown = ({
           { [styles.active]: visible },
           { [styles.error]: error },
         )}
-
       >
         <div
           className={cn(styles.head, classDropdownHead, {

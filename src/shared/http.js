@@ -84,8 +84,9 @@ export const removeToken = async () => {
 };
 
 export const handleHttpResponse = (response) => {
+  debugger;
 
-  return { status: 'success', body: response.data };
+  return { status: 'success', body: response.data ?? response };
 };
 
 export const handleHttpError = (error) => {
@@ -97,14 +98,12 @@ export const handleHttpError = (error) => {
       statusText: error.response?.statusText,
     },
   });
-  ;
   const code = error?.code;
   console.warn({ status: 'error', message: error?.message, code });
   return { status: 'error', message: error?.message, code };
 };
 
 export const handleShowError = (errors, delay = 100) => {
-
   const errorsResp = errors.response?.data?.errors;
   const errorsResponse = errorsResp
     ? errorsResp
