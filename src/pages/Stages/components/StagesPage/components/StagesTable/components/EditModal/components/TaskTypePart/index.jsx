@@ -14,13 +14,14 @@ import ValuesSelector from '../../../../../../../../../../shared/Selector';
 import useMembers from '../../../../../../../../../Members/hooks/useMembers';
 import { tasksTypesRu } from '../../../../../../../../../Tasks/tasks.types';
 import LabeledParagraph from '../../../../../../../../../../shared/LabeledParagraph';
+import cn from 'classnames';
 
 const Index = ({
   data: {
     auditors: initialAuditors,
     executors: initialExecutors,
     responsibles: initialResponsibles,
-      creator,
+    creator,
     type,
     showInLK,
     taskLinked,
@@ -39,8 +40,9 @@ const Index = ({
   const [mappedExecutors, setMappedExecutors] = useState([]);
   const [mappedResponsibles, setMappedResponsibles] = useState([]);
   const { members } = useMembers();
-    console.log(creator,'creator')
-  const renderLabelForSelector = (source) => `${source?.surname ?? ''} ${source?.name ?? ''} ${source?.middleName ?? ''}`
+  console.log(creator, 'creator');
+  const renderLabelForSelector = (source) =>
+    `${source?.surname ?? ''} ${source?.name ?? ''} ${source?.middleName ?? ''}`;
 
   return (
     <div className={className}>
@@ -67,17 +69,27 @@ const Index = ({
         renderValue={(value) => tasksTypesRu[value]}
         className={styles.dropdown}
       />
-      <Calendar
-        onChange={(data) => handleChange('deadline', data)}
-        label={'Дедлайн'}
-        name={'deadline'}
-        value={deadline}
-        // value={formatDateWithOnlyDigits(deadline)}
-        readonly={true}
-        className={styles.input}
-      />{
-        creator && <Dropdown className={styles.input} label={'Создатель'} value={renderLabelForSelector(creator)} disabled={true}/>
-    }
+      <div className={cn(styles.flex, styles.addZIndex, styles.relative)}>
+        <Calendar
+          onChange={(data) => handleChange('deadline', data)}
+          label={'Дедлайн'}
+          name={'deadline'}
+          value={deadline}
+          // value={formatDateWithOnlyDigits(deadline)}
+          readonly={true}
+          className={cn(styles.input)}
+        />
+      </div>
+      {creator && (
+        <div className={cn(styles.flex, styles.lowZIndex, styles.relative)}>
+          <Dropdown
+            className={cn(styles.input)}
+            label={'Создатель'}
+            value={renderLabelForSelector(creator)}
+            disabled={true}
+          />
+        </div>
+      )}
 
       <ValuesSelector
         onChange={(e) => {
@@ -120,7 +132,7 @@ const Index = ({
         label="Аудиторы"
         options={members.map((el) => ({
           value: el.id,
-          label:renderLabelForSelector(el),
+          label: renderLabelForSelector(el),
         }))}
         value={
           initialAuditors
