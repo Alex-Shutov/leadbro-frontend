@@ -1,6 +1,6 @@
 // src/Calls/hooks/useCalls.js
 import { useEffect, useState } from 'react';
-import useStore from '../../hooks/useStore';
+import useStore from '../../../hooks/useStore';
 
 export const useCalls = (entityType, entityId) => {
   const [isCallModalOpen, setIsCallModalOpen] = useState(false);

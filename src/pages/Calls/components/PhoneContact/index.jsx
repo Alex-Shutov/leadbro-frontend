@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './PhoneContact.module.sass';
-import Radio from '../../../shared/Radio';
+import Radio from '../../../../shared/Radio';
 
 const PhoneContact = ({ phoneData, selectedPhone, onPhoneSelected }) => {
   if (!phoneData || !phoneData.tel || Object.keys(phoneData.tel).length === 0) {

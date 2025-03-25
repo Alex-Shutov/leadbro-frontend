@@ -1,5 +1,5 @@
-import { colorStatusTypes } from './calls.types';
-import { convertUTCToLocal } from '../utils/formate.date';
+import { callStatusTypes, colorStatusTypes, durationEnum } from './calls.types';
+import { convertUTCToLocal } from '../../utils/formate.date';
 
 export const mapCallsResponse = (data) => {
   if (!data || !Array.isArray(data)) return [];
@@ -10,7 +10,7 @@ export const mapCallsResponse = (data) => {
     createdAt: new Date(item.created_at),
     mangoId: item.mango_id,
     type: item.type,
-    success: item.success,
+    success: item.success ? callStatusTypes.COMPLETED : callStatusTypes.MISSED,
     duration: item.duration,
     phoneClient: item.phone_client,
     record: item?.record,

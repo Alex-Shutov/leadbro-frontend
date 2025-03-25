@@ -1,12 +1,12 @@
 // src/components/DialPad/index.jsx
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import styles from './DialPad.module.sass';
-import useStore from '../../../hooks/useStore';
-import Icon from '../../../shared/Icon';
-import Dropdown from '../../../shared/Dropdown/Default';
-import useAppApi from '../../../api';
+import useStore from '../../../../hooks/useStore';
+import Icon from '../../../../shared/Icon';
+import Dropdown from '../../../../shared/Dropdown/Default';
+import useAppApi from '../../../../api';
 import cn from 'classnames';
-import useClientsApi from '../../../pages/Clients/clients.api';
+import useClientsApi from '../../../Clients/clients.api';
 import PhoneContact from '../PhoneContact';
 
 const DialPad = ({ onCallInitiated }) => {

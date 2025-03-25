@@ -14,7 +14,7 @@ export const statusTypes = {
   tasks: tasksStatuses,
   employes: employersStatuses,
   bills: billsStatuses,
-    deals: dealsStatuses,
+  deals: dealsStatuses,
 };
 
 const Badge = ({ statusType, status, classname }) => {

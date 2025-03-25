@@ -9,6 +9,7 @@ import Dropdown from '../Dropdown/Default';
 import Filters from '../Filter';
 import { useFilters } from '../../providers/FilterProvider';
 import Button from '../Button';
+import TextInput from '../TextInput';
 
 const FILTER_COMPONENTS = {
   radio: Radio,
@@ -16,6 +17,7 @@ const FILTER_COMPONENTS = {
   input: ValuesSelector,
   date: Calendar,
   dropdown: Dropdown,
+  textInput: TextInput,
 };
 
 const FilterManager = ({
@@ -86,7 +88,11 @@ const FilterManager = ({
   };
 
   const handleFilterChange = (name, value) => {
+    debugger;
     const filter = filterConfig.filters.find((f) => f.name === name);
+    if (filter.type === 'textInput') {
+      value = value.currentTarget.value;
+    }
     const isMulti = filter.props?.isMulti;
     // ;
     // setFilterValue(name, value);
@@ -116,7 +122,6 @@ const FilterManager = ({
       ...filterValues,
       [name]: value,
     };
-    ;
     newValues = clearConflictingGroupFilters(filter, newValues, updatedParams);
 
     // Обновляем состояние фильтров, но URL не изменяется
@@ -140,7 +145,6 @@ const FilterManager = ({
 
     // Теперь вызываем изменение URL
     const updatedParams = new URLSearchParams(searchParams);
-    ;
     // Проходим по фильтрам и обновляем или удаляем параметры URL
     filterConfig.filters.forEach((filter) => {
       if (newValues.hasOwnProperty(filter.name)) {

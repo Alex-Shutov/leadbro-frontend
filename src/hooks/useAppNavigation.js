@@ -54,6 +54,11 @@ const useAppNavigation = () => {
       url: '/timetrackings',
     },
     {
+      title: 'Звонки',
+      action: () => {},
+      url: '/calls',
+    },
+    {
       title: 'Wiki',
       action: () => {},
       url: 'https://wiki.lead-bro.ru',

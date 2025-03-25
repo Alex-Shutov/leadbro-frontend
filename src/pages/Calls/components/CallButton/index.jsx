@@ -1,7 +1,7 @@
 // src/Calls/components/CallButton/index.jsx
 import React from 'react';
 import styles from './CallButton.module.sass';
-import Icon from '../../../shared/Icon';
+import Icon from '../../../../shared/Icon';
 
 const CallButton = ({ onClick, onClose, isOpen }) => {
   return (

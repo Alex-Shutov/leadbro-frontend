@@ -18,6 +18,7 @@ import DealPage from '../pages/Deals/components/DealPage';
 import Forbidden from '../pages/Forbidden';
 import TimeTrackings from '../pages/TimeTracking';
 import Calendar from '../pages/Calendar';
+import Calls from '../pages/Calls';
 
 export const paths = {
   MAIN: '/',
@@ -31,6 +32,7 @@ export const paths = {
   SETTINGS: '/settings',
   BILLS: '/bills',
   TIME_TRACKINGS: '/timetrackings',
+  CALLS: '/calls',
   LOGIN: '/login',
   NOTFOUND: '*',
   DEALS: '/deals',
@@ -110,6 +112,10 @@ const protectedRoutes = [
   {
     path: paths.TIME_TRACKINGS,
     element: <TimeTrackings />,
+  },
+  {
+    path: paths.CALLS,
+    element: <Calls />,
   },
 ];
 

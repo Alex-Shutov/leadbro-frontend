@@ -13,7 +13,7 @@ import { BillsStore } from '../pages/Bills/stores/bills.store';
 import { DealsStore } from '../pages/Deals/stores';
 import { TimeTrackingStore } from '../pages/TimeTracking/stores/timeTracking.store';
 import { CalendarStore } from '../pages/Calendar/calendar.store';
-import { CallsStore } from '../Calls/stores';
+import { CallsStore } from '../pages/Calls/stores';
 export class RootStore {
   constructor() {
     this.appStore = new AppStore(this);

@@ -34,9 +34,9 @@ import CreateClientsModal from './Persons/Modals/CreateClientsModal';
 import Comments from '../../../../components/Comments';
 import useParamSearch from '../../../../hooks/useParamSearch';
 import ClientMembers from './ClientMembers';
-import { useCalls } from '../../../../Calls/hooks/useCalls';
-import CallButton from '../../../../Calls/components/CallButton';
-import CallModal from '../../../../Calls/components/CallModal';
+import { useCalls } from '../../../Calls/hooks/useCalls';
+import CallButton from '../../../Calls/components/CallButton';
+import CallModal from '../../../Calls/components/CallModal';
 
 const ClientPage = observer(() => {
   let { id } = useParams();

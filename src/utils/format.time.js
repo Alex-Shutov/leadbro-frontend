@@ -35,7 +35,7 @@ export const convertToHours = (time) => {
   if (Number.isNaN(timeValue)) {
     return null;
   }
-  return timeValue
+  return timeValue;
   // if (time.includes('ч')) {
   //   return timeValue;
   // } else if (time.includes('м')) {
@@ -49,8 +49,6 @@ export const convertToHours = (time) => {
   //   return null; // если не удалось распознать единицу времени, возвращаем null
   // }
 };
-
-
 
 export function getTimeMinutesDifference(time1, time2, absValue = true) {
   const [hours1, minutes1] = time1.split(':').map(Number);
@@ -68,3 +66,9 @@ export function getTimeMinutesDifference(time1, time2, absValue = true) {
 
   return absValue ? Math.abs(diffMinutes) : diffMinutes;
 }
+
+export const formatSeconds = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+};

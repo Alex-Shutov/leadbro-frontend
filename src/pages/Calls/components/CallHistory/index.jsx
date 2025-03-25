@@ -2,14 +2,14 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import styles from './CallHistory.module.sass';
-import useStore from '../../../hooks/useStore';
-import Loader from '../../../shared/Loader';
-import Icon from '../../../shared/Icon';
+import useStore from '../../../../hooks/useStore';
+import Loader from '../../../../shared/Loader';
+import Icon from '../../../../shared/Icon';
 import {
   formatDateOnlyHours,
   formatDateWithToday,
   formatHours,
-} from '../../../utils/formate.date';
+} from '../../../../utils/formate.date';
 import { callDirectionTypes } from '../../calls.types';
 
 const CallItem = ({ call }) => {

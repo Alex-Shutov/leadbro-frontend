@@ -2,8 +2,8 @@
 import React, { useState, useRef } from 'react';
 import { observer } from 'mobx-react';
 import styles from './CallModal.module.sass';
-import useOutsideClick from '../../../hooks/useOutsideClick';
-import Icon from '../../../shared/Icon';
+import useOutsideClick from '../../../../hooks/useOutsideClick';
+import Icon from '../../../../shared/Icon';
 import CallHistory from '../CallHistory';
 import DialPad from '../DialPad';
 
