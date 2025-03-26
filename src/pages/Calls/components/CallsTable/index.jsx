@@ -33,6 +33,7 @@ import usePagingData from '../../../../hooks/usePagingData';
 import { getQueryParam } from '../../../../utils/window.utils';
 import CallsStats from './CallStats';
 import { formatSeconds } from '../../../../utils/format.time';
+import ManagerCell from "../../../../components/ManagerCell";
 
 const CallsTable = observer(() => {
   const { callsStore } = useStore();
@@ -85,6 +86,7 @@ const CallsTable = observer(() => {
 
   // Render phone/contact cell
   const renderContactInfo = useCallback((entity) => {
+    debugger
     if (!entity) return <span>-</span>;
 
     return (
@@ -96,6 +98,17 @@ const CallsTable = observer(() => {
       </div>
     );
   }, []);
+
+  const renderManagerContactInfo = useCallback((entity,phone) => {
+    if (!entity) return <span>-</span>;
+    debugger
+    return (
+        <div className={styles.contactInfo}>
+         <ManagerCell manager={entity}/>
+          <span>С телефона: {phone}</span>
+        </div>
+    );
+  },[])
 
   const renderPhone = useCallback((phone) => {
     return <div className={styles.phone}>{phone}</div>;
@@ -112,7 +125,6 @@ const CallsTable = observer(() => {
         Header: 'Тип/Дата',
         accessor: 'type',
         Cell: ({ row }) => {
-          debugger;
           return (
             <div className={styles.typeCell}>
               <Badge
@@ -136,19 +148,22 @@ const CallsTable = observer(() => {
       {
         Header: 'Кто звонил',
         accessor: 'company',
-        Cell: ({ row }) =>
-          row.original?.company
-            ? renderContactInfo(row.original.company)
-            : renderPhone(row.original.phone),
+        Cell: ({ row }) => {
+          debugger
+          return row.original?.manager
+              ? renderManagerContactInfo(row.original.manager,row.original.phone)
+              : renderPhone(row.original.phone);
+        },
       },
       {
         Header: 'Кому звонили',
-        Header: 'Кому звонили',
         accessor: 'manager',
-        Cell: ({ row }) =>
-          row.original?.manager
-            ? renderContactInfo(row.original.manager)
-            : renderPhone(row.original.phoneClient),
+        Cell: ({ row }) => {
+          debugger
+          return row.original?.manager
+              ? renderContactInfo(row.original.manager)
+              : renderPhone(row.original.phoneClient);
+        },
       },
       {
         Header: 'Длительность',

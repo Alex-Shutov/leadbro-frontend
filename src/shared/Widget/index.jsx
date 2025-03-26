@@ -14,12 +14,13 @@ const StatsWidget = ({
                          showChart,
                          color,
                          icon,
+                         iconStyles={},
                          type,
                          value
                      }) => {
     const renderIcon = () => {
         if (typeof icon === 'string') {
-            return <img className={styles.icon_inner} src={icon} alt={title} />;
+            return <img className={cn(styles.icon_inner,iconStyles)} src={icon} alt={title} />;
         }
         return <div className={styles.icon_inner}>{icon}</div>;
     };

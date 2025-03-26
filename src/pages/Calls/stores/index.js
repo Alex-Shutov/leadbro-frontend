@@ -189,13 +189,13 @@ export class CallsStore {
   // Method for initiating a call
   async makeCall(phoneNumber) {
     try {
-      const contextData = this.contextType
-        ? { entityType: this.contextType, entityId: this.contextId }
-        : {};
+      // const contextData = this.contextType
+      //   ? { entityType: this.contextType, entityId: this.contextId }
+      //   : {};
 
       const response = await callsApi.makeCall({
         phone: phoneNumber,
-        ...contextData,
+        // ...contextData,
       });
       return { success: response.status === 'success', data: response.body };
     } catch (error) {

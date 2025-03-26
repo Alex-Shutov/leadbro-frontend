@@ -51,9 +51,10 @@ export const callsApi = {
 
     try {
       const response = await http.post('/api/calls/initiate_call', data);
+      debugger
       const resp = handleHttpResponse(response);
       if (resp.status === 'success') {
-        return 'success';
+        return resp
       }
     } catch (error) {
       return handleHttpError(error);
@@ -69,7 +70,7 @@ const useCallsApi = () => {
   const getCalls = (page = 1, filters = null) => {
     resetApiProvider();
     setIsLoading(true);
-
+    debugger
     // Get filters from URL or use provided filters
     const urlParams = new URLSearchParams(window.location.search);
     let sanitizedFilters = sanitizeUrlFilters(
@@ -89,6 +90,10 @@ const useCallsApi = () => {
       params,
       sanitizedFilters,
     );
+
+    if (!sanitizedFilters.period){
+      delete params.period
+    }
 
     return http
       .get('/api/calls', {

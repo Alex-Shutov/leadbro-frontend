@@ -32,15 +32,15 @@ export const mapClientFromApi = (
     status: mapStatus(apiClient?.status),
     manager: {
       id: apiClient?.manager.id,
-      name: apiClient?.manager.name,
-      surname: apiClient?.manager.last_name,
-      middleName: apiClient?.manager.middle_name,
-      avatar: apiClient?.manager.avatar
-        ? loadAvatar(apiClient?.manager.avatar)
+      name: apiClient?.manager?.name,
+      surname: apiClient?.manager?.last_name,
+      middleName: apiClient?.manager?.middle_name,
+      avatar: apiClient?.manager?.avatar
+        ? loadAvatar(apiClient?.manager?.avatar)
         : null,
-      position: apiClient?.manager.position.name,
-      email: apiClient?.manager.email,
-      phone: apiClient?.manager.phone,
+      position: apiClient?.manager?.position?.name,
+      email: apiClient?.manager?.email,
+      phone: apiClient?.manager?.phone,
     },
     services: mapServices(apiClient?.services, apiServices),
     deals: apiDeals.map((el) => mapDealFromApi(el)),
@@ -92,11 +92,11 @@ export const mapBusinesses = (apiBusinesses) => {
     const endDate = new Date(business?.end);
     acc[business.id] = {
       id: business.id,
-      name: business.name,
+      name: business?.name,
       description: business.description,
       relatedEntity: {
         id: business.related_entity.id,
-        name: business.related_entity.name,
+        name: business.related_entity?.name,
         type: business.related_entity.type,
         link: business.related_entity.link,
       },
@@ -174,20 +174,20 @@ const mapServices = (backendServices, apiServices) => {
       value: last
         ? {
             id: last.id,
-            description: last.name, // Используем поле name для description
+            description: last?.name, // Используем поле name для description
             creator: {
-              name: last.creator.name, // Отсутствует creator в API, поэтому используем responsible
-              surname: last.creator.last_name,
-              role: last.creator.position.name,
-              image: loadAvatar(last.creator.avatar),
+              name: last?.creator?.name,
+              surname: last?.creator?.last_name,
+              role: last?.creator?.position?.name,
+              image: loadAvatar(last?.creator?.avatar),
             },
             responsible: {
-              name: last.responsible.name,
-              surname: last.responsible.last_name,
-              role: last.responsible.position.name,
-              image: loadAvatar(last.responsible.avatar),
+              name: last?.responsible?.name,
+              surname: last?.responsible?.last_name,
+              role: last?.responsible?.position?.name,
+              image: loadAvatar(last?.responsible?.avatar),
             },
-            deadline: last?.deadline ? new Date(last.deadline) : null, // Преобразуем строку в дату
+            deadline: last?.deadline ? new Date(last.deadline) : null,
           }
         : null,
     };
@@ -199,16 +199,16 @@ const mapServices = (backendServices, apiServices) => {
     id: service.id,
     description: service.name,
     creator: {
-      name: service.responsible.name, // Отсутствует creator в API, поэтому используем responsible
-      surname: service.responsible.last_name,
-      role: service.responsible.position.name,
-      image: loadAvatar(service.responsible.avatar),
+      name: service?.responsible?.name,
+      surname: service?.responsible?.last_name,
+      role: service?.responsible?.position?.name,
+      image: loadAvatar(service?.responsible?.avatar),
     },
     responsible: {
-      name: service.responsible.name,
-      surname: service.responsible.last_name,
-      role: service.responsible.position.name,
-      image: loadAvatar(service.responsible.avatar),
+      name: service?.responsible?.name,
+      surname: service?.responsible?.last_name,
+      role: service?.responsible?.position?.name,
+      image: loadAvatar(service?.responsible?.avatar),
     },
     deadline: service?.deadline ? new Date(service.deadline) : null,
   }));

@@ -37,6 +37,7 @@ import ClientMembers from './ClientMembers';
 import { useCalls } from '../../../Calls/hooks/useCalls';
 import CallButton from '../../../Calls/components/CallButton';
 import CallModal from '../../../Calls/components/CallModal';
+import {CallsProvider} from "../../../../providers/CallsProvider";
 
 const ClientPage = observer(() => {
   let { id } = useParams();
@@ -117,13 +118,7 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
-      <CallButton
-        isOpen={isCallModalOpen}
-        onClose={closeCallModal}
-        onClick={openCallModal}
-      />
-
-      <CallModal isOpen={isCallModalOpen} onClose={closeCallModal} />
+      <CallsProvider>
       <LoadingProvider isLoading={isLoading || api.isLoading}>
         <Title title={client?.title} />
         <div className={styles.dropdown}>
@@ -249,6 +244,7 @@ const ClientPage = observer(() => {
           companyId={client?.id}
         />
       )}
+      </CallsProvider>
     </motion.div>
   );
 });

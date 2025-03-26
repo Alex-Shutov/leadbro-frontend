@@ -40,7 +40,6 @@ const ClientsTable = observer(() => {
   const fetchClients = React.useCallback((page) => {
     api.getClients(page);
   }, []);
-  console.log();
   const {
     currentPage,
     totalPages,

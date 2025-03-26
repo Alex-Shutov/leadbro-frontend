@@ -1,5 +1,6 @@
 import { callStatusTypes, colorStatusTypes, durationEnum } from './calls.types';
 import { convertUTCToLocal } from '../../utils/formate.date';
+import {mapEmployeesFromApi} from "../Settings/settings.mapper";
 
 export const mapCallsResponse = (data) => {
   if (!data || !Array.isArray(data)) return [];
@@ -15,6 +16,7 @@ export const mapCallsResponse = (data) => {
     phoneClient: item.phone_client,
     record: item?.record,
     contactName: item?.company?.name ?? null,
+    manager:mapEmployeesFromApi(item?.manager),
     // contactPerson
     client: item?.company
       ? {

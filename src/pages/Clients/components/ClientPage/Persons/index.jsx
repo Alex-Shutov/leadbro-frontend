@@ -18,6 +18,7 @@ import useMappedObj from '../../../../../hooks/useMappedObj';
 import CreateClientsModal from './Modals/CreateClientsModal';
 import useClientsApi from "../../../clients.api";
 import useStore from "../../../../../hooks/useStore";
+import {useCallsContext} from "../../../../../providers/CallsProvider";
 
 const ClientPersons = ({
   persons,
@@ -31,6 +32,7 @@ const ClientPersons = ({
   // const [isEditClientModalData, setClientModalData] = useState(null);
   // const api = useClientsApi()
   // const {clientsStore} = useStore()
+  const { setSelectedPhone,openCallModal } = useCallsContext();
   const defaultActions = (
     path,
     success,
@@ -51,6 +53,9 @@ const ClientPersons = ({
       onReset(path, info);
     },
   });
+  const handlePhoneClick = (phone) => {
+    openCallModal(phone);
+  };
 
   return (
     <>
@@ -111,12 +116,12 @@ const ClientPersons = ({
                   name={`contactPersons.${values.id}.tel`}
                   type={'tel'}
                   value={values.tel}
-                  actions={defaultActions(
-                    `contactPersons.${values.id}.tel`,
-                    'Телефон сохранен',
-                    'Телефон восстановлен',
-                    values.id,
-                  )}
+                  actions={{call:handlePhoneClick,...defaultActions(
+                        `contactPersons.${values.id}.tel`,
+                        'Телефон сохранен',
+                        'Телефон восстановлен',
+                        values.id,
+                    )}}
                 />}
                 {values.comment && <CardInput
                     placeholder={'Комментарий к телефону...'}

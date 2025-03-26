@@ -8,6 +8,7 @@ import Close from "./Close";
 import Delete from "./Delete";
 import Copy from "./Copy";
 import Add from "./Add";
+import Call from "./Call";
 
 const ActionList = ({setClose,actions,classNameActions,inputRef,props,withLabels=false}) => {
     return (
@@ -19,6 +20,7 @@ const ActionList = ({setClose,actions,classNameActions,inputRef,props,withLabels
             {actions?.delete && <Delete setClose={setClose } label={withLabels ? 'Удалить' :''}  actions={actions} props={props} inputRef={inputRef}/>}
             {actions?.copy && <Copy props={props} setClose={setClose} label={withLabels ? 'Копировать' :''}  inputRef={inputRef} actions={actions}/>}
             {actions?.add && <Add props={props} setClose={setClose} label={withLabels ? 'Добавить' :''}  inputRef={inputRef} actions={actions}/>}
+            {actions?.call && <Call props={props} setClose={setClose} label={withLabels ? 'Позвонить' :''}  inputRef={inputRef} actions={actions}/>}
         </div>
     );
 };

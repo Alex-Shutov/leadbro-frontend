@@ -47,10 +47,9 @@ const CallItem = ({ call }) => {
   );
 };
 
-const CallHistory = observer(() => {
+const CallHistory = observer(({isRendered}) => {
   const { callsStore } = useStore();
-  debugger;
-  if (callsStore.isLoading) {
+  if (!isRendered && callsStore.isLoading) {
     return (
       <div className={styles.loaderContainer}>
         <Loader />
@@ -64,7 +63,6 @@ const CallHistory = observer(() => {
 
   const groupedCalls = callsStore?.groupedByDateCalls;
   const dates = Object.keys(groupedCalls);
-  debugger;
   return (
     <div className={styles.callHistory}>
       <h3 className={styles.historyTitle}>История звонков</h3>

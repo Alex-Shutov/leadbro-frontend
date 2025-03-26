@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './Table.module.sass';
 import useStore from '../../../../hooks/useStore';
 import StatsWidget from '../../../../shared/Widget';
+import Icon from "../../../../shared/Icon";
 
 const CallsStats = () => {
   const { callsStore } = useStore();
@@ -16,12 +17,14 @@ const CallsStats = () => {
         title="Всего звонков"
         value={total}
         showChart={false}
-        icon={'/leadbro/phone-incoming.svg'}
+        icon={<Icon name={'phone'} size={36} />}
       />
       <StatsWidget
         type={'accept'}
         title="Входящих звонков"
         value={incoming}
+        iconStyles={styles.icon}
+
         // percent={total > 0 ? Math.round((incoming / total) * 100) : 0}
         icon={'/leadbro/phone-incoming.svg'}
       />
@@ -29,6 +32,7 @@ const CallsStats = () => {
         type={'info'}
         title="Исходящих звонков"
         value={outgoing}
+        iconStyles={styles.icon}
         // percent={total > 0 ? Math.round((outgoing / total) * 100) : 0}
         icon={'/leadbro/phone-outgoing.svg'}
       />

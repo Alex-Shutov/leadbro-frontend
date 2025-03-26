@@ -16,6 +16,7 @@ import Card from '../../../../../shared/Card';
 import styles from './Contacts.module.sass';
 import RequisitesComponent from './Inputs/Requisites.component';
 import MultiInputContacts from './Inputs/MultiInput.component';
+import {useCallsContext} from "../../../../../providers/CallsProvider";
 
 const ClientsContacts = ({
   contactData,
@@ -25,6 +26,7 @@ const ClientsContacts = ({
   onReset,
   onAdd,
 }) => {
+    const { setSelectedPhone,openCallModal } = useCallsContext();
   const defaultActions = (path, success, info, copy = 'Элемент скопирован') => {
     // console.log(properties,'smile')
     return {
@@ -49,6 +51,10 @@ const ClientsContacts = ({
     };
   };
 
+    const handlePhoneClick = (phone) => {
+        openCallModal(phone);
+    };
+
   return (
     <Card classTitle={styles.title} className={styles.card}>
       <Title
@@ -69,8 +75,7 @@ const ClientsContacts = ({
         label={'Телефон'}
         param={'tel'}
         type={'tel'}
-        onActions={(path) =>
-          defaultActions(path, 'Телефон сохранен', 'Телефон восстановлен')
+        onActions={(path) => ({call: handlePhoneClick, ...defaultActions(path, 'Телефон сохранен', 'Телефон восстановлен')})
         }
       />
       <MultiInputContacts

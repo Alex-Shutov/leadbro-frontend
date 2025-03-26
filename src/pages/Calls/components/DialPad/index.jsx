@@ -8,17 +8,28 @@ import useAppApi from '../../../../api';
 import cn from 'classnames';
 import useClientsApi from '../../../Clients/clients.api';
 import PhoneContact from '../PhoneContact';
+import Pad from "./components/Pad";
+import Settings from "./components/Settings";
+import parsePhoneNumberFromString from "libphonenumber-js";
 
-const DialPad = ({ onCallInitiated }) => {
+const DialPad = ({ onCallInitiated,initialPhone=null }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [clientData, setClientData] = useState(null);
   const [selectedPhone, setSelectedPhone] = useState('');
   const [showKeypad, setShowKeypad] = useState(false);
+  const [showSettings,setShowSettings] = useState(false);
 
   const appApi = useAppApi();
   const clientsApi = useClientsApi();
   const { callsStore } = useStore();
+
+  useEffect(() => {
+    if (initialPhone) {
+      setPhoneNumber(initialPhone);
+      setSelectedPhone(initialPhone);
+    }
+  }, [initialPhone]);
 
   const validatePhoneNumber = (phone) => {
     const phoneRegex =
@@ -28,10 +39,12 @@ const DialPad = ({ onCallInitiated }) => {
 
   const asyncSearch = useCallback(
     async (query) => {
+      const isValidPhone = validatePhoneNumber(query);
+
       const response = await appApi.getCompanies(query);
       return response || [];
     },
-    [appApi],
+    [],
   );
 
   const asyncGetCompany = useCallback(
@@ -56,17 +69,31 @@ const DialPad = ({ onCallInitiated }) => {
   };
 
   const toggleKeypad = () => {
+    setShowSettings(false)
+
     setShowKeypad((prev) => !prev);
   };
 
-  const handleCall = async () => {
-    const phoneToCall = selectedPhone || phoneNumber;
+  const toggleSettings = () => {
+    setShowKeypad(false)
+    setShowSettings((prev) => !prev);
+  }
 
+  const handleCall = async () => {
+    debugger
+
+    const phoneToCall = selectedPhone || phoneNumber;
     if (!phoneToCall.trim()) return;
 
-    const result = await callsStore.makeCall(phoneToCall);
+    const parsedNumber = parsePhoneNumberFromString(phoneToCall,'RU');
+
+    if (!parsedNumber) return;
+
+    const e164Number = parsedNumber.format('E.164');
+
+    const result = await callsStore.makeCall(e164Number);
     if (result.success && onCallInitiated) {
-      onCallInitiated(phoneToCall);
+      onCallInitiated(e164Number);
       setPhoneNumber('');
       setClientData(null);
       setSelectedPhone('');
@@ -75,15 +102,16 @@ const DialPad = ({ onCallInitiated }) => {
   };
 
   // Update dropdown options when phoneNumber changes
-  useEffect(() => {
+  const asyncSearchWithPhone = useCallback( async(query) => {
+    debugger
     const updateOptions = async () => {
-      if (!phoneNumber) {
+      if (!query) {
         setSearchResults([]);
         return;
       }
 
       // Check if it's a valid phone number
-      const isValidPhone = validatePhoneNumber(phoneNumber);
+      const isValidPhone = validatePhoneNumber(query);
 
       // If we have client data, don't search
       if (clientData) {
@@ -91,45 +119,58 @@ const DialPad = ({ onCallInitiated }) => {
       }
 
       // If phone number is at least 3 characters, search for companies
-      if (phoneNumber.length >= 3) {
-        const results = await asyncSearch(phoneNumber);
+      if (query.length >= 3) {
+        debugger
+        const results = await asyncSearch(query);
 
         // If it's a valid phone number and not already in the results, add it
         if (isValidPhone) {
           const phoneOption = {
             id: 'direct-phone',
-            name: phoneNumber,
+            name: query,
             isDirectPhone: true,
           };
 
           // Check if the phone number is already in the results
-          const phoneExists = results.some((r) => r.name === phoneNumber);
+          const phoneExists = results.some((r) => r.name === query);
 
           if (!phoneExists) {
-            setSearchResults([phoneOption, ...results]);
+            // setSearchResults([phoneOption, ...results]);
+            return [phoneOption, ...results]
           } else {
-            setSearchResults(results);
+            // setSearchResults(results);
+            return results
+
           }
         } else {
-          setSearchResults(results);
+          // setSearchResults(results);
+          return results;
         }
       } else if (isValidPhone) {
         // If it's a valid phone number but less than 3 characters
-        setSearchResults([
+        // setSearchResults([
+        //   {
+        //     id: 'direct-phone',
+        //     name: query,
+        //     isDirectPhone: true,
+        //   },
+        // ]);
+        return [
           {
             id: 'direct-phone',
-            name: phoneNumber,
+            name: query,
             isDirectPhone: true,
           },
-        ]);
+        ]
       } else {
-        setSearchResults([]);
+        // setSearchResults([]);
+        return []
       }
     };
 
-    updateOptions();
-  }, [phoneNumber, asyncSearch, clientData]);
-
+    return await updateOptions();
+  }, []);
+  console.log(searchResults)
   const handlePhoneSelected = (phone) => {
     setSelectedPhone(phone);
   };
@@ -162,13 +203,13 @@ const DialPad = ({ onCallInitiated }) => {
             setSelectedPhone(clientDetails.contactData.tel[0]);
           }
         }}
-        options={searchResults}
-        asyncSearch={asyncSearch}
+        // options={searchResults}
+        asyncSearch={(search)=>asyncSearchWithPhone(search)}
         renderOption={({ name, isDirectPhone }) => (
           <div>
             {isDirectPhone ? (
               <span>
-                <Icon name="call" size={16} style={{ marginRight: '8px' }} />
+                <Icon name="call" size={16} viewBox={'0 0 24 24'} style={{ marginRight: '8px' }} />
                 {name}
               </span>
             ) : (
@@ -208,110 +249,34 @@ const DialPad = ({ onCallInitiated }) => {
             >
               <Icon
                 name="keypad"
-                fill={showKeypad ? '#FF6A55' : '#6F767E'}
+                // fill={showKeypad ? '#FF6A55' : '#6F767E'}
                 viewBox={'0 0 24 24'}
                 size={24}
               />
             </button>
           )}
-          <button className={styles.controlButton}>
+          <button onClick={toggleSettings}  className={cn(styles.controlButton, {
+            [styles.active]: showSettings,
+          })}>
             <Icon name="setting" size={24} />
           </button>
         </div>
       </div>
 
-      {/* Phone Contact Selection */}
-      {clientData && clientData.contactData && (
-        <PhoneContact
-          phoneData={clientData.contactData}
-          selectedPhone={selectedPhone}
-          onPhoneSelected={handlePhoneSelected}
-        />
-      )}
+      {/*/!* Phone Contact Selection *!/*/}
+      {/*{clientData && clientData.contactData && (*/}
+      {/*  <PhoneContact*/}
+      {/*    phoneData={clientData.contactData}*/}
+      {/*    selectedPhone={selectedPhone}*/}
+      {/*    onPhoneSelected={handlePhoneSelected}*/}
+      {/*  />*/}
+      {/*)}*/}
 
       {showKeypad && (
-        <div className={styles.keypad}>
-          <div className={styles.keypadRow}>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('1')}
-            >
-              1
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('2')}
-            >
-              2
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('3')}
-            >
-              3
-            </button>
-          </div>
-          <div className={styles.keypadRow}>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('4')}
-            >
-              4
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('5')}
-            >
-              5
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('6')}
-            >
-              6
-            </button>
-          </div>
-          <div className={styles.keypadRow}>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('7')}
-            >
-              7
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('8')}
-            >
-              8
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('9')}
-            >
-              9
-            </button>
-          </div>
-          <div className={styles.keypadRow}>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('*')}
-            >
-              *
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('0')}
-            >
-              0
-            </button>
-            <button
-              className={styles.keypadButton}
-              onClick={() => handleNumberClick('#')}
-            >
-              #
-            </button>
-          </div>
-        </div>
+        <Pad handleNumberClick={handleNumberClick}/>
+      )}
+      {showSettings && (
+          <Settings/>
       )}
 
       <button

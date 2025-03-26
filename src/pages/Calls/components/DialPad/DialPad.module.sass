@@ -42,13 +42,20 @@
   background: none
   cursor: pointer
   color: $n4
+  svg
+    fill: $n4
 
   &:hover
     color: $n7
+    fill: $n7
+    svg
+      fill: $n7
     +dark
       color: $n1
 
   &.active
+    svg
+      fill: $p3
     color: $p3
 
 .keypad
@@ -109,3 +116,8 @@
     background-color: $n3
     color: $n4
     cursor: not-allowed
+
+.settings
+  padding: 16px
+  +base1-s
+  color: $n7

@@ -6,14 +6,20 @@ import useOutsideClick from '../../../../hooks/useOutsideClick';
 import Icon from '../../../../shared/Icon';
 import CallHistory from '../CallHistory';
 import DialPad from '../DialPad';
+import {handleSubmit} from "../../../../utils/snackbar";
+import {useCallsContext} from "../../../../providers/CallsProvider";
 
-const CallModal = observer(({ isOpen, onClose }) => {
+const CallModal = observer(({ isOpen, onClose,isRendered,initialPhone }) => {
   const [activeTab, setActiveTab] = useState('history');
   const modalRef = useRef(null);
-
+  const { selectedPhone } = useCallsContext();
   // useOutsideClick(modalRef, () => {
   //   if (isOpen) onClose();
   // });
+
+  const handleInitiateCall = (phone) => {
+    handleSubmit(`Начинаем дозвон по номеру ${phone}`)
+  }
 
   if (!isOpen) return null;
 
@@ -43,9 +49,9 @@ const CallModal = observer(({ isOpen, onClose }) => {
         {/*</div>*/}
 
         <div className={styles.content}>
-          <CallHistory />
+          <CallHistory isRendered={isRendered} />
         </div>
-        <DialPad onCallInitiated={() => setActiveTab('history')} />
+        <DialPad initialPhone={selectedPhone} onCallInitiated={handleInitiateCall} />
       </div>
     </div>
   );
