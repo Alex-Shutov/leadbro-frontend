@@ -29,7 +29,9 @@ export const callsApi = {
 
     try {
       const response = await http.get(`/api/companies/${companyId}/calls`);
-      return handleHttpResponse(mapCallsResponse(response?.body?.data));
+
+
+      return handleHttpResponse(mapCallsResponse(response?.data?.data));
     } catch (error) {
       return handleShowError(error);
     }
@@ -40,7 +42,7 @@ export const callsApi = {
 
     try {
       const response = await http.get(`/api/deals/${dealId}/calls`);
-      return handleHttpResponse(mapCallsResponse(response?.body?.data));
+      return handleHttpResponse(mapCallsResponse(response?.data?.data));
     } catch (error) {
       return handleHttpError(error);
     }
@@ -51,7 +53,7 @@ export const callsApi = {
 
     try {
       const response = await http.post('/api/calls/initiate_call', data);
-      debugger
+
       const resp = handleHttpResponse(response);
       if (resp.status === 'success') {
         return resp
@@ -70,7 +72,7 @@ const useCallsApi = () => {
   const getCalls = (page = 1, filters = null) => {
     resetApiProvider();
     setIsLoading(true);
-    debugger
+
     // Get filters from URL or use provided filters
     const urlParams = new URLSearchParams(window.location.search);
     let sanitizedFilters = sanitizeUrlFilters(
@@ -104,6 +106,8 @@ const useCallsApi = () => {
       })
       .then(handleHttpResponse)
       .then((res) => {
+
+
         const mappedCalls = mapCallsResponse(res?.body?.data);
         callsStore.setCalls(mappedCalls);
         callsStore.setMetaInfoTable(res.body?.meta);
@@ -123,6 +127,8 @@ const useCallsApi = () => {
   const getCompanyCalls = async (companyId) => {
     resetApiProvider();
     setIsLoading(true);
+
+
     callsStore.setContext('company', companyId);
 
     try {

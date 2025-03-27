@@ -80,7 +80,7 @@ const DialPad = ({ onCallInitiated,initialPhone=null }) => {
   }
 
   const handleCall = async () => {
-    debugger
+
 
     const phoneToCall = selectedPhone || phoneNumber;
     if (!phoneToCall.trim()) return;
@@ -103,7 +103,7 @@ const DialPad = ({ onCallInitiated,initialPhone=null }) => {
 
   // Update dropdown options when phoneNumber changes
   const asyncSearchWithPhone = useCallback( async(query) => {
-    debugger
+
     const updateOptions = async () => {
       if (!query) {
         setSearchResults([]);
@@ -120,7 +120,7 @@ const DialPad = ({ onCallInitiated,initialPhone=null }) => {
 
       // If phone number is at least 3 characters, search for companies
       if (query.length >= 3) {
-        debugger
+
         const results = await asyncSearch(query);
 
         // If it's a valid phone number and not already in the results, add it

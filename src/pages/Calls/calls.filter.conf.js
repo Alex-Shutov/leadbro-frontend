@@ -28,7 +28,7 @@ export const createCallsFilters = ({
           ),
         },
         toUrlValue: (values) => {
-          debugger;
+          ;
           return values
             ? Array.isArray(values)
               ? values.map((v) => v.value).join(',')
@@ -115,7 +115,7 @@ export const createCallsFilters = ({
           function mapValues(values) {
             return values.map((v) => v.value).join(',');
           }
-          debugger;
+          ;
           return values
             ? Array.isArray(values)
               ? mapValues(values)

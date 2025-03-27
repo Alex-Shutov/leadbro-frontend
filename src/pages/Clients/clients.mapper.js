@@ -117,36 +117,40 @@ export const mapBusinesses = (apiBusinesses) => {
   }, {});
 };
 
+export const mapContactPersonSolo = (client) => {
+  return {
+    id: client.id,
+    role: client.role,
+    last_name: client?.last_name ?? '',
+    name: client?.name ?? '',
+    middle_name: client?.middle_name ?? '',
+    fio: `${client?.last_name ?? ''} ${client?.name ?? ''} ${client?.middle_name ? client.middle_name : ''}`,
+    tel: client.phone ? client.phone : null,
+    comment: client.phone_comment ? client.phone_comment : null,
+    site: client.site ? client.site : null,
+    email: client.email ? client.email : null,
+    messengers: {
+      telegram: {
+        link: `https://t.me/${client?.telegram}`,
+        value: client?.telegram,
+      },
+      whatsapp: {
+        link: `https://wa.me/${client?.whatsapp}`.replace('+', ''),
+        value: client?.whatsapp,
+      },
+      //
+      //     ? {telegram: `https://t.me/${client.telegram}`}
+      //     : null,
+      // client.whatsapp && client.phone
+      //     ? {whatsapp: `https://api.whatsapp.com/send?phone=${client.phone}`}
+      //     : null,
+    },
+  }
+}
+
 export const mapContactPersons = (apiContactPersons) => {
   return apiContactPersons?.reduce((acc, client) => {
-    acc[client.id] = {
-      id: client.id,
-      role: client.role,
-      last_name: client?.last_name ?? '',
-      name: client?.name ?? '',
-      middle_name: client?.middle_name ?? '',
-      fio: `${client?.last_name ?? ''} ${client?.name ?? ''} ${client?.middle_name ? client.middle_name : ''}`,
-      tel: client.phone ? client.phone : null,
-      comment: client.phone_comment ? client.phone_comment : null,
-      site: client.site ? client.site : null,
-      email: client.email ? client.email : null,
-      messengers: {
-        telegram: {
-          link: `https://t.me/${client?.telegram}`,
-          value: client?.telegram,
-        },
-        whatsapp: {
-          link: `https://wa.me/${client?.whatsapp}`.replace('+', ''),
-          value: client?.whatsapp,
-        },
-        //
-        //     ? {telegram: `https://t.me/${client.telegram}`}
-        //     : null,
-        // client.whatsapp && client.phone
-        //     ? {whatsapp: `https://api.whatsapp.com/send?phone=${client.phone}`}
-        //     : null,
-      },
-    };
+    acc[client.id] = mapContactPersonSolo(client);
 
     return acc;
   }, {});
@@ -293,7 +297,7 @@ export const mapCommentDataToBackend = (drafts, changedFieldsSet) => {
 
 export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   // Обработка ФИО
-  debugger;
+
   const fioParams = mapFio(drafts, changedFieldsSet, propId);
   const getCorrectStatus = (status) => {
     const snakeStatuses = {
@@ -342,7 +346,7 @@ export const mapClientDataToBackend = (drafts, changedFieldsSet, propId) => {
   };
 
   const mapKeyToBackend = (key, draft) => {
-    debugger;
+
     const keyMapping = {
       [`passwords.${propId}.name`]: 'service_name',
       [`passwords.${propId}.values.login`]: 'login',

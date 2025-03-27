@@ -47,7 +47,6 @@ const BaseWeekItem = forwardRef(({
     const { calculateTimePosition, calculateEventHeight } = useCalculate(layout);
     const itemLayout = layout[business.id];
     const itemRef = useRef(null);
-    debugger
     const [isItemForOneSlot,setItemForOneSlot] = useState(Math.abs(getTimeMinutesDifference(business.startTime, business.endTime))<=15);
     const a = differenceInMinutes(business.startTime, business.endTime)
     const b = differenceInMinutes(business.startDate, business.endDate)

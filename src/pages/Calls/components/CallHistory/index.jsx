@@ -11,8 +11,10 @@ import {
   formatHours,
 } from '../../../../utils/formate.date';
 import { callDirectionTypes } from '../../calls.types';
+import {useCallsContext} from "../../../../providers/CallsProvider";
 
 const CallItem = ({ call }) => {
+  const {setSelectedPhone} = useCallsContext()
   const getCurrentCallIcon = () => {
     switch (call.type) {
       case callDirectionTypes.INCOMING:
@@ -24,8 +26,12 @@ const CallItem = ({ call }) => {
     }
   };
 
+  const handleClickOnCallItem = (value) => {
+    setSelectedPhone(value)
+  }
+
   return (
-    <div className={styles.callItem}>
+    <div onClick={()=>handleClickOnCallItem(call.phone)} className={styles.callItem}>
       <div className={styles.callIcon}>
         <Icon
           name={getCurrentCallIcon()}

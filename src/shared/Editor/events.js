@@ -16,7 +16,7 @@ export const beforeInitKeyDown = function (
 
       return false;
     }
-    debugger;
+
     if (
       (event.key === 'Delete' || event.key === 'Backspace') &&
       selectionRange
@@ -90,7 +90,7 @@ export const afterInitClick = function (editor) {
 
 export const afterInitPaste = function (editor) {
   editor.editor.addEventListener('paste', async function (e) {
-    debugger;
+
     const items = (e.clipboardData || e.originalEvent.clipboardData).items;
 
     for (let i = 0; i < items.length; i++) {

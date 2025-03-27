@@ -176,7 +176,7 @@ export class CallsStore {
       }
 
       if (response.status === 'success') {
-        this.setCalls(mapCallsResponse(response.body.data));
+        this.setCalls(response?.body?.data ?? response?.body ?? response);
       }
     } catch (error) {
       console.error('Error loading calls:', error);

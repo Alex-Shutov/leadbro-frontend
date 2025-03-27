@@ -111,7 +111,7 @@ const Dropdown = ({
   }, [value, isAsync, renderValue]);
 
   const handleClick = (selectedValue) => {
-    debugger;
+
     setValue(selectedValue);
     setVisible(false);
     setIsTouched(true);
@@ -143,7 +143,7 @@ const Dropdown = ({
         const newTimeout = setTimeout(async () => {
           try {
             const results = await asyncSearch(value);
-            debugger
+
             setOptions(results);
           } catch (error) {
             console.error('Search error:', error);

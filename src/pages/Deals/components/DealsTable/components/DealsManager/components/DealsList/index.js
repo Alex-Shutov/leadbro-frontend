@@ -61,7 +61,7 @@ const Column = ({ type, typeRu, values, color, sumPrice, onDrop, onClick }) => {
             <div className={cn(color, styles.divider)}></div>
             <div className={styles.scroll}>
                 {values.map((deal) => (
-                    <div key={deal.id} onClick={() => onClick(deal)}>
+                    <div key={deal.id} onClick={(e) => onClick(e,deal)}>
                         <DealCard deal={deal} />
                     </div>
                 ))}

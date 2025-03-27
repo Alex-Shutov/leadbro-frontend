@@ -27,7 +27,6 @@ const CalendarContent = observer(({ onEditBusiness, onCreateBusiness }) => {
   const api = useCalendarApi();
   const { calendarStore } = useStore();
   const appApi = useAppApi();
-  debugger;
   const currentView = calendarStore.currentView;
   const currentDate = calendarStore.currentDate;
   const [businessData, setbusinessData] = useState(null);

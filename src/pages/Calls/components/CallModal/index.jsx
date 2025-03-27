@@ -9,7 +9,7 @@ import DialPad from '../DialPad';
 import {handleSubmit} from "../../../../utils/snackbar";
 import {useCallsContext} from "../../../../providers/CallsProvider";
 
-const CallModal = observer(({ isOpen, onClose,isRendered,initialPhone }) => {
+const CallModal = observer(({ isOpen, onClose,isRendered,initialPhone,...rest }) => {
   const [activeTab, setActiveTab] = useState('history');
   const modalRef = useRef(null);
   const { selectedPhone } = useCallsContext();
@@ -48,9 +48,9 @@ const CallModal = observer(({ isOpen, onClose,isRendered,initialPhone }) => {
         {/*</button>*/}
         {/*</div>*/}
 
-        <div className={styles.content}>
+        {rest.withHistory && <div className={styles.content}>
           <CallHistory isRendered={isRendered} />
-        </div>
+        </div>}
         <DialPad initialPhone={selectedPhone} onCallInitiated={handleInitiateCall} />
       </div>
     </div>

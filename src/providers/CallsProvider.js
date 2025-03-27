@@ -6,7 +6,7 @@ import CallModal from "../pages/Calls/components/CallModal";
 // Создаем контекст для функционала звонков
 const CallsContext = createContext(null);
 
-export const CallsProvider = ({ children }) => {
+export const CallsProvider = ({ children,withHistory=true,entity=null,entityId=null, }) => {
     const [isCallModalOpen, setIsCallModalOpen] = useState(false);
     const isRenderedFirst = useRef();
     const [selectedPhone, setSelectedPhone] = useState(null);
@@ -28,13 +28,15 @@ export const CallsProvider = ({ children }) => {
     useEffect(() => {
         if (isCallModalOpen) {
            if (!isRenderedFirst.current) {
+               callsStore.setContext(entity,entityId)
                isRenderedFirst.current = true;
            }
             callsStore.fetchCallsData();
-
-            updateIntervalRef.current = setInterval(() => {
-                callsStore.fetchCallsData();
-            }, 5000);
+            if(withHistory) {
+                updateIntervalRef.current = setInterval(() => {
+                    callsStore.fetchCallsData();
+                }, 5000);
+            }
         }
 
         return () => {
@@ -59,17 +61,20 @@ export const CallsProvider = ({ children }) => {
         <CallsContext.Provider value={contextValue}>
             {children}
 
-            <CallButton
-                isOpen={isCallModalOpen}
-                onClose={closeCallModal}
-                onClick={() => openCallModal()}
-            />
-            <CallModal
-                isRendered={isRenderedFirst}
-                isOpen={isCallModalOpen}
-                onClose={closeCallModal}
-                initialPhone={selectedPhone}
-            />
+                <>
+                        <CallButton
+                        isOpen={isCallModalOpen}
+                        onClose={closeCallModal}
+                        onClick={() => openCallModal()}
+                        />
+                    <CallModal
+                        withHistory={withHistory}
+                        isRendered={isRenderedFirst}
+                        isOpen={isCallModalOpen}
+                        onClose={closeCallModal}
+                        initialPhone={selectedPhone}
+                    />
+                </>
         </CallsContext.Provider>
     );
 };

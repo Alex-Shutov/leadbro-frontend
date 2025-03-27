@@ -82,7 +82,7 @@ export const convertUTCToLocal = (utcDate: string): Date => {
 
 export function formatDateWithToday(date) {
   // const date = new Date(d);
-  // debugger
+  //
   if (isToday(date)) {
     return `Сегодня, ${format(date, 'd MMMM', { locale: ru })}`;
   } else if (isYesterday(date)) {

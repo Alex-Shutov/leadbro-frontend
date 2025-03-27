@@ -88,7 +88,7 @@ const FilterManager = ({
   };
 
   const handleFilterChange = (name, value) => {
-    debugger;
+
     const filter = filterConfig.filters.find((f) => f.name === name);
     if (filter.type === 'textInput') {
       value = value.currentTarget.value;

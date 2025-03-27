@@ -150,7 +150,7 @@ const useClientsApi = () => {
 
   // Обновление данных компании
   const updateCompany = (id, updateData, submitText) => {
-    debugger;
+
     resetApiProvider();
     setIsLoading(true);
     updateData = mapClientDataToBackend(
@@ -264,7 +264,7 @@ const useClientsApi = () => {
 
   // Обновление клиента компании
   const updateClient = (store, entityId, clientId, submitText) => {
-    debugger;
+
     resetApiProvider();
     const isClient = window.location.href.includes('clients');
     const updateData = mapClientDataToBackend(

@@ -71,7 +71,7 @@ const Index = observer(({ clientId, onClose, onSubmit }) => {
   // Обработчик изменений полей
   const handleChange = useCallback(
     (name, value, withId = true) => {
-      debugger;
+
       if (isEditMode) {
         // Если режим редактирования — меняем через MobX store
         clientsStore.changeById(clientId, name, value, withId);

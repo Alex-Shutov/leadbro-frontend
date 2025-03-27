@@ -8,7 +8,7 @@ import Icon from "../../../../shared/Icon";
 const CallsStats = () => {
   const { callsStore } = useStore();
   if (!callsStore.stats) return <></>;
-  debugger;
+
   const { total, incoming, outgoing } = callsStore.stats;
 
   return (

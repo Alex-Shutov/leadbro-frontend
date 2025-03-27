@@ -7,7 +7,7 @@ import Tooltip from '../../shared/Tooltip';
 import { loadAvatar } from '../../utils/create.utils';
 import TextLink from '../../shared/Table/TextLink';
 
-const ManagerCell = ({ manager, ...rest }) => {
+const ManagerCell = ({ manager, children, ...rest }) => {
   const imageSrc = manager?.image ?? manager?.avatar;
   const renderName = () => {
     if (manager?.fio) {
@@ -26,12 +26,14 @@ const ManagerCell = ({ manager, ...rest }) => {
 
   return (
     <div className={cn(styles.container, rest.className)}>
-      <Avatar size={42} imageSrc={imageSrc ?? loadAvatar()} />
+      {!rest?.disableAvatar && <Avatar size={42} imageSrc={imageSrc ?? loadAvatar()} />}
       <div className={styles.fioContainer}>
-        <div>
+        <div className={styles.fio}>
           <TextLink>{renderName()}</TextLink>
         </div>
-        <div style={{}}>{manager?.role}</div>
+        {!rest?.disableRole && <div className={styles.role}>{manager?.role}</div>}
+        {children}
+
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ const CallsTable = observer(() => {
   } = usePagingData(callsStore, fetchCalls, () => callsStore?.getCalls());
 
   const handleCheckRecord = (urlToRecord) => {
-    debugger;
+
     window.open(urlToRecord, '_blank');
   };
 
@@ -78,7 +78,7 @@ const CallsTable = observer(() => {
   // }, [currentPage, location.search]);
 
   const handleFilterChange = async (filters) => {
-    debugger;
+
     if (filters.date_range && !getQueryParam('date_range')) return;
 
     await api.getCalls(1).then(() => handlePageChange(1));
@@ -94,18 +94,19 @@ const CallsTable = observer(() => {
         {entity.name && (
           <TextLink to={`/clients/${entity.id}`}>{entity.name}</TextLink>
         )}
-        <div className={styles.phoneNumber}>{entity.phone || '-'}</div>
+        {/*<div className={styles.info}>{entity.phone || '-'}</div>*/}
       </div>
     );
   }, []);
 
   const renderManagerContactInfo = useCallback((entity,phone) => {
     if (!entity) return <span>-</span>;
-    debugger
+
     return (
         <div className={styles.contactInfo}>
-         <ManagerCell manager={entity}/>
-          <span>С телефона: {phone}</span>
+         <ManagerCell disableRole={true} manager={entity}>
+           <span className={styles.info}>{phone}</span>
+         </ManagerCell>
         </div>
     );
   },[])
@@ -113,6 +114,31 @@ const CallsTable = observer(() => {
   const renderPhone = useCallback((phone) => {
     return <div className={styles.phone}>{phone}</div>;
   }, []);
+
+  const renderWhoCallWithPhone = useCallback((entity,phone) => {
+    if (!entity) return <span>-</span>;
+
+    return (
+        <div className={styles.contactInfo}>
+          <ManagerCell disableAvatar={true} disableRole={true} manager={entity}>
+            <span className={styles.info}>{phone}</span>
+          </ManagerCell>
+        </div>
+    );
+  },[])
+
+
+  const renderWhoCallInfo = useCallback((entity) => {
+    debugger
+    if (!entity) return <span>-</span>;
+    if (entity.client){
+      return renderWhoCallWithPhone(entity.client,entity.phoneClient)
+    }
+    else if (entity.company){
+      return renderContactInfo(entity)
+    }
+    else return renderPhone(entity.phoneClient)
+  })
 
   // Table columns definition
   const cols = useMemo(
@@ -149,7 +175,7 @@ const CallsTable = observer(() => {
         Header: 'Кто звонил',
         accessor: 'company',
         Cell: ({ row }) => {
-          debugger
+
           return row.original?.manager
               ? renderManagerContactInfo(row.original.manager,row.original.phone)
               : renderPhone(row.original.phone);
@@ -159,10 +185,7 @@ const CallsTable = observer(() => {
         Header: 'Кому звонили',
         accessor: 'manager',
         Cell: ({ row }) => {
-          debugger
-          return row.original?.manager
-              ? renderContactInfo(row.original.manager)
-              : renderPhone(row.original.phoneClient);
+          return renderWhoCallInfo(row.original)
         },
       },
       {

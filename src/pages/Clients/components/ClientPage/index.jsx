@@ -118,7 +118,7 @@ const ClientPage = observer(() => {
       animate={'show'}
       variants={opacityTransition}
     >
-      <CallsProvider>
+      <CallsProvider entity={'company'} entityId={id}>
       <LoadingProvider isLoading={isLoading || api.isLoading}>
         <Title title={client?.title} />
         <div className={styles.dropdown}>

@@ -51,7 +51,7 @@ const CreateClientsModal = ({
     }
   }, [clientId]);
   const handleChange = (name, value, withId = true) => {
-    debugger;
+
     if (isEditMode) {
       store.changeById(entityId, name, value, withId);
     } else {

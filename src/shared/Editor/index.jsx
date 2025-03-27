@@ -90,7 +90,7 @@ const Editor = forwardRef(
               addResizePlugin(editor);
             },
             change: async function (newValue) {
-              debugger;
+
               if (onChange) {
                 onChange({
                   target: {

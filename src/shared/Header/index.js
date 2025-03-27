@@ -15,6 +15,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { useAppNavigation } from '../../hooks/useAppNavigation';
 import ConfirmationModal from '../../components/ConfirmationModal';
+import {handleClickWithHttpResourceOrMiddle} from "../../utils/click";
 
 const Header = ({ onOpen }) => {
   const [visible, setVisible] = useState(false);
@@ -87,17 +88,7 @@ const HeadersList = ({ navigation }) => {
   const handleClick = (x, index,event) => {
     setActiveIndex(index);
     x.action();
-    if (x?.url) {
-      const isExternalLink = x.url.startsWith('http://') || x.url.startsWith('https://');
-      const isCtrlOrMiddleClick = event.ctrlKey || event.metaKey  ||event.button === 1; // 1 - средняя кнопка мыши
-
-      if (isExternalLink || isCtrlOrMiddleClick) {
-        // Открываем ссылку в новой вкладке
-        window.open(x.url, '_blank');
-      } else {
-        navigate(x.url)
-      }
-    }
+    handleClickWithHttpResourceOrMiddle(x,event,navigate);
   };
 
   const isActive = (url) => {

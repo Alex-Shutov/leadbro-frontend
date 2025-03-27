@@ -11,6 +11,8 @@ import {FiltersProvider} from "../../providers/FilterProvider";
 import {createServicesFilters} from "../Services/services.filter.conf";
 import {createDealsFilters} from "./deals.filter.conf";
 import useAppApi from "../../api";
+import {handleClickWithHttpResourceOrMiddle} from "../../utils/click";
+import {CallsProvider} from "../../providers/CallsProvider";
 
 const Deals = observer(() => {
   const api = useDealsApi();
@@ -52,8 +54,10 @@ const Deals = observer(() => {
   };
 
   // Обработчик клика по карточке сделки
-  const handleDealClick = (deal) => {
-    navigate(`/deals/${deal.id}`);
+  const handleDealClick = (event,deal) => {
+    // navigate(`/deals/${deal.id}`);
+
+    handleClickWithHttpResourceOrMiddle({url:`/deals/${deal.id}`},event,navigate);
   };
 
   return (

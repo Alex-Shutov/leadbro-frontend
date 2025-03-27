@@ -28,6 +28,7 @@ import ClientPersons from "../../../Clients/components/ClientPage/Persons";
 import useClientsApi from "../../../Clients/clients.api";
 import CreateClientsModal from "../../../Clients/components/ClientPage/Persons/Modals/CreateClientsModal";
 import ClientActivities from "../../../Clients/components/ClientPage/Activities";
+import {CallsProvider} from "../../../../providers/CallsProvider";
 
 const DealPage = observer(() => {
   const { id } = useParams();
@@ -99,6 +100,8 @@ const DealPage = observer(() => {
       variants={opacityTransition}
     >
       <LoadingProvider isLoading={api.isLoading||dealsStore.isLoading}>
+        <CallsProvider entity={'deal'} entityId={deal?.id} withHistory={false}>
+
         <Title title={deal?.name} />
         <div className={styles.dropdown}>
           <CardDropdown
@@ -185,6 +188,7 @@ const DealPage = observer(() => {
             )}
           </AnimatePresence>
         </div>
+        </CallsProvider>
       </LoadingProvider>
       {personModalValue!==null && deal && (
           <CreateClientsModal
