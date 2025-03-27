@@ -18,7 +18,18 @@
     align-content: center
     line-height: 18px
     .fio
+      a,div
+        cursor: auto !important
       margin-bottom: 4px
     .role
       +caption2-m
       color: $shades2
+.name
+  +caption1
+  cursor: pointer
+  text-decoration: none
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  a
+    color: $n4

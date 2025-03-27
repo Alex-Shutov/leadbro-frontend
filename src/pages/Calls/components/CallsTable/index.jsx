@@ -115,12 +115,12 @@ const CallsTable = observer(() => {
     return <div className={styles.phone}>{phone}</div>;
   }, []);
 
-  const renderWhoCallWithPhone = useCallback((entity,phone) => {
-    if (!entity) return <span>-</span>;
+  const renderWhoCallWithPhone = useCallback(({client,company},phone) => {
+    if (!client) return <span>-</span>;
 
     return (
         <div className={styles.contactInfo}>
-          <ManagerCell disableAvatar={true} disableRole={true} manager={entity}>
+          <ManagerCell fioContainerClass={styles.fioContainer} companyName={company.name} companyLink={`/clients/${company.id}`} disableAvatar={true} disableRole={true} manager={client}>
             <span className={styles.info}>{phone}</span>
           </ManagerCell>
         </div>
@@ -132,7 +132,7 @@ const CallsTable = observer(() => {
     debugger
     if (!entity) return <span>-</span>;
     if (entity.client){
-      return renderWhoCallWithPhone(entity.client,entity.phoneClient)
+      return renderWhoCallWithPhone(entity,entity.phoneClient)
     }
     else if (entity.company){
       return renderContactInfo(entity)

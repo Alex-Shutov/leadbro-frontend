@@ -27,10 +27,13 @@ const ManagerCell = ({ manager, children, ...rest }) => {
   return (
     <div className={cn(styles.container, rest.className)}>
       {!rest?.disableAvatar && <Avatar size={42} imageSrc={imageSrc ?? loadAvatar()} />}
-      <div className={styles.fioContainer}>
+      <div  className={cn(styles.fioContainer,rest?.fioContainerClass)}>
         <div className={styles.fio}>
-          <TextLink>{renderName()}</TextLink>
+          <TextLink className={rest?.classLink}>{renderName()}</TextLink>
         </div>
+        {rest?.companyName && <div className={styles.name}>
+          <TextLink to={rest?.companyLink}>{rest?.companyName}</TextLink>
+        </div>}
         {!rest?.disableRole && <div className={styles.role}>{manager?.role}</div>}
         {children}
 
